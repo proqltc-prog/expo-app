@@ -1,0 +1,59 @@
+name: Release
+
+# Maakt automatisch tag vX.Y.Z + GitHub-release aan zodra de versie in
+# package.json op main verandert. De release-tekst komt uit CHANGELOG.md.
+on:
+  push:
+    branches: [main]
+    paths: [package.json, CHANGELOG.md, .github/workflows/release.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Versie bepalen
+        id: versie
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "bestaat=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "bestaat=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Release-tekst uit CHANGELOG halen
+        if: steps.versie.outputs.bestaat == 'false'
+        env:
+          VERSION: ${{ steps.versie.outputs.version }}
+        run: |
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" {f=1; next}
+            /^## \[/ && f {exit}
+            $0 ~ "^\\[" v "\\]:" {next}
+            f {print}
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "Geen sectie voor $VERSION in CHANGELOG.md" >&2
+            exit 1
+          fi
+
+      - name: Tag en release aanmaken
+        if: steps.versie.outputs.bestaat == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.versie.outputs.version }}
+        run: |
+          TITEL=$(grep -m1 -E "^## \[$VERSION\]" CHANGELOG.md | sed -E 's/^## \[[^]]+\] *(– *[0-9-]+)? *//')
+          gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "v$VERSION${TITEL:+ – $TITEL}" \
+            --notes-file release-notes.md

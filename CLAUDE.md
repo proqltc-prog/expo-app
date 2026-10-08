@@ -11,7 +11,7 @@ Voor **elke** nieuwe functionaliteit, verbetering of bugfix:
    - PATCH (0.x.y) voor bugfixes en kleine aanpassingen
 4. **CHANGELOG.md** – voeg bovenaan een sectie toe voor de nieuwe versie met de Jira-key en de link naar de Confluence-pagina.
 5. **Confluence** – maak een pagina per workitem onder "Gezond Boodschappen › Workitems" met: doel, wat er gewijzigd is, hoe te testen, versie, links naar Jira-item, commit/tag en GitHub-release; vul de versietabel op de pagina "Versies" aan.
-6. **GitHub** – merge naar `main`, maak tag `vX.Y.Z` en een GitHub-release met de changelog-tekst en links naar Jira en Confluence.
+6. **GitHub** – merge naar `main`. De workflow `.github/workflows/release.yml` maakt dan automatisch tag `vX.Y.Z` en de GitHub-release aan met de tekst uit CHANGELOG.md (zet daar dus de links naar Jira en Confluence in).
 7. **Jira** – zet het workitem op *Done*, met de fixVersion `vX.Y.Z` en links naar Confluence en de GitHub-release.
 
 ## Taal
