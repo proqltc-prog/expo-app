@@ -1,0 +1,53 @@
+import type { Afdeling } from '@/data/ingredienten';
+import type { Basis, Soort, StijlCode } from '@/data/receptenbank';
+import type { Taal } from '@/i18n';
+import type { Profiel } from '@/lib/profiel';
+
+export const WEEKDAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'] as const;
+export type DagCode = (typeof WEEKDAGEN)[number];
+
+export type KooktijdCode = 'snel' | 'gemiddeld' | 'uitgebreid';
+
+export type PlanIngredient = {
+  naam: string;
+  hoeveelheid: number;
+  /** g, ml, stuk, teentje — of een vrije eenheid uit de AI. */
+  eenheid: string;
+  afdeling: Afdeling;
+};
+
+/** Een recept zoals het in een weekplan staat: namen al in de taal van de gebruiker, hoeveelheden voor het hele gezin. */
+export type PlanRecept = {
+  /** Id uit de lokale receptenbank, of een id van de AI. */
+  id: string;
+  naam: string;
+  soort: Soort;
+  minuten: number;
+  stijlen: StijlCode[];
+  basis?: Basis;
+  ingredienten: PlanIngredient[];
+};
+
+export type PlanDag = { dag: DagCode; recept: PlanRecept };
+
+/** Wat de gebruiker vraagt; het profiel gaat er automatisch bij. */
+export type PlanVerzoek = {
+  opdracht: string;
+  kooktijden: KooktijdCode[];
+  stijlen: StijlCode[];
+  profiel: Profiel;
+  taal: Taal;
+  seed?: number;
+};
+
+export type Weekplan = {
+  dagen: PlanDag[];
+  opdracht: string;
+  kooktijden: KooktijdCode[];
+  stijlen: StijlCode[];
+  taal: Taal;
+  /** Aantal volwassen porties waarvoor de hoeveelheden berekend zijn. */
+  porties: number;
+  bron: 'lokaal' | 'ai';
+  gemaaktOp: string;
+};
