@@ -8,6 +8,22 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.3.0] – 2026-10-10
+
+App-interface in 6 talen: Nederlands, Frans, Duits, Engels, Spaans en Portugees.
+
+- Jira: [WEEK-22](https://proqltc-1791495894841.atlassian.net/browse/WEEK-22)
+- Confluence: [WEEK-22 – App-interface in 6 talen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1310739)
+
+### Toegevoegd
+- Vertaalmodule met één bestand per taal; alle schermteksten vertaald.
+- Taal volgt het toestel (niet-ondersteunde taal → Engels) en is aanpasbaar in het tabblad **Gezin**.
+- Lijstcategorieën, vaste items, gezondheidsscore en voedingswaarden in de gekozen taal; getallen met het juiste decimaalteken.
+- Productnaam van Open Food Facts in de taal van de gebruiker als die bestaat.
+
+### Gewijzigd
+- Gezondheidsscore en lijstcategorieën gebruiken taalonafhankelijke codes; bestaande lijsten blijven werken.
+
 ## [0.2.0] – 2026-10-10
 
 Gezinsprofiel met vaste instellingen.
@@ -51,3 +67,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 
 [0.1.1]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.1.1
 [0.2.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.2.0
+[0.3.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.3.0

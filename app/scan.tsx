@@ -3,9 +3,11 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { beoordeel, Oordeel, Product, zoekProduct } from '@/lib/openfoodfacts';
 import { bewaarLijst, laadLijst } from '@/opslag/lijst';
+import { getal, Sleutel } from '@/i18n';
+import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { Goed: '#2e7d4f', Matig: '#f9a825', 'Liever niet': '#c62828' };
+const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#2e7d4f', matig: '#f9a825', slecht: '#c62828' };
 
 type Status =
   | { soort: 'scannen' }
@@ -15,6 +17,7 @@ type Status =
   | { soort: 'fout' };
 
 export default function Scan() {
+  const { t, taal } = useTaal();
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
@@ -24,9 +27,9 @@ export default function Scan() {
   if (!toestemming.granted) {
     return (
       <View style={s.midden}>
-        <Text style={s.tekst}>De camera is nodig om barcodes te scannen.</Text>
+        <Text style={s.tekst}>{t('scan.cameraNodig')}</Text>
         <Pressable style={s.knop} onPress={vraagToestemming}>
-          <Text style={s.knopTekst}>Camera toestaan</Text>
+          <Text style={s.knopTekst}>{t('scan.cameraToestaan')}</Text>
         </Pressable>
       </View>
     );
@@ -37,7 +40,7 @@ export default function Scan() {
     bezig.current = true;
     setStatus({ soort: 'laden', barcode: data });
     try {
-      const product = await zoekProduct(data);
+      const product = await zoekProduct(data, taal);
       setStatus(product ? { soort: 'gevonden', product, oordeel: beoordeel(product) } : { soort: 'niet-gevonden', barcode: data });
     } catch {
       setStatus({ soort: 'fout' });
@@ -51,8 +54,8 @@ export default function Scan() {
 
   const accepteer = async (product: Product) => {
     const lijst = await laadLijst();
-    const naam = [product.merk, product.naam].filter(Boolean).join(' – ');
-    await bewaarLijst([...lijst, { id: `scan-${product.barcode}-${Date.now()}`, naam, categorie: 'Gescand', afgevinkt: true }]);
+    const naam = [product.merk, product.naam || t('scan.onbekend')].filter(Boolean).join(' – ');
+    await bewaarLijst([...lijst, { id: `scan-${product.barcode}-${Date.now()}`, naam, categorie: 'gescand', afgevinkt: true }]);
     opnieuw();
   };
 
@@ -67,66 +70,70 @@ export default function Scan() {
         />
         <View style={s.overlay}>
           <View style={s.kader} />
-          <Text style={s.hint}>Richt de camera op de barcode</Text>
+          <Text style={s.hint}>{t('scan.richt')}</Text>
         </View>
       </View>
     );
   }
 
   if (status.soort === 'laden') {
-    return <View style={s.midden}><ActivityIndicator size="large" /><Text style={s.tekst}>Product opzoeken…</Text></View>;
+    return <View style={s.midden}><ActivityIndicator size="large" /><Text style={s.tekst}>{t('scan.zoeken')}</Text></View>;
   }
 
   if (status.soort !== 'gevonden') {
     return (
       <View style={s.midden}>
         <Text style={s.tekst}>
-          {status.soort === 'fout' ? 'Er ging iets mis. Controleer je internetverbinding.' : `Product ${status.barcode} niet gevonden in Open Food Facts.`}
+          {status.soort === 'fout' ? t('scan.fout') : t('scan.nietGevonden', { barcode: status.barcode })}
         </Text>
-        <Pressable style={s.knop} onPress={opnieuw}><Text style={s.knopTekst}>Opnieuw scannen</Text></Pressable>
+        <Pressable style={s.knop} onPress={opnieuw}><Text style={s.knopTekst}>{t('scan.opnieuw')}</Text></Pressable>
       </View>
     );
   }
 
   const { product: p, oordeel } = status;
-  const waarde = (v?: number, eenheid = 'g') => (v === undefined ? '–' : `${Math.round(v * 10) / 10} ${eenheid}`);
+  const waarde = (v?: number, eenheid = 'g') => (v === undefined ? '–' : `${getal(taal, v)} ${eenheid}`);
 
   return (
     <ScrollView contentContainerStyle={s.resultaat}>
-      <Text style={s.productNaam}>{p.naam}</Text>
+      <Text style={s.productNaam}>{p.naam || t('scan.onbekend')}</Text>
       {p.merk ? <Text style={s.merk}>{p.merk}</Text> : null}
 
       <View style={[s.oordeel, { backgroundColor: LABEL_KLEUR[oordeel.label] }]}>
         <Text style={s.score}>{oordeel.score}</Text>
-        <Text style={s.label}>{oordeel.label}</Text>
+        <Text style={s.label}>{t(`oordeel.${oordeel.label}`)}</Text>
       </View>
-      {oordeel.redenen.map((r) => <Text key={r} style={s.reden}>• {r}</Text>)}
+      {oordeel.redenen.map((r) => (
+        <Text key={r.code} style={s.reden}>
+          • {t(`reden.${r.code}` as Sleutel, { waarde: typeof r.waarde === 'number' ? getal(taal, r.waarde) : r.waarde ?? '' })}
+        </Text>
+      ))}
 
-      <Text style={s.kop}>Per 100 g</Text>
+      <Text style={s.kop}>{t('scan.per100')}</Text>
       <View style={s.tabel}>
         {[
-          ['Calorieën', waarde(p.kcal, 'kcal')],
-          ['Suikers', waarde(p.suikers)],
-          ['Eiwitten', waarde(p.eiwitten)],
-          ['Vet', waarde(p.vet)],
-          ['Zout', waarde(p.zout)],
+          [t('voeding.kcal'), waarde(p.kcal, 'kcal')],
+          [t('voeding.suikers'), waarde(p.suikers)],
+          [t('voeding.eiwitten'), waarde(p.eiwitten)],
+          [t('voeding.vet'), waarde(p.vet)],
+          [t('voeding.zout'), waarde(p.zout)],
         ].map(([k, v]) => (
           <View key={k} style={s.tabelRij}><Text>{k}</Text><Text style={{ fontWeight: '600' }}>{v}</Text></View>
         ))}
       </View>
 
-      <Text style={s.kop}>Additieven</Text>
-      <Text style={s.tekstLinks}>{p.additieven.length ? p.additieven.join(', ') : 'Geen gekend'}</Text>
+      <Text style={s.kop}>{t('scan.additieven')}</Text>
+      <Text style={s.tekstLinks}>{p.additieven.length ? p.additieven.join(', ') : t('scan.geenAdditieven')}</Text>
 
       <View style={s.knoppen}>
         <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
-          <Text style={s.knopTekst}>Afwijzen</Text>
+          <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
         </Pressable>
         <Pressable style={[s.knop, { flex: 1 }]} onPress={() => accepteer(p)}>
-          <Text style={s.knopTekst}>Accepteren</Text>
+          <Text style={s.knopTekst}>{t('scan.accepteren')}</Text>
         </Pressable>
       </View>
-      <Text style={s.bron}>Gegevens: Open Food Facts (openfoodfacts.org). Geen medisch advies.</Text>
+      <Text style={s.bron}>{t('scan.bron')}</Text>
     </ScrollView>
   );
 }

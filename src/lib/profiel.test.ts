@@ -93,6 +93,14 @@ describe('normaliseerProfiel', () => {
   });
 });
 
+describe('taalkeuze in het profiel', () => {
+  test('een geldige taal blijft behouden, een ongeldige wordt toesteltaal', () => {
+    assert.equal(normaliseerProfiel({ taal: 'fr' }).taal, 'fr');
+    assert.equal(normaliseerProfiel({ taal: 'it' }).taal, undefined);
+    assert.equal(standaardProfiel().taal, undefined);
+  });
+});
+
 describe('profielContext', () => {
   const p = gezin({
     volwassenen: 2,

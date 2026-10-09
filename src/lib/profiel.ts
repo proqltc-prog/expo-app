@@ -1,5 +1,6 @@
 // Gezinsprofiel: vaste gegevens die één keer ingevuld worden en daarna
 // automatisch meegaan met elke AI-vraag (WEEK-7). Pure logica, zonder opslag.
+import { isTaal, Taal } from '@/i18n';
 
 export type Adres = {
   straat: string;
@@ -17,6 +18,8 @@ export type Profiel = {
   /** Vrije omschrijving van de gezinssamenstelling, bv. "kinderen eten kleine porties". */
   samenstelling: string;
   adres: Adres;
+  /** Taal van de app; undefined = taal van het toestel (WEEK-22). */
+  taal?: Taal;
 };
 
 export const MAX_VOLWASSENEN = 10;
@@ -30,6 +33,7 @@ export function standaardProfiel(): Profiel {
     weekbudget: undefined,
     samenstelling: '',
     adres: { straat: '', postcode: '', gemeente: '', land: 'België' },
+    taal: undefined,
   };
 }
 
@@ -103,6 +107,7 @@ export function normaliseerProfiel(ruw: unknown): Profiel {
       gemeente: tekst(adres.gemeente),
       land: tekst(adres.land, basis.adres.land),
     },
+    taal: isTaal(r.taal) ? r.taal : undefined,
   };
 }
 

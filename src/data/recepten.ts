@@ -48,9 +48,10 @@ export function maakWeekmenu(seed: number = Date.now()): WeekmenuItem[] {
 }
 
 // Vaste items voor ontbijt, middag (boterhammen), school en huishouden.
-export const VASTE_ITEMS: { categorie: string; items: string[] }[] = [
-  { categorie: 'Brood & beleg', items: ['brood', 'boter', 'kaas', 'hesp', 'choco'] },
-  { categorie: 'Fruit', items: ['appels', 'bananen', 'mandarijnen'] },
-  { categorie: 'School', items: ['koekjes voor de boekentas', 'drinkbrikjes'] },
-  { categorie: 'Huishouden', items: ['wc-papier', 'tandpasta'] },
-];
+// Categorie en items zijn codes; de tekst komt uit de vertalingen (categorie.<code>, item.<code>).
+export const VASTE_ITEMS = [
+  { categorie: 'brood-beleg', items: ['brood', 'boter', 'kaas', 'hesp', 'choco'] },
+  { categorie: 'fruit', items: ['appels', 'bananen', 'mandarijnen'] },
+  { categorie: 'school', items: ['koekjes', 'drinkbrikjes'] },
+  { categorie: 'huishouden', items: ['wc-papier', 'tandpasta'] },
+] as const;

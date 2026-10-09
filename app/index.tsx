@@ -6,11 +6,14 @@ import { lijstUitMenu } from '@/lib/lijst';
 import { bewaarLijst } from '@/opslag/lijst';
 import { aantalPersonen } from '@/lib/profiel';
 import { laadProfiel } from '@/opslag/profiel';
+import { dagSleutel } from '@/i18n';
+import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 export default function Weekmenu() {
+  const { t, tn, taal } = useTaal();
   const [menu, setMenu] = useState(() => maakWeekmenu());
   const [personen, setPersonen] = useState<number | null>(null);
 
@@ -21,34 +24,34 @@ export default function Weekmenu() {
   );
 
   const naarLijst = async () => {
-    await bewaarLijst(lijstUitMenu(menu));
-    Alert.alert('Klaar', 'De boodschappenlijst is aangemaakt.');
+    await bewaarLijst(lijstUitMenu(menu, taal));
+    Alert.alert(t('menu.klaar.titel'), t('menu.klaar.tekst'));
     router.navigate('/lijst');
   };
 
   return (
     <ScrollView contentContainerStyle={s.container}>
-      <Text style={s.intro}>Snelle avondmaaltijden zondag–vrijdag, afwisselend vlees, vegetarisch en vis.</Text>
+      <Text style={s.intro}>{t('menu.intro')}</Text>
       {personen !== null && (
         <Pressable onPress={() => router.navigate('/profiel')}>
-          <Text style={s.profiel}>Voor {personen} personen · gezin aanpassen ›</Text>
+          <Text style={s.profiel}>{t('menu.voorPersonen', { personen: tn('algemeen.personen', personen) })}</Text>
         </Pressable>
       )}
       {menu.map(({ dag, recept }) => (
         <View key={dag} style={s.kaart}>
-          <Text style={s.dag}>{dag}</Text>
+          <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
           <Text style={s.naam}>{recept.naam}</Text>
           <View style={s.rij}>
-            <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{recept.soort}</Text>
-            <Text style={s.min}>{recept.minuten} min</Text>
+            <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
+            <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
           </View>
         </View>
       ))}
       <Pressable style={[s.knop, s.secundair]} onPress={() => setMenu(maakWeekmenu())}>
-        <Text style={[s.knopTekst, { color: KLEUR }]}>Nieuw voorstel</Text>
+        <Text style={[s.knopTekst, { color: KLEUR }]}>{t('menu.nieuwVoorstel')}</Text>
       </Pressable>
       <Pressable style={s.knop} onPress={naarLijst}>
-        <Text style={s.knopTekst}>Zet op boodschappenlijst</Text>
+        <Text style={s.knopTekst}>{t('menu.naarLijst')}</Text>
       </Pressable>
     </ScrollView>
   );
