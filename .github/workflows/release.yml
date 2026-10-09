@@ -19,6 +19,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Geen release zonder groene tests.
+      - name: Unit tests
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+
       - name: Versie bepalen
         id: versie
         run: |

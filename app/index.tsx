@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { maakWeekmenu, Soort } from '@/data/recepten';
-import { bewaarLijst, lijstUitMenu } from '@/lib/lijst';
+import { lijstUitMenu } from '@/lib/lijst';
+import { bewaarLijst } from '@/opslag/lijst';
 
 const KLEUR = '#2e7d4f';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };

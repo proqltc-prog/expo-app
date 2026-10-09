@@ -1,6 +1,6 @@
 {
   "name": "gezond-boodschappen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -8,7 +8,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --tsconfig tsconfig.test.json --test \"src/**/*.test.ts\"",
+    "typecheck:logica": "tsc -p tsconfig.test.json",
+    "check": "npm test && npm run typecheck:logica && npm run typecheck"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -25,6 +28,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.20.0"
   }
 }

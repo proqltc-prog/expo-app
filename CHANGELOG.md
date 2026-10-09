@@ -8,6 +8,22 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.1.1] – 2026-10-10
+
+Testinfrastructuur: unit tests verplicht voor elke merge.
+
+- Jira: [WEEK-24](https://proqltc-1791495894841.atlassian.net/browse/WEEK-24)
+- Confluence: [WEEK-24 – Testinfrastructuur en CI](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1212504)
+
+### Toegevoegd
+- Unit tests met de ingebouwde Node-testrunner (`npm test`) voor weekmenu, boodschappenlijst en gezondheidsscore.
+- Workflow **Tests**: draait tests en typecontrole op elke pull request en push naar `main`.
+- De release-workflow maakt pas een release als de tests slagen.
+
+### Gewijzigd
+- Opslag van de lijst verhuisd naar `src/opslag/lijst.ts`; de pure lijstlogica blijft in `src/lib/lijst.ts`.
+- Werkafspraken (CLAUDE.md) bijgewerkt naar Jira-project WEEK en Confluence-space WEEK.
+
 ## [0.1.0] – 2026-10-08
 
 Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
@@ -19,3 +35,5 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 - **Gezondheidsscore** – score 0–100 met label Goed / Matig / Liever niet op basis van Nutri-Score, NOVA, additieven, suiker, zout en eiwit; voedingswaarden per 100 g; product accepteren of afwijzen.
 
 [0.1.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.1.0
+
+[0.1.1]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.1.1
