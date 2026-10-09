@@ -5,7 +5,8 @@ import { BankRecept, RECEPTENBANK, Soort } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import { leesOpdracht, Wensen } from './opdracht';
 import { porties as berekenPorties, rondAf } from './hoeveelheid';
-import { DagCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
+import { DagCode, KooktijdCode, kooktijdVan, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
+import type { StijlCode } from '@/data/receptenbank';
 
 export const STANDAARD_AANTAL_DAGEN = 6;
 
@@ -117,6 +118,31 @@ function kiesBeste(pool: BankRecept[], w: Wensen, random: () => number): BankRec
   return besten[Math.floor(random() * besten.length)];
 }
 
+/**
+ * Past de keuzes voor kooktijd en stijl toe (leeg = alles mag).
+ * Blijft er te weinig over voor het aantal dagen, dan laat de planner eerst de stijl
+ * en daarna de kooktijd los, en meldt dat met `versoepeld`.
+ */
+export function filterOpKeuzes(
+  recepten: BankRecept[],
+  kooktijden: readonly KooktijdCode[],
+  stijlen: readonly StijlCode[],
+  nodig: number
+): { recepten: BankRecept[]; versoepeld: boolean } {
+  const pastTijd = (r: BankRecept) => !kooktijden.length || kooktijden.includes(kooktijdVan(r.minuten));
+  const pastStijl = (r: BankRecept) => !stijlen.length || r.stijlen.some((s) => stijlen.includes(s));
+
+  const beide = recepten.filter((r) => pastTijd(r) && pastStijl(r));
+  if (beide.length >= nodig) return { recepten: beide, versoepeld: false };
+
+  // Te weinig: vul aan met recepten die wel de kooktijd halen, dan met de rest.
+  const aanvulling = [
+    ...recepten.filter((r) => pastTijd(r) && !beide.includes(r)),
+    ...recepten.filter((r) => !pastTijd(r)),
+  ];
+  return { recepten: [...beide, ...aanvulling.slice(0, Math.max(0, nodig - beide.length))], versoepeld: true };
+}
+
 export function dagenVoorPlan(aantal: number): DagCode[] {
   return WEEKDAGEN.slice(0, Math.min(7, Math.max(1, aantal)));
 }
@@ -125,7 +151,12 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
   const w = leesOpdracht(verzoek.opdracht);
   const dagen = dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   const random = toeval(verzoek.seed ?? Date.now());
-  const kandidaten = passendeRecepten(w, bank);
+  const { recepten: kandidaten, versoepeld } = filterOpKeuzes(
+    passendeRecepten(w, bank),
+    verzoek.kooktijden,
+    verzoek.stijlen,
+    dagen.length
+  );
   const schema = soortenSchema(w, dagen.length);
   const porties = berekenPorties(verzoek.profiel);
 
@@ -147,5 +178,6 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
     porties,
     bron: 'lokaal',
     gemaaktOp: new Date().toISOString(),
+    ...(versoepeld ? { versoepeld: true } : {}),
   };
 }

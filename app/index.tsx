@@ -1,20 +1,43 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import type { Soort } from '@/data/receptenbank';
+import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { lijstUitPlan } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planLokaal } from '@/lib/planner/lokaal';
-import type { Weekplan } from '@/lib/planner/types';
+import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { bewaarLijst } from '@/opslag/lijst';
-import { bewaarOpdrachten, bewaarPlan, laadOpdrachten, laadPlan } from '@/opslag/plan';
+import { bewaarKeuzes, bewaarOpdrachten, bewaarPlan, laadKeuzes, laadOpdrachten, laadPlan } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { dagSleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
+
+/** Zet een waarde aan of uit in een lijst (multi-select). */
+const wissel = <T,>(lijst: T[], waarde: T) => (lijst.includes(waarde) ? lijst.filter((x) => x !== waarde) : [...lijst, waarde]);
+
+function Chips<T extends string>({ opties, gekozen, label, onWissel }: {
+  opties: readonly T[];
+  gekozen: T[];
+  label: (o: T) => string;
+  onWissel: (o: T) => void;
+}) {
+  return (
+    <View style={s.chips}>
+      {opties.map((o) => {
+        const aan = gekozen.includes(o);
+        return (
+          <Pressable key={o} style={[s.chip, aan && s.chipAan]} onPress={() => onWissel(o)} accessibilityState={{ selected: aan }}>
+            <Text style={[s.chipTekst, aan && s.chipTekstAan]}>{label(o)}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
 
 export default function Weekplanning() {
   const { t, tn, taal } = useTaal();
@@ -23,11 +46,28 @@ export default function Weekplanning() {
   const [vorige, setVorige] = useState<string[]>([]);
   const [plan, setPlan] = useState<Weekplan | null>(null);
   const [bezig, setBezig] = useState(false);
+  const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
+  const [stijlen, setStijlen] = useState<StijlCode[]>([]);
 
   useEffect(() => {
     laadPlan().then(setPlan);
     laadOpdrachten().then(setVorige);
+    laadKeuzes().then((k) => {
+      setKooktijden(k.kooktijden);
+      setStijlen(k.stijlen);
+    });
   }, []);
+
+  const wisselKooktijd = (k: KooktijdCode) => {
+    const nieuw = wissel(kooktijden, k);
+    setKooktijden(nieuw);
+    bewaarKeuzes({ kooktijden: nieuw, stijlen });
+  };
+  const wisselStijl = (st: StijlCode) => {
+    const nieuw = wissel(stijlen, st);
+    setStijlen(nieuw);
+    bewaarKeuzes({ kooktijden, stijlen: nieuw });
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -39,7 +79,7 @@ export default function Weekplanning() {
     if (!profiel || bezig) return;
     setBezig(true);
     try {
-      const nieuw = planLokaal({ opdracht, kooktijden: [], stijlen: [], profiel, taal });
+      const nieuw = planLokaal({ opdracht, kooktijden, stijlen, profiel, taal });
       setPlan(nieuw);
       await bewaarPlan(nieuw);
       const geschiedenis = voegOpdrachtToe(vorige, opdracht);
@@ -65,6 +105,11 @@ export default function Weekplanning() {
           <Text style={s.profiel}>{t('menu.voorPersonen', { personen: tn('algemeen.personen', aantalPersonen(profiel)) })}</Text>
         </Pressable>
       )}
+
+      <Text style={s.blokKop}>{t('planning.kooktijd')}</Text>
+      <Chips opties={KOOKTIJDEN} gekozen={kooktijden} label={(k) => t(`kooktijd.${k}`)} onWissel={wisselKooktijd} />
+      <Text style={s.blokKop}>{t('planning.stijl')}</Text>
+      <Chips opties={STIJLEN} gekozen={stijlen} label={(st) => t(`stijl.${st}`)} onWissel={wisselStijl} />
 
       <TextInput
         style={s.veld}
@@ -98,6 +143,7 @@ export default function Weekplanning() {
           <Text style={s.bron}>
             {t(plan.bron === 'ai' ? 'planning.bronAi' : 'planning.bronLokaal')}
           </Text>
+          {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
           {plan.dagen.map(({ dag, recept }) => (
             <View key={dag} style={s.kaart}>
               <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
@@ -121,6 +167,13 @@ const s = StyleSheet.create({
   container: { padding: 16, gap: 10, paddingBottom: 40 },
   intro: { color: '#555' },
   profiel: { color: KLEUR, fontWeight: '600' },
+  blokKop: { fontWeight: '700', color: '#333', marginTop: 4 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6 },
+  chipAan: { backgroundColor: KLEUR },
+  chipTekst: { color: KLEUR, fontWeight: '600', fontSize: 13 },
+  chipTekstAan: { color: '#fff' },
+  melding: { backgroundColor: '#fff8e1', color: '#7a5b00', borderRadius: 10, padding: 10, fontSize: 13 },
   veld: {
     borderWidth: 1, borderColor: '#ddd', borderRadius: 12, padding: 12, minHeight: 96,
     backgroundColor: '#fff', textAlignVertical: 'top', fontSize: 15,

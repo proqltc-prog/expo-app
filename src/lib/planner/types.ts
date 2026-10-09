@@ -7,6 +7,14 @@ export const WEEKDAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag
 export type DagCode = (typeof WEEKDAGEN)[number];
 
 export type KooktijdCode = 'snel' | 'gemiddeld' | 'uitgebreid';
+export const KOOKTIJDEN: KooktijdCode[] = ['snel', 'gemiddeld', 'uitgebreid'];
+
+/** snel: tot 20 min · gemiddeld: 21–40 min · uitgebreid: meer dan 40 min. */
+export function kooktijdVan(minuten: number): KooktijdCode {
+  if (minuten <= 20) return 'snel';
+  if (minuten <= 40) return 'gemiddeld';
+  return 'uitgebreid';
+}
 
 export type PlanIngredient = {
   naam: string;
@@ -50,4 +58,6 @@ export type Weekplan = {
   porties: number;
   bron: 'lokaal' | 'ai';
   gemaaktOp: string;
+  /** true als er niet genoeg recepten waren voor de gekozen kooktijd/stijl en de planner moest versoepelen. */
+  versoepeld?: boolean;
 };
