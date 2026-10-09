@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { bewaarLijst, laadLijst, LijstItem } from '@/lib/lijst';
+import { LijstItem } from '@/lib/lijst';
+import { bewaarLijst, laadLijst } from '@/opslag/lijst';
 
 const KLEUR = '#2e7d4f';
 

@@ -1,0 +1,15 @@
+{
+  "//": "Config voor unit tests en typecontrole van de pure logica (zonder React Native). Gebruikt door `npm test` en `npm run typecheck:logica`.",
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["node"],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src/lib/**/*.ts", "src/data/**/*.ts", "src/i18n/**/*.ts"]
+}

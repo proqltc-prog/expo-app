@@ -26,7 +26,7 @@ export async function zoekProduct(barcode: string): Promise<Product | null> {
     headers: { 'User-Agent': 'GezondBoodschappen/0.1 (github.com/Proqltc-prog/expo-app)' },
   });
   if (!res.ok) return null;
-  const data = await res.json();
+  const data: any = await res.json();
   if (data.status !== 1 || !data.product) return null;
   const p = data.product;
   const n = p.nutriments ?? {};

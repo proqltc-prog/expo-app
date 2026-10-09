@@ -1,5 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VASTE_ITEMS, WeekmenuItem } from '@/data/recepten';
+
+// Pure logica voor de boodschappenlijst (zonder opslag), zodat ze los testbaar is.
+// Opslag op het toestel staat in src/opslag/lijst.ts.
 
 export type LijstItem = {
   id: string;
@@ -7,21 +9,6 @@ export type LijstItem = {
   categorie: string;
   afgevinkt: boolean;
 };
-
-const SLEUTEL = 'boodschappenlijst:v1';
-
-export async function laadLijst(): Promise<LijstItem[]> {
-  try {
-    const ruw = await AsyncStorage.getItem(SLEUTEL);
-    return ruw ? (JSON.parse(ruw) as LijstItem[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-export async function bewaarLijst(items: LijstItem[]): Promise<void> {
-  await AsyncStorage.setItem(SLEUTEL, JSON.stringify(items));
-}
 
 /** Bouwt een lijst uit het weekmenu + vaste items, zonder dubbels. */
 export function lijstUitMenu(menu: WeekmenuItem[]): LijstItem[] {

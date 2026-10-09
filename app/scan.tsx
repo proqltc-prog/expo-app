@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { beoordeel, Oordeel, Product, zoekProduct } from '@/lib/openfoodfacts';
-import { bewaarLijst, laadLijst } from '@/lib/lijst';
+import { bewaarLijst, laadLijst } from '@/opslag/lijst';
 
 const KLEUR = '#2e7d4f';
 const LABEL_KLEUR: Record<Oordeel['label'], string> = { Goed: '#2e7d4f', Matig: '#f9a825', 'Liever niet': '#c62828' };

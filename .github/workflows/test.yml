@@ -1,0 +1,31 @@
+name: Tests
+
+# Unit tests + TypeScript-controle op elke pull request en elke push naar main.
+# Een pull request wordt pas gemerged als deze workflow groen is.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Afhankelijkheden installeren
+        run: npm install --no-audit --no-fund
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Typecontrole pure logica
+        run: npm run typecheck:logica
+
+      - name: Typecontrole volledige app
+        run: npm run typecheck
