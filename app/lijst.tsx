@@ -3,7 +3,7 @@ import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react
 import { useFocusEffect } from 'expo-router';
 import { LijstItem } from '@/lib/lijst';
 import { bewaarLijst, laadLijst } from '@/opslag/lijst';
-import { categorieNaam } from '@/i18n';
+import { categorieNaam, hoeveelheidTekst } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
@@ -70,6 +70,11 @@ export default function Lijst() {
               {item.afgevinkt && <Text style={s.vinkjeTekst}>✓</Text>}
             </View>
             <Text style={[s.naam, item.afgevinkt && s.doorgehaald]}>{item.naam}</Text>
+            {item.hoeveelheid ? (
+              <Text style={[s.hoeveelheid, item.afgevinkt && s.doorgehaald]}>
+                {hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}
+              </Text>
+            ) : null}
           </Pressable>
         )}
         contentContainerStyle={{ paddingBottom: 32 }}
@@ -95,7 +100,8 @@ const s = StyleSheet.create({
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   vinkjeAan: { backgroundColor: KLEUR },
   vinkjeTekst: { color: '#fff', fontWeight: '700' },
-  naam: { fontSize: 16 },
+  naam: { fontSize: 16, flex: 1 },
+  hoeveelheid: { fontSize: 14, color: '#777' },
   doorgehaald: { textDecorationLine: 'line-through', color: '#aaa' },
   wis: { alignItems: 'center', padding: 12 },
 });

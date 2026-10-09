@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   categorieNaam,
   dagSleutel,
+  hoeveelheidTekst,
   getal,
   isTaal,
   kiesTaal,
@@ -133,10 +134,27 @@ describe('categorieNaam', () => {
 
 describe('dagSleutel', () => {
   test('elke dag uit het weekmenu heeft een vertaling', async () => {
-    const { DAGEN } = await import('@/data/recepten');
-    for (const dag of DAGEN) {
+    const { WEEKDAGEN } = await import('@/lib/planner/types');
+    for (const dag of WEEKDAGEN) {
       assert.ok(dagSleutel(dag) in nl, dag);
       assert.equal(vertaal('en', dagSleutel('Maandag')), 'Monday');
     }
+  });
+});
+
+describe('hoeveelheidTekst', () => {
+  test('gewicht en volume met decimaalteken volgens taal', () => {
+    assert.equal(hoeveelheidTekst('nl', 330, 'g'), '330 g');
+    assert.equal(hoeveelheidTekst('nl', 1.5, 'stuk'), '1,5 ×');
+    assert.equal(hoeveelheidTekst('en', 1.5, 'stuk'), '1.5 ×');
+  });
+  test('teentjes in enkelvoud en meervoud', () => {
+    assert.equal(hoeveelheidTekst('nl', 1, 'teentje'), '1 teentje');
+    assert.equal(hoeveelheidTekst('fr', 3, 'teentje'), '3 gousses');
+  });
+  test('geen of nul hoeveelheid geeft lege tekst; vrije eenheid blijft staan', () => {
+    assert.equal(hoeveelheidTekst('nl', undefined, 'g'), '');
+    assert.equal(hoeveelheidTekst('nl', 0, 'g'), '');
+    assert.equal(hoeveelheidTekst('de', 2, 'EL'), '2 EL');
   });
 });

@@ -8,6 +8,24 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.4.0] – 2026-10-10
+
+Weekplanning met een vrije opdracht en de laatste 3 opdrachten.
+
+- Jira: [WEEK-9](https://proqltc-1791495894841.atlassian.net/browse/WEEK-9)
+- Confluence: [WEEK-9 – Promptveld met placeholder en laatste 3 opdrachten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1146896)
+
+### Toegevoegd
+- Tekstveld om de weekplanning te sturen, met uitleg in de placeholder.
+- De laatste 3 opdrachten onder het veld; aantikken laadt ze in het veld, versturen pas met *Plan mijn week*.
+- Receptenbank met 29 recepten en 57 ingrediënten, in alle 6 talen, met winkelafdeling en hoeveelheid per portie.
+- Lokale planner: leest aantal dagen, geen vlees/vis, meer vis, snel, gezond en goedkoop uit de opdracht (6 talen) en zorgt voor variatie.
+- Hoeveelheden berekend voor het hele gezin (kinderen eten kleinere porties) en zichtbaar op de boodschappenlijst.
+- Weekplan en opdrachten worden op het toestel bewaard.
+
+### Gewijzigd
+- Het vaste weekmenu met 10 recepten is vervangen door de planner.
+
 ## [0.3.0] – 2026-10-10
 
 App-interface in 6 talen: Nederlands, Frans, Duits, Engels, Spaans en Portugees.
@@ -68,3 +86,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.1.1]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.1.1
 [0.2.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.2.0
 [0.3.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.3.0
+[0.4.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.4.0

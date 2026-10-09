@@ -94,3 +94,15 @@ export function categorieNaam(taal: Taal, categorie: string): string {
 export function dagSleutel(dag: string): Sleutel {
   return `dag.${dag.toLowerCase()}` as Sleutel;
 }
+
+/**
+ * Leesbare hoeveelheid: "330 g", "1,5 l"-stijl getallen volgens de taal, "2 ×" voor stuks,
+ * "1 teentje" / "2 teentjes". Onbekende eenheden (bv. van de AI) worden letterlijk getoond.
+ */
+export function hoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, eenheid: string | undefined): string {
+  if (hoeveelheid === undefined || hoeveelheid <= 0) return '';
+  const n = getal(taal, hoeveelheid, 2);
+  if (!eenheid || eenheid === 'stuk') return `${n} ×`;
+  if (eenheid === 'teentje') return vulIn(vertaal(taal, hoeveelheid === 1 ? 'eenheid.teentje_1' : 'eenheid.teentje_n'), { n });
+  return `${n} ${eenheid}`;
+}
