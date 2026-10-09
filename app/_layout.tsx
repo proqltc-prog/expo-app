@@ -16,6 +16,7 @@ export default function Layout() {
         <Tabs.Screen name="index" options={{ title: 'Weekmenu', tabBarLabel: 'Menu' }} />
         <Tabs.Screen name="lijst" options={{ title: 'Boodschappenlijst', tabBarLabel: 'Lijst' }} />
         <Tabs.Screen name="scan" options={{ title: 'Product scannen', tabBarLabel: 'Scan' }} />
+        <Tabs.Screen name="profiel" options={{ title: 'Gezinsprofiel', tabBarLabel: 'Gezin' }} />
       </Tabs>
     </>
   );
