@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { maakWeekmenu, Soort } from '@/data/recepten';
 import { lijstUitMenu } from '@/lib/lijst';
 import { bewaarLijst } from '@/opslag/lijst';
+import { aantalPersonen } from '@/lib/profiel';
+import { laadProfiel } from '@/opslag/profiel';
 
 const KLEUR = '#2e7d4f';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 export default function Weekmenu() {
   const [menu, setMenu] = useState(() => maakWeekmenu());
+  const [personen, setPersonen] = useState<number | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      laadProfiel().then((p) => setPersonen(aantalPersonen(p)));
+    }, [])
+  );
 
   const naarLijst = async () => {
     await bewaarLijst(lijstUitMenu(menu));
@@ -20,6 +29,11 @@ export default function Weekmenu() {
   return (
     <ScrollView contentContainerStyle={s.container}>
       <Text style={s.intro}>Snelle avondmaaltijden zondag–vrijdag, afwisselend vlees, vegetarisch en vis.</Text>
+      {personen !== null && (
+        <Pressable onPress={() => router.navigate('/profiel')}>
+          <Text style={s.profiel}>Voor {personen} personen · gezin aanpassen ›</Text>
+        </Pressable>
+      )}
       {menu.map(({ dag, recept }) => (
         <View key={dag} style={s.kaart}>
           <Text style={s.dag}>{dag}</Text>
@@ -43,6 +57,7 @@ export default function Weekmenu() {
 const s = StyleSheet.create({
   container: { padding: 16, gap: 10 },
   intro: { color: '#555', marginBottom: 4 },
+  profiel: { color: KLEUR, fontWeight: '600', marginBottom: 4 },
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },
   dag: { fontSize: 13, color: '#777', fontWeight: '600' },
   naam: { fontSize: 17, fontWeight: '600', marginTop: 2 },

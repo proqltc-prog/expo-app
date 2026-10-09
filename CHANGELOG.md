@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.2.0] – 2026-10-10
+
+Gezinsprofiel met vaste instellingen.
+
+- Jira: [WEEK-7](https://proqltc-1791495894841.atlassian.net/browse/WEEK-7)
+- Confluence: [WEEK-7 – Gezinsprofiel met vaste instellingen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1441794)
+
+### Toegevoegd
+- Tabblad **Gezin**: volwassenen, kinderen met leeftijd, weekbudget, gezinssamenstelling en adres; bewaard op het toestel.
+- Controle bij het bewaren (minstens 1 volwassene, leeftijd 0–17, geldig budget en postcode).
+- Profielcontext die automatisch met elke AI-vraag meegaat (enkel gemeente en land, nooit straat of postcode).
+- Weekmenu toont voor hoeveel personen er gepland wordt.
+
 ## [0.1.1] – 2026-10-10
 
 Testinfrastructuur: unit tests verplicht voor elke merge.
@@ -37,3 +50,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.1.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.1.0
 
 [0.1.1]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.1.1
+[0.2.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.2.0
