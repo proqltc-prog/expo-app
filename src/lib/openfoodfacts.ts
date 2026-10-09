@@ -12,16 +12,41 @@ export type Product = {
   zout?: number;
 };
 
+export type RedenCode = 'nutriscore' | 'nova4' | 'additieven' | 'suiker' | 'zout' | 'eiwit';
+
+/** Een reden is taalonafhankelijk; het scherm vertaalt ze (sleutel `reden.<code>`). */
+export type Reden = { code: RedenCode; waarde?: string | number };
+
+export type OordeelLabel = 'goed' | 'matig' | 'slecht';
+
 export type Oordeel = {
   score: number; // 0–100, hoger = gezonder
-  label: 'Goed' | 'Matig' | 'Liever niet';
-  redenen: string[];
+  label: OordeelLabel;
+  redenen: Reden[];
 };
 
 const BASIS = 'https://world.openfoodfacts.org/api/v2/product';
-const VELDEN = 'product_name,product_name_nl,brands,nutriscore_grade,nova_group,additives_tags,nutriments';
+const TALEN_OFF = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
+const VELDEN = [
+  'product_name',
+  ...TALEN_OFF.map((t) => `product_name_${t}`),
+  'brands',
+  'nutriscore_grade',
+  'nova_group',
+  'additives_tags',
+  'nutriments',
+].join(',');
 
-export async function zoekProduct(barcode: string): Promise<Product | null> {
+/** Productnaam in de gevraagde taal, anders de algemene naam; leeg als er geen naam is. */
+export function productNaam(p: Record<string, unknown>, taal: string): string {
+  const inTaal = p[`product_name_${taal}`];
+  if (typeof inTaal === 'string' && inTaal.trim()) return inTaal.trim();
+  const algemeen = p.product_name;
+  return typeof algemeen === 'string' ? algemeen.trim() : '';
+}
+
+/** Zoekt een product op. `naam` is leeg als Open Food Facts geen naam kent (scherm toont dan "onbekend product"). */
+export async function zoekProduct(barcode: string, taal = 'nl'): Promise<Product | null> {
   const res = await fetch(`${BASIS}/${encodeURIComponent(barcode)}.json?fields=${VELDEN}`, {
     headers: { 'User-Agent': 'GezondBoodschappen/0.1 (github.com/Proqltc-prog/expo-app)' },
   });
@@ -33,7 +58,7 @@ export async function zoekProduct(barcode: string): Promise<Product | null> {
   const getal = (v: unknown) => (typeof v === 'number' ? v : undefined);
   return {
     barcode,
-    naam: p.product_name_nl || p.product_name || 'Onbekend product',
+    naam: productNaam(p, taal),
     merk: p.brands,
     nutriscore: typeof p.nutriscore_grade === 'string' && /^[a-e]$/.test(p.nutriscore_grade) ? p.nutriscore_grade : undefined,
     nova: getal(p.nova_group),
@@ -50,17 +75,17 @@ const NUTRI_PUNTEN: Record<string, number> = { a: 100, b: 80, c: 60, d: 35, e: 1
 
 /** Eenvoudige, uitlegbare gezondheidsscore. Geen medisch advies. */
 export function beoordeel(p: Product): Oordeel {
-  const redenen: string[] = [];
+  const redenen: Reden[] = [];
   let score = p.nutriscore ? NUTRI_PUNTEN[p.nutriscore] : 60;
-  if (p.nutriscore) redenen.push(`Nutri-Score ${p.nutriscore.toUpperCase()}`);
+  if (p.nutriscore) redenen.push({ code: 'nutriscore', waarde: p.nutriscore.toUpperCase() });
 
-  if (p.nova === 4) { score -= 15; redenen.push('Ultrabewerkt (NOVA 4)'); }
-  if (p.additieven.length >= 3) { score -= 10; redenen.push(`${p.additieven.length} additieven`); }
-  if ((p.suikers ?? 0) > 22.5) { score -= 10; redenen.push(`Veel suiker (${p.suikers} g/100 g)`); }
-  if ((p.zout ?? 0) > 1.5) { score -= 5; redenen.push(`Veel zout (${p.zout} g/100 g)`); }
-  if ((p.eiwitten ?? 0) >= 10) { score += 5; redenen.push(`Eiwitrijk (${p.eiwitten} g/100 g)`); }
+  if (p.nova === 4) { score -= 15; redenen.push({ code: 'nova4' }); }
+  if (p.additieven.length >= 3) { score -= 10; redenen.push({ code: 'additieven', waarde: p.additieven.length }); }
+  if ((p.suikers ?? 0) > 22.5) { score -= 10; redenen.push({ code: 'suiker', waarde: p.suikers }); }
+  if ((p.zout ?? 0) > 1.5) { score -= 5; redenen.push({ code: 'zout', waarde: p.zout }); }
+  if ((p.eiwitten ?? 0) >= 10) { score += 5; redenen.push({ code: 'eiwit', waarde: p.eiwitten }); }
 
   score = Math.max(0, Math.min(100, Math.round(score)));
-  const label = score >= 65 ? 'Goed' : score >= 40 ? 'Matig' : 'Liever niet';
+  const label: OordeelLabel = score >= 65 ? 'goed' : score >= 40 ? 'matig' : 'slecht';
   return { score, label, redenen };
 }

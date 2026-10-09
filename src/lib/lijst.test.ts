@@ -33,7 +33,21 @@ describe('lijstUitMenu', () => {
     const lijst = lijstUitMenu([]);
     const verwacht = VASTE_ITEMS.flatMap((c) => c.items).length;
     assert.equal(lijst.length, verwacht);
-    assert.ok(lijst.some((i) => i.categorie === 'Fruit' && i.naam === 'appels'));
+    assert.ok(lijst.some((i) => i.categorie === 'fruit' && i.naam === 'appels'));
+  });
+
+  test('vaste items in de taal van de gebruiker', () => {
+    const lijst = lijstUitMenu([], 'fr');
+    assert.ok(lijst.some((i) => i.categorie === 'fruit' && i.naam === 'pommes'));
+    assert.ok(lijst.some((i) => i.categorie === 'huishouden' && i.naam === 'papier toilette'));
+  });
+
+  test('elk vast item heeft een vertaling in elke taal', () => {
+    for (const taal of ['nl', 'fr', 'de', 'en', 'es', 'pt'] as const) {
+      for (const item of lijstUitMenu([], taal)) {
+        assert.doesNotMatch(item.naam, /^item\./, `${taal}: ${item.naam}`);
+      }
+    }
   });
 
   test('een ingrediënt dat ook een vast item is, staat er maar één keer op', () => {

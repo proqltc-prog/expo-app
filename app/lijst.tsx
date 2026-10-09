@@ -3,10 +3,13 @@ import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react
 import { useFocusEffect } from 'expo-router';
 import { LijstItem } from '@/lib/lijst';
 import { bewaarLijst, laadLijst } from '@/opslag/lijst';
+import { categorieNaam } from '@/i18n';
+import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
 
 export default function Lijst() {
+  const { t, taal } = useTaal();
   const [items, setItems] = useState<LijstItem[]>([]);
   const [nieuw, setNieuw] = useState('');
 
@@ -27,15 +30,15 @@ export default function Lijst() {
   const voegToe = () => {
     const naam = nieuw.trim();
     if (!naam) return;
-    wijzig([...items, { id: `extra-${Date.now()}`, naam, categorie: 'Extra', afgevinkt: false }]);
+    wijzig([...items, { id: `extra-${Date.now()}`, naam, categorie: 'extra', afgevinkt: false }]);
     setNieuw('');
   };
 
   const secties = useMemo(() => {
     const per = new Map<string, LijstItem[]>();
     items.forEach((i) => per.set(i.categorie, [...(per.get(i.categorie) ?? []), i]));
-    return [...per.entries()].map(([title, data]) => ({ title, data }));
-  }, [items]);
+    return [...per.entries()].map(([categorie, data]) => ({ title: categorieNaam(taal, categorie), data }));
+  }, [items, taal]);
 
   const open = items.filter((i) => !i.afgevinkt).length;
 
@@ -44,7 +47,7 @@ export default function Lijst() {
       <View style={s.invoer}>
         <TextInput
           style={s.veld}
-          placeholder="Iets toevoegen…"
+          placeholder={t('lijst.toevoegen')}
           value={nieuw}
           onChangeText={setNieuw}
           onSubmitEditing={voegToe}
@@ -55,7 +58,7 @@ export default function Lijst() {
         </Pressable>
       </View>
       <Text style={s.teller}>
-        {items.length ? `${open} van ${items.length} nog te kopen` : 'Nog leeg — maak een lijst vanuit het weekmenu.'}
+        {items.length ? t('lijst.teller', { open, totaal: items.length }) : t('lijst.leeg')}
       </Text>
       <SectionList
         sections={secties}
@@ -73,7 +76,7 @@ export default function Lijst() {
       />
       {items.some((i) => i.afgevinkt) && (
         <Pressable style={s.wis} onPress={() => wijzig(items.filter((i) => !i.afgevinkt))}>
-          <Text style={{ color: KLEUR, fontWeight: '600' }}>Afgevinkte items wissen</Text>
+          <Text style={{ color: KLEUR, fontWeight: '600' }}>{t('lijst.wissen')}</Text>
         </Pressable>
       )}
     </View>
