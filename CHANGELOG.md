@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.5.0] – 2026-10-10
+
+Keuze voor kooktijd en stijl, voor de hele week.
+
+- Jira: [WEEK-10](https://proqltc-1791495894841.atlassian.net/browse/WEEK-10)
+- Confluence: [WEEK-10 – Keuze kooktijd en stijl](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/983283)
+
+### Toegevoegd
+- Keuzeblokken **kooktijd** (snel, gemiddeld, uitgebreid) en **stijl** (7 stijlen) met meerdere selecties op de startpagina.
+- De keuzes gaan mee naar de planner en blijven bewaard.
+- Melding als er te weinig recepten waren en de planner moest versoepelen; "geen vlees/vis" blijft altijd gelden.
+
 ## [0.4.0] – 2026-10-10
 
 Weekplanning met een vrije opdracht en de laatste 3 opdrachten.
@@ -87,3 +99,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.2.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.2.0
 [0.3.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.3.0
 [0.4.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.4.0
+[0.5.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.5.0

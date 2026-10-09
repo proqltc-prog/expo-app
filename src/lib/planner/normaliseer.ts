@@ -2,10 +2,9 @@
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
 import { isTaal } from '@/i18n';
-import { DagCode, KooktijdCode, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
+import { DagCode, KooktijdCode, KOOKTIJDEN, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 
 const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
-const KOOKTIJDEN: KooktijdCode[] = ['snel', 'gemiddeld', 'uitgebreid'];
 
 const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const tekst = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
@@ -60,5 +59,15 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     porties: typeof ruw.porties === 'number' && ruw.porties > 0 ? ruw.porties : 2,
     bron: ruw.bron === 'ai' ? 'ai' : 'lokaal',
     gemaaktOp: tekst(ruw.gemaaktOp) || new Date(0).toISOString(),
+    ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
+  };
+}
+
+/** Leest bewaarde keuzes voor kooktijd en stijl veilig in. */
+export function normaliseerKeuzes(ruw: unknown): { kooktijden: KooktijdCode[]; stijlen: StijlCode[] } {
+  if (!isObject(ruw)) return { kooktijden: [], stijlen: [] };
+  return {
+    kooktijden: Array.isArray(ruw.kooktijden) ? KOOKTIJDEN.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
+    stijlen: Array.isArray(ruw.stijlen) ? STIJLEN.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
   };
 }
