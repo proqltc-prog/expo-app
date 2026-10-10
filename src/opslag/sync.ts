@@ -338,9 +338,13 @@ async function haalOp(gezin: Gezin, eerste = false): Promise<void> {
 
 let kanaal: RealtimeChannel | null = null;
 
-function abonneer(gezin: Gezin) {
+async function abonneer(gezin: Gezin): Promise<void> {
   const sb = supabase();
   if (!sb) return;
+  // Realtime moet het toegangstoken van de gebruiker kennen vóór het inschrijven; anders luistert het
+  // kanaal als niet-aangemelde gebruiker en laten de toegangsregels niets door (WEEK-25).
+  const { data } = await sb.auth.getSession();
+  if (data.session) await sb.realtime.setAuth(data.session.access_token);
   if (kanaal) void sb.removeChannel(kanaal);
   const filter = `gezin_id=eq.${gezin.id}`;
   kanaal = sb
@@ -424,7 +428,7 @@ async function start(): Promise<void> {
     }
     await haalOp(gezin);
     await verstuur();
-    if (!kanaal) abonneer(gezin);
+    if (!kanaal) await abonneer(gezin);
   } catch {
     zetStatus('offline');
     planHerstart();
@@ -437,7 +441,7 @@ async function koppel(gezin: Gezin): Promise<void> {
   await haalOp(gezin, true);
   meld('gezin');
   await verstuur();
-  abonneer(gezin);
+  await abonneer(gezin);
 }
 
 async function koppelLos(): Promise<void> {

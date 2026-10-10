@@ -23,6 +23,16 @@ Frigo-voorrang: eerst opmaken wat al in huis is, en niet opnieuw kopen wat je al
 ### Gewijzigd
 - Opnieuw overzetten behoudt ook wie iets afvinkte.
 
+## [0.14.1] – 2026-10-10
+
+Bugfix: live updates van de gezinsruimte kwamen soms niet binnen.
+
+- Jira: [WEEK-25](https://proqltc-1791495894841.atlassian.net/browse/WEEK-25)
+- Confluence: [WEEK-25 – Live updates van de gezinsruimte komen soms niet binnen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2031646)
+
+### Opgelost
+- Het live-kanaal kreeg soms het toegangstoken van de gebruiker pas na het inschrijven en zag dan niets; het token wordt nu vooraf doorgegeven.
+
 ## [0.14.0] – 2026-10-10
 
 Receptstatussen: gepland, ingrediënt ontbreekt, gedaan — gekoppeld aan de frigo.
