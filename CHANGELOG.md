@@ -8,6 +8,22 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.10.0] – 2026-10-10
+
+Virtuele frigo: wat je afvinkt op de boodschappenlijst, staat daarna vanzelf in de frigo.
+
+- Jira: [WEEK-18](https://proqltc-1791495894841.atlassian.net/browse/WEEK-18)
+- Confluence: [WEEK-18 – Afgevinkte producten automatisch in de frigo](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1867786)
+
+### Toegevoegd
+- Tabblad **Frigo**, per winkelafdeling, met hoeveelheid en "sinds <datum>".
+- Afvinken op de lijst (= gekocht) zet het product in de frigo; het vinkje weghalen haalt het er weer uit.
+- Elk gekocht item wordt apart bewaard met het tijdstip van aankoop (basis om later de oudste producten eerst te gebruiken).
+- Zelf iets toevoegen dat al in huis is.
+
+### Opmerking
+- Huishoudproducten (wc-papier, tandpasta) komen niet in de frigo.
+
 ## [0.9.0] – 2026-10-10
 
 Twee weergaven van de boodschappenlijst: per recept en per categorie.

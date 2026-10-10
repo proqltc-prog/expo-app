@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   categorieNaam,
   dagSleutel,
+  datumKort,
   hoeveelheidTekst,
   getal,
   isTaal,
@@ -172,5 +173,16 @@ describe('afdelingen', () => {
   test('elke winkelafdeling (en "overig") heeft een vertaling', async () => {
     const { AFDELINGEN } = await import('@/data/ingredienten');
     for (const a of [...AFDELINGEN, 'overig']) assert.ok(`afdeling.${a}` in nl, a);
+  });
+});
+
+describe('datumKort', () => {
+  test('dag en verkorte maand volgens de taal', () => {
+    assert.match(datumKort('nl', '2026-10-10T12:00:00Z'), /^10 okt/);
+    assert.match(datumKort('en', '2026-10-10T12:00:00Z'), /^10 Oct/);
+    assert.match(datumKort('fr', '2026-10-10T12:00:00Z'), /^10 oct/);
+  });
+  test('ongeldige datum geeft lege tekst', () => {
+    assert.equal(datumKort('nl', 'gisteren'), '');
   });
 });

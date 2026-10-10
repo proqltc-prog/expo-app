@@ -5,6 +5,7 @@ Smartphone-app (React Native / Expo) voor de wekelijkse maaltijdplanning en bood
 - **Weekplanning** – beschrijf je week in een vrij tekstveld (aantal dagen, geen vlees, Nutri-Score, snel klaar…), kies kooktijd en stijl, en krijg een gevarieerd weekmenu. Je laatste 3 opdrachten staan klaar om te hergebruiken.
 - **Gezinsprofiel** – volwassenen, kinderen, budget, gezinssamenstelling en adres vul je één keer in; ze gaan automatisch mee bij elke planning.
 - **Boodschappenlijst** – automatisch uit het weekplan, met hoeveelheden voor je gezin + vaste items; af te vinken in de winkel.
+- **Frigo** – wat je op de lijst afvinkt, staat vanzelf in je virtuele frigo; zo weet je wat er in huis is.
 - **Scan** – scan de barcode van een product en zie hoe gezond het is (Nutri-Score, bewerkingsgraad, additieven, suikers, calorieën, eiwitten).
 - **6 talen** – Nederlands, Frans, Duits, Engels, Spaans en Portugees; volgt de taal van je toestel of kies zelf in het tabblad *Gezin*.
 
@@ -68,7 +69,7 @@ app/                 schermen (expo-router, tabs)
   profiel.tsx        gezinsprofiel en taal
 src/data/            receptenbank, ingrediënten, vaste items
 src/i18n/            vertalingen (nl, fr, de, en, es, pt)
-src/lib/             pure logica (getest): profiel, lijst, score, opdrachten
+src/lib/             pure logica (getest): profiel, lijst, frigo, score, opdrachten
 src/lib/planner/     lokale planner, AI-client, controle van plannen
 src/opslag/          opslag op het toestel (AsyncStorage)
 src/ui/              React-context voor de taal
