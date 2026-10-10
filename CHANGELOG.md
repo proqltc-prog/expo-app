@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.17.3] – 2026-10-10
+
+Bugfix: het weekplan veilig bijwerken bij "Gekookt?" en bij een reset (gevonden bij een onafhankelijke review).
+
+- Jira: [WEEK-28](https://proqltc-1791495894841.atlassian.net/browse/WEEK-28)
+- Confluence: [WEEK-28 – Weekplan veilig bijwerken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2195571)
+
+### Opgelost
+- Dubbel tikken op "Gekookt?" verbruikte de ingrediënten twee keer.
+- Een trage reset (AI) overschreef wat intussen in het plan veranderde.
+
 ## [0.17.2] – 2026-10-10
 
 Bugfix: lijstitems hebben per weekplan een eigen id (gevonden bij een onafhankelijke review).
