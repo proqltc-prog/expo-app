@@ -177,3 +177,18 @@ export function leesGezinFout(bericht: string | undefined | null): GezinFout {
   if (/network|fetch|timeout|offline|failed to fetch/i.test(t)) return 'geenVerbinding';
   return 'onbekend';
 }
+
+// ── Bijhalen naast live updates (WEEK-26) ──
+
+/**
+ * Wanneer de app zelf alles opnieuw ophaalt, naast de live updates.
+ * Bij een koude start van Supabase Realtime (project een tijd niet gebruikt) gaan wijzigingen in de
+ * eerste seconden na het inschrijven live verloren; door kort na het verbinden en daarna geregeld
+ * bij te halen, komt een gemiste wijziging ten laatste na `intervalMs` binnen.
+ */
+export const BIJHALEN = {
+  /** Na het verbinden: zoveel milliseconden later nog eens bijhalen. */
+  naVerbindenMs: [5_000, 20_000],
+  /** Zolang de app open en verbonden is: zo vaak bijhalen. */
+  intervalMs: 60_000,
+} as const;
