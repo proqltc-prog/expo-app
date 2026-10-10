@@ -5,6 +5,8 @@ import { leesOpdracht } from './opdracht';
 import { porties as berekenPorties } from './hoeveelheid';
 import { dagenVoorPlan, planLokaal, STANDAARD_AANTAL_DAGEN } from './lokaal';
 import { normaliseerRecept } from './normaliseer';
+import { markeerUitFrigo } from './frigovoorrang';
+import type { FrigoItem } from '@/lib/frigo';
 import type { AiVerzoek } from './aiPrompt';
 import { DagCode, kooktijdVan, PlanDag, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 
@@ -19,8 +21,23 @@ export type AiInstelling = {
 
 export class AiFout extends Error {}
 
+const DAG_MS = 24 * 60 * 60 * 1000;
+
+/** De frigo voor de AI: oudste eerst, hoogstens 25 producten, met hoeveelheid en leeftijd in dagen. */
+export function frigoVoorAi(frigo: readonly FrigoItem[], nu: Date): string[] {
+  return [...frigo]
+    .sort((a, b) => a.toegevoegdOp.localeCompare(b.toegevoegdOp))
+    .slice(0, 25)
+    .map((f) => {
+      const dagen = Math.max(0, Math.floor((nu.getTime() - Date.parse(f.toegevoegdOp)) / DAG_MS));
+      const hoeveel = f.hoeveelheid !== undefined ? `${f.hoeveelheid}${f.eenheid ? ` ${f.eenheid}` : ''}, ` : '';
+      return `${f.naam.slice(0, 60)} (${hoeveel}${Number.isFinite(dagen) ? dagen : 0} days)`;
+    });
+}
+
 export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?: string[]): AiVerzoek {
   const w = leesOpdracht(verzoek.opdracht);
+  const frigo = verzoek.frigo?.length ? frigoVoorAi(verzoek.frigo, new Date()) : [];
   return {
     taal: verzoek.taal,
     profiel: profielContext(verzoek.profiel),
@@ -30,6 +47,7 @@ export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?:
     stijlen: [...verzoek.stijlen],
     dagen: dagen ?? dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
     ...(vermijd?.length ? { vermijd } : {}),
+    ...(frigo.length ? { frigo } : {}),
   };
 }
 
@@ -102,7 +120,7 @@ export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = 
   try {
     const planDagen = await vraagAi(verzoek, instelling, dagen);
     return {
-      dagen: planDagen,
+      dagen: verzoek.frigo?.length ? markeerUitFrigo(planDagen, verzoek.frigo) : planDagen,
       opdracht: verzoek.opdracht,
       kooktijden: verzoek.kooktijden,
       stijlen: verzoek.stijlen,

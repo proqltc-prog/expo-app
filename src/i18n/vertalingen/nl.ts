@@ -37,6 +37,7 @@ export const nl = {
   'menu.naarLijst': 'Voeg items toe aan boodschappenlijst',
   'menu.klaar.titel': 'Klaar',
   'menu.klaar.tekst': '{n} ingrediënten uit je weekplanning staan op de boodschappenlijst.',
+  'menu.klaar.inHuis': '{n} ingrediënten uit je weekplanning staan op de boodschappenlijst. {m} had je al in huis.',
 
   'planning.intro': 'Beschrijf je week en laat een weekmenu voorstellen. Je gezinsprofiel gaat automatisch mee.',
   'planning.placeholder': 'Beschrijf je weekmenu: hoeveel dagen, hoe gevarieerd, geen vlees, let op de Nutri-Score, snel klaar…',
@@ -57,6 +58,7 @@ export const nl = {
   'planning.opLijst': 'Op de lijst zetten',
   'planning.anderGerecht': 'Ander gerecht',
   'planning.opLijstKlaar': '{namen} staat op de boodschappenlijst.',
+  'planning.uitFrigo': '♻ Al in huis: {namen}',
   'planning.kooktijd': 'Kooktijd',
   'planning.stijl': 'Stijl',
   'planning.versoepeld': 'Er waren niet genoeg recepten voor je keuze; sommige gerechten passen niet helemaal bij de gekozen kooktijd of stijl.',

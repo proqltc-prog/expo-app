@@ -34,7 +34,8 @@ function geldigVerzoek(v: unknown): v is AiVerzoek {
     Array.isArray(r.kooktijden) && Array.isArray(r.stijlen) &&
     Array.isArray(r.dagen) && r.dagen.length >= 1 && r.dagen.length <= 7 &&
     r.dagen.every((d) => DAGEN.includes(d as string)) &&
-    (r.vermijd === undefined || (Array.isArray(r.vermijd) && r.vermijd.length <= 14))
+    (r.vermijd === undefined || (Array.isArray(r.vermijd) && r.vermijd.length <= 14)) &&
+    (r.frigo === undefined || (Array.isArray(r.frigo) && r.frigo.length <= 25 && r.frigo.every((f) => typeof f === 'string' && f.length <= 100)))
   );
 }
 

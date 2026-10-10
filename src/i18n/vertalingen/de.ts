@@ -36,6 +36,7 @@ export const de: Vertalingen = {
   'menu.naarLijst': 'Zur Einkaufsliste hinzufügen',
   'menu.klaar.titel': 'Fertig',
   'menu.klaar.tekst': '{n} Zutaten aus deiner Wochenplanung stehen auf der Einkaufsliste.',
+  'menu.klaar.inHuis': '{n} Zutaten aus deinem Wochenplan stehen auf der Einkaufsliste. {m} hattest du schon im Haus.',
 
   'planning.intro': 'Beschreibe deine Woche und lass dir ein Menü vorschlagen. Dein Familienprofil wird automatisch berücksichtigt.',
   'planning.placeholder': 'Beschreibe dein Wochenmenü: wie viele Tage, wie abwechslungsreich, ohne Fleisch, auf den Nutri-Score achten, schnell…',
@@ -56,6 +57,7 @@ export const de: Vertalingen = {
   'planning.opLijst': 'Auf die Liste setzen',
   'planning.anderGerecht': 'Anderes Gericht',
   'planning.opLijstKlaar': '{namen} steht auf der Einkaufsliste.',
+  'planning.uitFrigo': '♻ Schon im Haus: {namen}',
   'planning.kooktijd': 'Kochzeit',
   'planning.stijl': 'Stil',
   'planning.versoepeld': 'Nicht genug Rezepte für deine Auswahl; einige Gerichte passen nicht ganz zur gewählten Kochzeit oder zum Stil.',

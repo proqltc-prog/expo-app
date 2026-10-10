@@ -17,6 +17,8 @@ export type AiVerzoek = {
   dagen: string[];
   /** Recepten die al in het plan staan en niet herhaald mogen worden (bv. bij een reset van één dag). */
   vermijd?: string[];
+  /** Wat al in huis is, het oudste eerst, bv. "spinazie (200 g, 5 days)" (WEEK-12). */
+  frigo?: string[];
 };
 
 export const TAALNAAM: Record<AiTaal, string> = {
@@ -89,6 +91,7 @@ export function systeemPrompt(): string {
     '- Quantities are the total for the whole household (the given number of adult portions; children are already counted as smaller portions). Use g, ml, stuk or teentje, rounded to amounts you can buy.',
     '- Use ingredients available in a normal Belgian supermarket (e.g. Colruyt, Delhaize, Aldi, Lidl). Keep it realistic for a weeknight.',
     '- Never repeat a recipe listed under "avoid".',
+    '- Ingredients already at home are listed under "In the fridge", oldest first. Use them first so nothing is wasted: the dinner of the first requested day must use the oldest ones. Do not plan more of them than needed.',
   ].join('\n');
 }
 
@@ -103,5 +106,6 @@ export function gebruikersBericht(v: AiVerzoek): string {
     `User request: ${v.opdracht.trim() || '(none – make a balanced, varied week)'}`,
   ];
   if (v.vermijd?.length) regels.push(`Avoid these recipes: ${v.vermijd.join('; ')}`);
+  if (v.frigo?.length) regels.push(`In the fridge (oldest first): ${v.frigo.join('; ')}`);
   return regels.join('\n');
 }

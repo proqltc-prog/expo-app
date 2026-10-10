@@ -82,11 +82,22 @@ export function vasteItems(taal: Taal): LijstItem[] {
  * - Zelf toegevoegde en gescande items blijven staan, net als vaste items.
  * - Wie hetzelfde plan opnieuw overzet, krijgt geen dubbels en verliest zijn vinkjes niet.
  * - Een vast item dat ook in een recept zit (bv. brood), komt er niet nog eens apart bij.
+ * - `aanpassing` past de items uit het plan aan vóór ze op de lijst komen
+ *   (bv. aftrekken wat al in de frigo ligt, WEEK-12).
  */
-export function voegPlanToe(bestaand: readonly LijstItem[], dagen: readonly PlanDag[], taal: Taal): LijstItem[] {
-  const vinkjes = new Map(bestaand.map((i) => [i.id, i.afgevinkt]));
-  const uitPlan = itemsUitPlan(dagen).map((i) => ({ ...i, afgevinkt: vinkjes.get(i.id) ?? false }));
-  const receptNamen = new Set(uitPlan.map((i) => klein(i.naam)));
+export function voegPlanToe(
+  bestaand: readonly LijstItem[],
+  dagen: readonly PlanDag[],
+  taal: Taal,
+  aanpassing: (items: LijstItem[]) => LijstItem[] = (i) => i
+): LijstItem[] {
+  const oud = new Map(bestaand.map((i) => [i.id, i]));
+  const volledig = itemsUitPlan(dagen);
+  const receptNamen = new Set(volledig.map((i) => klein(i.naam)));
+  const uitPlan = aanpassing(volledig).map((i) => {
+    const was = oud.get(i.id);
+    return was?.afgevinkt ? { ...i, afgevinkt: true, ...(was.afgevinktDoor ? { afgevinktDoor: was.afgevinktDoor } : {}) } : i;
+  });
 
   const behouden = bestaand.filter(
     (i) =>

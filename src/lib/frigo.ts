@@ -200,3 +200,47 @@ export function verwijderUitFrigo(frigo: readonly FrigoItem[], ids: readonly str
   const weg = new Set(ids);
   return frigo.filter((f) => !weg.has(f.id));
 }
+
+// ── Wat al in huis is (WEEK-12) ──
+
+export type Dekking = { gedekt: 'geheel' | 'deels' | 'niet'; rest?: number };
+
+/**
+ * Hoeveel van wat nodig is, ligt al in de frigo? Loopt de behoeften in volgorde af en verdeelt
+ * de voorraad (zonder ze aan te passen). Een product zonder gekende hoeveelheid dekt alles met die naam.
+ * Geeft per behoefte terug of ze geheel, deels of niet gedekt is, en wat er nog gekocht moet worden.
+ */
+export function verdeelFrigo(behoeften: readonly Benodigd[], frigo: readonly FrigoItem[]): Dekking[] {
+  const voorraad = frigo.map((f) => ({ ...f }));
+  return behoeften.map((b): Dekking => {
+    const passend = voorraad.filter((f) => pastBij(f, b));
+    if (!passend.length) return { gedekt: 'niet', ...(b.hoeveelheid !== undefined ? { rest: b.hoeveelheid } : {}) };
+    if (b.hoeveelheid === undefined || passend.some((f) => f.hoeveelheid === undefined)) return { gedekt: 'geheel' };
+    let nodig = b.hoeveelheid;
+    for (const f of passend) {
+      const neem = Math.min(nodig, f.hoeveelheid ?? 0);
+      f.hoeveelheid = rond((f.hoeveelheid ?? 0) - neem);
+      nodig = rond(nodig - neem);
+      if (nodig <= 0) break;
+    }
+    if (nodig <= 0) return { gedekt: 'geheel' };
+    return nodig < b.hoeveelheid ? { gedekt: 'deels', rest: nodig } : { gedekt: 'niet', rest: nodig };
+  });
+}
+
+/**
+ * Trekt wat al in huis is af van de items die op de boodschappenlijst komen.
+ * Geheel gedekt = niet op de lijst; deels gedekt = enkel het verschil.
+ * Producten die uit precies deze lijstitems gekocht werden, tellen niet mee
+ * (anders zou opnieuw overzetten wat je net kocht van de lijst halen).
+ */
+export function trekFrigoAf(items: readonly LijstItem[], frigo: readonly FrigoItem[]): LijstItem[] {
+  const eigen = new Set(items.map((i) => i.id));
+  const dekking = verdeelFrigo(items, frigo.filter((f) => !f.lijstId || !eigen.has(f.lijstId)));
+  return items.flatMap((i, n) => {
+    const d = dekking[n];
+    if (d.gedekt === 'geheel') return [];
+    if (d.gedekt === 'deels' && d.rest !== undefined) return [{ ...i, hoeveelheid: d.rest }];
+    return [i];
+  });
+}

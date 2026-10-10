@@ -46,6 +46,8 @@ export type PlanDag = {
   verbruikt?: FrigoItem[];
   /** Ingrediënten die uit de frigo gehaald werden en er niet meer zijn (WEEK-13). */
   ontbreekt?: string[];
+  /** Ingrediënten die al in huis waren toen het plan gemaakt werd (WEEK-12). */
+  uitFrigo?: string[];
 };
 
 /** Wat de gebruiker vraagt; het profiel gaat er automatisch bij. */
@@ -56,6 +58,8 @@ export type PlanVerzoek = {
   profiel: Profiel;
   taal: Taal;
   seed?: number;
+  /** Wat al in huis is; gaat voor (WEEK-12). */
+  frigo?: FrigoItem[];
 };
 
 export type Weekplan = {
