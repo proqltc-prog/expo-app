@@ -123,3 +123,76 @@ describe('aantalReceptRegels', () => {
     assert.equal(aantalReceptRegels(voegPlanToe([], dagen, 'nl')), 3);
   });
 });
+
+describe('weergaven (WEEK-16)', () => {
+  const metEigen = (): LijstItem[] => [
+    ...voegPlanToe([], dagen, 'nl'),
+    { id: 'extra-1', naam: 'pasta', categorie: 'extra', afgevinkt: false, hoeveelheid: 500, eenheid: 'g', afdeling: 'droge-voeding' },
+    { id: 'extra-2', naam: 'kaarsjes', categorie: 'extra', afgevinkt: false },
+  ];
+
+  test('per recept: recepten in de volgorde van de week, daarna de overige categorieën', async () => {
+    const { perRecept } = await import('@/lib/lijst');
+    const omgekeerd = [...metEigen()].reverse();
+    const s = perRecept(omgekeerd);
+    const recepten = s.filter((x) => x.soort === 'recept');
+    assert.deepEqual(recepten.map((x) => (x.soort === 'recept' ? x.dag : '')), ['zondag', 'maandag']);
+    assert.ok(s.findIndex((x) => x.soort === 'categorie') > s.findIndex((x) => x.soort === 'recept'));
+  });
+
+  test('per recept: elk recept toont enkel zijn eigen ingrediënten en hoeveelheden', async () => {
+    const { perRecept } = await import('@/lib/lijst');
+    const s = perRecept(metEigen());
+    const pesto = s.find((x) => x.soort === 'recept' && x.recept === 'Pasta pesto')!;
+    assert.deepEqual(pesto.regels.map((r) => [r.naam, r.hoeveelheid]), [['pasta', 300], ['ui', 1]]);
+    const tonijn = s.find((x) => x.soort === 'recept' && x.recept === 'Pasta tonijn')!;
+    assert.equal(tonijn.regels.find((r) => r.naam === 'Pasta')!.hoeveelheid, 200);
+  });
+
+  test('per categorie: gegroepeerd per winkelafdeling, dubbels over recepten én eigen items samengeteld', async () => {
+    const { perAfdeling } = await import('@/lib/lijst');
+    const s = perAfdeling(metEigen());
+    const droog = s.find((x) => x.soort === 'afdeling' && x.afdeling === 'droge-voeding')!;
+    const pasta = droog.regels.filter((r) => r.naam.toLowerCase() === 'pasta');
+    assert.equal(pasta.length, 1);
+    assert.equal(pasta[0].hoeveelheid, 1000);
+    assert.equal(pasta[0].ids.length, 3);
+  });
+
+  test('per categorie: afdelingen in winkelvolgorde, "overig" achteraan', async () => {
+    const { perAfdeling } = await import('@/lib/lijst');
+    const namen = perAfdeling(metEigen()).map((x) => (x.soort === 'afdeling' ? x.afdeling : ''));
+    assert.equal(namen[0], 'groenten-fruit');
+    assert.equal(namen[namen.length - 1], 'overig');
+    const overig = perAfdeling(metEigen()).at(-1)!;
+    assert.ok(overig.regels.some((r) => r.naam === 'kaarsjes'));
+    assert.ok(overig.regels.some((r) => r.naam === 'tandpasta'));
+  });
+
+  test('vaste items liggen in de juiste afdeling, ook als ze uit een oudere versie komen', async () => {
+    const { afdelingVan } = await import('@/lib/lijst');
+    assert.equal(afdelingVan({ id: 'fruit-appels', naam: 'appels', categorie: 'fruit', afgevinkt: false }), 'groenten-fruit');
+    assert.equal(afdelingVan({ id: 'huishouden-wc-papier', naam: 'wc-papier', categorie: 'huishouden', afgevinkt: false }), 'overig');
+    assert.equal(afdelingVan({ id: 'extra-9', naam: 'x', categorie: 'extra', afgevinkt: false }), 'overig');
+  });
+
+  test('afvinken in de ene weergave is zichtbaar in de andere', async () => {
+    const { perAfdeling, perRecept } = await import('@/lib/lijst');
+    const items = metEigen();
+    const pestoPasta = perRecept(items).find((x) => x.soort === 'recept' && x.recept === 'Pasta pesto')!.regels[0];
+    const na = vinkAf(items, pestoPasta.ids, true);
+    // per categorie: pasta is nog niet volledig afgevinkt (ook nog in tonijn en eigen item)
+    const pasta = perAfdeling(na).flatMap((x) => x.regels).find((r) => r.naam.toLowerCase() === 'pasta')!;
+    assert.equal(pasta.afgevinkt, false);
+    // alles afvinken in de categorieweergave vinkt het af in elk recept
+    const alles = vinkAf(na, pasta.ids, true);
+    const tonijn = perRecept(alles).find((x) => x.soort === 'recept' && x.recept === 'Pasta tonijn')!;
+    assert.equal(tonijn.regels.find((r) => r.naam === 'Pasta')!.afgevinkt, true);
+  });
+
+  test('isWeergave', async () => {
+    const { isWeergave } = await import('@/lib/lijst');
+    assert.ok(isWeergave('recept') && isWeergave('categorie'));
+    assert.ok(!isWeergave('alfabet'));
+  });
+});
