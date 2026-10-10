@@ -13,9 +13,14 @@ const DAG_MS = 24 * 60 * 60 * 1000;
  * met 1 + het aantal dagen dat het oudste exemplaar er al ligt: oudere producten wegen zwaarder.
  */
 export function frigoScore(recept: BankRecept, frigo: readonly FrigoItem[], taal: Taal, nu: Date): number {
+  return frigoScoreNamen(recept.ingredienten.map(([code]) => ingredientNaam(code, taal)), frigo, nu);
+}
+
+/** Zoals frigoScore, maar voor ingrediëntnamen (bv. van een favoriet). */
+export function frigoScoreNamen(namen: readonly string[], frigo: readonly FrigoItem[], nu: Date): number {
   let score = 0;
-  for (const [code] of recept.ingredienten) {
-    const naam = klein(ingredientNaam(code, taal));
+  for (const ruweNaam of namen) {
+    const naam = klein(ruweNaam);
     const passend = frigo.filter((f) => klein(f.naam) === naam);
     if (!passend.length) continue;
     const oudste = Math.min(...passend.map((f) => Date.parse(f.toegevoegdOp)).filter((t) => !Number.isNaN(t)));
