@@ -5,6 +5,7 @@ import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { lijstUitPlan } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
+import { resetDag } from '@/lib/planner/reset';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
@@ -47,6 +48,7 @@ export default function Weekplanning() {
   const [vorige, setVorige] = useState<string[]>([]);
   const [plan, setPlan] = useState<Weekplan | null>(null);
   const [bezig, setBezig] = useState(false);
+  const [bezigDag, setBezigDag] = useState<number | null>(null);
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
 
@@ -88,6 +90,19 @@ export default function Weekplanning() {
       await bewaarOpdrachten(geschiedenis);
     } finally {
       setBezig(false);
+    }
+  };
+
+  // Enkel die ene dag krijgt een nieuw recept; de rest van de week blijft staan.
+  const herdoeDag = async (index: number) => {
+    if (!plan || !profiel || bezigDag !== null) return;
+    setBezigDag(index);
+    try {
+      const nieuw = await resetDag(plan, index, profiel, AI);
+      setPlan(nieuw);
+      await bewaarPlan(nieuw);
+    } finally {
+      setBezigDag(null);
     }
   };
 
@@ -146,9 +161,21 @@ export default function Weekplanning() {
           </Text>
           {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-          {plan.dagen.map(({ dag, recept }) => (
+          {plan.dagen.map(({ dag, recept }, index) => (
             <View key={dag} style={s.kaart}>
-              <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
+              <View style={s.kaartKop}>
+                <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
+                <Pressable
+                  style={s.reset}
+                  onPress={() => herdoeDag(index)}
+                  disabled={bezigDag !== null}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('planning.reset', { dag: t(dagSleutel(dag)) })}
+                  hitSlop={8}
+                >
+                  {bezigDag === index ? <ActivityIndicator size="small" color={KLEUR} /> : <Text style={s.resetTekst}>↻</Text>}
+                </Pressable>
+              </View>
               <Text style={s.naam}>{recept.naam}</Text>
               <View style={s.rij}>
                 <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
@@ -188,6 +215,9 @@ const s = StyleSheet.create({
   bron: { color: '#999', fontSize: 12 },
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },
   dag: { fontSize: 13, color: '#777', fontWeight: '600' },
+  kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  reset: { width: 32, height: 32, borderRadius: 16, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  resetTekst: { color: KLEUR, fontSize: 18, fontWeight: '700' },
   naam: { fontSize: 17, fontWeight: '600', marginTop: 2 },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },

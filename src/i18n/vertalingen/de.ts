@@ -45,6 +45,7 @@ export const de: Vertalingen = {
   'planning.bronAi': 'Vorschlag der KI',
   'planning.aiMislukt': 'Die KI war nicht erreichbar; dieser Vorschlag stammt aus der Rezeptsammlung der App.',
   'planning.porties': 'Mengen für {personen}',
+  'planning.reset': 'Anderes Gericht für {dag}',
   'planning.kooktijd': 'Kochzeit',
   'planning.stijl': 'Stil',
   'planning.versoepeld': 'Nicht genug Rezepte für deine Auswahl; einige Gerichte passen nicht ganz zur gewählten Kochzeit oder zum Stil.',

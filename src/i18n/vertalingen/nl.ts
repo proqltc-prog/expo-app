@@ -46,6 +46,7 @@ export const nl = {
   'planning.bronAi': 'Voorstel van de AI',
   'planning.aiMislukt': 'De AI was niet bereikbaar; dit voorstel komt uit de receptenbank van de app.',
   'planning.porties': 'Hoeveelheden voor {personen}',
+  'planning.reset': 'Ander gerecht voor {dag}',
   'planning.kooktijd': 'Kooktijd',
   'planning.stijl': 'Stijl',
   'planning.versoepeld': 'Er waren niet genoeg recepten voor je keuze; sommige gerechten passen niet helemaal bij de gekozen kooktijd of stijl.',
