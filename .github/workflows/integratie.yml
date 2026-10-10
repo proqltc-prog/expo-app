@@ -1,0 +1,27 @@
+name: Integratietest
+
+# Test de gezinsruimte (WEEK-8) tegen het echte Supabase-project: twee toestellen van één gezin
+# en een buitenstaander. Draait bij wijzigingen aan de database of de synchronisatie, en op aanvraag.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - supabase/**
+      - src/opslag/sync.ts
+      - src/opslag/supabase.ts
+      - scripts/integratie/**
+
+jobs:
+  gezinsruimte:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: scripts/integratie
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm test
