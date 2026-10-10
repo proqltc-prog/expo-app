@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { AI, SUPABASE } from '@/config';
 import type { AiInstelling } from '@/lib/planner/ai';
+import { AiTegoed, leesTegoed } from '@/lib/planner/tegoed';
 
 let client: SupabaseClient | null = null;
 
@@ -51,3 +52,16 @@ export async function toegangstoken(): Promise<string | undefined> {
 
 /** De AI-planner met het toegangstoken van dit toestel (WEEK-31): enkel aangemelde toestellen mogen hem gebruiken. */
 export const aiPlanner: AiInstelling = { ...AI, token: toegangstoken };
+
+/** AI-tegoed van vandaag voor het gezin van dit toestel (WEEK-33), of null als het niet op te vragen is. */
+export async function aiTegoed(): Promise<AiTegoed | null> {
+  const sb = supabase();
+  if (!sb || !AI.url) return null;
+  try {
+    await zorgVoorSessie();
+    const { data, error } = await sb.rpc('ai_tegoed');
+    return error ? null : leesTegoed(data);
+  } catch {
+    return null;
+  }
+}
