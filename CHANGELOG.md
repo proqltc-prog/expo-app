@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.12.0] – 2026-10-10
+
+Gedeelde boodschappenlijst: zien wie wat toevoegde en wie wat al kocht.
+
+- Jira: [WEEK-17](https://proqltc-1791495894841.atlassian.net/browse/WEEK-17)
+- Confluence: [WEEK-17 – Gedeelde lijst: live afvinken en losse items toevoegen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1703940)
+
+### Toegevoegd
+- "Gekocht door <naam>" onder afgevinkte items en "toegevoegd door <naam>" onder zelf toegevoegde items.
+- Bovenaan de lijst: gedeeld met je gezin en de status van de synchronisatie.
+
 ## [0.11.0] – 2026-10-10
 
 Gezinsruimte: weekplanning, boodschappenlijst, frigo en gezinsprofiel delen met het hele gezin, live op elk toestel.

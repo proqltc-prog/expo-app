@@ -21,6 +21,8 @@ export type LijstItem = {
   recept?: { dag: DagCode; naam: string };
   /** Naam van het gezinslid dat het item zelf toevoegde (gedeelde lijst, WEEK-17). */
   door?: string;
+  /** Naam van het gezinslid dat het item afvinkte (gedeelde lijst, WEEK-17). */
+  afgevinktDoor?: string;
 };
 
 /** Een regel zoals hij op het scherm staat: hetzelfde ingrediënt uit verschillende recepten samengeteld. */
@@ -37,6 +39,10 @@ export type LijstRegel = {
   ids: string[];
   /** Namen van de recepten waar het ingrediënt in zit. */
   recepten: string[];
+  /** Wie het item zelf toevoegde (gedeelde lijst). */
+  door?: string;
+  /** Wie de onderliggende items afvinkte (gedeelde lijst), zonder dubbels. */
+  afgevinktDoor: string[];
 };
 
 const klein = (t: string) => t.trim().toLocaleLowerCase();
@@ -121,6 +127,8 @@ export function samenvoegen(items: readonly LijstItem[], { overCategorieen = fal
         afgevinkt: i.afgevinkt,
         ids: [i.id],
         recepten: i.recept ? [i.recept.naam] : [],
+        ...(i.door ? { door: i.door } : {}),
+        afgevinktDoor: i.afgevinkt && i.afgevinktDoor ? [i.afgevinktDoor] : [],
       });
       continue;
     }
@@ -130,14 +138,31 @@ export function samenvoegen(items: readonly LijstItem[], { overCategorieen = fal
     regel.afgevinkt = regel.afgevinkt && i.afgevinkt;
     regel.ids.push(i.id);
     if (i.recept && !regel.recepten.includes(i.recept.naam)) regel.recepten.push(i.recept.naam);
+    if (!regel.door && i.door) regel.door = i.door;
+    if (i.afgevinkt && i.afgevinktDoor && !regel.afgevinktDoor.includes(i.afgevinktDoor)) regel.afgevinktDoor.push(i.afgevinktDoor);
   }
   return [...regels.values()];
 }
 
-/** Vinkt een regel af (of weer aan): alle onderliggende items krijgen dezelfde status. */
-export function vinkAf(items: readonly LijstItem[], ids: readonly string[], afgevinkt: boolean): LijstItem[] {
+/**
+ * Vinkt een regel af (of weer aan): alle onderliggende items krijgen dezelfde status.
+ * `door` (gedeelde lijst, WEEK-17): wie afvinkt. Wie een item al eerder afvinkte, blijft staan;
+ * een vinkje weghalen wist ook de naam.
+ */
+export function vinkAf(items: readonly LijstItem[], ids: readonly string[], afgevinkt: boolean, door?: string): LijstItem[] {
   const set = new Set(ids);
-  return items.map((i) => (set.has(i.id) ? { ...i, afgevinkt } : i));
+  return items.map((i) => {
+    if (!set.has(i.id) || i.afgevinkt === afgevinkt) return i;
+    const { afgevinktDoor: _weg, ...rest } = i;
+    return afgevinkt && door ? { ...rest, afgevinkt, afgevinktDoor: door } : { ...rest, afgevinkt };
+  });
+}
+
+/** Een item dat de gebruiker zelf toevoegt; in een gedeelde lijst met de naam van wie het toevoegde. */
+export function eigenItem(naam: string, nu: Date, door?: string): LijstItem | null {
+  const n = naam.trim();
+  if (!n) return null;
+  return { id: `extra-${nu.getTime()}`, naam: n, categorie: 'extra', afgevinkt: false, ...(door ? { door } : {}) };
 }
 
 /** Aantal verschillende ingrediënten uit de recepten (voor de bevestiging na het overzetten). */
@@ -242,6 +267,7 @@ export function leesLijstItem(ruw: unknown): LijstItem | null {
     ...(typeof ruw.afdeling === 'string' && (AFDELINGEN as string[]).includes(ruw.afdeling) ? { afdeling: ruw.afdeling as Afdeling } : {}),
     ...(recept ? { recept } : {}),
     ...(typeof ruw.door === 'string' && ruw.door ? { door: ruw.door } : {}),
+    ...(ruw.afgevinkt === true && typeof ruw.afgevinktDoor === 'string' && ruw.afgevinktDoor ? { afgevinktDoor: ruw.afgevinktDoor } : {}),
   };
 }
 

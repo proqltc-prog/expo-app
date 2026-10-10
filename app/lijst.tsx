@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
+import { eigenItem, LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
 import { bewaarWeergave, laadLijst, laadWeergave, wijzigLijst } from '@/opslag/lijst';
-import { bijWijziging } from '@/opslag/sync';
+import { bijWijziging, Gezin, laadGezin, syncStatus, SyncStatus } from '@/opslag/sync';
 import { pasFrigoAan } from '@/lib/frigo';
 import { wijzigFrigo } from '@/opslag/frigo';
 import { categorieNaam, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
@@ -16,10 +16,23 @@ export default function Lijst() {
   const [items, setItems] = useState<LijstItem[]>([]);
   const [nieuw, setNieuw] = useState('');
   const [weergave, setWeergave] = useState<Weergave>('recept');
+  const [gezin, setGezin] = useState<Gezin | null>(null);
+  const [status, setStatus] = useState<SyncStatus>(syncStatus());
 
   useEffect(() => {
     laadWeergave().then(setWeergave);
   }, []);
+
+  // Gedeelde lijst (WEEK-17): met wie en onder welke naam.
+  useEffect(() => {
+    laadGezin().then(setGezin);
+    const stop = [
+      bijWijziging('gezin', () => laadGezin().then(setGezin)),
+      bijWijziging('status', () => setStatus(syncStatus())),
+    ];
+    return () => stop.forEach((f) => f());
+  }, []);
+  const ikNaam = gezin?.ikNaam;
 
   // Live: een ander gezinslid vinkte iets af of voegde iets toe (WEEK-8).
   useEffect(() => bijWijziging('lijst', () => laadLijst().then(setItems)), []);
@@ -45,20 +58,19 @@ export default function Lijst() {
   // Afvinken = gekocht: het product gaat in de frigo; het vinkje weghalen haalt het er weer uit (WEEK-18).
   const toggle = async (regel: LijstRegel) => {
     const afgevinkt = !regel.afgevinkt;
-    setItems((huidig) => vinkAf(huidig, regel.ids, afgevinkt));
+    setItems((huidig) => vinkAf(huidig, regel.ids, afgevinkt, ikNaam));
     let onderliggend: LijstItem[] = [];
     const nieuw = await wijzigLijst((huidig) => {
       onderliggend = huidig.filter((i) => regel.ids.includes(i.id));
-      return vinkAf(huidig, regel.ids, afgevinkt);
+      return vinkAf(huidig, regel.ids, afgevinkt, ikNaam);
     });
     setItems(nieuw);
     await wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
   };
 
   const voegToe = () => {
-    const naam = nieuw.trim();
-    if (!naam) return;
-    const item: LijstItem = { id: `extra-${Date.now()}`, naam, categorie: 'extra', afgevinkt: false };
+    const item = eigenItem(nieuw, new Date(), ikNaam);
+    if (!item) return;
     wijzig((huidig) => [...huidig, item]);
     setNieuw('');
   };
@@ -114,6 +126,11 @@ export default function Lijst() {
         })}
       </View>
 
+      {gezin && (
+        <Text style={[s.gedeeld, status === 'offline' && s.offline]}>
+          {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
+        </Text>
+      )}
       <Text style={s.teller}>
         {alleRegels.length ? t('lijst.teller', { open, totaal: alleRegels.length }) : t('lijst.leeg')}
       </Text>
@@ -130,6 +147,10 @@ export default function Lijst() {
               <Text style={[s.naam, item.afgevinkt && s.doorgehaald]}>{item.naam}</Text>
               {weergave === 'categorie' && item.recepten.length > 0 && (
                 <Text style={s.recepten} numberOfLines={1}>{item.recepten.join(' · ')}</Text>
+              )}
+              {gezin && item.door && !item.afgevinkt && <Text style={s.recepten}>{t('lijst.door', { naam: item.door })}</Text>}
+              {gezin && item.afgevinkt && item.afgevinktDoor.length > 0 && (
+                <Text style={s.gekocht}>{t('lijst.gekochtDoor', { naam: item.afgevinktDoor.join(', ') })}</Text>
               )}
             </View>
             {item.hoeveelheid ? (
@@ -163,6 +184,9 @@ const s = StyleSheet.create({
   optieTekst: { color: KLEUR, fontWeight: '600' },
   optieTekstAan: { color: '#fff' },
   teller: { color: '#666', marginVertical: 10 },
+  gedeeld: { color: KLEUR, fontSize: 13, marginTop: 10 },
+  offline: { color: '#7a5b00' },
+  gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
