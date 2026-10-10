@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.15.1] – 2026-10-10
+
+Bugfix: na een lange stilte kwam de eerste wijziging van een gezinslid niet live binnen.
+
+- Jira: [WEEK-26](https://proqltc-1791495894841.atlassian.net/browse/WEEK-26)
+- Confluence: [WEEK-26 – Eerste wijziging na een lange stilte komt niet live binnen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2195458)
+
+### Opgelost
+- De app haalt na het verbinden nog twee keer bij (na 5 en 20 seconden) en daarna elke minuut zolang ze open is; een gemiste live-update komt zo ten laatste na een minuut binnen.
+- Integratietest bestand tegen een koude start van Supabase Realtime (meldt een waarschuwing).
+
 ## [0.15.0] – 2026-10-10
 
 Frigo-voorrang: eerst opmaken wat al in huis is, en niet opnieuw kopen wat je al hebt.

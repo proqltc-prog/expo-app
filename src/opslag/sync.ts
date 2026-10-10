@@ -14,6 +14,7 @@ import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import { normaliseerProfiel } from '@/lib/profiel';
 import {
+  BIJHALEN,
   DocumentSleutel,
   eersteSamenvoeging,
   ItemSoort,
@@ -372,8 +373,13 @@ async function abonneer(gezin: Gezin): Promise<void> {
     .subscribe((s) => {
       if (s === 'SUBSCRIBED') {
         zetStatus('verbonden');
-        // Inhalen wat er gemist werd terwijl de verbinding weg was.
-        haalOp(gezin).then(verstuur).catch(() => zetStatus('offline'));
+        // Inhalen wat er gemist werd terwijl de verbinding weg was, en nog eens kort daarna:
+        // bij een koude start van Realtime gaan de eerste wijzigingen live verloren (WEEK-26).
+        const bijhalen = () => haalOp(gezin).then(verstuur).catch(() => zetStatus('offline'));
+        void bijhalen();
+        stopBijhalen();
+        bijhaalTimers = BIJHALEN.naVerbindenMs.map((ms) => setTimeout(bijhalen, ms));
+        bijhaalInterval = setInterval(bijhalen, BIJHALEN.intervalMs);
       } else if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') {
         // supabase-js probeert zelf opnieuw te verbinden; bij succes volgt opnieuw SUBSCRIBED.
         zetStatus('offline');
@@ -381,10 +387,21 @@ async function abonneer(gezin: Gezin): Promise<void> {
     });
 }
 
+let bijhaalTimers: ReturnType<typeof setTimeout>[] = [];
+let bijhaalInterval: ReturnType<typeof setInterval> | null = null;
+
+function stopBijhalen() {
+  bijhaalTimers.forEach(clearTimeout);
+  bijhaalTimers = [];
+  if (bijhaalInterval) clearInterval(bijhaalInterval);
+  bijhaalInterval = null;
+}
+
 function stopAbonnement() {
   const sb = supabase();
   if (kanaal && sb) void sb.removeChannel(kanaal);
   kanaal = null;
+  stopBijhalen();
 }
 
 // ── Starten, aansluiten, verlaten ──

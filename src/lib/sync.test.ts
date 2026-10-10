@@ -175,3 +175,12 @@ describe('gezinscode', () => {
     assert.equal(leesGezinFout(undefined), 'onbekend');
   });
 });
+
+describe('bijhalen naast live updates (WEEK-26)', () => {
+  test('een gemiste live-update komt ten laatste na een minuut binnen', async () => {
+    const { BIJHALEN } = await import('@/lib/sync');
+    assert.ok(BIJHALEN.intervalMs <= 60_000);
+    assert.ok(BIJHALEN.naVerbindenMs.length >= 1);
+    assert.ok(BIJHALEN.naVerbindenMs.every((ms, i, a) => ms > 0 && (i === 0 || ms > a[i - 1]) && ms < BIJHALEN.intervalMs));
+  });
+});
