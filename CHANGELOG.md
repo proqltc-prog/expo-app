@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.9.0] – 2026-10-10
+
+Twee weergaven van de boodschappenlijst: per recept en per categorie.
+
+- Jira: [WEEK-16](https://proqltc-1791495894841.atlassian.net/browse/WEEK-16)
+- Confluence: [WEEK-16 – Twee weergaven: per recept en per categorie](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1540098)
+
+### Toegevoegd
+- Schakelaar **Per recept** / **Per categorie** bovenaan de lijst; de keuze wordt onthouden.
+- Per recept: één sectie per gerecht in de volgorde van de week, met de hoeveelheden van dat recept.
+- Per categorie: alles per winkelafdeling in winkelvolgorde, dubbele items samengeteld, met de receptnamen eronder.
+- Afvinken werkt in beide weergaven samen.
+
 ## [0.8.0] – 2026-10-10
 
 Weekplanning overzetten naar de boodschappenlijst, zonder dubbels en zonder vinkjes te verliezen.
@@ -147,3 +160,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.6.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.6.0
 [0.7.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.7.0
 [0.8.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.8.0
+[0.9.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.9.0

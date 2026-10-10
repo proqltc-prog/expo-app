@@ -1,7 +1,8 @@
 import type { Afdeling } from '@/data/ingredienten';
-import { VASTE_ITEMS } from '@/data/vasteItems';
+import { AFDELINGEN } from '@/data/ingredienten';
+import { VAST_AFDELING, VASTE_ITEMS } from '@/data/vasteItems';
 import { Sleutel, Taal, vertaal } from '@/i18n';
-import type { DagCode, PlanDag } from '@/lib/planner/types';
+import { DagCode, PlanDag, WEEKDAGEN } from '@/lib/planner/types';
 
 // Pure logica voor de boodschappenlijst (zonder opslag), zodat ze los testbaar is.
 // Opslag op het toestel staat in src/opslag/lijst.ts.
@@ -57,7 +58,13 @@ export function itemsUitPlan(dagen: readonly PlanDag[]): LijstItem[] {
 /** De vaste items (ontbijt, school, huishouden) in de taal van de gebruiker. */
 export function vasteItems(taal: Taal): LijstItem[] {
   return VASTE_ITEMS.flatMap(({ categorie, items: codes }) =>
-    codes.map((code) => ({ id: `${categorie}-${code}`, naam: vertaal(taal, `item.${code}` as Sleutel), categorie, afgevinkt: false }))
+    codes.map((code) => ({
+      id: `${categorie}-${code}`,
+      naam: vertaal(taal, `item.${code}` as Sleutel),
+      categorie,
+      afgevinkt: false,
+      ...(VAST_AFDELING[code] ? { afdeling: VAST_AFDELING[code] } : {}),
+    }))
   );
 }
 
@@ -96,10 +103,10 @@ function isVastItemId(id: string): boolean {
  * Voegt items met dezelfde naam, eenheid en categorie samen tot één regel en telt de hoeveelheden op.
  * Volgorde: zoals ze voor het eerst in de lijst voorkomen.
  */
-export function samenvoegen(items: readonly LijstItem[]): LijstRegel[] {
+export function samenvoegen(items: readonly LijstItem[], { overCategorieen = false } = {}): LijstRegel[] {
   const regels = new Map<string, LijstRegel>();
   for (const i of items) {
-    const sleutel = `${i.categorie}|${klein(i.naam)}|${i.eenheid ?? ''}`;
+    const sleutel = `${overCategorieen ? '' : i.categorie}|${klein(i.naam)}|${i.eenheid ?? ''}`;
     const regel = regels.get(sleutel);
     if (!regel) {
       regels.set(sleutel, {
@@ -134,4 +141,80 @@ export function vinkAf(items: readonly LijstItem[], ids: readonly string[], afge
 /** Aantal verschillende ingrediënten uit de recepten (voor de bevestiging na het overzetten). */
 export function aantalReceptRegels(items: readonly LijstItem[]): number {
   return samenvoegen(items.filter((i) => i.recept)).length;
+}
+
+// ── Weergaven (WEEK-16) ──
+
+export type Weergave = 'recept' | 'categorie';
+
+/** Een sectie op het scherm. `soort` bepaalt hoe de titel getoond wordt. */
+export type LijstSectie =
+  | { sleutel: string; soort: 'recept'; dag: DagCode; recept: string; regels: LijstRegel[] }
+  | { sleutel: string; soort: 'categorie'; categorie: string; regels: LijstRegel[] }
+  | { sleutel: string; soort: 'afdeling'; afdeling: string; regels: LijstRegel[] };
+
+/** Afdeling van een item; vaste items uit een oudere versie krijgen ze via hun id. */
+export function afdelingVan(i: LijstItem): string {
+  if (i.afdeling) return i.afdeling;
+  const code = VASTE_ITEMS.flatMap(({ categorie, items }) => items.map((c) => [`${categorie}-${c}`, c] as const)).find(([id]) => id === i.id)?.[1];
+  return (code && VAST_AFDELING[code]) || 'overig';
+}
+
+/**
+ * Weergave per recept: eerst de recepten in de volgorde van de week (zondag → zaterdag),
+ * daarna de overige items per lijstcategorie (vaste items, zelf toegevoegd, gescand).
+ */
+export function perRecept(items: readonly LijstItem[]): LijstSectie[] {
+  const recepten = new Map<string, { dag: DagCode; recept: string; items: LijstItem[] }>();
+  const overige = new Map<string, LijstItem[]>();
+  for (const i of items) {
+    if (i.recept) {
+      const sleutel = `${i.recept.dag}|${i.recept.naam}`;
+      const groep = recepten.get(sleutel) ?? { dag: i.recept.dag, recept: i.recept.naam, items: [] };
+      groep.items.push(i);
+      recepten.set(sleutel, groep);
+    } else {
+      overige.set(i.categorie, [...(overige.get(i.categorie) ?? []), i]);
+    }
+  }
+  const receptSecties: LijstSectie[] = [...recepten.entries()]
+    .sort(([, a], [, b]) => WEEKDAGEN.indexOf(a.dag) - WEEKDAGEN.indexOf(b.dag))
+    .map(([sleutel, g]) => ({ sleutel: `recept|${sleutel}`, soort: 'recept', dag: g.dag, recept: g.recept, regels: samenvoegen(g.items) }));
+  const overigeSecties: LijstSectie[] = [...overige.entries()].map(([categorie, groep]) => ({
+    sleutel: `categorie|${categorie}`,
+    soort: 'categorie',
+    categorie,
+    regels: samenvoegen(groep),
+  }));
+  return [...receptSecties, ...overigeSecties];
+}
+
+/**
+ * Weergave per categorie, voor in de winkel: alles gegroepeerd per winkelafdeling
+ * (groenten, zuivel, vlees…), dubbele items over recepten en lijsten heen samengeteld.
+ * Volgorde van de afdelingen zoals in een gemiddelde winkel; "overig" achteraan.
+ */
+export function perAfdeling(items: readonly LijstItem[]): LijstSectie[] {
+  const groepen = new Map<string, LijstItem[]>();
+  for (const i of items) {
+    const afdeling = afdelingVan(i);
+    groepen.set(afdeling, [...(groepen.get(afdeling) ?? []), i]);
+  }
+  const volgorde = [...AFDELINGEN, 'overig'];
+  return [...groepen.entries()]
+    .sort(([a], [b]) => volgorde.indexOf(a) - volgorde.indexOf(b))
+    .map(([afdeling, groep]) => ({
+      sleutel: `afdeling|${afdeling}`,
+      soort: 'afdeling',
+      afdeling,
+      regels: samenvoegen(groep, { overCategorieen: true }).sort((a, b) => a.naam.localeCompare(b.naam)),
+    }));
+}
+
+export function secties(items: readonly LijstItem[], weergave: Weergave): LijstSectie[] {
+  return weergave === 'recept' ? perRecept(items) : perAfdeling(items);
+}
+
+export function isWeergave(w: unknown): w is Weergave {
+  return w === 'recept' || w === 'categorie';
 }

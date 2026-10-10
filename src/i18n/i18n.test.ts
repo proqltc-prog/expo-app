@@ -167,3 +167,10 @@ describe('keuzes voor kooktijd en stijl', () => {
     for (const s of STIJLEN) assert.ok(`stijl.${s}` in nl, s);
   });
 });
+
+describe('afdelingen', () => {
+  test('elke winkelafdeling (en "overig") heeft een vertaling', async () => {
+    const { AFDELINGEN } = await import('@/data/ingredienten');
+    for (const a of [...AFDELINGEN, 'overig']) assert.ok(`afdeling.${a}` in nl, a);
+  });
+});
