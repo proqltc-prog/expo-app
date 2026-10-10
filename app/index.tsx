@@ -7,9 +7,9 @@ import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { planUitFavorieten, resetDagUitFavorieten } from '@/lib/planner/favorietenplan';
-import { zetGedaan } from '@/lib/planner/gedaan';
+import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
 import { receptStatus } from '@/lib/planner/status';
-import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
+import { laadFrigo } from '@/opslag/frigo';
 import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favorieten';
 import { laadFavorieten, wijzigFavorieten } from '@/opslag/favorieten';
 import { laadGezin } from '@/opslag/sync';
@@ -18,7 +18,7 @@ import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
-import { bewaarKeuzes, bewaarOpdrachten, bewaarPlan, laadKeuzes, laadOpdrachten, laadPlan } from '@/opslag/plan';
+import { bewaarKeuzes, bewaarOpdrachten, bewaarPlan, laadKeuzes, laadOpdrachten, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { bijWijziging } from '@/opslag/sync';
 import { dagSleutel } from '@/i18n';
@@ -130,28 +130,35 @@ export default function Weekplanning() {
     if (!plan || !profiel || bezigDag !== null) return;
     setBezigDag(index);
     try {
+      const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
       const nieuw = plan.bron === 'favorieten' ? resetDagUitFavorieten(plan, index, favorieten) : await resetDag(plan, index, profiel, AI);
-      setPlan(nieuw);
-      await bewaarPlan(nieuw);
+      // Enkel die ene dag in het nieuwste plan vervangen: wat intussen veranderde, blijft (WEEK-28).
+      const nieuweDag = nieuw.dagen[index];
+      const bewaard = nieuweDag
+        ? await wijzigPlan((huidig) => {
+            const vervangen = vervangDag(huidig, index, verwacht, nieuweDag);
+            return vervangen === huidig ? huidig : { ...vervangen, ...(nieuw.terugval ? { terugval: true } : {}) };
+          })
+        : null;
+      if (bewaard) setPlan(bewaard);
     } finally {
       setBezigDag(null);
     }
   };
 
   // Gekookt (WEEK-19): de ingrediënten gaan uit de frigo; nog eens tikken zet alles terug.
-  const wisselGedaan = async (index: number) => {
-    // Altijd vanuit het bewaarde plan, zodat een status uit een ander scherm niet verloren gaat.
-    const huidig = await laadPlan();
-    if (!huidig) return;
-    const gedaan = !huidig.dagen[index]?.gedaan;
-    let nieuwPlan = huidig;
-    await wijzigFrigo((frigo) => {
-      const resultaat = zetGedaan(huidig, index, gedaan, frigo);
-      nieuwPlan = resultaat.plan;
-      return resultaat.frigo;
-    });
-    setPlan(nieuwPlan);
-    await bewaarPlan(nieuwPlan);
+  // Plan en frigo samen in één stap op de nieuwste versie; de knop is uitgeschakeld tot het klaar is (WEEK-28).
+  const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
+  const wisselGedaanKnop = async (index: number) => {
+    if (!plan || bezigGedaan !== null) return;
+    setBezigGedaan(index);
+    try {
+      const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
+      const nieuw = await wijzigPlanEnFrigo((huidig, frigo) => wisselGedaan(huidig, frigo, index, verwacht));
+      if (nieuw) setPlan(nieuw);
+    } finally {
+      setBezigGedaan(null);
+    }
   };
 
   // Geslaagd recept bewaren als favoriet (WEEK-21).
@@ -302,7 +309,8 @@ export default function Weekplanning() {
                 <View style={{ flex: 1 }} />
                 <Pressable
                   style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
-                  onPress={() => wisselGedaan(index)}
+                  onPress={() => wisselGedaanKnop(index)}
+                  disabled={bezigGedaan !== null}
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: !!gedaan }}
                   accessibilityLabel={t('planning.gedaanLabel', { recept: recept.naam })}

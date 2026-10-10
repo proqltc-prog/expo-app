@@ -4,7 +4,9 @@ import { normaliseerKeuzes, normaliseerWeekplan } from '@/lib/planner/normalisee
 import type { KooktijdCode, Weekplan } from '@/lib/planner/types';
 import type { StijlCode } from '@/data/receptenbank';
 import { SLEUTEL } from './sleutels';
-import { registreerDocument } from './sync';
+import { registreerDocument, registreerItems } from './sync';
+import { laadFrigo } from './frigo';
+import type { FrigoItem } from '@/lib/frigo';
 import { naElkaar } from './wachtrij';
 
 const PLAN = SLEUTEL.plan;
@@ -35,6 +37,27 @@ export function wijzigPlan(wijziging: (plan: Weekplan) => Weekplan): Promise<Wee
     await AsyncStorage.setItem(PLAN, JSON.stringify(nieuw));
     await registreerDocument('plan', nieuw);
     return nieuw;
+  });
+}
+
+/**
+ * Past weekplan én frigo samen aan in één stap, op de nieuwste versie van allebei (WEEK-28),
+ * bv. een recept op "gedaan" zetten. Bewaart en deelt enkel wat echt verandert.
+ */
+export function wijzigPlanEnFrigo(
+  wijziging: (plan: Weekplan, frigo: FrigoItem[]) => { plan: Weekplan; frigo: FrigoItem[] }
+): Promise<Weekplan | null> {
+  return naElkaar(async () => {
+    const plan = await laadPlan();
+    if (!plan) return null;
+    const frigo = await laadFrigo();
+    const resultaat = wijziging(plan, frigo);
+    if (resultaat.plan === plan) return plan;
+    await AsyncStorage.setItem(SLEUTEL.frigo, JSON.stringify(resultaat.frigo));
+    await registreerItems('frigo', resultaat.frigo);
+    await AsyncStorage.setItem(PLAN, JSON.stringify(resultaat.plan));
+    await registreerDocument('plan', resultaat.plan);
+    return resultaat.plan;
   });
 }
 
