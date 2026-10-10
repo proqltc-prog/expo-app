@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.21.0] – 2026-10-11
+
+Scanlimiet: 3 gratis scans per dag, onbeperkt voor betalende gezinnen.
+
+- Jira: [WEEK-34](https://proqltc-1791495894841.atlassian.net/browse/WEEK-34)
+- Confluence: [WEEK-34 – Scanlimiet](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2621441)
+
+### Gewijzigd
+- De gratis versie scant 3 producten per dag. Het scherm toont hoeveel scans er nog over zijn, en na 3 scans verschijnt een melding.
+- Betalende gezinnen scannen onbeperkt.
+
 ## [0.20.0] – 2026-10-11
 
 Betalende versie: zelf producten in de frigo zetten, met hoeveelheid en afdeling of via de scanner.

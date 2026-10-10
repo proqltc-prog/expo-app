@@ -159,6 +159,9 @@ export const en: Vertalingen = {
   'scan.inFrigo': 'Into the fridge',
   'scan.inFrigoGedaan': '{naam} is in the fridge.',
   'scan.frigoBetalend': 'Scanning straight into the fridge is part of the paid version.',
+  'scan.resterend': '{n} free scans left today',
+  'scan.limiet': 'You’ve used your {limiet} free scans for today. Try again tomorrow.',
+  'scan.limietBetalend': 'Unlimited scanning is part of the paid version.',
   'scan.bron': 'Data: Open Food Facts (openfoodfacts.org). Not medical advice.',
 
   'voeding.kcal': 'Calories',
