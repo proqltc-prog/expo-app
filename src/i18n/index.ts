@@ -106,3 +106,10 @@ export function hoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, ee
   if (eenheid === 'teentje') return vulIn(vertaal(taal, hoeveelheid === 1 ? 'eenheid.teentje_1' : 'eenheid.teentje_n'), { n });
   return `${n} ${eenheid}`;
 }
+
+/** Korte datum volgens de taal, bv. "10 okt." (nl) of "10 Oct" (en). Ongeldige datum geeft lege tekst. */
+export function datumKort(taal: Taal, iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return new Intl.DateTimeFormat(LOCALE[taal], { day: 'numeric', month: 'short' }).format(d);
+}

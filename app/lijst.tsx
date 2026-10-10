@@ -3,6 +3,8 @@ import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react
 import { useFocusEffect } from 'expo-router';
 import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
 import { bewaarLijst, bewaarWeergave, laadLijst, laadWeergave } from '@/opslag/lijst';
+import { pasFrigoAan } from '@/lib/frigo';
+import { wijzigFrigo } from '@/opslag/frigo';
 import { categorieNaam, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -35,7 +37,13 @@ export default function Lijst() {
   };
 
   // Een regel kan uit meerdere items bestaan; afvinken geldt voor alle onderliggende items.
-  const toggle = (regel: LijstRegel) => wijzig(vinkAf(items, regel.ids, !regel.afgevinkt));
+  // Afvinken = gekocht: het product gaat in de frigo; het vinkje weghalen haalt het er weer uit (WEEK-18).
+  const toggle = (regel: LijstRegel) => {
+    const afgevinkt = !regel.afgevinkt;
+    const onderliggend = items.filter((i) => regel.ids.includes(i.id));
+    wijzig(vinkAf(items, regel.ids, afgevinkt));
+    wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
+  };
 
   const voegToe = () => {
     const naam = nieuw.trim();
