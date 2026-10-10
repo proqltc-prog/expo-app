@@ -1,7 +1,11 @@
-import { useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
-import { beoordeel, Oordeel, Product, zoekProduct } from '@/lib/openfoodfacts';
+import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
+import { voegZelfToe } from '@/lib/frigo';
+import { laadBetalend } from '@/opslag/abonnement';
+import { wijzigFrigo } from '@/opslag/frigo';
 import { wijzigLijst } from '@/opslag/lijst';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
@@ -21,6 +25,8 @@ export default function Scan() {
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
+  const [betalend, setBetalend] = useState(false);
+  useFocusEffect(useCallback(() => { laadBetalend().then(setBetalend); }, []));
 
   if (!toestemming) return <View style={s.midden}><ActivityIndicator /></View>;
 
@@ -53,8 +59,16 @@ export default function Scan() {
   };
 
   const accepteer = async (product: Product) => {
-    const naam = [product.merk, product.naam || t('scan.onbekend')].filter(Boolean).join(' – ');
+    const naam = scanNaam(product, t('scan.onbekend'));
     await wijzigLijst((lijst) => [...lijst, { id: `scan-${product.barcode}-${Date.now()}`, naam, categorie: 'gescand', afgevinkt: true }]);
+    opnieuw();
+  };
+
+  // Betalende versie (WEEK-35): het gescande product rechtstreeks in de frigo, in de juiste afdeling.
+  const naarFrigo = async (product: Product) => {
+    const naam = scanNaam(product, t('scan.onbekend'));
+    await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), { afdeling: afdelingUitCategorieen(product.categorieen) }));
+    Alert.alert(t('scan.inFrigo'), t('scan.inFrigoGedaan', { naam }));
     opnieuw();
   };
 
@@ -132,6 +146,13 @@ export default function Scan() {
           <Text style={s.knopTekst}>{t('scan.accepteren')}</Text>
         </Pressable>
       </View>
+      {betalend ? (
+        <Pressable style={[s.knop, s.frigoKnop]} onPress={() => naarFrigo(p)}>
+          <Text style={[s.knopTekst, { color: KLEUR }]}>{t('scan.inFrigo')}</Text>
+        </Pressable>
+      ) : (
+        <Text style={s.bron}>{t('scan.frigoBetalend')}</Text>
+      )}
       <Text style={s.bron}>{t('scan.bron')}</Text>
     </ScrollView>
   );
@@ -157,5 +178,6 @@ const s = StyleSheet.create({
   tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
+  frigoKnop: { backgroundColor: '#fff', borderWidth: 2, borderColor: KLEUR, marginTop: 4 },
   bron: { color: '#999', fontSize: 12, marginTop: 12, textAlign: 'center' },
 });

@@ -74,11 +74,40 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
   return frigo.filter((f) => !f.lijstId || !terug.has(f.lijstId));
 }
 
-/** Voegt een product toe dat de gebruiker zelf in de frigo zet (bv. wat al in huis was). */
-export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date): FrigoItem[] {
-  const n = naam.trim();
+/** Extra gegevens bij zelf toevoegen (betalende versie, WEEK-35). */
+export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig' };
+
+/** Eenheden die je kan kiezen bij zelf toevoegen. */
+export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
+
+/**
+ * Voegt een product toe dat de gebruiker zelf in de frigo zet (bv. wat al in huis was).
+ * Gratis: enkel een naam. Betalend (WEEK-35): ook hoeveelheid, eenheid en afdeling (manueel of via de scanner).
+ */
+export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date, extra: ZelfExtra = {}): FrigoItem[] {
+  const n = naam.trim().slice(0, 100);
   if (!n) return [...frigo];
-  return [...frigo, { id: `zelf:${nu.getTime()}:${frigo.length}`, naam: n, afdeling: 'overig', toegevoegdOp: nu.toISOString() }];
+  const h = extra.hoeveelheid;
+  const hoeveelheid = typeof h === 'number' && Number.isFinite(h) && h > 0 ? Math.round(h * 100) / 100 : undefined;
+  const eenheid = hoeveelheid !== undefined && extra.eenheid?.trim() ? extra.eenheid.trim() : undefined;
+  const afdeling = extra.afdeling && (extra.afdeling === 'overig' || isAfdeling(extra.afdeling)) ? extra.afdeling : 'overig';
+  return [
+    ...frigo,
+    {
+      id: `zelf:${nu.getTime()}:${frigo.length}`,
+      naam: n,
+      ...(hoeveelheid !== undefined ? { hoeveelheid } : {}),
+      ...(eenheid ? { eenheid } : {}),
+      afdeling,
+      toegevoegdOp: nu.toISOString(),
+    },
+  ];
+}
+
+/** Leest een hoeveelheid zoals de gebruiker ze typt ("1,5" of "250"); undefined als het geen positief getal is. */
+export function leesHoeveelheid(tekst: string): number | undefined {
+  const n = Number(tekst.trim().replace(',', '.'));
+  return tekst.trim() && Number.isFinite(n) && n > 0 ? n : undefined;
 }
 
 /**

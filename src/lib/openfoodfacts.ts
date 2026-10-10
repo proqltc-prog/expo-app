@@ -1,3 +1,5 @@
+import type { Afdeling } from '@/data/ingredienten';
+
 export type Product = {
   barcode: string;
   naam: string;
@@ -10,6 +12,8 @@ export type Product = {
   eiwitten?: number; // g per 100 g
   vet?: number;
   zout?: number;
+  /** Categorieën van Open Food Facts (bv. "en:dairies"), om de winkelafdeling te bepalen (WEEK-35). */
+  categorieen?: string[];
 };
 
 export type RedenCode = 'nutriscore' | 'nova4' | 'additieven' | 'suiker' | 'zout' | 'eiwit';
@@ -35,6 +39,7 @@ const VELDEN = [
   'nova_group',
   'additives_tags',
   'nutriments',
+  'categories_tags',
 ].join(',');
 
 /** Productnaam in de gevraagde taal, anders de algemene naam; leeg als er geen naam is. */
@@ -68,6 +73,7 @@ export async function zoekProduct(barcode: string, taal = 'nl'): Promise<Product
     eiwitten: getal(n.proteins_100g),
     vet: getal(n.fat_100g),
     zout: getal(n.salt_100g),
+    categorieen: Array.isArray(p.categories_tags) ? p.categories_tags.filter((c: unknown) => typeof c === 'string') : [],
   };
 }
 
@@ -88,4 +94,31 @@ export function beoordeel(p: Product): Oordeel {
   score = Math.max(0, Math.min(100, Math.round(score)));
   const label: OordeelLabel = score >= 65 ? 'goed' : score >= 40 ? 'matig' : 'slecht';
   return { score, label, redenen };
+}
+
+/**
+ * Winkelafdeling van een gescand product op basis van de categorieën van Open Food Facts (WEEK-35).
+ * De meest specifieke regels eerst (diepvries en dranken gaan voor groenten of vlees).
+ */
+const AFDELING_REGELS: [RegExp, Afdeling][] = [
+  [/^en:frozen/, 'diepvries'],
+  [/^en:(beverages|waters|juices|sodas|coffees|teas|plant-based-milks|alcoholic-beverages)/, 'dranken'],
+  [/^en:(canned|sauces|condiments|preserves|jams|spreads|pickles)/, 'conserven-sauzen'],
+  [/^en:(dairies|milks|cheeses|yogurts|eggs|butters|creams|desserts-dairy)/, 'zuivel-eieren'],
+  [/^en:(meats|poultries|fishes|seafood|hams|sausages|prepared-meats)/, 'vlees-vis'],
+  [/^en:(breads|viennoiseries|sandwich-breads)/, 'brood'],
+  [/^en:(fruits|vegetables|fresh-|salads|potatoes)/, 'groenten-fruit'],
+  [/^en:(cereals|pastas|rices|legumes|flours|biscuits|snacks|chocolates|breakfast|nuts|dried|sugars|noodles)/, 'droge-voeding'],
+];
+
+export function afdelingUitCategorieen(categorieen: readonly string[] = []): Afdeling | 'overig' {
+  for (const [regel, afdeling] of AFDELING_REGELS) {
+    if (categorieen.some((c) => regel.test(c))) return afdeling;
+  }
+  return 'overig';
+}
+
+/** Naam van een gescand product voor de lijst of de frigo: "Merk – naam". */
+export function scanNaam(p: Pick<Product, 'merk' | 'naam'>, onbekend: string): string {
+  return [p.merk?.split(',')[0]?.trim(), p.naam || onbekend].filter(Boolean).join(' – ');
 }
