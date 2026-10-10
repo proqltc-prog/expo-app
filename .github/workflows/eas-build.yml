@@ -1,0 +1,44 @@
+# Android-build met EAS (WEEK-37). Manueel starten: Actions › "Android-build" › Run workflow.
+# Vereist het GitHub-secret EXPO_TOKEN (expo.dev › Account settings › Access tokens).
+# - preview: APK om zelf op een gsm te installeren
+# - production: AAB voor de Google Play Store (interne testtrack)
+name: Android-build
+
+on:
+  workflow_dispatch:
+    inputs:
+      profiel:
+        description: 'Build-profiel'
+        type: choice
+        options: [preview, production]
+        default: preview
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Controleer EXPO_TOKEN
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Het GitHub-secret EXPO_TOKEN ontbreekt. Maak een token op expo.dev en voeg het toe onder Settings › Secrets › Actions."
+            exit 1
+          fi
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - name: EAS-project koppelen (eenmalig aangemaakt, daarna hergebruikt)
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx --yes eas-cli@latest init --non-interactive --force
+      - name: Build starten
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          npx --yes eas-cli@latest build --platform android --profile ${{ inputs.profiel }} --non-interactive --no-wait --json > build.json
+          URL=$(node -e "const b=require('./build.json');console.log(b[0]?.buildDetailsPageUrl ?? '')")
+          echo "::notice::Build gestart: $URL (klaar na 10–20 minuten; download daar de APK/AAB)"

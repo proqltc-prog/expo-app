@@ -214,7 +214,7 @@ export const nl = {
   'gezin.gedeeldMet': 'Gedeeld in „{naam}”',
   'gezin.code': 'Code om iemand uit te nodigen',
   'gezin.deel': 'Code delen',
-  'gezin.deelTekst': 'Doe mee in onze gezinsruimte in Gezond Boodschappen: open het tabblad Gezin en vul de code {code} in.',
+  'gezin.deelTekst': 'Doe mee in onze gezinsruimte in Famenu: open het tabblad Gezin en vul de code {code} in.',
   'gezin.leden': 'Leden',
   'gezin.jij': '{naam} (jij)',
   'gezin.naamloos': 'Gezinslid',

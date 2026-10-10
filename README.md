@@ -1,4 +1,6 @@
-# Gezond Boodschappen
+# Famenu
+
+*(werknaam: Gezond Boodschappen)*
 
 Smartphone-app (React Native / Expo) voor de wekelijkse maaltijdplanning en boodschappen van een gezin.
 
@@ -64,6 +66,19 @@ De AI loopt via de server-functie `plan-week` in hetzelfde Supabase-project als 
   ```
 
 Opnieuw uitrollen: `supabase functions deploy plan-week`. Enkel de lokale planner gebruiken: zet `EXPO_PUBLIC_PLANNER_URL=` (leeg) in `.env.local`.
+
+## Android-build en Google Play Store
+
+De app heet **Famenu**, met de vaste interne naam `be.famenu.app`. Die naam kan niet meer veranderen zodra de app in de Play Store staat.
+
+- `eas.json` bevat drie profielen:
+  - `preview` maakt een APK die je zelf op een gsm installeert;
+  - `production` maakt een AAB voor de Play Store;
+  - `development` maakt een ontwikkelversie.
+- Een build start je via GitHub › Actions › **Android-build** › Run workflow, waar je het profiel kiest. Daarvoor is het GitHub-secret `EXPO_TOKEN` nodig (expo.dev › Account settings › Access tokens).
+- De versiecode beheert EAS zelf (`appVersionSource: remote`). De zichtbare versie volgt `app.json`.
+- Teksten voor de winkel in 6 talen, het icoon en de feature graphic staan in `store/`. Het ontwerp van het privacybeleid staat in `store/privacybeleid.md`.
+- Het icoon (`assets/`) is een eerste versie en mag vervangen worden door een eigen ontwerp.
 
 ## Structuur
 
