@@ -8,6 +8,21 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.15.0] – 2026-10-10
+
+Frigo-voorrang: eerst opmaken wat al in huis is, en niet opnieuw kopen wat je al hebt.
+
+- Jira: [WEEK-12](https://proqltc-1791495894841.atlassian.net/browse/WEEK-12)
+- Confluence: [WEEK-12 – Frigo-voorrang bij weekplanning](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2031626)
+
+### Toegevoegd
+- Dag 1 krijgt het recept dat het meest opmaakt van wat al (het langst) in huis is; ook de AI-planner krijgt de frigo mee.
+- "♻ Al in huis: …" op de dagkaart.
+- Bij het overzetten naar de boodschappenlijst gaat wat al in huis is eraf (of enkel het verschil komt erop).
+
+### Gewijzigd
+- Opnieuw overzetten behoudt ook wie iets afvinkte.
+
 ## [0.14.1] – 2026-10-10
 
 Bugfix: live updates van de gezinsruimte kwamen soms niet binnen.

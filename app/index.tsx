@@ -8,7 +8,8 @@ import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { zetGedaan } from '@/lib/planner/gedaan';
 import { receptStatus } from '@/lib/planner/status';
-import { wijzigFrigo } from '@/opslag/frigo';
+import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
+import { trekFrigoAf } from '@/lib/frigo';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
@@ -97,7 +98,9 @@ export default function Weekplanning() {
     if (!profiel || bezig) return;
     setBezig(true);
     try {
-      const nieuw = await planWeek({ opdracht, kooktijden, stijlen, profiel, taal }, AI);
+      // Frigo-voorrang (WEEK-12): wat al in huis is, gaat mee naar de planner.
+      const frigo = await laadFrigo();
+      const nieuw = await planWeek({ opdracht, kooktijden, stijlen, profiel, taal, frigo }, AI);
       setPlan(nieuw);
       await bewaarPlan(nieuw);
       const geschiedenis = voegOpdrachtToe(vorige, opdracht);
@@ -147,8 +150,18 @@ export default function Weekplanning() {
 
   const naarLijst = async () => {
     if (!plan) return;
-    const lijst = await wijzigLijst((bestaand) => voegPlanToe(bestaand, plan.dagen, taal));
-    Alert.alert(t('menu.klaar.titel'), t('menu.klaar.tekst', { n: aantalReceptRegels(lijst) }));
+    // Wat al in huis is, komt niet (of minder) op de lijst (WEEK-12).
+    const frigo = await laadFrigo();
+    let inHuis = 0;
+    const lijst = await wijzigLijst((bestaand) =>
+      voegPlanToe(bestaand, plan.dagen, taal, (items) => {
+        const over = trekFrigoAf(items, frigo);
+        inHuis = items.length - over.length;
+        return over;
+      })
+    );
+    const n = aantalReceptRegels(lijst);
+    Alert.alert(t('menu.klaar.titel'), inHuis ? t('menu.klaar.inHuis', { n, m: inHuis }) : t('menu.klaar.tekst', { n }));
     router.navigate('/lijst');
   };
 
@@ -200,7 +213,7 @@ export default function Weekplanning() {
           </Text>
           {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-          {plan.dagen.map(({ dag, recept, gedaan, ontbreekt }, index) => (
+          {plan.dagen.map(({ dag, recept, gedaan, ontbreekt, uitFrigo }, index) => (
             <View key={dag} style={[s.kaart, gedaan && s.kaartGedaan]}>
               <View style={s.kaartKop}>
                 <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
@@ -216,6 +229,9 @@ export default function Weekplanning() {
                 </Pressable>}
               </View>
               <Text style={s.naam}>{recept.naam}</Text>
+              {!gedaan && uitFrigo && uitFrigo.length > 0 && (
+                <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
+              )}
               {receptStatus(plan.dagen[index]) === 'ontbreekt' ? (
                 <View style={s.ontbreekt}>
                   <Text style={s.ontbreektTekst}>{t('status.ontbreekt', { namen: (ontbreekt ?? []).join(', ') })}</Text>
@@ -288,6 +304,7 @@ const s = StyleSheet.create({
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
   min: { color: '#777', fontSize: 13 },
   gepland: { color: '#999', fontSize: 12, marginTop: 2 },
+  uitFrigo: { color: KLEUR, fontSize: 12, marginTop: 2, fontWeight: '600' },
   ontbreekt: { backgroundColor: '#fff8e1', borderRadius: 10, padding: 10, marginTop: 8, gap: 8 },
   ontbreektTekst: { color: '#7a5b00', fontSize: 13, fontWeight: '600' },
   ontbreektKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },

@@ -7,6 +7,7 @@ import { leesOpdracht, Wensen } from './opdracht';
 import { porties as berekenPorties, rondAf } from './hoeveelheid';
 import { DagCode, KooktijdCode, kooktijdVan, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 import type { StijlCode } from '@/data/receptenbank';
+import { kiesEersteDag, markeerUitFrigo } from './frigovoorrang';
 
 export const STANDAARD_AANTAL_DAGEN = 6;
 
@@ -162,15 +163,17 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
 
   const gekozen: BankRecept[] = [];
   const planDagen: PlanDag[] = [];
+  // Frigo-voorrang (WEEK-12): dag 1 maakt op wat al (het langst) in huis is.
+  const eerste = verzoek.frigo?.length ? kiesEersteDag(kandidaten, verzoek.frigo, verzoek.taal, new Date()) : undefined;
   dagen.forEach((dag, i) => {
-    const recept = kiesRecept(kandidaten, schema[i], { gekozen, dag: i }, w, random);
+    const recept = i === 0 && eerste ? eerste : kiesRecept(kandidaten, schema[i], { gekozen, dag: i }, w, random);
     if (!recept) return;
     gekozen.push(recept);
     planDagen.push({ dag, recept: naarPlanRecept(recept, verzoek.taal, porties) });
   });
 
   return {
-    dagen: planDagen,
+    dagen: verzoek.frigo?.length ? markeerUitFrigo(planDagen, verzoek.frigo) : planDagen,
     opdracht: verzoek.opdracht,
     kooktijden: verzoek.kooktijden,
     stijlen: verzoek.stijlen,

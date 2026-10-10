@@ -36,6 +36,7 @@ export const fr: Vertalingen = {
   'menu.naarLijst': 'Ajouter à la liste de courses',
   'menu.klaar.titel': 'C’est fait',
   'menu.klaar.tekst': '{n} ingrédients de votre planning sont sur la liste de courses.',
+  'menu.klaar.inHuis': '{n} ingrédients de votre planning sont sur la liste de courses. Vous en aviez déjà {m} à la maison.',
 
   'planning.intro': 'Décrivez votre semaine et recevez un menu. Votre profil familial est pris en compte automatiquement.',
   'planning.placeholder': 'Décrivez votre menu : combien de jours, quelle variété, sans viande, attention au Nutri-Score, rapide…',
@@ -56,6 +57,7 @@ export const fr: Vertalingen = {
   'planning.opLijst': 'Mettre sur la liste',
   'planning.anderGerecht': 'Autre plat',
   'planning.opLijstKlaar': '{namen} est sur la liste de courses.',
+  'planning.uitFrigo': '♻ Déjà à la maison : {namen}',
   'planning.kooktijd': 'Temps de cuisson',
   'planning.stijl': 'Style',
   'planning.versoepeld': 'Pas assez de recettes pour votre choix ; certains plats ne correspondent pas tout à fait au temps ou au style choisi.',
