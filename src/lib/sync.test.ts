@@ -132,6 +132,21 @@ describe('eersteSamenvoeging', () => {
     assert.deepEqual(items, []);
     assert.deepEqual(teVersturen, []);
   });
+  test('dubbele ids op het toestel worden maar één keer verstuurd (WEEK-27)', () => {
+    const { items, teVersturen } = eersteSamenvoeging([item('a'), item('a', 'tweede'), item('b')], [], lees, T2);
+    assert.deepEqual(teVersturen.map((r) => r.id), ['a', 'b']);
+    assert.deepEqual(items.map((i) => i.naam), ['a', 'b']);
+  });
+  test('een lokaal item dat nieuwer is dan de verwijdering bij het gezin, blijft (WEEK-27)', () => {
+    type Fav = Item & { op: string };
+    const leesFav = (d: unknown) => d as Fav;
+    const lasagne: Fav = { ...item('fav:lasagne'), op: T3 };
+    const { items, teVersturen } = eersteSamenvoeging([lasagne], [rij('fav:lasagne', T2)], leesFav, T3, (f) => f.op);
+    assert.deepEqual(items, [lasagne]);
+    assert.deepEqual(teVersturen.map((r) => r.id), ['fav:lasagne']);
+    const ouder = eersteSamenvoeging([{ ...lasagne, op: T1 }], [rij('fav:lasagne', T2)], leesFav, T3, (f) => f.op);
+    assert.deepEqual(ouder.items, []);
+  });
 });
 
 describe('neemDocumentOver', () => {
