@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.17.1] – 2026-10-10
+
+Bugfix: synchronisatie van de gezinsruimte robuuster (gevonden bij een onafhankelijke review).
+
+- Jira: [WEEK-27](https://proqltc-1791495894841.atlassian.net/browse/WEEK-27)
+- Confluence: [WEEK-27 – Synchronisatie gezinsruimte robuuster](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1802289)
+
+### Opgelost
+- Een dubbel item kon een toestel blijvend blokkeren (de database weigerde de hele batch).
+- Een mislukte eerste samenvoeging na het aansluiten wordt opnieuw geprobeerd tot ze lukt.
+- Eigen favorieten en frigo-items verdwijnen niet meer bij het aansluiten omdat het gezin vroeger een item met dezelfde naam verwijderde.
+- Verloren aanmelding: het toestel sluit automatisch opnieuw aan met de bewaarde code in plaats van stil los te koppelen.
+
 ## [0.17.0] – 2026-10-10
 
 Planmodus "Random uit favorieten": een week uit het eigen kookboek.

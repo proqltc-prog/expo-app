@@ -112,17 +112,28 @@ export function pasExternToe<T extends MetId>(
 /**
  * Eerste keer samenvoegen na het aansluiten bij een gezin: de gegevens van het gezin
  * worden overgenomen, en wat dit toestel al had en het gezin nog niet kent, wordt toegevoegd.
+ * - Dubbele ids op het toestel worden maar één keer meegenomen (anders weigert de database de hele batch).
+ * - Verwijderde het gezin ooit een item met dezelfde id, dan wint die verwijdering, tenzij het lokale item
+ *   aantoonbaar nieuwer is (`tijdVan`, bv. wanneer een favoriet bewaard werd).
  * Geeft de samengevoegde lijst en de rijen die dit toestel moet versturen.
  */
 export function eersteSamenvoeging<T extends MetId>(
   lokaal: readonly T[],
   rijen: readonly SyncRij[],
   lees: (data: unknown) => T | null,
-  nu: string
+  nu: string,
+  tijdVan?: (item: T) => string | undefined
 ): { items: T[]; meta: SyncMeta; teVersturen: SyncRij[] } {
   const { items: vanGezin, meta } = pasExternToe([], {}, rijen, lees);
-  const bekend = new Set(rijen.map((r) => r.id));
-  const extra = lokaal.filter((i) => !bekend.has(i.id));
+  const levend = new Set(vanGezin.map((i) => i.id));
+  const gezien = new Set<string>();
+  const extra = lokaal.filter((i) => {
+    if (gezien.has(i.id) || levend.has(i.id)) return false;
+    gezien.add(i.id);
+    const verwijderdOp = meta[i.id];
+    if (!verwijderdOp) return true;
+    return !!tijdVan && nieuwer(tijdVan(i), verwijderdOp);
+  });
   const teVersturen = extra.map((i) => ({ id: i.id, data: i, verwijderd: false, bijgewerkt_op: nu }));
   for (const r of teVersturen) meta[r.id] = nu;
   return { items: [...vanGezin, ...extra], meta, teVersturen };

@@ -30,7 +30,15 @@ import { SLEUTEL } from './sleutels';
 import { supabase, zorgVoorSessie } from './supabase';
 import { naElkaar } from './wachtrij';
 
-export type Gezin = { id: string; naam: string; code: string; /** Naam van dit toestel binnen het gezin. */ ikNaam?: string };
+export type Gezin = {
+  id: string;
+  naam: string;
+  code: string;
+  /** Naam van dit toestel binnen het gezin. */
+  ikNaam?: string;
+  /** De eerste samenvoeging na het aansluiten is nog niet gelukt; opnieuw proberen bij de volgende start (WEEK-27). */
+  eersteSamenvoeging?: boolean;
+};
 export type GezinsLid = { id: string; naam: string; ikZelf: boolean };
 export type SyncStatus = 'uit' | 'verbonden' | 'offline';
 export type Gebeurtenis = ItemSoort | DocumentSleutel | 'leden' | 'gezin' | 'status';
@@ -39,12 +47,28 @@ type MetId = { id: string };
 
 // ── Wat er gesynchroniseerd wordt ──
 
-type ItemBron = { sleutel: string; lees: (d: unknown) => MetId | null; normaliseer: (ruw: unknown) => MetId[] };
+type ItemBron = {
+  sleutel: string;
+  lees: (d: unknown) => MetId | null;
+  normaliseer: (ruw: unknown) => MetId[];
+  /** Wanneer het item gemaakt werd, indien gekend (om bij het aansluiten een oude verwijdering niet te laten winnen). */
+  tijdVan?: (item: MetId) => string | undefined;
+};
 
 const ITEMBRONNEN: Partial<Record<ItemSoort, ItemBron>> = {
   lijst: { sleutel: SLEUTEL.lijst, lees: leesLijstItem, normaliseer: normaliseerLijst },
-  frigo: { sleutel: SLEUTEL.frigo, lees: (d) => normaliseerFrigo([d])[0] ?? null, normaliseer: normaliseerFrigo },
-  favoriet: { sleutel: SLEUTEL.favorieten, lees: leesFavoriet, normaliseer: normaliseerFavorieten },
+  frigo: {
+    sleutel: SLEUTEL.frigo,
+    lees: (d) => normaliseerFrigo([d])[0] ?? null,
+    normaliseer: normaliseerFrigo,
+    tijdVan: (i) => (i as { toegevoegdOp?: string }).toegevoegdOp,
+  },
+  favoriet: {
+    sleutel: SLEUTEL.favorieten,
+    lees: leesFavoriet,
+    normaliseer: normaliseerFavorieten,
+    tijdVan: (i) => (i as { opgeslagenOp?: string }).opgeslagenOp,
+  },
 };
 
 type DocumentBron = {
@@ -114,7 +138,13 @@ export async function laadGezin(): Promise<Gezin | null> {
   const ruw = (await leesJson(SLEUTEL.gezin)) as Partial<Gezin> | null;
   gezinCache =
     ruw && typeof ruw.id === 'string' && typeof ruw.code === 'string'
-      ? { id: ruw.id, naam: ruw.naam ?? '', code: ruw.code, ...(typeof ruw.ikNaam === 'string' && ruw.ikNaam ? { ikNaam: ruw.ikNaam } : {}) }
+      ? {
+          id: ruw.id,
+          naam: ruw.naam ?? '',
+          code: ruw.code,
+          ...(typeof ruw.ikNaam === 'string' && ruw.ikNaam ? { ikNaam: ruw.ikNaam } : {}),
+          ...(ruw.eersteSamenvoeging === true ? { eersteSamenvoeging: true } : {}),
+        }
       : null;
   gezinGeladen = true;
   return gezinCache;
@@ -212,8 +242,9 @@ export async function verstuur(): Promise<void> {
       const sb = supabase();
       if (!gezin || !sb) return;
       const t = await naElkaar(laadToestand);
+      // Per item maar één rij (de nieuwste): twee keer dezelfde id in één batch weigert de database (WEEK-27).
       const itemRijen = (Object.entries(t.wachtrij.items) as [ItemSoort, SyncRij[]][]).flatMap(([soort, rijen]) =>
-        rijen.map((r) => ({ gezin_id: gezin.id, soort, id: r.id, data: r.data, verwijderd: r.verwijderd, bijgewerkt_op: r.bijgewerkt_op }))
+        voegWachtrijSamen([], rijen).map((r) => ({ gezin_id: gezin.id, soort, id: r.id, data: r.data, verwijderd: r.verwijderd, bijgewerkt_op: r.bijgewerkt_op }))
       );
       const docRijen = (Object.entries(t.wachtrij.documenten) as [DocumentSleutel, { data: unknown; bijgewerkt_op: string }][]).map(
         ([sleutel, d]) => ({ gezin_id: gezin.id, sleutel, data: d.data, bijgewerkt_op: d.bijgewerkt_op })
@@ -314,7 +345,7 @@ async function haalOp(gezin: Gezin, eerste = false): Promise<void> {
         continue;
       }
       const lokaal = bron.normaliseer(await leesJson(bron.sleutel));
-      const samen = eersteSamenvoeging(lokaal, rijen, bron.lees, nu);
+      const samen = eersteSamenvoeging(lokaal, rijen, bron.lees, nu, bron.tijdVan);
       await AsyncStorage.setItem(bron.sleutel, JSON.stringify(samen.items));
       t.items[soort] = { vorige: samen.items, meta: samen.meta };
       if (samen.teVersturen.length) t.wachtrij.items[soort] = samen.teVersturen;
@@ -441,11 +472,23 @@ async function start(): Promise<void> {
     const { data, error } = await sb.from('gezinnen').select('id').eq('id', gezin.id).maybeSingle();
     if (error) throw error;
     if (!data) {
-      // Niet meer (of nooit) lid: loskoppelen, de gegevens blijven op het toestel.
-      await koppelLos();
-      return;
+      // Geen lid meer. Meestal is de (anonieme) aanmelding verloren gegaan: opnieuw aansluiten met de
+      // bewaarde code. Bestaat het gezin niet meer, dan loskoppelen; de gegevens blijven op het toestel (WEEK-27).
+      const { data: opnieuw, error: fout } = await sb.rpc('word_lid', { p_code: gezin.code, p_lid_naam: gezin.ikNaam ?? '' });
+      if (fout) throw fout;
+      if (alsGezin(opnieuw, '')?.id !== gezin.id) {
+        await koppelLos();
+        return;
+      }
     }
-    await haalOp(gezin);
+    if (gezin.eersteSamenvoeging) {
+      // De eerste samenvoeging na het aansluiten lukte vorige keer niet: nu opnieuw (WEEK-27).
+      await haalOp(gezin, true);
+      await bewaarGezin({ ...gezin, eersteSamenvoeging: undefined });
+      meld('gezin');
+    } else {
+      await haalOp(gezin);
+    }
     await verstuur();
     if (!kanaal) await abonneer(gezin);
   } catch {
@@ -456,9 +499,12 @@ async function start(): Promise<void> {
 
 async function koppel(gezin: Gezin): Promise<void> {
   stopAbonnement();
-  await bewaarGezin(gezin);
-  await haalOp(gezin, true);
+  // Eerst onthouden dat de eerste samenvoeging nog moet gebeuren; pas als ze lukt, valt die vlag weg.
+  // Mislukt ze (netwerk, app gesloten), dan probeert start() ze opnieuw (WEEK-27).
+  await bewaarGezin({ ...gezin, eersteSamenvoeging: true });
   meld('gezin');
+  await haalOp(gezin, true);
+  await bewaarGezin(gezin);
   await verstuur();
   await abonneer(gezin);
 }
