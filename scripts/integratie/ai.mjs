@@ -58,5 +58,9 @@ for (const d of inhoud.dagen) {
   assert.ok(d.recept.naam && d.recept.ingredienten.length > 0);
   assert.notEqual(d.recept.soort, 'vis', 'geen vis');
 }
+// Gratis: 1 AI-vraag per dag (WEEK-33) — een tweede vraag van hetzelfde toestel wordt geweigerd.
+const tweede = await roep(auth);
+assert.equal(tweede.status, 429, `tweede vraag: verwacht 429 (daglimiet), kreeg ${tweede.status}`);
+console.log('✓ daglimiet gratis (1 per dag) werkt (429)');
 console.log(`::notice::AI-PLANNER WERKT: ${inhoud.dagen.map((d) => `${d.dag}: ${d.recept.naam} (${d.recept.minuten} min)`).join(' | ')}`);
 process.exit(0);

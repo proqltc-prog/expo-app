@@ -55,7 +55,7 @@ De AI loopt via de server-functie `plan-week` in hetzelfde Supabase-project als 
 
 - de Anthropic API-sleutel staat enkel op de server, als secret `ANTHROPIC_API_KEY` (dashboard › Edge Functions › Secrets); standaardmodel Claude Haiku 5.5, het goedkoopste: ongeveer $0,001 per weekmenu. Een ander model kies je met het secret `PLANNER_MODEL`, bv. `claude-sonnet-5-5`, dat ongeveer $0,025 per weekmenu kost;
 - enkel aangemelde toestellen (anonieme sessie van de app) mogen de functie gebruiken;
-- daglimiet per toestel (per 24 uur): **5** gratis, **30** voor een betalend gezin (`ai_toegestaan()` en `ai_daglimiet()` in de database). Bij de limiet toont de app een melding en een voorstel uit de receptenbank;
+- daglimiet per gezin per kalenderdag (Belgische tijd): **1** gratis, **3** voor een betalend gezin. Een toestel zonder gezin telt als een gezin van één (`ai_toegestaan()`, `ai_daglimiet()` en `ai_tegoed()` in de database). De app toont hoeveel AI-voorstellen er vandaag nog over zijn. Bij de limiet komt het voorstel uit de receptenbank, ook bij ↻;
 - een gezin betalend zetten (tot er een betaalsysteem is) doet de beheerder in de SQL-editor:
   ```sql
   insert into public.gezin_abonnement (gezin_id, betalend_tot)

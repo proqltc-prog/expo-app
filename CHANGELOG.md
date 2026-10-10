@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.19.0] – 2026-10-11
+
+AI-limiet per gezin: 1 AI-voorstel per dag (gratis) of 3 (betalend gezin).
+
+- Jira: [WEEK-33](https://proqltc-1791495894841.atlassian.net/browse/WEEK-33)
+- Confluence: [WEEK-33 – AI-limiet per gezin](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2228284)
+
+### Gewijzigd
+- Alle toestellen van een gezin delen de daglimiet. Een nieuwe dag begint om middernacht (Belgische tijd).
+- Gratis: 1 AI-voorstel per dag. Betalend gezin: 3. Daarna komt het voorstel uit de receptenbank, ook bij ↻.
+
+### Toegevoegd
+- Onder de knop staat hoeveel AI-voorstellen er vandaag nog over zijn (in 6 talen).
+
 ## [0.18.1] – 2026-10-10
 
 De AI-planner gebruikt standaard het goedkoopste model.

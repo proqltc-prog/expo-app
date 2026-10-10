@@ -14,7 +14,8 @@ import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favo
 import { laadFavorieten, wijzigFavorieten } from '@/opslag/favorieten';
 import { laadGezin } from '@/opslag/sync';
 import { trekFrigoAf } from '@/lib/frigo';
-import { aiPlanner as AI } from '@/opslag/supabase';
+import { aiPlanner as AI, aiTegoed } from '@/opslag/supabase';
+import { AiTegoed, tegoedTekst } from '@/lib/planner/tegoed';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
@@ -94,12 +95,17 @@ export default function Weekplanning() {
     bewaarKeuzes({ kooktijden, stijlen: nieuw });
   };
 
+  // AI-tegoed van vandaag (WEEK-33): na elke AI-vraag opnieuw ophalen.
+  const [tegoed, setTegoed] = useState<AiTegoed | null>(null);
+  const vernieuwTegoed = () => aiTegoed().then(setTegoed);
+
   // Bij elk bezoek opnieuw laden: frigo of lijst kunnen het plan intussen aangepast hebben (WEEK-13).
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then(setProfiel);
       laadPlan().then(setPlan);
       laadFavorieten().then(setFavorieten);
+      aiTegoed().then(setTegoed);
     }, [])
   );
 
@@ -122,6 +128,7 @@ export default function Weekplanning() {
       await bewaarOpdrachten(geschiedenis);
     } finally {
       setBezig(false);
+      if (modus === 'nieuw') vernieuwTegoed();
     }
   };
 
@@ -143,6 +150,7 @@ export default function Weekplanning() {
       if (bewaard) setPlan(bewaard);
     } finally {
       setBezigDag(null);
+      if (plan.bron !== 'favorieten') vernieuwTegoed();
     }
   };
 
@@ -251,6 +259,10 @@ export default function Weekplanning() {
       <Pressable style={[s.knop, bezig && s.uit]} onPress={maakPlan} disabled={bezig || !profiel}>
         {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
       </Pressable>
+      {modus === 'nieuw' && tegoed && (() => {
+        const { sleutel, waarden } = tegoedTekst(tegoed);
+        return <Text style={s.tegoed}>{t(sleutel, waarden)}</Text>;
+      })()}
 
       {favorieten.length > 0 && (
         <Pressable onPress={() => router.navigate('/kookboek')}>
@@ -359,6 +371,7 @@ const s = StyleSheet.create({
   vorigeTekst: { color: '#1f5c3a' },
   leeg: { color: '#777', textAlign: 'center', marginTop: 8 },
   bron: { color: '#999', fontSize: 12 },
+  tegoed: { color: '#666', fontSize: 12, textAlign: 'center', marginTop: 6 },
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },
   dag: { fontSize: 13, color: '#777', fontWeight: '600' },
   kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
