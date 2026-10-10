@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { LijstItem } from '@/lib/lijst';
+import { LijstItem, LijstRegel, samenvoegen, vinkAf } from '@/lib/lijst';
 import { bewaarLijst, laadLijst } from '@/opslag/lijst';
 import { categorieNaam, hoeveelheidTekst } from '@/i18n';
 import { useTaal } from '@/ui/taal';
@@ -24,8 +24,8 @@ export default function Lijst() {
     bewaarLijst(volgende);
   };
 
-  const toggle = (id: string) =>
-    wijzig(items.map((i) => (i.id === id ? { ...i, afgevinkt: !i.afgevinkt } : i)));
+  // Een regel kan uit meerdere recepten komen; afvinken geldt voor alle onderliggende items.
+  const toggle = (regel: LijstRegel) => wijzig(vinkAf(items, regel.ids, !regel.afgevinkt));
 
   const voegToe = () => {
     const naam = nieuw.trim();
@@ -34,13 +34,15 @@ export default function Lijst() {
     setNieuw('');
   };
 
-  const secties = useMemo(() => {
-    const per = new Map<string, LijstItem[]>();
-    items.forEach((i) => per.set(i.categorie, [...(per.get(i.categorie) ?? []), i]));
-    return [...per.entries()].map(([categorie, data]) => ({ title: categorieNaam(taal, categorie), data }));
-  }, [items, taal]);
+  const regels = useMemo(() => samenvoegen(items), [items]);
 
-  const open = items.filter((i) => !i.afgevinkt).length;
+  const secties = useMemo(() => {
+    const per = new Map<string, LijstRegel[]>();
+    regels.forEach((r) => per.set(r.categorie, [...(per.get(r.categorie) ?? []), r]));
+    return [...per.entries()].map(([categorie, data]) => ({ title: categorieNaam(taal, categorie), data }));
+  }, [regels, taal]);
+
+  const open = regels.filter((r) => !r.afgevinkt).length;
 
   return (
     <View style={s.scherm}>
@@ -58,14 +60,14 @@ export default function Lijst() {
         </Pressable>
       </View>
       <Text style={s.teller}>
-        {items.length ? t('lijst.teller', { open, totaal: items.length }) : t('lijst.leeg')}
+        {regels.length ? t('lijst.teller', { open, totaal: regels.length }) : t('lijst.leeg')}
       </Text>
       <SectionList
         sections={secties}
-        keyExtractor={(i) => i.id}
+        keyExtractor={(r) => r.sleutel}
         renderSectionHeader={({ section }) => <Text style={s.kop}>{section.title}</Text>}
         renderItem={({ item }) => (
-          <Pressable style={s.item} onPress={() => toggle(item.id)}>
+          <Pressable style={s.item} onPress={() => toggle(item)}>
             <View style={[s.vinkje, item.afgevinkt && s.vinkjeAan]}>
               {item.afgevinkt && <Text style={s.vinkjeTekst}>✓</Text>}
             </View>

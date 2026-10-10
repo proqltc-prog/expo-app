@@ -31,9 +31,9 @@ export const de: Vertalingen = {
   'eenheid.teentje_n': '{n} Zehen',
 
   'menu.voorPersonen': 'Für {personen} · Familie bearbeiten ›',
-  'menu.naarLijst': 'Auf die Einkaufsliste',
+  'menu.naarLijst': 'Zur Einkaufsliste hinzufügen',
   'menu.klaar.titel': 'Fertig',
-  'menu.klaar.tekst': 'Die Einkaufsliste wurde erstellt.',
+  'menu.klaar.tekst': '{n} Zutaten aus deiner Wochenplanung stehen auf der Einkaufsliste.',
 
   'planning.intro': 'Beschreibe deine Woche und lass dir ein Menü vorschlagen. Dein Familienprofil wird automatisch berücksichtigt.',
   'planning.placeholder': 'Beschreibe dein Wochenmenü: wie viele Tage, wie abwechslungsreich, ohne Fleisch, auf den Nutri-Score achten, schnell…',

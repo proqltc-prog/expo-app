@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
-import { lijstUitPlan } from '@/lib/lijst';
+import { aantalReceptRegels, voegPlanToe } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
-import { bewaarLijst } from '@/opslag/lijst';
+import { bewaarLijst, laadLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarOpdrachten, bewaarPlan, laadKeuzes, laadOpdrachten, laadPlan } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { dagSleutel } from '@/i18n';
@@ -108,8 +108,9 @@ export default function Weekplanning() {
 
   const naarLijst = async () => {
     if (!plan) return;
-    await bewaarLijst(lijstUitPlan(plan.dagen, taal));
-    Alert.alert(t('menu.klaar.titel'), t('menu.klaar.tekst'));
+    const lijst = voegPlanToe(await laadLijst(), plan.dagen, taal);
+    await bewaarLijst(lijst);
+    Alert.alert(t('menu.klaar.titel'), t('menu.klaar.tekst', { n: aantalReceptRegels(lijst) }));
     router.navigate('/lijst');
   };
 

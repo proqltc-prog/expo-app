@@ -31,9 +31,9 @@ export const en: Vertalingen = {
   'eenheid.teentje_n': '{n} cloves',
 
   'menu.voorPersonen': 'For {personen} · edit family ›',
-  'menu.naarLijst': 'Add to shopping list',
+  'menu.naarLijst': 'Add items to shopping list',
   'menu.klaar.titel': 'Done',
-  'menu.klaar.tekst': 'The shopping list has been created.',
+  'menu.klaar.tekst': '{n} ingredients from your weekly plan are on the shopping list.',
 
   'planning.intro': 'Describe your week and get a suggested menu. Your family profile is included automatically.',
   'planning.placeholder': 'Describe your weekly menu: how many days, how varied, no meat, mind the Nutri-Score, quick to make…',

@@ -33,7 +33,7 @@ export const es: Vertalingen = {
   'menu.voorPersonen': 'Para {personen} · editar familia ›',
   'menu.naarLijst': 'Añadir a la lista de la compra',
   'menu.klaar.titel': 'Listo',
-  'menu.klaar.tekst': 'Se ha creado la lista de la compra.',
+  'menu.klaar.tekst': '{n} ingredientes de tu planificación están en la lista de la compra.',
 
   'planning.intro': 'Describe tu semana y recibe un menú. Tu perfil familiar se incluye automáticamente.',
   'planning.placeholder': 'Describe tu menú semanal: cuántos días, cuánta variedad, sin carne, atención al Nutri-Score, rápido…',
