@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.18.1] – 2026-10-10
+
+De AI-planner gebruikt standaard het goedkoopste model.
+
+- Jira: [WEEK-32](https://proqltc-1791495894841.atlassian.net/browse/WEEK-32)
+- Confluence: [WEEK-32 – AI-planner op het goedkoopste model](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2195632)
+
+### Gewijzigd
+- Standaardmodel Claude Haiku 5.5 in plaats van Sonnet 5.5. Een weekmenu kost ongeveer $0,001 in plaats van $0,025. Een ander model kan met het secret `PLANNER_MODEL`.
+
 ## [0.18.0] – 2026-10-10
 
 De AI-planner werkt standaard in de app, via de server-functie in Supabase, met aanmelding en een limiet.

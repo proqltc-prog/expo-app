@@ -7,13 +7,13 @@
 // Uitrollen:
 //   supabase functions deploy plan-week
 //   supabase secrets set ANTHROPIC_API_KEY=sk-ant-...      (verplicht)
-//   supabase secrets set PLANNER_MODEL=claude-sonnet-5-5   (optioneel)
+//   supabase secrets set PLANNER_MODEL=claude-sonnet-5-5   (optioneel; standaard claude-haiku-5-5, het goedkoopste)
 //
 // Zie README.md › "AI-planner".
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { gebruikersBericht, systeemPrompt, WEEKPLAN_SCHEMA, type AiVerzoek } from '../../../src/lib/planner/aiPrompt.ts';
+import { gebruikersBericht, STANDAARD_MODEL, systeemPrompt, WEEKPLAN_SCHEMA, type AiVerzoek } from '../../../src/lib/planner/aiPrompt.ts';
 
-const MODEL = Deno.env.get('PLANNER_MODEL') ?? 'claude-sonnet-5-5';
+const MODEL = Deno.env.get('PLANNER_MODEL') || STANDAARD_MODEL;
 const TALEN = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
 

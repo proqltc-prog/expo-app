@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { AiFout, bouwAiVerzoek, leesAiAntwoord, planWeek } from '@/lib/planner/ai';
-import { gebruikersBericht, systeemPrompt, TAALNAAM, WEEKPLAN_SCHEMA } from '@/lib/planner/aiPrompt';
+import { gebruikersBericht, STANDAARD_MODEL, systeemPrompt, TAALNAAM, WEEKPLAN_SCHEMA } from '@/lib/planner/aiPrompt';
 import type { DagCode, PlanVerzoek } from '@/lib/planner/types';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 import { TALEN } from '@/i18n';
@@ -37,6 +37,10 @@ function nepFetch(body: unknown, status = 200) {
 }
 
 describe('gedeelde AI-afspraken', () => {
+  test('standaard het goedkoopste Claude-model (WEEK-32)', () => {
+    assert.equal(STANDAARD_MODEL, 'claude-haiku-5-5');
+  });
+
   test('elke app-taal heeft een taalnaam voor de AI', () => {
     for (const taal of TALEN) assert.ok(TAALNAAM[taal]);
   });

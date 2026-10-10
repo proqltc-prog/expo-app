@@ -21,6 +21,12 @@ export type AiVerzoek = {
   frigo?: string[];
 };
 
+/**
+ * Standaardmodel van de server-functie (WEEK-32): het goedkoopste Claude-model.
+ * Een ander model kiezen kan met het secret PLANNER_MODEL in Supabase.
+ */
+export const STANDAARD_MODEL = 'claude-haiku-5-5';
+
 export const TAALNAAM: Record<AiTaal, string> = {
   nl: 'Dutch (as spoken in Flanders, Belgium)',
   fr: 'French (as spoken in Belgium)',
