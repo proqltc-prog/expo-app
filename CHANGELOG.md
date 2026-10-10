@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.17.2] – 2026-10-10
+
+Bugfix: lijstitems hebben per weekplan een eigen id (gevonden bij een onafhankelijke review).
+
+- Jira: [WEEK-29](https://proqltc-1791495894841.atlassian.net/browse/WEEK-29)
+- Confluence: [WEEK-29 – Lijstitems per weekplan een eigen id](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2228246)
+
+### Opgelost
+- Hetzelfde gerecht in een volgende week bracht de frigo in de war (nieuw gekocht kwam niet in de frigo, restjes werden opnieuw gekocht).
+- Hetzelfde ingrediënt twee keer in één recept wordt één item met de som.
+
 ## [0.17.1] – 2026-10-10
 
 Bugfix: synchronisatie van de gezinsruimte robuuster (gevonden bij een onafhankelijke review).

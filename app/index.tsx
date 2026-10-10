@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
-import { aantalReceptRegels, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
+import { aantalReceptRegels, planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
@@ -166,8 +166,9 @@ export default function Weekplanning() {
   // Ingrediënt ontbreekt (WEEK-13): opnieuw op de boodschappenlijst zetten.
   const ontbrekendOpLijst = async (index: number) => {
     const dag = plan?.dagen[index];
-    if (!dag?.ontbreekt?.length) return;
-    await wijzigLijst((items) => zetOntbrekendOpLijst(items, dag, dag.ontbreekt ?? []));
+    if (!plan || !dag?.ontbreekt?.length) return;
+    const sleutel = planSleutel(plan);
+    await wijzigLijst((items) => zetOntbrekendOpLijst(items, dag, dag.ontbreekt ?? [], sleutel));
     Alert.alert(t('menu.klaar.titel'), t('planning.opLijstKlaar', { namen: dag.ontbreekt.join(', ') }));
   };
 
@@ -177,11 +178,17 @@ export default function Weekplanning() {
     const frigo = await laadFrigo();
     let inHuis = 0;
     const lijst = await wijzigLijst((bestaand) =>
-      voegPlanToe(bestaand, plan.dagen, taal, (items) => {
-        const over = trekFrigoAf(items, frigo);
-        inHuis = items.length - over.length;
-        return over;
-      })
+      voegPlanToe(
+        bestaand,
+        plan.dagen,
+        taal,
+        (items) => {
+          const over = trekFrigoAf(items, frigo);
+          inHuis = items.length - over.length;
+          return over;
+        },
+        planSleutel(plan)
+      )
     );
     const n = aantalReceptRegels(lijst);
     Alert.alert(t('menu.klaar.titel'), inHuis ? t('menu.klaar.inHuis', { n, m: inHuis }) : t('menu.klaar.tekst', { n }));

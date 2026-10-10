@@ -47,20 +47,43 @@ export type LijstRegel = {
 
 const klein = (t: string) => t.trim().toLocaleLowerCase();
 
-/** Eén item per ingrediënt per recept, zodat de lijst later ook per recept getoond kan worden. */
-export function itemsUitPlan(dagen: readonly PlanDag[]): LijstItem[] {
-  return dagen.flatMap(({ dag, recept }) =>
-    recept.ingredienten.map((ing) => ({
-      id: `recept-${dag}-${klein(ing.naam)}-${ing.eenheid}`,
-      naam: ing.naam,
-      categorie: 'avondeten',
-      afgevinkt: false,
-      hoeveelheid: ing.hoeveelheid,
-      eenheid: ing.eenheid,
-      afdeling: ing.afdeling,
-      recept: { dag, naam: recept.naam },
-    }))
-  );
+/**
+ * Sleutel van een weekplan (uit het tijdstip waarop het gemaakt werd), zodat lijstitems van verschillende
+ * weken nooit dezelfde id krijgen (WEEK-29). Hetzelfde plan geeft altijd dezelfde sleutel.
+ */
+export function planSleutel(plan: { gemaaktOp: string }): string {
+  const t = Date.parse(plan.gemaaktOp);
+  return Number.isNaN(t) ? klein(plan.gemaaktOp).replace(/[^a-z0-9]+/g, '') || 'plan' : t.toString(36);
+}
+
+/**
+ * Eén item per ingrediënt per recept, zodat de lijst later ook per recept getoond kan worden.
+ * Staat hetzelfde ingrediënt (naam + eenheid) twee keer in één recept, dan wordt het samengeteld (WEEK-29).
+ * `sleutel`: zie planSleutel(); zonder sleutel het oude id-formaat.
+ */
+export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): LijstItem[] {
+  const items: LijstItem[] = [];
+  for (const { dag, recept } of dagen) {
+    for (const ing of recept.ingredienten) {
+      const id = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${klein(ing.naam)}-${ing.eenheid}`;
+      const bestaand = items.find((i) => i.id === id);
+      if (bestaand) {
+        bestaand.hoeveelheid = Math.round(((bestaand.hoeveelheid ?? 0) + ing.hoeveelheid) * 100) / 100;
+        continue;
+      }
+      items.push({
+        id,
+        naam: ing.naam,
+        categorie: 'avondeten',
+        afgevinkt: false,
+        hoeveelheid: ing.hoeveelheid,
+        eenheid: ing.eenheid,
+        afdeling: ing.afdeling,
+        recept: { dag, naam: recept.naam },
+      });
+    }
+  }
+  return items;
 }
 
 /** De vaste items (ontbijt, school, huishouden) in de taal van de gebruiker. */
@@ -89,10 +112,11 @@ export function voegPlanToe(
   bestaand: readonly LijstItem[],
   dagen: readonly PlanDag[],
   taal: Taal,
-  aanpassing: (items: LijstItem[]) => LijstItem[] = (i) => i
+  aanpassing: (items: LijstItem[]) => LijstItem[] = (i) => i,
+  sleutel?: string
 ): LijstItem[] {
   const oud = new Map(bestaand.map((i) => [i.id, i]));
-  const volledig = itemsUitPlan(dagen);
+  const volledig = itemsUitPlan(dagen, sleutel);
   const receptNamen = new Set(volledig.map((i) => klein(i.naam)));
   const uitPlan = aanpassing(volledig).map((i) => {
     const was = oud.get(i.id);
@@ -291,9 +315,9 @@ export function normaliseerLijst(ruw: unknown): LijstItem[] {
  * Zet ontbrekende ingrediënten van één recept (opnieuw) op de boodschappenlijst (WEEK-13).
  * Gebruikt dezelfde ids als bij het overzetten van het plan; een item dat al gekocht was, staat weer open.
  */
-export function zetOntbrekendOpLijst(items: readonly LijstItem[], dag: PlanDag, namen: readonly string[]): LijstItem[] {
+export function zetOntbrekendOpLijst(items: readonly LijstItem[], dag: PlanDag, namen: readonly string[], sleutel?: string): LijstItem[] {
   const gezocht = new Set(namen.map(klein));
-  const nodig = itemsUitPlan([dag]).filter((i) => gezocht.has(klein(i.naam)));
+  const nodig = itemsUitPlan([dag], sleutel).filter((i) => gezocht.has(klein(i.naam)));
   const ids = new Set(nodig.map((i) => i.id));
   const bestaand = new Set(items.map((i) => i.id));
   const bijgewerkt = items.map((i) => {

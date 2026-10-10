@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, LijstItem, normaliseerLijst, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, planSleutel, LijstItem, normaliseerLijst, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
@@ -268,5 +268,47 @@ describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
   test('inlezen bewaart afgevinktDoor enkel bij een afgevinkt item', () => {
     assert.equal(leesLijstItem({ id: 'a', naam: 'a', afgevinkt: true, afgevinktDoor: 'Pauline' })!.afgevinktDoor, 'Pauline');
     assert.ok(!('afgevinktDoor' in leesLijstItem({ id: 'a', naam: 'a', afgevinkt: false, afgevinktDoor: 'Pauline' })!));
+  });
+});
+
+describe('lijstitems per weekplan (WEEK-29)', () => {
+  test('planSleutel: hetzelfde plan geeft dezelfde sleutel, een ander plan een andere', () => {
+    assert.equal(planSleutel({ gemaaktOp: '2026-10-10T10:00:00.000Z' }), planSleutel({ gemaaktOp: '2026-10-10T10:00:00.000Z' }));
+    assert.notEqual(planSleutel({ gemaaktOp: '2026-10-10T10:00:00.000Z' }), planSleutel({ gemaaktOp: '2026-10-17T10:00:00.000Z' }));
+    assert.match(planSleutel({ gemaaktOp: 'raar!' }), /^[a-z0-9]+$/);
+  });
+  test('dezelfde maaltijd in twee weken krijgt verschillende ids', () => {
+    const week1 = itemsUitPlan(dagen, 'a1');
+    const week2 = itemsUitPlan(dagen, 'b2');
+    assert.ok(week1.every((i) => !week2.some((j) => j.id === i.id)));
+    assert.ok(week1[0].id.startsWith('recept-a1-zondag-'));
+  });
+  test('hetzelfde ingrediënt twee keer in één recept wordt één item met de som', () => {
+    const dubbel: PlanDag[] = [{ dag: 'maandag', recept: recept('Salade', [
+      { naam: 'olijfolie', hoeveelheid: 15, eenheid: 'ml', afdeling: 'conserven-sauzen' },
+      { naam: 'Olijfolie', hoeveelheid: 30, eenheid: 'ml', afdeling: 'conserven-sauzen' },
+      { naam: 'olijfolie', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'conserven-sauzen' },
+    ]) }];
+    const items = itemsUitPlan(dubbel, 'x');
+    assert.equal(new Set(items.map((i) => i.id)).size, items.length);
+    assert.deepEqual(items.map((i) => [i.eenheid, i.hoeveelheid]), [['ml', 45], ['stuk', 1]]);
+  });
+  test('opnieuw overzetten van hetzelfde plan behoudt vinkjes; een nieuw plan vervangt de items', () => {
+    const eerst = voegPlanToe([], dagen, 'nl', undefined, 'w1');
+    const gekocht = vinkAf(eerst, [eerst[0].id], true);
+    const opnieuw = voegPlanToe(gekocht, dagen, 'nl', undefined, 'w1');
+    assert.equal(opnieuw.find((i) => i.id === eerst[0].id)?.afgevinkt, true);
+    const volgendeWeek = voegPlanToe(gekocht, dagen, 'nl', undefined, 'w2');
+    assert.ok(volgendeWeek.filter((i) => i.recept).every((i) => i.id.includes('-w2-') && !i.afgevinkt));
+  });
+  test('frigo: restjes van vorige week worden afgetrokken en het nieuw gekochte komt erbij', async () => {
+    const { pasFrigoAan, trekFrigoAf } = await import('@/lib/frigo');
+    const week1 = itemsUitPlan(dagen, 'w1');
+    const frigo = pasFrigoAan([], [week1[0]], true, new Date('2026-10-03T10:00:00Z')); // 300 g pasta gekocht, niet opgegeten
+    const week2 = itemsUitPlan(dagen, 'w2');
+    // de restjes tellen als "al in huis" voor de nieuwe week
+    assert.ok(!trekFrigoAf(week2, frigo).some((i) => i.id === week2[0].id));
+    // en wie toch opnieuw koopt, krijgt een tweede exemplaar in de frigo
+    assert.equal(pasFrigoAan(frigo, [week2[0]], true, new Date('2026-10-10T10:00:00Z')).length, 2);
   });
 });
