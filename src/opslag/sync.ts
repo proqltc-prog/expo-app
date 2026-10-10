@@ -28,7 +28,7 @@ import { SLEUTEL } from './sleutels';
 import { supabase, zorgVoorSessie } from './supabase';
 import { naElkaar } from './wachtrij';
 
-export type Gezin = { id: string; naam: string; code: string };
+export type Gezin = { id: string; naam: string; code: string; /** Naam van dit toestel binnen het gezin. */ ikNaam?: string };
 export type GezinsLid = { id: string; naam: string; ikZelf: boolean };
 export type SyncStatus = 'uit' | 'verbonden' | 'offline';
 export type Gebeurtenis = ItemSoort | DocumentSleutel | 'leden' | 'gezin' | 'status';
@@ -109,7 +109,10 @@ let gezinCache: Gezin | null = null;
 export async function laadGezin(): Promise<Gezin | null> {
   if (gezinGeladen) return gezinCache;
   const ruw = (await leesJson(SLEUTEL.gezin)) as Partial<Gezin> | null;
-  gezinCache = ruw && typeof ruw.id === 'string' && typeof ruw.code === 'string' ? { id: ruw.id, naam: ruw.naam ?? '', code: ruw.code } : null;
+  gezinCache =
+    ruw && typeof ruw.id === 'string' && typeof ruw.code === 'string'
+      ? { id: ruw.id, naam: ruw.naam ?? '', code: ruw.code, ...(typeof ruw.ikNaam === 'string' && ruw.ikNaam ? { ikNaam: ruw.ikNaam } : {}) }
+      : null;
   gezinGeladen = true;
   return gezinCache;
 }
@@ -449,9 +452,10 @@ async function koppelLos(): Promise<void> {
 
 type GezinRij = { id: string | null; naam: string | null; code: string | null } | null;
 
-function alsGezin(data: unknown): Gezin | null {
+function alsGezin(data: unknown, ikNaam: string): Gezin | null {
   const r = (Array.isArray(data) ? data[0] : data) as GezinRij;
-  return r && r.id && r.code ? { id: r.id, naam: r.naam ?? '', code: r.code } : null;
+  const naam = ikNaam.trim().slice(0, 40);
+  return r && r.id && r.code ? { id: r.id, naam: r.naam ?? '', code: r.code, ...(naam ? { ikNaam: naam } : {}) } : null;
 }
 
 /** Maakt een nieuwe gezinsruimte en deelt de gegevens van dit toestel. */
@@ -461,7 +465,7 @@ export async function maakGezin(naam: string, lidNaam: string): Promise<Gezin> {
   await zorgVoorSessie();
   const { data, error } = await sb.rpc('maak_gezin', { p_naam: naam, p_lid_naam: lidNaam });
   if (error) throw new Error(error.message);
-  const gezin = alsGezin(data);
+  const gezin = alsGezin(data, lidNaam);
   if (!gezin) throw new Error('onbekend');
   await koppel(gezin);
   return gezin;
@@ -474,7 +478,7 @@ export async function wordLid(code: string, lidNaam: string): Promise<Gezin> {
   await zorgVoorSessie();
   const { data, error } = await sb.rpc('word_lid', { p_code: code, p_lid_naam: lidNaam });
   if (error) throw new Error(error.message);
-  const gezin = alsGezin(data);
+  const gezin = alsGezin(data, lidNaam);
   if (!gezin) throw new Error('onbekende_code');
   await koppel(gezin);
   return gezin;

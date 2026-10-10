@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalReceptRegels, itemsUitPlan, leesLijstItem, LijstItem, normaliseerLijst, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, LijstItem, normaliseerLijst, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
@@ -218,5 +218,55 @@ describe('leesLijstItem / normaliseerLijst (WEEK-8)', () => {
   test('normaliseerLijst slaat onbruikbare items over', () => {
     assert.deepEqual(normaliseerLijst([{ id: 'a', naam: 'a', categorie: 'extra', afgevinkt: false }, null, { id: 'b' }]).map((i) => i.id), ['a']);
     assert.deepEqual(normaliseerLijst({}), []);
+  });
+});
+
+describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
+  const basis = itemsUitPlan(dagen);
+  const pasta = basis.filter((i) => i.naam.toLowerCase() === 'pasta').map((i) => i.id);
+
+  test('afvinken onthoudt wie afvinkte; een vinkje weghalen wist de naam', () => {
+    const afgevinkt = vinkAf(basis, [pasta[0]], true, 'Pauline');
+    assert.equal(afgevinkt.find((i) => i.id === pasta[0])!.afgevinktDoor, 'Pauline');
+    const terug = vinkAf(afgevinkt, [pasta[0]], false, 'Maarten');
+    const item = terug.find((i) => i.id === pasta[0])!;
+    assert.equal(item.afgevinkt, false);
+    assert.ok(!('afgevinktDoor' in item));
+  });
+
+  test('wie al eerder afvinkte, blijft staan als een ander de hele regel afvinkt', () => {
+    const een = vinkAf(basis, [pasta[0]], true, 'Pauline');
+    const twee = vinkAf(een, pasta, true, 'Maarten');
+    assert.deepEqual(twee.filter((i) => pasta.includes(i.id)).map((i) => i.afgevinktDoor), ['Pauline', 'Maarten']);
+    const [regel] = samenvoegen(twee.filter((i) => pasta.includes(i.id)), { overCategorieen: true });
+    assert.deepEqual(regel.afgevinktDoor, ['Pauline', 'Maarten']);
+  });
+
+  test('zonder gezinsruimte (geen naam) wordt er geen naam bewaard', () => {
+    const item = vinkAf(basis, [pasta[0]], true).find((i) => i.id === pasta[0])!;
+    assert.equal(item.afgevinkt, true);
+    assert.ok(!('afgevinktDoor' in item));
+  });
+
+  test('een regel toont wie het item toevoegde, en enkel de namen van wat echt afgevinkt is', () => {
+    const items: LijstItem[] = [
+      { id: 'extra-1', naam: 'wc-papier', categorie: 'extra', afgevinkt: false, door: 'Pauline' },
+      { id: 'extra-2', naam: 'WC-papier', categorie: 'extra', afgevinkt: false, afgevinktDoor: 'oud' },
+    ];
+    const [regel] = samenvoegen(items);
+    assert.equal(regel.door, 'Pauline');
+    assert.deepEqual(regel.afgevinktDoor, []);
+  });
+
+  test('eigenItem: met naam van wie toevoegde, lege tekst = niets', () => {
+    const nu = new Date('2026-10-10T12:00:00Z');
+    assert.deepEqual(eigenItem('  chips ', nu, 'Maarten'), { id: `extra-${nu.getTime()}`, naam: 'chips', categorie: 'extra', afgevinkt: false, door: 'Maarten' });
+    assert.deepEqual(eigenItem('chips', nu), { id: `extra-${nu.getTime()}`, naam: 'chips', categorie: 'extra', afgevinkt: false });
+    assert.equal(eigenItem('   ', nu, 'Maarten'), null);
+  });
+
+  test('inlezen bewaart afgevinktDoor enkel bij een afgevinkt item', () => {
+    assert.equal(leesLijstItem({ id: 'a', naam: 'a', afgevinkt: true, afgevinktDoor: 'Pauline' })!.afgevinktDoor, 'Pauline');
+    assert.ok(!('afgevinktDoor' in leesLijstItem({ id: 'a', naam: 'a', afgevinkt: false, afgevinktDoor: 'Pauline' })!));
   });
 });
