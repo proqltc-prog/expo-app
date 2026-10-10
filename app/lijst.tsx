@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
-import { bewaarLijst, bewaarWeergave, laadLijst, laadWeergave } from '@/opslag/lijst';
+import { bewaarWeergave, laadLijst, laadWeergave, wijzigLijst } from '@/opslag/lijst';
+import { bijWijziging } from '@/opslag/sync';
 import { pasFrigoAan } from '@/lib/frigo';
 import { wijzigFrigo } from '@/opslag/frigo';
 import { categorieNaam, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
@@ -20,15 +21,19 @@ export default function Lijst() {
     laadWeergave().then(setWeergave);
   }, []);
 
+  // Live: een ander gezinslid vinkte iets af of voegde iets toe (WEEK-8).
+  useEffect(() => bijWijziging('lijst', () => laadLijst().then(setItems)), []);
+
   useFocusEffect(
     useCallback(() => {
       laadLijst().then(setItems);
     }, [])
   );
 
-  const wijzig = (volgende: LijstItem[]) => {
-    setItems(volgende);
-    bewaarLijst(volgende);
+  // Meteen tonen, en daarna de versie uit de opslag (die ook wijzigingen van het gezin bevat).
+  const wijzig = (wijziging: (items: LijstItem[]) => LijstItem[]) => {
+    setItems(wijziging);
+    wijzigLijst(wijziging).then(setItems);
   };
 
   const kiesWeergave = (w: Weergave) => {
@@ -38,17 +43,23 @@ export default function Lijst() {
 
   // Een regel kan uit meerdere items bestaan; afvinken geldt voor alle onderliggende items.
   // Afvinken = gekocht: het product gaat in de frigo; het vinkje weghalen haalt het er weer uit (WEEK-18).
-  const toggle = (regel: LijstRegel) => {
+  const toggle = async (regel: LijstRegel) => {
     const afgevinkt = !regel.afgevinkt;
-    const onderliggend = items.filter((i) => regel.ids.includes(i.id));
-    wijzig(vinkAf(items, regel.ids, afgevinkt));
-    wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
+    setItems((huidig) => vinkAf(huidig, regel.ids, afgevinkt));
+    let onderliggend: LijstItem[] = [];
+    const nieuw = await wijzigLijst((huidig) => {
+      onderliggend = huidig.filter((i) => regel.ids.includes(i.id));
+      return vinkAf(huidig, regel.ids, afgevinkt);
+    });
+    setItems(nieuw);
+    await wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
   };
 
   const voegToe = () => {
     const naam = nieuw.trim();
     if (!naam) return;
-    wijzig([...items, { id: `extra-${Date.now()}`, naam, categorie: 'extra', afgevinkt: false }]);
+    const item: LijstItem = { id: `extra-${Date.now()}`, naam, categorie: 'extra', afgevinkt: false };
+    wijzig((huidig) => [...huidig, item]);
     setNieuw('');
   };
 
@@ -132,7 +143,7 @@ export default function Lijst() {
         contentContainerStyle={{ paddingBottom: 32 }}
       />
       {items.some((i) => i.afgevinkt) && (
-        <Pressable style={s.wis} onPress={() => wijzig(items.filter((i) => !i.afgevinkt))}>
+        <Pressable style={s.wis} onPress={() => wijzig((huidig) => huidig.filter((i) => !i.afgevinkt))}>
           <Text style={{ color: KLEUR, fontWeight: '600' }}>{t('lijst.wissen')}</Text>
         </Pressable>
       )}

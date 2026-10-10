@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { beoordeel, Oordeel, Product, zoekProduct } from '@/lib/openfoodfacts';
-import { bewaarLijst, laadLijst } from '@/opslag/lijst';
+import { wijzigLijst } from '@/opslag/lijst';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -53,9 +53,8 @@ export default function Scan() {
   };
 
   const accepteer = async (product: Product) => {
-    const lijst = await laadLijst();
     const naam = [product.merk, product.naam || t('scan.onbekend')].filter(Boolean).join(' – ');
-    await bewaarLijst([...lijst, { id: `scan-${product.barcode}-${Date.now()}`, naam, categorie: 'gescand', afgevinkt: true }]);
+    await wijzigLijst((lijst) => [...lijst, { id: `scan-${product.barcode}-${Date.now()}`, naam, categorie: 'gescand', afgevinkt: true }]);
     opnieuw();
   };
 

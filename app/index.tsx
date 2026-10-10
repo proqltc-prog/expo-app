@@ -9,9 +9,10 @@ import { resetDag } from '@/lib/planner/reset';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
-import { bewaarLijst, laadLijst } from '@/opslag/lijst';
+import { wijzigLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarOpdrachten, bewaarPlan, laadKeuzes, laadOpdrachten, laadPlan } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
+import { bijWijziging } from '@/opslag/sync';
 import { dagSleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -61,6 +62,15 @@ export default function Weekplanning() {
     });
   }, []);
 
+  // Live: een ander gezinslid maakte of wijzigde het weekplan of het gezinsprofiel (WEEK-8).
+  useEffect(() => {
+    const stop = [
+      bijWijziging('plan', () => laadPlan().then(setPlan)),
+      bijWijziging('profiel', () => laadProfiel().then(setProfiel)),
+    ];
+    return () => stop.forEach((f) => f());
+  }, []);
+
   const wisselKooktijd = (k: KooktijdCode) => {
     const nieuw = wissel(kooktijden, k);
     setKooktijden(nieuw);
@@ -108,8 +118,7 @@ export default function Weekplanning() {
 
   const naarLijst = async () => {
     if (!plan) return;
-    const lijst = voegPlanToe(await laadLijst(), plan.dagen, taal);
-    await bewaarLijst(lijst);
+    const lijst = await wijzigLijst((bestaand) => voegPlanToe(bestaand, plan.dagen, taal));
     Alert.alert(t('menu.klaar.titel'), t('menu.klaar.tekst', { n: aantalReceptRegels(lijst) }));
     router.navigate('/lijst');
   };

@@ -19,6 +19,8 @@ export type LijstItem = {
   afdeling?: Afdeling;
   /** Het recept waar dit ingrediënt bij hoort (enkel voor items uit de weekplanning). */
   recept?: { dag: DagCode; naam: string };
+  /** Naam van het gezinslid dat het item zelf toevoegde (gedeelde lijst, WEEK-17). */
+  door?: string;
 };
 
 /** Een regel zoals hij op het scherm staat: hetzelfde ingrediënt uit verschillende recepten samengeteld. */
@@ -217,4 +219,33 @@ export function secties(items: readonly LijstItem[], weergave: Weergave): LijstS
 
 export function isWeergave(w: unknown): w is Weergave {
   return w === 'recept' || w === 'categorie';
+}
+
+// ── Inlezen (WEEK-8) ──
+
+const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+
+/** Leest één lijstitem veilig in (uit opslag of van een ander toestel); null als het onbruikbaar is. */
+export function leesLijstItem(ruw: unknown): LijstItem | null {
+  if (!isObject(ruw) || typeof ruw.id !== 'string' || !ruw.id || typeof ruw.naam !== 'string' || !ruw.naam.trim()) return null;
+  const recept = isObject(ruw.recept) && WEEKDAGEN.includes(ruw.recept.dag as DagCode) && typeof ruw.recept.naam === 'string'
+    ? { dag: ruw.recept.dag as DagCode, naam: ruw.recept.naam }
+    : undefined;
+  const hoeveelheid = typeof ruw.hoeveelheid === 'number' && Number.isFinite(ruw.hoeveelheid) && ruw.hoeveelheid >= 0 ? ruw.hoeveelheid : undefined;
+  return {
+    id: ruw.id,
+    naam: ruw.naam,
+    categorie: typeof ruw.categorie === 'string' && ruw.categorie ? ruw.categorie : 'extra',
+    afgevinkt: ruw.afgevinkt === true,
+    ...(hoeveelheid !== undefined ? { hoeveelheid } : {}),
+    ...(typeof ruw.eenheid === 'string' ? { eenheid: ruw.eenheid } : {}),
+    ...(typeof ruw.afdeling === 'string' && (AFDELINGEN as string[]).includes(ruw.afdeling) ? { afdeling: ruw.afdeling as Afdeling } : {}),
+    ...(recept ? { recept } : {}),
+    ...(typeof ruw.door === 'string' && ruw.door ? { door: ruw.door } : {}),
+  };
+}
+
+/** Leest een bewaarde lijst veilig in; onbruikbare items worden overgeslagen. */
+export function normaliseerLijst(ruw: unknown): LijstItem[] {
+  return Array.isArray(ruw) ? ruw.map(leesLijstItem).filter((i): i is LijstItem => i !== null) : [];
 }
