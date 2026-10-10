@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.16.0] – 2026-10-10
+
+Favorieten: een geslaagd recept bewaren in het gezinskookboek.
+
+- Jira: [WEEK-21](https://proqltc-1791495894841.atlassian.net/browse/WEEK-21)
+- Confluence: [WEEK-21 – Geslaagd recept opslaan als favoriet](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2228226)
+
+### Toegevoegd
+- **☆ Geslaagd? Bewaar als favoriet** op een gekookte dag; bewaart naam, stijl, kooktijd, ingrediënten en aantal personen.
+- Scherm **Kookboek** (via het weekmenu) met alle favorieten, ingrediënten en verwijderen.
+- Favorieten worden gedeeld via de gezinsruimte.
+
 ## [0.15.1] – 2026-10-10
 
 Bugfix: na een lange stilte kwam de eerste wijziging van een gezinslid niet live binnen.
