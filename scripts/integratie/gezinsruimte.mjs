@@ -46,6 +46,8 @@ try {
     const { data, error } = await sb.auth.signInAnonymously();
     assert.ifError(error);
     assert.ok(data.user?.id, `${naam} aangemeld`);
+    // zoals de app (WEEK-25): Realtime het toegangstoken geven vóór het inschrijven
+    await sb.realtime.setAuth(data.session.access_token);
   }
   stap('drie toestellen anoniem aangemeld');
 
