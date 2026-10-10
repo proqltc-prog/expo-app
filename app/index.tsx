@@ -76,7 +76,7 @@ export default function Weekplanning() {
     }, [])
   );
 
-  const planWeek = async () => {
+  const maakPlan = async () => {
     if (!profiel || bezig) return;
     setBezig(true);
     try {
@@ -133,7 +133,7 @@ export default function Weekplanning() {
         </View>
       )}
 
-      <Pressable style={[s.knop, bezig && s.uit]} onPress={planWeek} disabled={bezig || !profiel}>
+      <Pressable style={[s.knop, bezig && s.uit]} onPress={maakPlan} disabled={bezig || !profiel}>
         {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
       </Pressable>
 
