@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalReceptRegels, itemsUitPlan, LijstItem, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { aantalReceptRegels, itemsUitPlan, leesLijstItem, LijstItem, normaliseerLijst, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
@@ -194,5 +194,29 @@ describe('weergaven (WEEK-16)', () => {
     const { isWeergave } = await import('@/lib/lijst');
     assert.ok(isWeergave('recept') && isWeergave('categorie'));
     assert.ok(!isWeergave('alfabet'));
+  });
+});
+
+describe('leesLijstItem / normaliseerLijst (WEEK-8)', () => {
+  test('leest een volledig item ongewijzigd in', () => {
+    const [i] = itemsUitPlan(dagen);
+    assert.deepEqual(leesLijstItem(JSON.parse(JSON.stringify(i))), i);
+    const eigen = { id: 'extra-1', naam: 'wc-papier', categorie: 'extra', afgevinkt: true, door: 'Pauline' };
+    assert.deepEqual(leesLijstItem(eigen), eigen);
+  });
+  test('vult ontbrekende velden aan en laat foute velden weg', () => {
+    assert.deepEqual(
+      leesLijstItem({ id: 'x', naam: 'melk', hoeveelheid: -1, afdeling: 'maan', recept: { dag: 'feestdag', naam: 'r' }, afgevinkt: 'ja' }),
+      { id: 'x', naam: 'melk', categorie: 'extra', afgevinkt: false }
+    );
+  });
+  test('geen id of naam = onbruikbaar', () => {
+    assert.equal(leesLijstItem({ naam: 'melk' }), null);
+    assert.equal(leesLijstItem({ id: 'x', naam: '  ' }), null);
+    assert.equal(leesLijstItem('melk'), null);
+  });
+  test('normaliseerLijst slaat onbruikbare items over', () => {
+    assert.deepEqual(normaliseerLijst([{ id: 'a', naam: 'a', categorie: 'extra', afgevinkt: false }, null, { id: 'b' }]).map((i) => i.id), ['a']);
+    assert.deepEqual(normaliseerLijst({}), []);
   });
 });

@@ -15,6 +15,7 @@ import {
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
 import { Sleutel, Taal, TALEN, vertaal } from '@/i18n';
 import { useTaal } from '@/ui/taal';
+import { GezinsRuimte } from '@/ui/gezinsruimte';
 
 const KLEUR = '#2e7d4f';
 
@@ -73,6 +74,8 @@ export default function ProfielScherm() {
   return (
     <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
       <Text style={s.intro}>{t('profiel.intro')}</Text>
+
+      <GezinsRuimte />
 
       <Text style={s.kop}>{t('profiel.gezin')}</Text>
       <View style={s.kaart}>

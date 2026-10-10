@@ -5,6 +5,7 @@ Smartphone-app (React Native / Expo) voor de wekelijkse maaltijdplanning en bood
 - **Weekplanning** – beschrijf je week in een vrij tekstveld (aantal dagen, geen vlees, Nutri-Score, snel klaar…), kies kooktijd en stijl, en krijg een gevarieerd weekmenu. Je laatste 3 opdrachten staan klaar om te hergebruiken.
 - **Gezinsprofiel** – volwassenen, kinderen, budget, gezinssamenstelling en adres vul je één keer in; ze gaan automatisch mee bij elke planning.
 - **Boodschappenlijst** – automatisch uit het weekplan, met hoeveelheden voor je gezin + vaste items; af te vinken in de winkel.
+- **Gezinsruimte** – deel weekplanning, boodschappenlijst, frigo en gezinsprofiel met je gezin via een code van 6 tekens; wijzigingen zijn meteen zichtbaar op elk toestel.
 - **Frigo** – wat je op de lijst afvinkt, staat vanzelf in je virtuele frigo; zo weet je wat er in huis is.
 - **Scan** – scan de barcode van een product en zie hoe gezond het is (Nutri-Score, bewerkingsgraad, additieven, suikers, calorieën, eiwitten).
 - **6 talen** – Nederlands, Frans, Duits, Engels, Spaans en Portugees; volgt de taal van je toestel of kies zelf in het tabblad *Gezin*.
@@ -34,6 +35,16 @@ npm run check            # alles samen
 ```
 
 Elke pull request draait automatisch de workflow **Tests**; er wordt pas gemerged als die groen is.
+
+## Gezinsruimte (Supabase)
+
+De gezinsruimte gebruikt het Supabase-project **gezond-boodschappen** (regio Frankfurt, gratis plan). Adres en publieke sleutel staan in `src/config.ts`; de toegang tot de gegevens wordt in de database afgeschermd (row level security): enkel leden van een gezin zien of wijzigen de gegevens van dat gezin.
+
+- **Aanmelden** gebeurt anoniem per toestel (instelling *Allow anonymous sign-ins* in Supabase › Authentication).
+- **Database**: `supabase/migrations/` (tabellen `gezinnen`, `gezinsleden`, `gezin_items`, `gezin_documenten`; functies `maak_gezin`, `word_lid`, `verlaat_gezin`).
+- **Synchroniseren**: de app bewaart alles op het toestel en werkt ook offline; wijzigingen gaan per item naar het gezin (laatste wijziging wint) en komen live binnen. Logica in `src/lib/sync.ts` (getest), verbinding in `src/opslag/sync.ts`.
+- **Testen**: `supabase/tests/gezinsruimte_test.sql` (toegangsregels, in de SQL-editor) en de GitHub-workflow *Integratietest* (twee toestellen + een buitenstaander tegen het echte project).
+- Gratis projecten worden na een week zonder gebruik gepauzeerd; heractiveren kan met één klik in het Supabase-dashboard.
 
 ## AI-planner inschakelen
 
@@ -71,7 +82,7 @@ src/data/            receptenbank, ingrediënten, vaste items
 src/i18n/            vertalingen (nl, fr, de, en, es, pt)
 src/lib/             pure logica (getest): profiel, lijst, frigo, score, opdrachten
 src/lib/planner/     lokale planner, AI-client, controle van plannen
-src/opslag/          opslag op het toestel (AsyncStorage)
+src/opslag/          opslag op het toestel (AsyncStorage) en synchronisatie met de gezinsruimte
 src/ui/              React-context voor de taal
 supabase/functions/  server-functie voor de AI-planner
 ```

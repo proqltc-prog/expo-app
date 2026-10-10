@@ -3,10 +3,13 @@ import { normaliseerOpdrachten } from '@/lib/opdrachten';
 import { normaliseerKeuzes, normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { KooktijdCode, Weekplan } from '@/lib/planner/types';
 import type { StijlCode } from '@/data/receptenbank';
+import { SLEUTEL } from './sleutels';
+import { registreerDocument } from './sync';
+import { naElkaar } from './wachtrij';
 
-const PLAN = 'weekplan:v1';
-const OPDRACHTEN = 'opdrachten:v1';
-const KEUZES = 'planningkeuzes:v1';
+const PLAN = SLEUTEL.plan;
+const OPDRACHTEN = SLEUTEL.opdrachten;
+const KEUZES = SLEUTEL.keuzes;
 
 export type Keuzes = { kooktijden: KooktijdCode[]; stijlen: StijlCode[] };
 
@@ -19,8 +22,12 @@ export async function laadPlan(): Promise<Weekplan | null> {
   }
 }
 
-export async function bewaarPlan(plan: Weekplan): Promise<void> {
-  await AsyncStorage.setItem(PLAN, JSON.stringify(plan));
+/** Bewaart het weekplan en deelt het met het gezin (WEEK-8). */
+export function bewaarPlan(plan: Weekplan): Promise<void> {
+  return naElkaar(async () => {
+    await AsyncStorage.setItem(PLAN, JSON.stringify(plan));
+    await registreerDocument('plan', plan);
+  });
 }
 
 export async function laadOpdrachten(): Promise<string[]> {

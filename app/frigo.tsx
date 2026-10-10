@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, frigoSecties, voegZelfToe } from '@/lib/frigo';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
+import { bijWijziging } from '@/opslag/sync';
 import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -19,6 +20,9 @@ export default function Frigo() {
       laadFrigo().then(setFrigo);
     }, [])
   );
+
+  // Live: een ander gezinslid kocht iets of haalde iets uit de frigo (WEEK-8).
+  useEffect(() => bijWijziging('frigo', () => laadFrigo().then(setFrigo)), []);
 
   const voegToe = async () => {
     const naam = nieuw.trim();
