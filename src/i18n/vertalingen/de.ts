@@ -43,6 +43,7 @@ export const de: Vertalingen = {
   'planning.leeg': 'Noch kein Wochenmenü. Schreib eine Anfrage oder tippe direkt auf „Meine Woche planen“.',
   'planning.bronLokaal': 'Vorschlag aus der Rezeptsammlung der App',
   'planning.bronAi': 'Vorschlag der KI',
+  'planning.aiMislukt': 'Die KI war nicht erreichbar; dieser Vorschlag stammt aus der Rezeptsammlung der App.',
   'planning.porties': 'Mengen für {personen}',
   'planning.kooktijd': 'Kochzeit',
   'planning.stijl': 'Stil',

@@ -44,6 +44,7 @@ export const nl = {
   'planning.leeg': 'Nog geen weekmenu. Typ een opdracht of druk meteen op „Plan mijn week”.',
   'planning.bronLokaal': 'Voorstel uit de receptenbank van de app',
   'planning.bronAi': 'Voorstel van de AI',
+  'planning.aiMislukt': 'De AI was niet bereikbaar; dit voorstel komt uit de receptenbank van de app.',
   'planning.porties': 'Hoeveelheden voor {personen}',
   'planning.kooktijd': 'Kooktijd',
   'planning.stijl': 'Stijl',
