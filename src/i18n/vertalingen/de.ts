@@ -48,6 +48,9 @@ export const de: Vertalingen = {
   'planning.aiMislukt': 'Die KI war nicht erreichbar; dieser Vorschlag stammt aus der Rezeptsammlung der App.',
   'planning.porties': 'Mengen für {personen}',
   'planning.reset': 'Anderes Gericht für {dag}',
+  'planning.gekookt': 'Gekocht?',
+  'planning.gedaan': '✓ Erledigt',
+  'planning.gedaanLabel': '{recept} als erledigt markieren; die Zutaten werden aus dem Kühlschrank genommen',
   'planning.kooktijd': 'Kochzeit',
   'planning.stijl': 'Stil',
   'planning.versoepeld': 'Nicht genug Rezepte für deine Auswahl; einige Gerichte passen nicht ganz zur gewählten Kochzeit oder zum Stil.',
@@ -87,6 +90,7 @@ export const de: Vertalingen = {
   'frigo.teller_n': '{n} Produkte im Haus',
   'frigo.toevoegen': 'Etwas hinzufügen, das schon da ist…',
   'frigo.sinds': 'seit {datum}',
+  'frigo.verwijder': '{naam} aus dem Kühlschrank nehmen',
 
   'categorie.avondeten': 'Abendessen',
   'categorie.brood-beleg': 'Brot & Belag',

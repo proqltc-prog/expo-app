@@ -2,6 +2,7 @@ import type { Afdeling } from '@/data/ingredienten';
 import type { Basis, Soort, StijlCode } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import type { Profiel } from '@/lib/profiel';
+import type { FrigoItem } from '@/lib/frigo';
 
 export const WEEKDAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'] as const;
 export type DagCode = (typeof WEEKDAGEN)[number];
@@ -36,7 +37,14 @@ export type PlanRecept = {
   ingredienten: PlanIngredient[];
 };
 
-export type PlanDag = { dag: DagCode; recept: PlanRecept };
+export type PlanDag = {
+  dag: DagCode;
+  recept: PlanRecept;
+  /** Het recept is gekookt (WEEK-19). */
+  gedaan?: boolean;
+  /** Wat er uit de frigo ging toen het recept op gedaan kwam, om het ongedaan te kunnen maken (WEEK-19). */
+  verbruikt?: FrigoItem[];
+};
 
 /** Wat de gebruiker vraagt; het profiel gaat er automatisch bij. */
 export type PlanVerzoek = {

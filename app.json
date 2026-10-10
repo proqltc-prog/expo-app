@@ -3,7 +3,7 @@
     "name": "Gezond Boodschappen",
     "slug": "gezond-boodschappen",
     "scheme": "gezondboodschappen",
-    "version": "0.12.0",
+    "version": "0.13.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {

@@ -48,6 +48,9 @@ export const en: Vertalingen = {
   'planning.aiMislukt': 'The AI could not be reached; this suggestion comes from the app’s recipe collection.',
   'planning.porties': 'Quantities for {personen}',
   'planning.reset': 'Another dish for {dag}',
+  'planning.gekookt': 'Cooked?',
+  'planning.gedaan': '✓ Done',
+  'planning.gedaanLabel': 'Mark {recept} as done; the ingredients are taken out of the fridge',
   'planning.kooktijd': 'Cooking time',
   'planning.stijl': 'Style',
   'planning.versoepeld': 'There weren’t enough recipes for your choice; some dishes don’t fully match the chosen cooking time or style.',
@@ -87,6 +90,7 @@ export const en: Vertalingen = {
   'frigo.teller_n': '{n} products at home',
   'frigo.toevoegen': 'Add something you already have…',
   'frigo.sinds': 'since {datum}',
+  'frigo.verwijder': 'Take {naam} out of the fridge',
 
   'categorie.avondeten': 'Dinner',
   'categorie.brood-beleg': 'Bread & toppings',

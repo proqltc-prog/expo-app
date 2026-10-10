@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.13.0] – 2026-10-10
+
+Producten uit de frigo halen: gekookte recepten verbruiken hun ingrediënten, en zelf iets weghalen kan met één tik.
+
+- Jira: [WEEK-19](https://proqltc-1791495894841.atlassian.net/browse/WEEK-19)
+- Confluence: [WEEK-19 – Producten uit de frigo halen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1802269)
+
+### Toegevoegd
+- Knop **Gekookt?** per dag: het recept komt op **✓ Gedaan** en de ingrediënten gaan uit de frigo (enkel de nodige hoeveelheid, oudste producten eerst).
+- Nog eens tikken zet alles precies terug.
+- **×** naast elk product in de frigo om het eruit te halen.
+
 ## [0.12.0] – 2026-10-10
 
 Gedeelde boodschappenlijst: zien wie wat toevoegde en wie wat al kocht.

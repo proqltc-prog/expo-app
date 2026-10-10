@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalProducten, FrigoItem, frigoSecties, hoortInFrigo, normaliseerFrigo, pasFrigoAan, voegZelfToe } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
 const nu = new Date('2026-10-10T18:00:00Z');
@@ -155,5 +155,79 @@ describe('normaliseerFrigo', () => {
   test('geen lijst geeft een lege frigo', () => {
     assert.deepEqual(normaliseerFrigo(null), []);
     assert.deepEqual(normaliseerFrigo({}), []);
+  });
+});
+
+describe('verbruik (WEEK-19)', () => {
+  const f = (id: string, naam: string, hoeveelheid: number | undefined, eenheid: string | undefined, op: string): FrigoItem => ({
+    id, naam, afdeling: 'droge-voeding', toegevoegdOp: op,
+    ...(hoeveelheid !== undefined ? { hoeveelheid } : {}), ...(eenheid ? { eenheid } : {}),
+  });
+  const OUD = '2026-10-01T10:00:00.000Z';
+  const NIEUW = '2026-10-08T10:00:00.000Z';
+
+  test('trekt enkel af wat het recept nodig heeft', () => {
+    const { frigo, verbruikt } = verbruik([f('a', 'pasta', 500, 'g', OUD)], [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
+    assert.equal(frigo[0].hoeveelheid, 200);
+    assert.deepEqual(verbruikt, [f('a', 'pasta', 300, 'g', OUD)]);
+  });
+
+  test('de oudste producten gaan eerst op', () => {
+    const { frigo } = verbruik([f('nieuw', 'pasta', 500, 'g', NIEUW), f('oud', 'pasta', 200, 'g', OUD)], [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
+    assert.deepEqual(frigo.map((x) => [x.id, x.hoeveelheid]), [['nieuw', 400]]);
+  });
+
+  test('een product dat helemaal opgaat, verdwijnt uit de frigo', () => {
+    const { frigo } = verbruik([f('a', 'ui', 1, 'stuk', OUD)], [{ naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }]);
+    assert.deepEqual(frigo, []);
+  });
+
+  test('te weinig in de frigo: alles wat er is gaat op, de rest blijft gewoon ontbreken', () => {
+    const { frigo, verbruikt } = verbruik([f('a', 'pasta', 100, 'g', OUD)], [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
+    assert.deepEqual(frigo, []);
+    assert.equal(verbruikt[0].hoeveelheid, 100);
+  });
+
+  test('onbekende hoeveelheid: het oudste passende product gaat er helemaal uit', () => {
+    const zelf = f('zelf', 'Pasta', undefined, undefined, OUD);
+    const { frigo, verbruikt } = verbruik([zelf, f('b', 'pasta', 500, 'g', NIEUW)], [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
+    assert.deepEqual(frigo.map((x) => x.id), ['b']);
+    assert.deepEqual(verbruikt, [zelf]);
+    const zonderHoeveelheid = verbruik([f('a', 'look', 3, 'teentje', OUD)], [{ naam: 'look' }]);
+    assert.deepEqual(zonderHoeveelheid.frigo, []);
+  });
+
+  test('een andere eenheid of naam past niet; zonder eenheid past wel', () => {
+    const frigo = [f('g', 'ui', 200, 'g', OUD), f('ander', 'prei', 1, 'stuk', OUD)];
+    assert.equal(verbruik(frigo, [{ naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt.length, 0);
+    assert.equal(verbruik(frigo, [{ naam: 'UI', hoeveelheid: 50 }]).verbruikt[0].hoeveelheid, 50);
+  });
+
+  test('ingrediënten die niet in de frigo zitten, veranderen niets', () => {
+    const frigo = [f('a', 'pasta', 500, 'g', OUD)];
+    const r = verbruik(frigo, [{ naam: 'zalm', hoeveelheid: 200, eenheid: 'g' }]);
+    assert.deepEqual(r.frigo, frigo);
+    assert.deepEqual(r.verbruikt, []);
+  });
+
+  test('de oorspronkelijke frigo wordt niet aangepast', () => {
+    const frigo = [f('a', 'pasta', 500, 'g', OUD)];
+    verbruik(frigo, [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
+    assert.equal(frigo[0].hoeveelheid, 500);
+  });
+
+  test('herstel zet precies terug wat verbruikt werd', () => {
+    const begin = [f('a', 'pasta', 500, 'g', OUD), f('b', 'ui', 1, 'stuk', OUD), f('c', 'pesto', undefined, undefined, NIEUW)];
+    const ingr = [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }, { naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }, { naam: 'pesto', hoeveelheid: 40, eenheid: 'g' }];
+    const { frigo, verbruikt } = verbruik(begin, ingr);
+    assert.deepEqual(frigo.map((x) => x.id), ['a']);
+    const terug = herstel(frigo, verbruikt);
+    assert.deepEqual([...terug].sort((x, y) => x.id.localeCompare(y.id)), begin);
+  });
+
+  test('verwijderUitFrigo haalt de gekozen producten weg', () => {
+    const frigo = [f('a', 'pasta', 500, 'g', OUD), f('b', 'pasta', 200, 'g', NIEUW), f('c', 'ui', 1, 'stuk', OUD)];
+    assert.deepEqual(verwijderUitFrigo(frigo, ['a', 'b']).map((x) => x.id), ['c']);
+    assert.deepEqual(verwijderUitFrigo(frigo, []), frigo);
   });
 });

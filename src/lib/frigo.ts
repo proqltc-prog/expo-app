@@ -139,3 +139,64 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
     }];
   });
 }
+
+// ── Verbruiken (WEEK-19) ──
+
+const rond = (n: number) => Math.round(n * 100) / 100;
+
+/** Wat een recept nodig heeft; dezelfde vorm als een ingrediënt in het weekplan. */
+export type Benodigd = { naam: string; hoeveelheid?: number; eenheid?: string };
+
+/** Hoort dit product bij dit ingrediënt? Zelfde naam (hoofdletters maken niet uit) en, als beide een eenheid hebben, dezelfde eenheid. */
+export function pastBij(f: FrigoItem, ing: Benodigd): boolean {
+  return klein(f.naam) === klein(ing.naam) && (!f.eenheid || !ing.eenheid || f.eenheid === ing.eenheid);
+}
+
+/**
+ * Haalt de ingrediënten van een gekookt recept uit de frigo, de oudste producten eerst.
+ * - Met gekende hoeveelheden wordt enkel afgetrokken wat het recept nodig heeft.
+ * - Is de hoeveelheid van het product of van het recept niet gekend, dan gaat het hele (oudste) product eruit.
+ * Geeft de nieuwe frigo terug en wat er verbruikt werd (om het ongedaan te kunnen maken).
+ */
+export function verbruik(frigo: readonly FrigoItem[], ingredienten: readonly Benodigd[]): { frigo: FrigoItem[]; verbruikt: FrigoItem[] } {
+  let rest = frigo.map((f) => ({ ...f }));
+  const verbruikt: FrigoItem[] = [];
+  for (const ing of ingredienten) {
+    let nodig = ing.hoeveelheid !== undefined && ing.hoeveelheid > 0 ? ing.hoeveelheid : undefined;
+    const kandidaten = rest.filter((f) => pastBij(f, ing)).sort((a, b) => a.toegevoegdOp.localeCompare(b.toegevoegdOp));
+    for (const f of kandidaten) {
+      if (nodig === undefined || f.hoeveelheid === undefined) {
+        rest = rest.filter((r) => r !== f);
+        verbruikt.push({ ...f });
+        break;
+      }
+      const neem = rond(Math.min(nodig, f.hoeveelheid));
+      verbruikt.push({ ...f, hoeveelheid: neem });
+      f.hoeveelheid = rond(f.hoeveelheid - neem);
+      if (f.hoeveelheid <= 0) rest = rest.filter((r) => r !== f);
+      nodig = rond(nodig - neem);
+      if (nodig <= 0) break;
+    }
+  }
+  return { frigo: rest, verbruikt };
+}
+
+/** Zet verbruikte producten terug (een recept terug op "niet gedaan"). */
+export function herstel(frigo: readonly FrigoItem[], verbruikt: readonly FrigoItem[]): FrigoItem[] {
+  const resultaat = frigo.map((f) => ({ ...f }));
+  for (const v of verbruikt) {
+    const bestaand = resultaat.find((f) => f.id === v.id);
+    if (!bestaand) {
+      resultaat.push({ ...v });
+    } else if (bestaand.hoeveelheid !== undefined && v.hoeveelheid !== undefined) {
+      bestaand.hoeveelheid = rond(bestaand.hoeveelheid + v.hoeveelheid);
+    }
+  }
+  return resultaat;
+}
+
+/** Haalt producten handmatig uit de frigo (op, weggegooid…). */
+export function verwijderUitFrigo(frigo: readonly FrigoItem[], ids: readonly string[]): FrigoItem[] {
+  const weg = new Set(ids);
+  return frigo.filter((f) => !weg.has(f.id));
+}
