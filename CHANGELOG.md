@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.7.0] – 2026-10-10
+
+Reset-knop per dag: één gerecht vervangen, de rest van de week blijft staan.
+
+- Jira: [WEEK-11](https://proqltc-1791495894841.atlassian.net/browse/WEEK-11)
+- Confluence: [WEEK-11 – Reset-knop per dag met variatiebewaking](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1310787)
+
+### Toegevoegd
+- ↻-knop op elke dag van de weekkalender.
+- Het nieuwe recept staat nog nergens in de week, heeft niet dezelfde basis als de dag ervoor of erna en volgt de oorspronkelijke wensen (opdracht, kooktijd, stijl).
+- Met AI wordt enkel die dag gevraagd, met de andere recepten als "vermijden"; bij een fout kiest de lokale planner.
+
 ## [0.6.0] – 2026-10-10
 
 AI-planner met recepten in de gekozen taal, met terugval op de lokale planner.
@@ -118,3 +130,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.4.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.4.0
 [0.5.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.5.0
 [0.6.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.6.0
+[0.7.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.7.0

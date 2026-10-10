@@ -45,6 +45,7 @@ export const pt: Vertalingen = {
   'planning.bronAi': 'Proposta da IA',
   'planning.aiMislukt': 'Não foi possível contactar a IA; esta proposta vem das receitas da app.',
   'planning.porties': 'Quantidades para {personen}',
+  'planning.reset': 'Outro prato para {dag}',
   'planning.kooktijd': 'Tempo de preparação',
   'planning.stijl': 'Estilo',
   'planning.versoepeld': 'Não havia receitas suficientes para a sua escolha; alguns pratos não correspondem totalmente ao tempo ou estilo escolhidos.',
