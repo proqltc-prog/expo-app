@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, frigoSecties, voegZelfToe } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
@@ -29,6 +29,12 @@ export default function Frigo() {
     if (!naam) return;
     setNieuw('');
     setFrigo(await wijzigFrigo((f) => voegZelfToe(f, naam, new Date())));
+  };
+
+  // Op of weggegooid (WEEK-19).
+  const verwijder = async (ids: string[]) => {
+    setFrigo((f) => verwijderUitFrigo(f, ids));
+    setFrigo(await wijzigFrigo((f) => verwijderUitFrigo(f, ids)));
   };
 
   const secties = useMemo(
@@ -65,6 +71,15 @@ export default function Frigo() {
               <Text style={s.sinds}>{t('frigo.sinds', { datum: datumKort(taal, item.oudsteOp) })}</Text>
             </View>
             {item.hoeveelheid ? <Text style={s.hoeveelheid}>{hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}</Text> : null}
+            <Pressable
+              style={s.weg}
+              onPress={() => verwijder(item.ids)}
+              accessibilityRole="button"
+              accessibilityLabel={t('frigo.verwijder', { naam: item.naam })}
+              hitSlop={8}
+            >
+              <Text style={s.wegTekst}>×</Text>
+            </Pressable>
           </View>
         )}
         stickySectionHeadersEnabled={false}
@@ -88,4 +103,6 @@ const s = StyleSheet.create({
   naam: { fontSize: 16 },
   sinds: { fontSize: 12, color: '#999', marginTop: 2 },
   hoeveelheid: { fontSize: 14, color: '#777' },
+  weg: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f1f1' },
+  wegTekst: { fontSize: 18, color: '#888', fontWeight: '700', lineHeight: 20 },
 });

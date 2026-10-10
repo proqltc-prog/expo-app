@@ -48,6 +48,9 @@ export const pt: Vertalingen = {
   'planning.aiMislukt': 'Não foi possível contactar a IA; esta proposta vem das receitas da app.',
   'planning.porties': 'Quantidades para {personen}',
   'planning.reset': 'Outro prato para {dag}',
+  'planning.gekookt': 'Cozinhado?',
+  'planning.gedaan': '✓ Feito',
+  'planning.gedaanLabel': 'Marcar {recept} como feito; os ingredientes saem do frigorífico',
   'planning.kooktijd': 'Tempo de preparação',
   'planning.stijl': 'Estilo',
   'planning.versoepeld': 'Não havia receitas suficientes para a sua escolha; alguns pratos não correspondem totalmente ao tempo ou estilo escolhidos.',
@@ -87,6 +90,7 @@ export const pt: Vertalingen = {
   'frigo.teller_n': '{n} produtos em casa',
   'frigo.toevoegen': 'Adicionar algo que já tem…',
   'frigo.sinds': 'desde {datum}',
+  'frigo.verwijder': 'Tirar {naam} do frigorífico',
 
   'categorie.avondeten': 'Jantar',
   'categorie.brood-beleg': 'Pão e recheios',

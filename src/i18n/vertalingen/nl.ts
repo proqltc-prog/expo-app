@@ -49,6 +49,9 @@ export const nl = {
   'planning.aiMislukt': 'De AI was niet bereikbaar; dit voorstel komt uit de receptenbank van de app.',
   'planning.porties': 'Hoeveelheden voor {personen}',
   'planning.reset': 'Ander gerecht voor {dag}',
+  'planning.gekookt': 'Gekookt?',
+  'planning.gedaan': '✓ Gedaan',
+  'planning.gedaanLabel': '{recept} op gedaan zetten; de ingrediënten gaan uit de frigo',
   'planning.kooktijd': 'Kooktijd',
   'planning.stijl': 'Stijl',
   'planning.versoepeld': 'Er waren niet genoeg recepten voor je keuze; sommige gerechten passen niet helemaal bij de gekozen kooktijd of stijl.',
@@ -88,6 +91,7 @@ export const nl = {
   'frigo.teller_n': '{n} producten in huis',
   'frigo.toevoegen': 'Iets toevoegen dat al in huis is…',
   'frigo.sinds': 'sinds {datum}',
+  'frigo.verwijder': '{naam} uit de frigo halen',
 
   'categorie.avondeten': 'Avondeten',
   'categorie.brood-beleg': 'Brood & beleg',

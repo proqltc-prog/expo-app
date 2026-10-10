@@ -2,7 +2,8 @@
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
 import { isTaal } from '@/i18n';
-import { DagCode, KooktijdCode, KOOKTIJDEN, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
+import { normaliseerFrigo } from '@/lib/frigo';
+import { DagCode, KooktijdCode, KOOKTIJDEN, PlanDag, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 
 const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
 
@@ -46,9 +47,16 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     .map((d) => {
       if (!isObject(d) || !WEEKDAGEN.includes(d.dag as DagCode)) return null;
       const recept = normaliseerRecept(d.recept);
-      return recept ? { dag: d.dag as DagCode, recept } : null;
+      if (!recept) return null;
+      const dag: PlanDag = { dag: d.dag as DagCode, recept };
+      if (d.gedaan === true) {
+        dag.gedaan = true;
+        const verbruikt = normaliseerFrigo(d.verbruikt);
+        if (verbruikt.length) dag.verbruikt = verbruikt;
+      }
+      return dag;
     })
-    .filter((d): d is { dag: DagCode; recept: PlanRecept } => d !== null);
+    .filter((d): d is PlanDag => d !== null);
   if (!dagen.length) return null;
   return {
     dagen,

@@ -6,6 +6,8 @@ import { aantalReceptRegels, voegPlanToe } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
+import { zetGedaan } from '@/lib/planner/gedaan';
+import { wijzigFrigo } from '@/opslag/frigo';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
@@ -116,6 +118,20 @@ export default function Weekplanning() {
     }
   };
 
+  // Gekookt (WEEK-19): de ingrediënten gaan uit de frigo; nog eens tikken zet alles terug.
+  const wisselGedaan = async (index: number) => {
+    if (!plan) return;
+    const gedaan = !plan.dagen[index]?.gedaan;
+    let nieuwPlan = plan;
+    await wijzigFrigo((frigo) => {
+      const resultaat = zetGedaan(plan, index, gedaan, frigo);
+      nieuwPlan = resultaat.plan;
+      return resultaat.frigo;
+    });
+    setPlan(nieuwPlan);
+    await bewaarPlan(nieuwPlan);
+  };
+
   const naarLijst = async () => {
     if (!plan) return;
     const lijst = await wijzigLijst((bestaand) => voegPlanToe(bestaand, plan.dagen, taal));
@@ -171,11 +187,11 @@ export default function Weekplanning() {
           </Text>
           {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-          {plan.dagen.map(({ dag, recept }, index) => (
-            <View key={dag} style={s.kaart}>
+          {plan.dagen.map(({ dag, recept, gedaan }, index) => (
+            <View key={dag} style={[s.kaart, gedaan && s.kaartGedaan]}>
               <View style={s.kaartKop}>
                 <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
-                <Pressable
+                {!gedaan && <Pressable
                   style={s.reset}
                   onPress={() => herdoeDag(index)}
                   disabled={bezigDag !== null}
@@ -184,12 +200,23 @@ export default function Weekplanning() {
                   hitSlop={8}
                 >
                   {bezigDag === index ? <ActivityIndicator size="small" color={KLEUR} /> : <Text style={s.resetTekst}>↻</Text>}
-                </Pressable>
+                </Pressable>}
               </View>
               <Text style={s.naam}>{recept.naam}</Text>
               <View style={s.rij}>
                 <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                 <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
+                <View style={{ flex: 1 }} />
+                <Pressable
+                  style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
+                  onPress={() => wisselGedaan(index)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: !!gedaan }}
+                  accessibilityLabel={t('planning.gedaanLabel', { recept: recept.naam })}
+                  hitSlop={6}
+                >
+                  <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t(gedaan ? 'planning.gedaan' : 'planning.gekookt')}</Text>
+                </Pressable>
               </View>
             </View>
           ))}
@@ -232,6 +259,11 @@ const s = StyleSheet.create({
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
   min: { color: '#777', fontSize: 13 },
+  kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
+  gedaanKnop: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
+  gedaanKnopAan: { backgroundColor: KLEUR },
+  gedaanTekst: { color: KLEUR, fontSize: 12, fontWeight: '700' },
+  gedaanTekstAan: { color: '#fff' },
   knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
   uit: { opacity: 0.6 },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
