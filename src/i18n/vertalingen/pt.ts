@@ -159,6 +159,9 @@ export const pt: Vertalingen = {
   'scan.inFrigo': 'Para o frigorífico',
   'scan.inFrigoGedaan': '{naam} está no frigorífico.',
   'scan.frigoBetalend': 'Digitalizar diretamente para o frigorífico faz parte da versão paga.',
+  'scan.resterend': 'Ainda tens {n} leituras grátis hoje',
+  'scan.limiet': 'Já usaste as tuas {limiet} leituras grátis de hoje. Amanhã podes voltar a ler.',
+  'scan.limietBetalend': 'Leituras ilimitadas na versão paga.',
   'scan.bron': 'Dados: Open Food Facts (openfoodfacts.org). Não é aconselhamento médico.',
 
   'voeding.kcal': 'Calorias',

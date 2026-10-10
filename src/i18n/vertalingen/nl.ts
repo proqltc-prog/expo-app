@@ -160,6 +160,9 @@ export const nl = {
   'scan.inFrigo': 'In de frigo',
   'scan.inFrigoGedaan': '{naam} staat in de frigo.',
   'scan.frigoBetalend': 'Rechtstreeks in de frigo scannen kan in de betalende versie.',
+  'scan.resterend': 'Nog {n} gratis scans vandaag',
+  'scan.limiet': 'Je hebt vandaag je {limiet} gratis scans gebruikt. Morgen kan het opnieuw.',
+  'scan.limietBetalend': 'Onbeperkt scannen kan in de betalende versie.',
   'scan.bron': 'Gegevens: Open Food Facts (openfoodfacts.org). Geen medisch advies.',
 
   'voeding.kcal': 'Calorieën',

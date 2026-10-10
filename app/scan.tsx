@@ -5,6 +5,8 @@ import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-ca
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegZelfToe } from '@/lib/frigo';
 import { laadBetalend } from '@/opslag/abonnement';
+import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
+import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
 import { wijzigFrigo } from '@/opslag/frigo';
 import { wijzigLijst } from '@/opslag/lijst';
 import { getal, Sleutel } from '@/i18n';
@@ -26,7 +28,14 @@ export default function Scan() {
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
   const [betalend, setBetalend] = useState(false);
-  useFocusEffect(useCallback(() => { laadBetalend().then(setBetalend); }, []));
+  // Scanlimiet (WEEK-34): gratis 3 per dag, betalend onbeperkt.
+  const [teller, setTeller] = useState<ScanTeller | null>(null);
+  useFocusEffect(
+    useCallback(() => {
+      laadBetalend().then(setBetalend);
+      laadScanTeller().then(setTeller);
+    }, [])
+  );
 
   if (!toestemming) return <View style={s.midden}><ActivityIndicator /></View>;
 
@@ -44,6 +53,11 @@ export default function Scan() {
   const opScan = async ({ data }: BarcodeScanningResult) => {
     if (bezig.current) return;
     bezig.current = true;
+    if (!magScannen(teller, new Date(), betalend)) {
+      bezig.current = false;
+      return;
+    }
+    setTeller(await registreerScan());
     setStatus({ soort: 'laden', barcode: data });
     try {
       const product = await zoekProduct(data, taal);
@@ -72,6 +86,17 @@ export default function Scan() {
     opnieuw();
   };
 
+  const rest = resterendeScans(teller, new Date(), betalend);
+
+  if (status.soort === 'scannen' && rest === 0) {
+    return (
+      <View style={s.midden}>
+        <Text style={s.tekst}>{t('scan.limiet', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
+        <Text style={s.bron}>{t('scan.limietBetalend')}</Text>
+      </View>
+    );
+  }
+
   if (status.soort === 'scannen') {
     return (
       <View style={{ flex: 1 }}>
@@ -84,6 +109,7 @@ export default function Scan() {
         <View style={s.overlay}>
           <View style={s.kader} />
           <Text style={s.hint}>{t('scan.richt')}</Text>
+          {rest !== null && <Text style={s.hint}>{t('scan.resterend', { n: rest })}</Text>}
         </View>
       </View>
     );
