@@ -8,6 +8,21 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.8.0] – 2026-10-10
+
+Weekplanning overzetten naar de boodschappenlijst, zonder dubbels en zonder vinkjes te verliezen.
+
+- Jira: [WEEK-15](https://proqltc-1791495894841.atlassian.net/browse/WEEK-15)
+- Confluence: [WEEK-15 – Weekplanning overzetten naar boodschappenlijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1277989)
+
+### Toegevoegd
+- Knop **Voeg items toe aan boodschappenlijst** met bevestiging van het aantal ingrediënten.
+- Elk lijstitem kent zijn recept, dag en winkelafdeling.
+
+### Gewijzigd
+- Overzetten vervangt de items van het vorige weekplan; zelf toegevoegde en gescande items en vinkjes blijven behouden.
+- Hetzelfde ingrediënt uit meerdere recepten staat als één regel met opgetelde hoeveelheid; afvinken geldt voor alle recepten.
+
 ## [0.7.0] – 2026-10-10
 
 Reset-knop per dag: één gerecht vervangen, de rest van de week blijft staan.
@@ -131,3 +146,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.5.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.5.0
 [0.6.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.6.0
 [0.7.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.7.0
+[0.8.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.8.0

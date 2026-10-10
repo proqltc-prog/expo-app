@@ -32,9 +32,9 @@ export const nl = {
   'eenheid.teentje_n': '{n} teentjes',
 
   'menu.voorPersonen': 'Voor {personen} · gezin aanpassen ›',
-  'menu.naarLijst': 'Zet op boodschappenlijst',
+  'menu.naarLijst': 'Voeg items toe aan boodschappenlijst',
   'menu.klaar.titel': 'Klaar',
-  'menu.klaar.tekst': 'De boodschappenlijst is aangemaakt.',
+  'menu.klaar.tekst': '{n} ingrediënten uit je weekplanning staan op de boodschappenlijst.',
 
   'planning.intro': 'Beschrijf je week en laat een weekmenu voorstellen. Je gezinsprofiel gaat automatisch mee.',
   'planning.placeholder': 'Beschrijf je weekmenu: hoeveel dagen, hoe gevarieerd, geen vlees, let op de Nutri-Score, snel klaar…',
