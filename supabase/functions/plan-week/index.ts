@@ -47,9 +47,6 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json({ fout: 'Enkel POST' }, 405);
 
-  const sleutel = Deno.env.get('ANTHROPIC_API_KEY');
-  if (!sleutel) return json({ fout: 'ANTHROPIC_API_KEY ontbreekt op de server' }, 500);
-
   // Enkel aangemelde toestellen, met een limiet per toestel (WEEK-31).
   const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
     global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } },
@@ -66,7 +63,10 @@ Deno.serve(async (req) => {
   }
   if (!geldigVerzoek(verzoek)) return json({ fout: 'Ongeldig verzoek' }, 400);
 
-  // Pas tellen voor de limiet als het verzoek geldig is.
+  const sleutel = Deno.env.get('ANTHROPIC_API_KEY');
+  if (!sleutel) return json({ fout: 'ANTHROPIC_API_KEY ontbreekt op de server' }, 500);
+
+  // Pas tellen voor de limiet als het verzoek geldig is en de AI ingesteld is.
   const { data: toegestaan, error: limietFout } = await supabase.rpc('ai_toegestaan');
   if (limietFout) return json({ fout: 'Limiet kon niet gecontroleerd worden' }, 500);
   if (toegestaan !== true) return json({ fout: 'Daglimiet AI bereikt' }, 429);
