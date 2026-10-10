@@ -69,10 +69,12 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     stijlen: Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [],
     taal: isTaal(ruw.taal) ? ruw.taal : 'nl',
     porties: typeof ruw.porties === 'number' && ruw.porties > 0 ? ruw.porties : 2,
-    bron: ruw.bron === 'ai' ? 'ai' : 'lokaal',
+    bron: ruw.bron === 'ai' || ruw.bron === 'favorieten' ? ruw.bron : 'lokaal',
     gemaaktOp: tekst(ruw.gemaaktOp) || new Date(0).toISOString(),
     ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
     ...(ruw.terugval === true ? { terugval: true } : {}),
+    ...(ruw.herhaald === true ? { herhaald: true } : {}),
+    ...(ruw.kort === true ? { kort: true } : {}),
   };
 }
 

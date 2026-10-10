@@ -6,6 +6,7 @@ import { aantalReceptRegels, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lij
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
+import { planUitFavorieten, resetDagUitFavorieten } from '@/lib/planner/favorietenplan';
 import { zetGedaan } from '@/lib/planner/gedaan';
 import { receptStatus } from '@/lib/planner/status';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
@@ -60,6 +61,8 @@ export default function Weekplanning() {
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
   const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
+  // Planmodus (WEEK-14): nieuwe recepten (AI of receptenbank) of random uit het kookboek.
+  const [modus, setModus] = useState<'nieuw' | 'favorieten'>('nieuw');
 
   useEffect(() => {
     laadPlan().then(setPlan);
@@ -106,7 +109,12 @@ export default function Weekplanning() {
     try {
       // Frigo-voorrang (WEEK-12): wat al in huis is, gaat mee naar de planner.
       const frigo = await laadFrigo();
-      const nieuw = await planWeek({ opdracht, kooktijden, stijlen, profiel, taal, frigo }, AI);
+      const verzoek = { opdracht, kooktijden, stijlen, profiel, taal, frigo };
+      const nieuw = modus === 'favorieten' ? planUitFavorieten(favorieten, verzoek, plan) : await planWeek(verzoek, AI);
+      if (!nieuw) {
+        Alert.alert(t('planning.modusFavorieten'), t('planning.geenFavorieten'));
+        return;
+      }
       setPlan(nieuw);
       await bewaarPlan(nieuw);
       const geschiedenis = voegOpdrachtToe(vorige, opdracht);
@@ -122,7 +130,7 @@ export default function Weekplanning() {
     if (!plan || !profiel || bezigDag !== null) return;
     setBezigDag(index);
     try {
-      const nieuw = await resetDag(plan, index, profiel, AI);
+      const nieuw = plan.bron === 'favorieten' ? resetDagUitFavorieten(plan, index, favorieten) : await resetDag(plan, index, profiel, AI);
       setPlan(nieuw);
       await bewaarPlan(nieuw);
     } finally {
@@ -215,6 +223,17 @@ export default function Weekplanning() {
         </View>
       )}
 
+      <View style={s.modus} accessibilityRole="tablist">
+        {(['nieuw', 'favorieten'] as const).map((m) => {
+          const aan = modus === m;
+          return (
+            <Pressable key={m} style={[s.modusOptie, aan && s.modusAan]} onPress={() => setModus(m)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
+              <Text style={[s.modusTekst, aan && s.modusTekstAan]}>{t(m === 'nieuw' ? 'planning.modusNieuw' : 'planning.modusFavorieten')}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
       <Pressable style={[s.knop, bezig && s.uit]} onPress={maakPlan} disabled={bezig || !profiel}>
         {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
       </Pressable>
@@ -230,8 +249,10 @@ export default function Weekplanning() {
       {plan && (
         <>
           <Text style={s.bron}>
-            {t(plan.bron === 'ai' ? 'planning.bronAi' : 'planning.bronLokaal')}
+            {t(plan.bron === 'ai' ? 'planning.bronAi' : plan.bron === 'favorieten' ? 'planning.bronFavorieten' : 'planning.bronLokaal')}
           </Text>
+          {plan.kort && <Text style={s.melding}>{t('planning.kort', { n: plan.dagen.length })}</Text>}
+          {plan.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
           {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
           {plan.dagen.map(({ dag, recept, gedaan, ontbreekt, uitFrigo }, index) => (
@@ -334,6 +355,11 @@ const s = StyleSheet.create({
   min: { color: '#777', fontSize: 13 },
   gepland: { color: '#999', fontSize: 12, marginTop: 2 },
   uitFrigo: { color: KLEUR, fontSize: 12, marginTop: 2, fontWeight: '600' },
+  modus: { flexDirection: 'row', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, overflow: 'hidden' },
+  modusOptie: { flex: 1, paddingVertical: 8, alignItems: 'center' },
+  modusAan: { backgroundColor: KLEUR },
+  modusTekst: { color: KLEUR, fontWeight: '600', fontSize: 13 },
+  modusTekstAan: { color: '#fff' },
   favoriet: { color: '#b28704', fontSize: 13, fontWeight: '700', marginTop: 8 },
   favorietKnop: { color: '#b28704', fontSize: 13, fontWeight: '700', marginTop: 8 },
   ontbreekt: { backgroundColor: '#fff8e1', borderRadius: 10, padding: 10, marginTop: 8, gap: 8 },

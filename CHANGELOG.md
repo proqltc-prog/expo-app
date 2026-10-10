@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.17.0] – 2026-10-10
+
+Planmodus "Random uit favorieten": een week uit het eigen kookboek.
+
+- Jira: [WEEK-14](https://proqltc-1791495894841.atlassian.net/browse/WEEK-14)
+- Confluence: [WEEK-14 – Planmodus: random uit favorieten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1736727)
+
+### Toegevoegd
+- Keuze **Nieuwe recepten** / **Random uit favorieten** in het weekmenu.
+- Random uit favorieten: frigo-voorrang op dag 1, filters op kooktijd, stijl en harde wensen, geen herhaling binnen de week of t.o.v. vorige week (met meldingen als het kookboek te klein is).
+- Hoeveelheden herrekend naar het huidige gezin; ↻ kiest een andere favoriet.
+
 ## [0.16.0] – 2026-10-10
 
 Favorieten: een geslaagd recept bewaren in het gezinskookboek.

@@ -70,10 +70,15 @@ export type Weekplan = {
   taal: Taal;
   /** Aantal volwassen porties waarvoor de hoeveelheden berekend zijn. */
   porties: number;
-  bron: 'lokaal' | 'ai';
+  /** lokaal = receptenbank van de app, ai = AI-planner, favorieten = willekeurig uit het kookboek (WEEK-14). */
+  bron: 'lokaal' | 'ai' | 'favorieten';
   gemaaktOp: string;
   /** true als er niet genoeg recepten waren voor de gekozen kooktijd/stijl en de planner moest versoepelen. */
   versoepeld?: boolean;
   /** true als de AI-planner ingesteld was maar faalde en de lokale planner het overnam. */
   terugval?: boolean;
+  /** Random uit favorieten: er waren niet genoeg andere favorieten, dus sommige stonden vorige week ook op het menu. */
+  herhaald?: boolean;
+  /** Random uit favorieten: minder dagen dan gevraagd, omdat er niet genoeg passende favorieten waren. */
+  kort?: boolean;
 };
