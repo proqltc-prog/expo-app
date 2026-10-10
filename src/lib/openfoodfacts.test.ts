@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { beoordeel, Product, productNaam } from '@/lib/openfoodfacts';
+import { afdelingUitCategorieen, beoordeel, Product, productNaam, scanNaam } from '@/lib/openfoodfacts';
 
 const basis: Product = { barcode: '1', naam: 'Test', additieven: [] };
 
@@ -55,5 +55,33 @@ describe('productNaam', () => {
   });
   test('geeft een lege naam als er niets gekend is', () => {
     assert.equal(productNaam({}, 'nl'), '');
+  });
+});
+
+describe('gescand product naar de frigo (WEEK-35)', () => {
+  test('afdeling uit de categorieën', () => {
+    assert.equal(afdelingUitCategorieen(['en:dairies', 'en:yogurts']), 'zuivel-eieren');
+    assert.equal(afdelingUitCategorieen(['en:plant-based-foods', 'en:fruits']), 'groenten-fruit');
+    assert.equal(afdelingUitCategorieen(['en:meats', 'en:hams']), 'vlees-vis');
+    assert.equal(afdelingUitCategorieen(['en:pastas']), 'droge-voeding');
+    assert.equal(afdelingUitCategorieen(['en:breads']), 'brood');
+    assert.equal(afdelingUitCategorieen(['en:sauces', 'en:tomato-sauces']), 'conserven-sauzen');
+  });
+
+  test('diepvries en dranken gaan voor de andere afdelingen', () => {
+    assert.equal(afdelingUitCategorieen(['en:vegetables', 'en:frozen-vegetables']), 'diepvries');
+    assert.equal(afdelingUitCategorieen(['en:fruits', 'en:juices']), 'dranken');
+  });
+
+  test('onbekend of leeg: overig', () => {
+    assert.equal(afdelingUitCategorieen([]), 'overig');
+    assert.equal(afdelingUitCategorieen(undefined), 'overig');
+    assert.equal(afdelingUitCategorieen(['fr:biscuits-au-beurre']), 'overig');
+  });
+
+  test('naam: eerste merk – naam, of onbekend', () => {
+    assert.equal(scanNaam({ merk: 'Danone, Activia', naam: 'Yoghurt' }, '?'), 'Danone – Yoghurt');
+    assert.equal(scanNaam({ naam: 'Melk' }, '?'), 'Melk');
+    assert.equal(scanNaam({ merk: 'Lidl', naam: '' }, 'Onbekend product'), 'Lidl – Onbekend product');
   });
 });

@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.20.0] – 2026-10-11
+
+Betalende versie: zelf producten in de frigo zetten, met hoeveelheid en afdeling of via de scanner.
+
+- Jira: [WEEK-35](https://proqltc-1791495894841.atlassian.net/browse/WEEK-35)
+- Confluence: [WEEK-35 – Zelf producten in de frigo](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2228305)
+
+### Toegevoegd
+- Frigo (betalend): hoeveelheid, eenheid (g, ml, stuks) en afdeling bij zelf toevoegen.
+- Scanner (betalend): de knop "In de frigo" zet het product in de juiste afdeling.
+- Gratis gezinnen houden het eenvoudige invoerveld, met een korte uitleg over de betalende versie.
+
 ## [0.19.0] – 2026-10-11
 
 AI-limiet per gezin: 1 AI-voorstel per dag (gratis) of 3 (betalend gezin).

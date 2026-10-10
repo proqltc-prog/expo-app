@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, frigoSecties, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, voegZelfToe, ZELF_EENHEDEN } from '@/lib/frigo';
+import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
+import { laadBetalend } from '@/opslag/abonnement';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
@@ -15,11 +17,18 @@ export default function Frigo() {
   const { t, tn, taal } = useTaal();
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [nieuw, setNieuw] = useState('');
+  // Betalende versie (WEEK-35): hoeveelheid, eenheid en afdeling bij zelf toevoegen.
+  const [betalend, setBetalend] = useState(false);
+  const [details, setDetails] = useState(false);
+  const [hoeveelheid, setHoeveelheid] = useState('');
+  const [eenheid, setEenheid] = useState<(typeof ZELF_EENHEDEN)[number]>('g');
+  const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>('overig');
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
   useFocusEffect(
     useCallback(() => {
       laadFrigo().then(setFrigo);
+      laadBetalend().then(setBetalend);
     }, [])
   );
 
@@ -30,7 +39,9 @@ export default function Frigo() {
     const naam = nieuw.trim();
     if (!naam) return;
     setNieuw('');
-    setFrigo(await wijzigFrigo((f) => voegZelfToe(f, naam, new Date())));
+    const extra = betalend && details ? { hoeveelheid: leesHoeveelheid(hoeveelheid), eenheid, afdeling } : {};
+    setHoeveelheid('');
+    setFrigo(await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), extra)));
   };
 
   // Op of weggegooid (WEEK-19). Geplande recepten die het product nodig hebben, krijgen "ingrediënt ontbreekt" (WEEK-13).
@@ -67,6 +78,40 @@ export default function Frigo() {
           <Text style={s.plusTekst}>+</Text>
         </Pressable>
       </View>
+      {betalend ? (
+        <>
+          <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
+            <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
+          </Pressable>
+          {details && (
+            <View style={s.details}>
+              <View style={s.rij}>
+                <TextInput
+                  style={[s.veld, s.getal]}
+                  placeholder={t('frigo.hoeveelheid')}
+                  value={hoeveelheid}
+                  onChangeText={setHoeveelheid}
+                  keyboardType="decimal-pad"
+                />
+                {ZELF_EENHEDEN.map((e) => (
+                  <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityState={{ selected: eenheid === e }}>
+                    <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rij}>
+                {[...AFDELINGEN, 'overig' as const].map((a) => (
+                  <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityState={{ selected: afdeling === a }}>
+                    <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+        </>
+      ) : (
+        <Text style={s.betalend}>{t('frigo.meerBetalend')}</Text>
+      )}
       <Text style={s.teller}>{aantal ? tn('frigo.teller', aantal) : t('frigo.leeg')}</Text>
       <SectionList
         sections={secties}
@@ -105,6 +150,15 @@ const s = StyleSheet.create({
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
   teller: { color: '#666', marginVertical: 10 },
+  detailsLink: { color: KLEUR, fontWeight: '600', marginTop: 8 },
+  details: { gap: 8, marginTop: 8 },
+  rij: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  getal: { flex: 0, width: 110 },
+  chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: '#fff' },
+  chipAan: { backgroundColor: KLEUR, borderColor: KLEUR },
+  chipTekst: { color: '#444' },
+  chipTekstAan: { color: '#fff', fontWeight: '600' },
+  betalend: { color: '#999', fontSize: 12, marginTop: 6 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   tekstBlok: { flex: 1 },

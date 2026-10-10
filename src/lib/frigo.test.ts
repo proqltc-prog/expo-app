@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
 const nu = new Date('2026-10-10T18:00:00Z');
@@ -229,5 +229,47 @@ describe('verbruik (WEEK-19)', () => {
     const frigo = [f('a', 'pasta', 500, 'g', OUD), f('b', 'pasta', 200, 'g', NIEUW), f('c', 'ui', 1, 'stuk', OUD)];
     assert.deepEqual(verwijderUitFrigo(frigo, ['a', 'b']).map((x) => x.id), ['c']);
     assert.deepEqual(verwijderUitFrigo(frigo, []), frigo);
+  });
+});
+
+describe('zelf toevoegen met details (WEEK-35)', () => {
+  test('gratis: enkel een naam, afdeling overig', () => {
+    const [f] = voegZelfToe([], '  kaas ', nu);
+    assert.equal(f.naam, 'kaas');
+    assert.equal(f.afdeling, 'overig');
+    assert.equal(f.hoeveelheid, undefined);
+    assert.equal(f.toegevoegdOp, nu.toISOString());
+  });
+
+  test('betalend: hoeveelheid, eenheid en afdeling', () => {
+    const [f] = voegZelfToe([], 'melk', nu, { hoeveelheid: 1000, eenheid: 'ml', afdeling: 'zuivel-eieren' });
+    assert.deepEqual(
+      { naam: f.naam, hoeveelheid: f.hoeveelheid, eenheid: f.eenheid, afdeling: f.afdeling },
+      { naam: 'melk', hoeveelheid: 1000, eenheid: 'ml', afdeling: 'zuivel-eieren' }
+    );
+  });
+
+  test('ongeldige details worden genegeerd', () => {
+    const [a] = voegZelfToe([], 'x', nu, { hoeveelheid: -2, eenheid: 'g', afdeling: 'onzin' as never });
+    assert.equal(a.hoeveelheid, undefined);
+    assert.equal(a.eenheid, undefined, 'geen eenheid zonder hoeveelheid');
+    assert.equal(a.afdeling, 'overig');
+    assert.equal(voegZelfToe([], '   ', nu).length, 0);
+  });
+
+  test('blijft geldig na opslaan en inlezen, en telt mee op het frigo-scherm', () => {
+    const frigo = voegZelfToe(voegZelfToe([], 'melk', nu, { hoeveelheid: 1000, eenheid: 'ml', afdeling: 'zuivel-eieren' }), 'melk', later, { hoeveelheid: 500, eenheid: 'ml', afdeling: 'zuivel-eieren' });
+    assert.deepEqual(normaliseerFrigo(JSON.parse(JSON.stringify(frigo))), frigo);
+    assert.notEqual(frigo[0].id, frigo[1].id);
+  });
+
+  test('hoeveelheid lezen zoals getypt', () => {
+    assert.equal(leesHoeveelheid('250'), 250);
+    assert.equal(leesHoeveelheid('1,5'), 1.5);
+    assert.equal(leesHoeveelheid(' 2.5 '), 2.5);
+    assert.equal(leesHoeveelheid(''), undefined);
+    assert.equal(leesHoeveelheid('abc'), undefined);
+    assert.equal(leesHoeveelheid('0'), undefined);
+    assert.equal(leesHoeveelheid('-3'), undefined);
   });
 });
