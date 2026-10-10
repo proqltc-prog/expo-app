@@ -21,6 +21,8 @@ function TabBladen() {
       <Tabs.Screen name="frigo" options={{ title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
       <Tabs.Screen name="scan" options={{ title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), tabBarLabel: t('tab.gezin') }} />
+      {/* Kookboek (WEEK-21): geen eigen tabblad, bereikbaar vanuit het weekmenu. */}
+      <Tabs.Screen name="kookboek" options={{ title: t('kookboek.titel'), href: null }} />
     </Tabs>
   );
 }

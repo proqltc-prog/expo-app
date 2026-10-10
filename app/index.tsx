@@ -9,6 +9,9 @@ import { resetDag } from '@/lib/planner/reset';
 import { zetGedaan } from '@/lib/planner/gedaan';
 import { receptStatus } from '@/lib/planner/status';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
+import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favorieten';
+import { laadFavorieten, wijzigFavorieten } from '@/opslag/favorieten';
+import { laadGezin } from '@/opslag/sync';
 import { trekFrigoAf } from '@/lib/frigo';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
@@ -56,6 +59,7 @@ export default function Weekplanning() {
   const [bezigDag, setBezigDag] = useState<number | null>(null);
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
+  const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
 
   useEffect(() => {
     laadPlan().then(setPlan);
@@ -71,6 +75,7 @@ export default function Weekplanning() {
     const stop = [
       bijWijziging('plan', () => laadPlan().then(setPlan)),
       bijWijziging('profiel', () => laadProfiel().then(setProfiel)),
+      bijWijziging('favoriet', () => laadFavorieten().then(setFavorieten)),
     ];
     return () => stop.forEach((f) => f());
   }, []);
@@ -91,6 +96,7 @@ export default function Weekplanning() {
     useCallback(() => {
       laadProfiel().then(setProfiel);
       laadPlan().then(setPlan);
+      laadFavorieten().then(setFavorieten);
     }, [])
   );
 
@@ -138,6 +144,15 @@ export default function Weekplanning() {
     });
     setPlan(nieuwPlan);
     await bewaarPlan(nieuwPlan);
+  };
+
+  // Geslaagd recept bewaren als favoriet (WEEK-21).
+  const bewaarAlsFavoriet = async (index: number) => {
+    const dag = plan?.dagen[index];
+    if (!plan || !dag || !profiel) return;
+    const door = (await laadGezin())?.ikNaam;
+    const favoriet = favorietUitDag(dag, plan.porties, aantalPersonen(profiel), new Date(), door);
+    setFavorieten(await wijzigFavorieten((huidig) => bewaarFavoriet(huidig, favoriet)));
   };
 
   // Ingrediënt ontbreekt (WEEK-13): opnieuw op de boodschappenlijst zetten.
@@ -204,6 +219,12 @@ export default function Weekplanning() {
         {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
       </Pressable>
 
+      {favorieten.length > 0 && (
+        <Pressable onPress={() => router.navigate('/kookboek')}>
+          <Text style={s.profiel}>{t('kookboek.link', { n: favorieten.length })}</Text>
+        </Pressable>
+      )}
+
       {!plan && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
 
       {plan && (
@@ -262,6 +283,14 @@ export default function Weekplanning() {
                   <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t(gedaan ? 'planning.gedaan' : 'planning.gekookt')}</Text>
                 </Pressable>
               </View>
+              {gedaan &&
+                (isFavoriet(favorieten, recept.naam) ? (
+                  <Text style={s.favoriet}>{t('favoriet.bewaard')}</Text>
+                ) : (
+                  <Pressable onPress={() => bewaarAlsFavoriet(index)} hitSlop={6}>
+                    <Text style={s.favorietKnop}>{t('favoriet.bewaar')}</Text>
+                  </Pressable>
+                ))}
             </View>
           ))}
           <Pressable style={s.knop} onPress={naarLijst}>
@@ -305,6 +334,8 @@ const s = StyleSheet.create({
   min: { color: '#777', fontSize: 13 },
   gepland: { color: '#999', fontSize: 12, marginTop: 2 },
   uitFrigo: { color: KLEUR, fontSize: 12, marginTop: 2, fontWeight: '600' },
+  favoriet: { color: '#b28704', fontSize: 13, fontWeight: '700', marginTop: 8 },
+  favorietKnop: { color: '#b28704', fontSize: 13, fontWeight: '700', marginTop: 8 },
   ontbreekt: { backgroundColor: '#fff8e1', borderRadius: 10, padding: 10, marginTop: 8, gap: 8 },
   ontbreektTekst: { color: '#7a5b00', fontSize: 13, fontWeight: '600' },
   ontbreektKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },

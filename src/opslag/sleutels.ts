@@ -4,6 +4,7 @@ export const SLEUTEL = {
   lijst: 'boodschappenlijst:v1',
   lijstWeergave: 'lijstweergave:v1',
   frigo: 'frigo:v1',
+  favorieten: 'favorieten:v1',
   plan: 'weekplan:v1',
   opdrachten: 'opdrachten:v1',
   keuzes: 'planningkeuzes:v1',

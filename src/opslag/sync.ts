@@ -9,6 +9,7 @@
 // - Alle wijzigingen aan de opslag lopen via naElkaar(), zodat niets elkaar overschrijft.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import { leesFavoriet, normaliseerFavorieten } from '@/lib/favorieten';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
@@ -43,6 +44,7 @@ type ItemBron = { sleutel: string; lees: (d: unknown) => MetId | null; normalise
 const ITEMBRONNEN: Partial<Record<ItemSoort, ItemBron>> = {
   lijst: { sleutel: SLEUTEL.lijst, lees: leesLijstItem, normaliseer: normaliseerLijst },
   frigo: { sleutel: SLEUTEL.frigo, lees: (d) => normaliseerFrigo([d])[0] ?? null, normaliseer: normaliseerFrigo },
+  favoriet: { sleutel: SLEUTEL.favorieten, lees: leesFavoriet, normaliseer: normaliseerFavorieten },
 };
 
 type DocumentBron = {
