@@ -60,6 +60,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     bron: ruw.bron === 'ai' ? 'ai' : 'lokaal',
     gemaaktOp: tekst(ruw.gemaaktOp) || new Date(0).toISOString(),
     ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
+    ...(ruw.terugval === true ? { terugval: true } : {}),
   };
 }
 

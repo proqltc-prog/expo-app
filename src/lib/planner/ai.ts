@@ -1,0 +1,117 @@
+// AI-planner (WEEK-23): vraagt een weekplan aan de server-functie en controleert het antwoord.
+// Faalt er iets (geen internet, time-out, ongeldig antwoord), dan valt de app terug op de lokale planner.
+import { profielContext } from '@/lib/profiel';
+import { leesOpdracht } from './opdracht';
+import { porties as berekenPorties } from './hoeveelheid';
+import { dagenVoorPlan, planLokaal, STANDAARD_AANTAL_DAGEN } from './lokaal';
+import { normaliseerRecept } from './normaliseer';
+import type { AiVerzoek } from './aiPrompt';
+import { DagCode, kooktijdVan, PlanDag, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
+
+export type AiInstelling = {
+  /** Adres van de server-functie; leeg = geen AI, enkel de lokale planner. */
+  url?: string;
+  /** Optionele sleutel (bv. de publieke Supabase-sleutel) voor de Authorization-header. */
+  sleutel?: string;
+  timeoutMs?: number;
+  fetch?: typeof fetch;
+};
+
+export class AiFout extends Error {}
+
+export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?: string[]): AiVerzoek {
+  const w = leesOpdracht(verzoek.opdracht);
+  return {
+    taal: verzoek.taal,
+    profiel: profielContext(verzoek.profiel),
+    porties: berekenPorties(verzoek.profiel),
+    opdracht: verzoek.opdracht,
+    kooktijden: [...verzoek.kooktijden],
+    stijlen: [...verzoek.stijlen],
+    dagen: dagen ?? dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
+    ...(vermijd?.length ? { vermijd } : {}),
+  };
+}
+
+/**
+ * Controleert het antwoord van de AI. Gooit AiFout als het onbruikbaar is.
+ * Harde regels worden hier nog eens afgedwongen, zodat de app er nooit blind op vertrouwt.
+ */
+export function leesAiAntwoord(ruw: unknown, verzoek: PlanVerzoek, gevraagdeDagen: DagCode[]): PlanDag[] {
+  if (!ruw || typeof ruw !== 'object' || !Array.isArray((ruw as { dagen?: unknown }).dagen)) {
+    throw new AiFout('Antwoord zonder dagen');
+  }
+  const w = leesOpdracht(verzoek.opdracht);
+  const resultaat: PlanDag[] = [];
+  for (const d of (ruw as { dagen: unknown[] }).dagen) {
+    if (!d || typeof d !== 'object') continue;
+    const { dag, recept: ruwRecept } = d as { dag?: unknown; recept?: unknown };
+    if (!WEEKDAGEN.includes(dag as DagCode) || !gevraagdeDagen.includes(dag as DagCode)) continue;
+    if (resultaat.some((r) => r.dag === dag)) continue;
+    const recept = normaliseerRecept(ruwRecept);
+    if (!recept) continue;
+    if (w.zonderVlees && recept.soort === 'vlees') continue;
+    if (w.zonderVis && recept.soort === 'vis') continue;
+    if (verzoek.kooktijden.length && !verzoek.kooktijden.includes(kooktijdVan(recept.minuten))) continue;
+    resultaat.push({ dag: dag as DagCode, recept: { ...recept, id: `ai-${dag}-${recept.id}` } });
+  }
+  if (resultaat.length < gevraagdeDagen.length) {
+    throw new AiFout(`Antwoord onvolledig: ${resultaat.length} van ${gevraagdeDagen.length} dagen bruikbaar`);
+  }
+  return gevraagdeDagen.map((dag) => resultaat.find((r) => r.dag === dag)!);
+}
+
+/** Vraagt recepten voor de gegeven dagen aan de server-functie. */
+export async function vraagAi(
+  verzoek: PlanVerzoek,
+  instelling: AiInstelling,
+  dagen: DagCode[],
+  vermijd?: string[]
+): Promise<PlanDag[]> {
+  if (!instelling.url) throw new AiFout('Geen AI ingesteld');
+  const doeFetch = instelling.fetch ?? fetch;
+  const controle = new AbortController();
+  const timer = setTimeout(() => controle.abort(), instelling.timeoutMs ?? 45000);
+  try {
+    const antwoord = await doeFetch(instelling.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(instelling.sleutel ? { Authorization: `Bearer ${instelling.sleutel}` } : {}),
+      },
+      body: JSON.stringify(bouwAiVerzoek(verzoek, dagen, vermijd)),
+      signal: controle.signal,
+    });
+    if (!antwoord.ok) throw new AiFout(`Server antwoordde ${antwoord.status}`);
+    return leesAiAntwoord(await antwoord.json(), verzoek, dagen);
+  } catch (e) {
+    throw e instanceof AiFout ? e : new AiFout(e instanceof Error ? e.message : String(e));
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Maakt een weekplan: met AI als die ingesteld is, anders (of bij een fout) met de lokale planner.
+ * `terugval` staat op true als de AI ingesteld was maar faalde.
+ */
+export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = {}): Promise<Weekplan> {
+  if (!instelling.url) return planLokaal(verzoek);
+  const w = leesOpdracht(verzoek.opdracht);
+  const dagen = dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  try {
+    const planDagen = await vraagAi(verzoek, instelling, dagen);
+    return {
+      dagen: planDagen,
+      opdracht: verzoek.opdracht,
+      kooktijden: verzoek.kooktijden,
+      stijlen: verzoek.stijlen,
+      taal: verzoek.taal,
+      porties: berekenPorties(verzoek.profiel),
+      bron: 'ai',
+      gemaaktOp: new Date().toISOString(),
+    };
+  } catch {
+    return { ...planLokaal(verzoek), terugval: true };
+  }
+}

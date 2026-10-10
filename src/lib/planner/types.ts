@@ -60,4 +60,6 @@ export type Weekplan = {
   gemaaktOp: string;
   /** true als er niet genoeg recepten waren voor de gekozen kooktijd/stijl en de planner moest versoepelen. */
   versoepeld?: boolean;
+  /** true als de AI-planner ingesteld was maar faalde en de lokale planner het overnam. */
+  terugval?: boolean;
 };

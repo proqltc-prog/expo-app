@@ -8,6 +8,23 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.6.0] – 2026-10-10
+
+AI-planner met recepten in de gekozen taal, met terugval op de lokale planner.
+
+- Jira: [WEEK-23](https://proqltc-1791495894841.atlassian.net/browse/WEEK-23)
+- Confluence: [WEEK-23 – AI-output in de gekozen taal](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/1310767)
+
+### Toegevoegd
+- AI-client: stuurt taal, profiel (zonder straat of postcode), porties, opdracht, kooktijd, stijl en dagen naar een server-functie.
+- Server-functie `supabase/functions/plan-week`: vraagt het weekmenu aan Claude met een vast JSON-schema; de API-sleutel blijft op de server.
+- Strikte controle van het AI-antwoord; harde regels (geen vlees/vis, kooktijd) worden in de app opnieuw afgedwongen.
+- Terugval op de lokale planner als de AI niet ingesteld is of faalt, met melding.
+- README: stappen om de AI-planner in te schakelen.
+
+### Opmerking
+- De server-functie is nog niet uitgerold; tot dan gebruikt de app de lokale planner.
+
 ## [0.5.0] – 2026-10-10
 
 Keuze voor kooktijd en stijl, voor de hele week.
@@ -100,3 +117,4 @@ Eerste versie van de app (Expo / React Native, expo-router met drie tabs).
 [0.3.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.3.0
 [0.4.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.4.0
 [0.5.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.5.0
+[0.6.0]: https://github.com/Proqltc-prog/expo-app/releases/tag/v0.6.0

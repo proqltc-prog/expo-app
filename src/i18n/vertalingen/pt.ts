@@ -43,6 +43,7 @@ export const pt: Vertalingen = {
   'planning.leeg': 'Ainda sem menu. Escreva um pedido ou toque diretamente em «Planear a minha semana».',
   'planning.bronLokaal': 'Proposta das receitas da app',
   'planning.bronAi': 'Proposta da IA',
+  'planning.aiMislukt': 'Não foi possível contactar a IA; esta proposta vem das receitas da app.',
   'planning.porties': 'Quantidades para {personen}',
   'planning.kooktijd': 'Tempo de preparação',
   'planning.stijl': 'Estilo',

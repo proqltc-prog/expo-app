@@ -4,7 +4,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { lijstUitPlan } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
-import { planLokaal } from '@/lib/planner/lokaal';
+import { planWeek } from '@/lib/planner/ai';
+import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { bewaarLijst } from '@/opslag/lijst';
@@ -75,11 +76,11 @@ export default function Weekplanning() {
     }, [])
   );
 
-  const planWeek = async () => {
+  const maakPlan = async () => {
     if (!profiel || bezig) return;
     setBezig(true);
     try {
-      const nieuw = planLokaal({ opdracht, kooktijden, stijlen, profiel, taal });
+      const nieuw = await planWeek({ opdracht, kooktijden, stijlen, profiel, taal }, AI);
       setPlan(nieuw);
       await bewaarPlan(nieuw);
       const geschiedenis = voegOpdrachtToe(vorige, opdracht);
@@ -132,7 +133,7 @@ export default function Weekplanning() {
         </View>
       )}
 
-      <Pressable style={[s.knop, bezig && s.uit]} onPress={planWeek} disabled={bezig || !profiel}>
+      <Pressable style={[s.knop, bezig && s.uit]} onPress={maakPlan} disabled={bezig || !profiel}>
         {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
       </Pressable>
 
@@ -143,6 +144,7 @@ export default function Weekplanning() {
           <Text style={s.bron}>
             {t(plan.bron === 'ai' ? 'planning.bronAi' : 'planning.bronLokaal')}
           </Text>
+          {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
           {plan.dagen.map(({ dag, recept }) => (
             <View key={dag} style={s.kaart}>
