@@ -15,11 +15,24 @@ export type AiInstelling = {
   url?: string;
   /** Optionele sleutel (bv. de publieke Supabase-sleutel) voor de Authorization-header. */
   sleutel?: string;
+  /** Publieke Supabase-sleutel voor de apikey-header. */
+  apikey?: string;
+  /** Toegangstoken van het aangemelde toestel (WEEK-31); gaat voor op `sleutel`. */
+  token?: () => Promise<string | undefined>;
   timeoutMs?: number;
   fetch?: typeof fetch;
 };
 
-export class AiFout extends Error {}
+export class AiFout extends Error {
+  constructor(bericht: string, readonly status?: number) {
+    super(bericht);
+  }
+}
+
+/** Velden voor een plan waarbij de AI faalde: `aiLimiet` als de daglimiet bereikt was (HTTP 429). */
+export function terugvalVelden(fout: unknown): { terugval: true; aiLimiet?: true } {
+  return fout instanceof AiFout && fout.status === 429 ? { terugval: true, aiLimiet: true } : { terugval: true };
+}
 
 const DAG_MS = 24 * 60 * 60 * 1000;
 
@@ -91,16 +104,18 @@ export async function vraagAi(
   const controle = new AbortController();
   const timer = setTimeout(() => controle.abort(), instelling.timeoutMs ?? 45000);
   try {
+    const token = (await instelling.token?.()) ?? instelling.sleutel;
     const antwoord = await doeFetch(instelling.url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(instelling.sleutel ? { Authorization: `Bearer ${instelling.sleutel}` } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(instelling.apikey ? { apikey: instelling.apikey } : {}),
       },
       body: JSON.stringify(bouwAiVerzoek(verzoek, dagen, vermijd)),
       signal: controle.signal,
     });
-    if (!antwoord.ok) throw new AiFout(`Server antwoordde ${antwoord.status}`);
+    if (!antwoord.ok) throw new AiFout(`Server antwoordde ${antwoord.status}`, antwoord.status);
     return leesAiAntwoord(await antwoord.json(), verzoek, dagen);
   } catch (e) {
     throw e instanceof AiFout ? e : new AiFout(e instanceof Error ? e.message : String(e));
@@ -129,7 +144,7 @@ export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = 
       bron: 'ai',
       gemaaktOp: new Date().toISOString(),
     };
-  } catch {
-    return { ...planLokaal(verzoek), terugval: true };
+  } catch (e) {
+    return { ...planLokaal(verzoek), ...terugvalVelden(e) };
   }
 }

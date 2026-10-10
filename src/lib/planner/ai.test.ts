@@ -150,3 +150,41 @@ describe('planWeek', () => {
     assert.equal(plan.terugval, true);
   });
 });
+
+describe('aanmelding bij de AI-planner (WEEK-31)', () => {
+  const antwoord = antwoordVoor(['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']);
+
+  test('het toegangstoken van het toestel gaat mee als Authorization, de publieke sleutel als apikey', async () => {
+    const { f, oproepen } = nepFetch(antwoord);
+    const plan = await planWeek(verzoek(), { url: 'https://x/plan-week', apikey: 'anon', sleutel: 'oud', token: async () => 'tok-123', fetch: f });
+    assert.equal(plan.bron, 'ai');
+    const headers = oproepen[0].init.headers as Record<string, string>;
+    assert.equal(headers.Authorization, 'Bearer tok-123');
+    assert.equal(headers.apikey, 'anon');
+  });
+
+  test('zonder token valt het terug op de sleutel; zonder beide geen Authorization', async () => {
+    const een = nepFetch(antwoord);
+    await planWeek(verzoek(), { url: 'https://x', sleutel: 'oud', token: async () => undefined, fetch: een.f });
+    assert.equal((een.oproepen[0].init.headers as Record<string, string>).Authorization, 'Bearer oud');
+    const twee = nepFetch(antwoord);
+    await planWeek(verzoek(), { url: 'https://x', fetch: twee.f });
+    assert.ok(!('Authorization' in (twee.oproepen[0].init.headers as Record<string, string>)));
+  });
+
+  test('aanmelden mislukt of limiet bereikt (429): terugval op de lokale planner', async () => {
+    const zonderNet = await planWeek(verzoek(), { url: 'https://x', token: async () => { throw new Error('offline'); }, fetch: nepFetch(antwoord).f });
+    assert.equal(zonderNet.bron, 'lokaal');
+    assert.equal(zonderNet.terugval, true);
+    const limiet = await planWeek(verzoek(), { url: 'https://x', token: async () => 't', fetch: nepFetch({ fout: 'Limiet' }, 429).f });
+    assert.equal(limiet.terugval, true);
+    assert.equal(limiet.aiLimiet, true);
+    assert.equal(zonderNet.aiLimiet, undefined);
+  });
+
+  test('andere serverfout (500) is geen limiet', async () => {
+    const plan = await planWeek(verzoek(), { url: 'https://x', fetch: nepFetch({ fout: 'x' }, 500).f });
+    assert.equal(plan.terugval, true);
+    assert.equal(plan.aiLimiet, undefined);
+  });
+});

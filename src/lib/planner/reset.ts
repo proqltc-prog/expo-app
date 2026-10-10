@@ -2,7 +2,7 @@
 // Het nieuwe recept houdt rekening met de andere dagen (variatie) en met de oorspronkelijke wensen.
 import { BankRecept, RECEPTENBANK } from '@/data/receptenbank';
 import type { Profiel } from '@/lib/profiel';
-import { AiInstelling, vraagAi } from './ai';
+import { AiInstelling, terugvalVelden, vraagAi } from './ai';
 import { leesOpdracht } from './opdracht';
 import { filterOpKeuzes, naarPlanRecept, passendeRecepten, toeval } from './lokaal';
 import type { PlanVerzoek, Weekplan } from './types';
@@ -87,7 +87,7 @@ export async function resetDag(
       throw new Error('AI gaf een recept dat al in de week staat');
     }
     return { ...plan, dagen: plan.dagen.map((d, i) => (i === index ? vervanging : d)) };
-  } catch {
-    return { ...resetDagLokaal(plan, index, seed), terugval: true };
+  } catch (e) {
+    return { ...resetDagLokaal(plan, index, seed), ...terugvalVelden(e) };
   }
 }

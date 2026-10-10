@@ -77,6 +77,8 @@ export type Weekplan = {
   versoepeld?: boolean;
   /** true als de AI-planner ingesteld was maar faalde en de lokale planner het overnam. */
   terugval?: boolean;
+  /** true als de AI niet gebruikt werd omdat de daglimiet bereikt was (WEEK-31). */
+  aiLimiet?: boolean;
   /** Random uit favorieten: er waren niet genoeg andere favorieten, dus sommige stonden vorige week ook op het menu. */
   herhaald?: boolean;
   /** Random uit favorieten: minder dagen dan gevraagd, omdat er niet genoeg passende favorieten waren. */

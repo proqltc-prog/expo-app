@@ -48,6 +48,7 @@ export const en: Vertalingen = {
   'planning.bronLokaal': 'Suggestion from the app’s recipe collection',
   'planning.bronAi': 'Suggestion from the AI',
   'planning.aiMislukt': 'The AI could not be reached; this suggestion comes from the app’s recipe collection.',
+  'planning.aiLimiet': 'You’ve used all of today’s AI suggestions; this one comes from the app’s recipe collection. Try again tomorrow.',
   'planning.porties': 'Quantities for {personen}',
   'planning.reset': 'Another dish for {dag}',
   'planning.gekookt': 'Cooked?',

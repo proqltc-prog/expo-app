@@ -47,29 +47,23 @@ De gezinsruimte gebruikt het Supabase-project **gezond-boodschappen** (regio Fra
 - **Testen**: `supabase/tests/gezinsruimte_test.sql` (toegangsregels, in de SQL-editor) en de GitHub-workflow *Integratietest* (twee toestellen + een buitenstaander tegen het echte project).
 - Gratis projecten worden na een week zonder gebruik gepauzeerd; heractiveren kan met één klik in het Supabase-dashboard.
 
-## AI-planner inschakelen
+## AI-planner
 
-Zonder instellingen gebruikt de app de **lokale planner** (29 recepten in 6 talen, werkt zonder internet).
-Met de AI-planner maakt Claude een weekmenu op maat, in de taal van de gebruiker. Lukt dat niet (geen internet, fout), dan neemt de lokale planner het automatisch over.
+De app gebruikt standaard de **AI-planner**: Claude maakt een weekmenu op maat, in de taal van de gebruiker. Lukt dat niet (geen internet, fout, limiet bereikt), dan neemt de **lokale planner** het automatisch over (29 recepten in 6 talen, werkt zonder internet).
 
-De API-sleutel mag nooit in de app zelf staan; daarom loopt de AI via een kleine server-functie (Supabase Edge Function):
+De AI loopt via de server-functie `plan-week` in hetzelfde Supabase-project als de gezinsruimte (`supabase/functions/plan-week`):
 
-1. Maak een (gratis) project op [supabase.com](https://supabase.com) en installeer de [Supabase CLI](https://supabase.com/docs/guides/cli).
-2. Rol de functie uit en zet de sleutel als geheim:
-   ```bash
-   supabase link --project-ref <project-ref>
-   supabase functions deploy plan-week
-   supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
-   # optioneel: supabase secrets set PLANNER_MODEL=<model-id>
-   ```
-3. Maak in de map van de app een bestand `.env.local`:
-   ```
-   EXPO_PUBLIC_PLANNER_URL=https://<project-ref>.supabase.co/functions/v1/plan-week
-   EXPO_PUBLIC_PLANNER_KEY=<publieke anon-sleutel van het project>
-   ```
-4. Herstart `npx expo start`. Onder het weekmenu staat nu *Voorstel van de AI*.
+- de Anthropic API-sleutel staat enkel op de server, als secret `ANTHROPIC_API_KEY` (dashboard › Edge Functions › Secrets); optioneel `PLANNER_MODEL`;
+- enkel aangemelde toestellen (anonieme sessie van de app) mogen de functie gebruiken;
+- daglimiet per toestel (per 24 uur): **5** gratis, **30** voor een betalend gezin (`ai_toegestaan()` en `ai_daglimiet()` in de database). Bij de limiet toont de app een melding en een voorstel uit de receptenbank;
+- een gezin betalend zetten (tot er een betaalsysteem is) doet de beheerder in de SQL-editor:
+  ```sql
+  insert into public.gezin_abonnement (gezin_id, betalend_tot)
+  select id, now() + interval '1 year' from public.gezinnen where code = 'ABC234'
+  on conflict (gezin_id) do update set betalend_tot = excluded.betalend_tot;
+  ```
 
-> Let op: iedereen met de app kan deze functie aanroepen en zo je API-tegoed gebruiken. Zet voor een publieke release gebruikerslogin en een limiet per gebruiker op de functie.
+Opnieuw uitrollen: `supabase functions deploy plan-week`. Enkel de lokale planner gebruiken: zet `EXPO_PUBLIC_PLANNER_URL=` (leeg) in `.env.local`.
 
 ## Structuur
 

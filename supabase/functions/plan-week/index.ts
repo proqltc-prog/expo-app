@@ -1,12 +1,16 @@
 // Supabase Edge Function (Deno): vraagt een weekplan aan Claude en geeft het terug als JSON.
 // De API-sleutel blijft op de server; de app kent enkel het adres van deze functie.
 //
+// Enkel aangemelde toestellen (anonieme sessie van de app) mogen de functie gebruiken, met een limiet
+// van 5 aanvragen per 24 uur per toestel, 30 voor een betalend gezin (WEEK-31, ai_toegestaan in de database).
+//
 // Uitrollen:
 //   supabase functions deploy plan-week
 //   supabase secrets set ANTHROPIC_API_KEY=sk-ant-...      (verplicht)
 //   supabase secrets set PLANNER_MODEL=claude-sonnet-5-5   (optioneel)
 //
-// Zie README.md › "AI-planner inschakelen".
+// Zie README.md › "AI-planner".
+import { createClient } from 'npm:@supabase/supabase-js@2';
 import { gebruikersBericht, systeemPrompt, WEEKPLAN_SCHEMA, type AiVerzoek } from '../../../src/lib/planner/aiPrompt.ts';
 
 const MODEL = Deno.env.get('PLANNER_MODEL') ?? 'claude-sonnet-5-5';
@@ -43,8 +47,13 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json({ fout: 'Enkel POST' }, 405);
 
-  const sleutel = Deno.env.get('ANTHROPIC_API_KEY');
-  if (!sleutel) return json({ fout: 'ANTHROPIC_API_KEY ontbreekt op de server' }, 500);
+  // Enkel aangemelde toestellen, met een limiet per toestel (WEEK-31).
+  const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+    global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } },
+    auth: { persistSession: false },
+  });
+  const { data: gebruiker } = await supabase.auth.getUser();
+  if (!gebruiker?.user) return json({ fout: 'Niet aangemeld' }, 401);
 
   let verzoek: unknown;
   try {
@@ -53,6 +62,14 @@ Deno.serve(async (req) => {
     return json({ fout: 'Ongeldige JSON' }, 400);
   }
   if (!geldigVerzoek(verzoek)) return json({ fout: 'Ongeldig verzoek' }, 400);
+
+  const sleutel = Deno.env.get('ANTHROPIC_API_KEY');
+  if (!sleutel) return json({ fout: 'ANTHROPIC_API_KEY ontbreekt op de server' }, 500);
+
+  // Pas tellen voor de limiet als het verzoek geldig is en de AI ingesteld is.
+  const { data: toegestaan, error: limietFout } = await supabase.rpc('ai_toegestaan');
+  if (limietFout) return json({ fout: 'Limiet kon niet gecontroleerd worden' }, 500);
+  if (toegestaan !== true) return json({ fout: 'Daglimiet AI bereikt' }, 429);
 
   const antwoord = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',

@@ -138,6 +138,15 @@ describe('resetDag met AI', () => {
     const na = await resetDag(voor, 2, gezin, { url: 'https://x.test', fetch: f });
     assert.equal(na.terugval, true);
     assert.notEqual(na.dagen[2].recept.id, voor.dagen[2].recept.id);
+    assert.equal(na.aiLimiet, undefined);
+  });
+
+  test('daglimiet bereikt (429): lokale terugval met limietmelding', async () => {
+    const voor = plan('3 dagen');
+    const { f } = nep({ fout: 'Limiet' }, 429);
+    const na = await resetDag(voor, 1, gezin, { url: 'https://x.test', fetch: f });
+    assert.equal(na.terugval, true);
+    assert.equal(na.aiLimiet, true);
   });
 
   test('zonder AI: meteen lokaal', async () => {
