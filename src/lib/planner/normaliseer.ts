@@ -49,6 +49,8 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
       const recept = normaliseerRecept(d.recept);
       if (!recept) return null;
       const dag: PlanDag = { dag: d.dag as DagCode, recept };
+      const ontbreekt = Array.isArray(d.ontbreekt) ? d.ontbreekt.filter((n): n is string => typeof n === 'string' && !!n.trim()) : [];
+      if (ontbreekt.length) dag.ontbreekt = ontbreekt;
       if (d.gedaan === true) {
         dag.gedaan = true;
         const verbruikt = normaliseerFrigo(d.verbruikt);

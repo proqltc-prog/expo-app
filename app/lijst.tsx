@@ -6,6 +6,8 @@ import { bewaarWeergave, laadLijst, laadWeergave, wijzigLijst } from '@/opslag/l
 import { bijWijziging, Gezin, laadGezin, syncStatus, SyncStatus } from '@/opslag/sync';
 import { pasFrigoAan } from '@/lib/frigo';
 import { wijzigFrigo } from '@/opslag/frigo';
+import { werkOntbrekendBij } from '@/lib/planner/status';
+import { wijzigPlan } from '@/opslag/plan';
 import { categorieNaam, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -65,7 +67,9 @@ export default function Lijst() {
       return vinkAf(huidig, regel.ids, afgevinkt, ikNaam);
     });
     setItems(nieuw);
-    await wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
+    const frigo = await wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
+    // Opnieuw gekocht: een ontbrekend ingrediënt is er weer (WEEK-13).
+    if (afgevinkt) await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
   };
 
   const voegToe = () => {

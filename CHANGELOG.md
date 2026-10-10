@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.14.0] – 2026-10-10
+
+Receptstatussen: gepland, ingrediënt ontbreekt, gedaan — gekoppeld aan de frigo.
+
+- Jira: [WEEK-13](https://proqltc-1791495894841.atlassian.net/browse/WEEK-13)
+- Confluence: [WEEK-13 – Receptstatussen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2064386)
+
+### Toegevoegd
+- Een product met × uit de frigo halen zet elk gepland recept dat het nodig heeft op **Ingrediënt ontbreekt**, met de knoppen **Op de lijst zetten** en **Ander gerecht**.
+- Opnieuw gekocht (afgevinkt) → het recept staat weer op **Gepland**. Alle ingrediënten weg → **Gedaan**.
+
+### Gewijzigd
+- Het weekmenu laadt het plan opnieuw bij elk bezoek; *Gekookt?* werkt altijd op het bewaarde plan.
+
 ## [0.13.0] – 2026-10-10
 
 Producten uit de frigo halen: gekookte recepten verbruiken hun ingrediënten, en zelf iets weghalen kan met één tik.

@@ -2,11 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
-import { aantalReceptRegels, voegPlanToe } from '@/lib/lijst';
+import { aantalReceptRegels, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
 import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { zetGedaan } from '@/lib/planner/gedaan';
+import { receptStatus } from '@/lib/planner/status';
 import { wijzigFrigo } from '@/opslag/frigo';
 import { AI } from '@/config';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
@@ -84,9 +85,11 @@ export default function Weekplanning() {
     bewaarKeuzes({ kooktijden, stijlen: nieuw });
   };
 
+  // Bij elk bezoek opnieuw laden: frigo of lijst kunnen het plan intussen aangepast hebben (WEEK-13).
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then(setProfiel);
+      laadPlan().then(setPlan);
     }, [])
   );
 
@@ -120,16 +123,26 @@ export default function Weekplanning() {
 
   // Gekookt (WEEK-19): de ingrediënten gaan uit de frigo; nog eens tikken zet alles terug.
   const wisselGedaan = async (index: number) => {
-    if (!plan) return;
-    const gedaan = !plan.dagen[index]?.gedaan;
-    let nieuwPlan = plan;
+    // Altijd vanuit het bewaarde plan, zodat een status uit een ander scherm niet verloren gaat.
+    const huidig = await laadPlan();
+    if (!huidig) return;
+    const gedaan = !huidig.dagen[index]?.gedaan;
+    let nieuwPlan = huidig;
     await wijzigFrigo((frigo) => {
-      const resultaat = zetGedaan(plan, index, gedaan, frigo);
+      const resultaat = zetGedaan(huidig, index, gedaan, frigo);
       nieuwPlan = resultaat.plan;
       return resultaat.frigo;
     });
     setPlan(nieuwPlan);
     await bewaarPlan(nieuwPlan);
+  };
+
+  // Ingrediënt ontbreekt (WEEK-13): opnieuw op de boodschappenlijst zetten.
+  const ontbrekendOpLijst = async (index: number) => {
+    const dag = plan?.dagen[index];
+    if (!dag?.ontbreekt?.length) return;
+    await wijzigLijst((items) => zetOntbrekendOpLijst(items, dag, dag.ontbreekt ?? []));
+    Alert.alert(t('menu.klaar.titel'), t('planning.opLijstKlaar', { namen: dag.ontbreekt.join(', ') }));
   };
 
   const naarLijst = async () => {
@@ -187,7 +200,7 @@ export default function Weekplanning() {
           </Text>
           {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-          {plan.dagen.map(({ dag, recept, gedaan }, index) => (
+          {plan.dagen.map(({ dag, recept, gedaan, ontbreekt }, index) => (
             <View key={dag} style={[s.kaart, gedaan && s.kaartGedaan]}>
               <View style={s.kaartKop}>
                 <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
@@ -203,6 +216,21 @@ export default function Weekplanning() {
                 </Pressable>}
               </View>
               <Text style={s.naam}>{recept.naam}</Text>
+              {receptStatus(plan.dagen[index]) === 'ontbreekt' ? (
+                <View style={s.ontbreekt}>
+                  <Text style={s.ontbreektTekst}>{t('status.ontbreekt', { namen: (ontbreekt ?? []).join(', ') })}</Text>
+                  <View style={s.ontbreektKnoppen}>
+                    <Pressable style={s.kleineKnop} onPress={() => ontbrekendOpLijst(index)}>
+                      <Text style={s.kleineKnopTekst}>{t('planning.opLijst')}</Text>
+                    </Pressable>
+                    <Pressable style={s.kleineKnop} onPress={() => herdoeDag(index)} disabled={bezigDag !== null}>
+                      <Text style={s.kleineKnopTekst}>{t('planning.anderGerecht')}</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+                !gedaan && <Text style={s.gepland}>{t('status.gepland')}</Text>
+              )}
               <View style={s.rij}>
                 <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                 <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
@@ -259,6 +287,12 @@ const s = StyleSheet.create({
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
   min: { color: '#777', fontSize: 13 },
+  gepland: { color: '#999', fontSize: 12, marginTop: 2 },
+  ontbreekt: { backgroundColor: '#fff8e1', borderRadius: 10, padding: 10, marginTop: 8, gap: 8 },
+  ontbreektTekst: { color: '#7a5b00', fontSize: 13, fontWeight: '600' },
+  ontbreektKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  kleineKnop: { borderWidth: 1.5, borderColor: '#b28704', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
+  kleineKnopTekst: { color: '#7a5b00', fontSize: 12, fontWeight: '700' },
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
   gedaanKnop: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
   gedaanKnopAan: { backgroundColor: KLEUR },
