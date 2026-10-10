@@ -1,0 +1,51 @@
+# Privacybeleid Famenu
+
+*Versie 1 – 11 oktober 2026 · ontwerp, nog na te kijken door de eigenaar*
+
+Famenu helpt een gezin met het weekmenu, de boodschappenlijst en de virtuele frigo. We verzamelen zo weinig mogelijk gegevens.
+
+## Wie is verantwoordelijk?
+
+[Naam van de uitgever], [adres], België – contact: [e-mailadres].
+
+## Welke gegevens en waarom?
+
+| Gegevens | Waar | Waarom |
+| --- | --- | --- |
+| Gezinsprofiel (aantal personen en leeftijden, budget, voorkeuren, woonplaats als je die invult), weekmenu, boodschappenlijst, frigo, favorieten | Op je toestel; als je een gezinsruimte gebruikt ook bij Supabase (servers in de EU, Frankfurt) | Om de app te laten werken en om alles te delen met de leden van je gezin |
+| Een anonieme gebruikers-id per toestel | Supabase (EU) | Aanmelding zonder e-mail of wachtwoord; toegang enkel voor de leden van je gezin |
+| Aantal AI-aanvragen per dag | Supabase (EU) | De daglimiet van de AI-planner |
+| Je opdracht, je gezinsprofiel en wat in je frigo zit, wanneer je een AI-voorstel vraagt | Anthropic (Claude), via onze server; verwerking kan in de VS gebeuren | Om een weekmenu op maat te maken. Anthropic gebruikt deze gegevens niet om zijn modellen te trainen. |
+| De barcode van een gescand product | Open Food Facts | Om de productinformatie op te zoeken |
+
+De camera wordt enkel gebruikt om barcodes te lezen; er worden geen foto's bewaard of verstuurd. De app gebruikt de microfoon niet.
+
+## Wat we niet doen
+
+- Geen verkoop van gegevens, geen reclameprofielen, geen tracking over andere apps.
+- Geen account met naam, e-mail of telefoonnummer nodig.
+
+## Hoe lang?
+
+Gegevens in de gezinsruimte blijven bewaard zolang je lid bent. Verlaat je de gezinsruimte, dan blijven de gedeelde gegevens bij de andere leden. Verwijder je de app, dan verdwijnen de gegevens op je toestel. Wil je dat we alles van jouw gezinsruimte wissen, stuur dan een e-mail naar [e-mailadres].
+
+## Je rechten
+
+Je hebt het recht om je gegevens in te kijken, te laten verbeteren of te laten wissen, en om klacht in te dienen bij de Gegevensbeschermingsautoriteit (gegevensbeschermingsautoriteit.be).
+
+## Kinderen
+
+Famenu is bedoeld voor volwassenen die voor hun gezin plannen. Leeftijden van kinderen worden enkel gebruikt om porties te berekenen.
+
+---
+
+# Privacy policy Famenu (English)
+
+Famenu helps a family with the weekly menu, the shopping list and the virtual fridge. We collect as little data as possible.
+
+- **Family profile, menu, list, fridge, favourites:** stored on your device and, if you use a family space, at Supabase (EU servers, Frankfurt) to share with your family members.
+- **Anonymous user id per device** and **number of AI requests per day:** Supabase (EU), for sign-in without e-mail and for the daily AI limit.
+- **AI suggestions:** your request, family profile and fridge contents are sent to Anthropic (Claude) via our server; processing may take place in the US. Anthropic does not use this data to train its models.
+- **Barcode scanning:** the barcode is looked up at Open Food Facts. The camera is only used to read barcodes; no photos are stored. The microphone is not used.
+- No selling of data, no advertising profiles, no cross-app tracking, no account with name or e-mail required.
+- Your rights: access, correction and deletion via [e-mail address]; complaints to the Belgian Data Protection Authority.

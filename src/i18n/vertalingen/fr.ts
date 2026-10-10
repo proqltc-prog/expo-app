@@ -213,7 +213,7 @@ export const fr: Vertalingen = {
   'gezin.gedeeldMet': 'Partagé dans « {naam} »',
   'gezin.code': 'Code pour inviter quelqu’un',
   'gezin.deel': 'Partager le code',
-  'gezin.deelTekst': 'Rejoignez notre espace familial dans Gezond Boodschappen : ouvrez l’onglet Famille et saisissez le code {code}.',
+  'gezin.deelTekst': 'Rejoignez notre espace familial dans Famenu : ouvrez l’onglet Famille et saisissez le code {code}.',
   'gezin.leden': 'Membres',
   'gezin.jij': '{naam} (vous)',
   'gezin.naamloos': 'Membre de la famille',

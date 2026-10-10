@@ -8,6 +8,21 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.22.0] – 2026-10-11
+
+De app heet voortaan **Famenu** en is klaar om voor de Google Play Store gebouwd te worden.
+
+- Jira: [WEEK-37](https://proqltc-1791495894841.atlassian.net/browse/WEEK-37)
+- Confluence: [WEEK-37 – Famenu in de Google Play Store](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2654209)
+
+### Toegevoegd
+- Nieuwe naam: Famenu (`be.famenu.app`), met een eerste icoon.
+- Build-configuratie (EAS): een APK om zelf te testen en een AAB voor de Play Store, plus een GitHub-workflow "Android-build".
+- Winkelteksten in 6 talen, afbeeldingen voor de winkel en een ontwerp van het privacybeleid (`store/`).
+
+### Gewijzigd
+- De app vraagt enkel toegang tot de camera, niet tot de microfoon.
+
 ## [0.21.0] – 2026-10-11
 
 Scanlimiet: 3 gratis scans per dag, onbeperkt voor betalende gezinnen.
