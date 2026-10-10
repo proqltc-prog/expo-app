@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.18.0] – 2026-10-10
+
+De AI-planner werkt standaard in de app, via de server-functie in Supabase, met aanmelding en een limiet.
+
+- Jira: [WEEK-31](https://proqltc-1791495894841.atlassian.net/browse/WEEK-31)
+- Confluence: [WEEK-31 – AI-planner uitrollen op Supabase](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2195603)
+
+### Toegevoegd
+- *Voorstel van de AI* werkt zonder extra instellingen. De API-sleutel blijft op de server.
+- Enkel aangemelde toestellen mogen de AI gebruiken. Daglimiet per toestel: 5 AI-voorstellen (gratis) of 30 (betalend gezin).
+- Is de daglimiet bereikt, dan meldt de app dat en komt het voorstel uit de receptenbank. Bij een andere fout neemt de lokale planner ook over.
+- Integratietest voor de AI-planner.
+
 ## [0.17.3] – 2026-10-10
 
 Bugfix: het weekplan veilig bijwerken bij "Gekookt?" en bij een reset (gevonden bij een onafhankelijke review).

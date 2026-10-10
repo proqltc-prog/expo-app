@@ -14,7 +14,7 @@ import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favo
 import { laadFavorieten, wijzigFavorieten } from '@/opslag/favorieten';
 import { laadGezin } from '@/opslag/sync';
 import { trekFrigoAf } from '@/lib/frigo';
-import { AI } from '@/config';
+import { aiPlanner as AI } from '@/opslag/supabase';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
@@ -137,7 +137,7 @@ export default function Weekplanning() {
       const bewaard = nieuweDag
         ? await wijzigPlan((huidig) => {
             const vervangen = vervangDag(huidig, index, verwacht, nieuweDag);
-            return vervangen === huidig ? huidig : { ...vervangen, ...(nieuw.terugval ? { terugval: true } : {}) };
+            return vervangen === huidig ? huidig : { ...vervangen, ...(nieuw.terugval ? { terugval: true } : {}), ...(nieuw.aiLimiet ? { aiLimiet: true } : {}) };
           })
         : null;
       if (bewaard) setPlan(bewaard);
@@ -267,7 +267,7 @@ export default function Weekplanning() {
           </Text>
           {plan.kort && <Text style={s.melding}>{t('planning.kort', { n: plan.dagen.length })}</Text>}
           {plan.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
-          {plan.terugval && <Text style={s.melding}>{t('planning.aiMislukt')}</Text>}
+          {plan.terugval && <Text style={s.melding}>{t(plan.aiLimiet ? 'planning.aiLimiet' : 'planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
           {plan.dagen.map(({ dag, recept, gedaan, ontbreekt, uitFrigo }, index) => (
             <View key={dag} style={[s.kaart, gedaan && s.kaartGedaan]}>

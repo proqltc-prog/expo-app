@@ -177,6 +177,10 @@ describe('normaliseerWeekplan', () => {
     const plan = planLokaal(verzoek('5 dagen'));
     assert.deepEqual(normaliseerWeekplan(JSON.parse(JSON.stringify(plan))), plan);
   });
+  test('de limietmelding (terugval + aiLimiet) blijft bewaard', () => {
+    const plan = { ...planLokaal(verzoek('2 dagen')), terugval: true, aiLimiet: true };
+    assert.deepEqual(normaliseerWeekplan(JSON.parse(JSON.stringify(plan))), plan);
+  });
   test('onbruikbare data geeft null', () => {
     assert.equal(normaliseerWeekplan(null), null);
     assert.equal(normaliseerWeekplan({ dagen: [] }), null);

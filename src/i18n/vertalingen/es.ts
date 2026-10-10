@@ -48,6 +48,7 @@ export const es: Vertalingen = {
   'planning.bronLokaal': 'Propuesta de las recetas de la app',
   'planning.bronAi': 'Propuesta de la IA',
   'planning.aiMislukt': 'No se pudo contactar con la IA; esta propuesta procede de las recetas de la app.',
+  'planning.aiLimiet': 'Has usado todas las propuestas de IA de hoy; esta procede de las recetas de la app. Mañana podrás volver a intentarlo.',
   'planning.porties': 'Cantidades para {personen}',
   'planning.reset': 'Otro plato para {dag}',
   'planning.gekookt': '¿Cocinado?',

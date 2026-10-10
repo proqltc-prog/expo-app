@@ -73,6 +73,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     gemaaktOp: tekst(ruw.gemaaktOp) || new Date(0).toISOString(),
     ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
     ...(ruw.terugval === true ? { terugval: true } : {}),
+    ...(ruw.aiLimiet === true ? { aiLimiet: true } : {}),
     ...(ruw.herhaald === true ? { herhaald: true } : {}),
     ...(ruw.kort === true ? { kort: true } : {}),
   };

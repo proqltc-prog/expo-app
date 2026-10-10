@@ -9,6 +9,7 @@ on:
       - supabase/**
       - src/opslag/sync.ts
       - src/opslag/supabase.ts
+      - src/lib/planner/aiPrompt.ts
       - scripts/integratie/**
 
 jobs:
