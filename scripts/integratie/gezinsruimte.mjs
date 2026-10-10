@@ -20,7 +20,20 @@ async function totDat(voorwaarde, beschrijving, ms = 15000) {
   }
   throw new Error(`Time-out: ${beschrijving}`);
 }
-const stap = (t) => console.log(`✓ ${t}`);
+// Elke stap en fout ook als GitHub-annotatie, zodat het resultaat zichtbaar is zonder het volledige logboek.
+const stappen = [];
+const stap = (t) => {
+  stappen.push(t);
+  console.log(`✓ ${t}`);
+};
+process.on('uncaughtException', (e) => {
+  console.log(`::error::Na ${stappen.length} stappen (laatste: ${stappen.at(-1) ?? '-'}): ${e?.message ?? e}`);
+  process.exit(1);
+});
+process.on('unhandledRejection', (e) => {
+  console.log(`::error::Na ${stappen.length} stappen (laatste: ${stappen.at(-1) ?? '-'}): ${e?.message ?? e}`);
+  process.exit(1);
+});
 
 const a = toestel();
 const b = toestel();
@@ -161,5 +174,5 @@ try {
     stap('opgeruimd: beide leden vertrokken, gezin verwijderd');
   }
 }
-console.log('\nALLE INTEGRATIETESTS GESLAAGD');
+console.log(`::notice::ALLE INTEGRATIETESTS GESLAAGD (${stappen.length} stappen)`);
 process.exit(0);
