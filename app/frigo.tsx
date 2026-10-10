@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, frigoSecties, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
+import { markeerOntbrekend } from '@/lib/planner/status';
+import { wijzigPlan } from '@/opslag/plan';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
@@ -31,10 +33,16 @@ export default function Frigo() {
     setFrigo(await wijzigFrigo((f) => voegZelfToe(f, naam, new Date())));
   };
 
-  // Op of weggegooid (WEEK-19).
+  // Op of weggegooid (WEEK-19). Geplande recepten die het product nodig hebben, krijgen "ingrediënt ontbreekt" (WEEK-13).
   const verwijder = async (ids: string[]) => {
     setFrigo((f) => verwijderUitFrigo(f, ids));
-    setFrigo(await wijzigFrigo((f) => verwijderUitFrigo(f, ids)));
+    let verwijderd: FrigoItem[] = [];
+    const na = await wijzigFrigo((f) => {
+      verwijderd = f.filter((x) => ids.includes(x.id));
+      return verwijderUitFrigo(f, ids);
+    });
+    setFrigo(na);
+    await wijzigPlan((plan) => markeerOntbrekend(plan, verwijderd, na));
   };
 
   const secties = useMemo(

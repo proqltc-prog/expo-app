@@ -22,6 +22,22 @@ export async function laadPlan(): Promise<Weekplan | null> {
   }
 }
 
+/**
+ * Past het bewaarde weekplan aan met `wijziging`; bewaart en deelt enkel als het echt verandert
+ * (geeft `wijziging` hetzelfde object terug, dan gebeurt er niets). Geeft het plan na de wijziging terug.
+ */
+export function wijzigPlan(wijziging: (plan: Weekplan) => Weekplan): Promise<Weekplan | null> {
+  return naElkaar(async () => {
+    const plan = await laadPlan();
+    if (!plan) return null;
+    const nieuw = wijziging(plan);
+    if (nieuw === plan) return plan;
+    await AsyncStorage.setItem(PLAN, JSON.stringify(nieuw));
+    await registreerDocument('plan', nieuw);
+    return nieuw;
+  });
+}
+
 /** Bewaart het weekplan en deelt het met het gezin (WEEK-8). */
 export function bewaarPlan(plan: Weekplan): Promise<void> {
   return naElkaar(async () => {

@@ -44,6 +44,8 @@ export type PlanDag = {
   gedaan?: boolean;
   /** Wat er uit de frigo ging toen het recept op gedaan kwam, om het ongedaan te kunnen maken (WEEK-19). */
   verbruikt?: FrigoItem[];
+  /** Ingrediënten die uit de frigo gehaald werden en er niet meer zijn (WEEK-13). */
+  ontbreekt?: string[];
 };
 
 /** Wat de gebruiker vraagt; het profiel gaat er automatisch bij. */
