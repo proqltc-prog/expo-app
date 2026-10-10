@@ -236,6 +236,7 @@ export async function verstuur(): Promise<void> {
     } while (nogEens);
   } catch {
     zetStatus('offline');
+    planHerstart();
   } finally {
     bezigMetVersturen = false;
   }
@@ -367,6 +368,7 @@ function abonneer(gezin: Gezin) {
         // Inhalen wat er gemist werd terwijl de verbinding weg was.
         haalOp(gezin).then(verstuur).catch(() => zetStatus('offline'));
       } else if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') {
+        // supabase-js probeert zelf opnieuw te verbinden; bij succes volgt opnieuw SUBSCRIBED.
         zetStatus('offline');
       }
     });
@@ -380,8 +382,28 @@ function stopAbonnement() {
 
 // ── Starten, aansluiten, verlaten ──
 
+let herstartTimer: ReturnType<typeof setTimeout> | null = null;
+/** Offline: over 30 seconden opnieuw proberen (zolang de app open is). */
+function planHerstart() {
+  if (herstartTimer) return;
+  herstartTimer = setTimeout(() => {
+    herstartTimer = null;
+    void startSync();
+  }, 30_000);
+}
+
+let lopendeStart: Promise<void> | null = null;
+
 /** Bij het openen van de app (en telkens ze terug op de voorgrond komt): bijwerken en live meeluisteren. */
-export async function startSync(): Promise<void> {
+export function startSync(): Promise<void> {
+  // Twee starts tegelijk (bv. openen + voorgrond) doen het werk maar één keer.
+  lopendeStart ??= start().finally(() => {
+    lopendeStart = null;
+  });
+  return lopendeStart;
+}
+
+async function start(): Promise<void> {
   const gezin = await laadGezin();
   const sb = supabase();
   if (!gezin || !sb) {
@@ -402,6 +424,7 @@ export async function startSync(): Promise<void> {
     if (!kanaal) abonneer(gezin);
   } catch {
     zetStatus('offline');
+    planHerstart();
   }
 }
 
