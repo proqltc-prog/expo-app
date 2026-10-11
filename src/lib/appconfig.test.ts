@@ -32,6 +32,12 @@ describe('app-configuratie (WEEK-37)', () => {
     assert.equal(camera[1].recordAudioAndroid, false);
   });
 
+  test('react en react-dom op dezelfde vaste versie (anders faalt de installatie bij EAS)', () => {
+    const d = pakket.dependencies;
+    assert.match(d.react, /^\d+\.\d+\.\d+$/);
+    assert.equal(d['react-dom'], d.react);
+  });
+
   test('EAS: APK om te testen, AAB voor de Play Store', () => {
     assert.equal(eas.build.preview.android.buildType, 'apk');
     assert.equal(eas.build.production.android.buildType, 'app-bundle');
