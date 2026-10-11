@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.22.2] – 2026-10-11
+
+Bugfix: de Android-build bij Expo faalde bij het installeren van de afhankelijkheden. npm haalde react-dom 19.3 binnen, dat niet past bij react 19.1.
+
+- Jira: [WEEK-37](https://proqltc-1791495894841.atlassian.net/browse/WEEK-37)
+- Confluence: [WEEK-37 – Famenu in de Google Play Store](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2654209)
+
+### Opgelost
+- react-dom staat nu vast op 19.1.0, gelijk aan react, en react-native op 0.81.5, de versie die Expo SDK 54 verwacht.
+- De workflow "Android-build" toont opnieuw de link naar de build.
+
 ## [0.22.1] – 2026-10-11
 
 Bugfix: de Android-build voerde de tests uit met Node 20, waar het testcommando niet werkt. De build gebruikt nu Node 22, net als de andere workflows.

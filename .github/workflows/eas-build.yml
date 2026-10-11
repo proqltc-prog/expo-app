@@ -40,5 +40,6 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           npx --yes eas-cli@latest build --platform android --profile ${{ inputs.profiel }} --non-interactive --no-wait --json > build.json
-          URL=$(node -e "const b=require('./build.json');console.log(b[0]?.buildDetailsPageUrl ?? '')")
-          echo "::notice::Build gestart: $URL (klaar na 10–20 minuten; download daar de APK/AAB)"
+          ID=$(jq -r '.[0].id // empty' build.json)
+          EIGENAAR=$(npx --yes eas-cli@latest whoami 2>/dev/null | head -1)
+          echo "::notice::Build gestart: https://expo.dev/accounts/$EIGENAAR/projects/famenu/builds/$ID (klaar na 10–20 minuten; download daar de APK/AAB)"
