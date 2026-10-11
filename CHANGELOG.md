@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.22.1] – 2026-10-11
+
+Bugfix: de Android-build voerde de tests uit met Node 20, waar het testcommando niet werkt. De build gebruikt nu Node 22, net als de andere workflows.
+
+- Jira: [WEEK-37](https://proqltc-1791495894841.atlassian.net/browse/WEEK-37)
+- Confluence: [WEEK-37 – Famenu in de Google Play Store](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/2654209)
+
 ## [0.22.0] – 2026-10-11
 
 De app heet voortaan **Famenu** en is klaar om voor de Google Play Store gebouwd te worden.
