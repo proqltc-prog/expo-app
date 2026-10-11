@@ -1,0 +1,33 @@
+name: Diagnose
+on:
+  push:
+    branches: ['diag/**']
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-audit --no-fund
+      - name: expo install --check
+        run: npx expo install --check 2>&1 | tee check.txt || true
+        env: { CI: '1' }
+      - name: expo-doctor
+        run: npx --yes expo-doctor@latest 2>&1 | tee doctor.txt || true
+      - name: EAS-log
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          npx --yes eas-cli@latest build:list --limit 1 --json --non-interactive > builds.json 2>/dev/null || true
+          node -e '
+            const b=require("./builds.json")[0]||{};
+            console.log("::notice::build "+b.id+" status="+b.status+" fout="+JSON.stringify(b.error||{}));
+            require("fs").writeFileSync("logs.txt",(b.logFiles||[]).join("\n"));
+          '
+          i=0; for u in $(cat logs.txt); do curl -sL "$u" -o log$i.txt; i=$((i+1)); done
+          cat log*.txt 2>/dev/null | grep -iE "npm (ERR|error)|ERESOLVE|peer|error|conflict|could not resolve" | grep -v '"phase"' | head -40 | sed 's/^/::warning::LOG /' || true
+      - name: Samenvatting
+        run: |
+          sed 's/^/::notice::CHECK /' check.txt | head -30
+          grep -iE "✖|fail|mismatch|should|expected|issue" doctor.txt | sed 's/^/::warning::DOCTOR /' | head -30 || true
