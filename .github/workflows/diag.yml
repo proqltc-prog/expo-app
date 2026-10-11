@@ -22,14 +22,13 @@ jobs:
         run: |
           npx --yes eas-cli@latest init --non-interactive --force || true
           npx --yes eas-cli@latest build:list --limit 1 --json --non-interactive > builds.json || true
-          head -c 300 builds.json | sed 's/^/::notice::BUILDS /' || true
-          node -e '
-            const b=require("./builds.json")[0]||{};
-            console.log("::notice::build "+b.id+" status="+b.status+" fout="+JSON.stringify(b.error||{}));
-            require("fs").writeFileSync("logs.txt",(b.logFiles||[]).join("\n"));
-          '
+          jq -r '.[0].logFiles[]?' builds.json > logs.txt || true
+          echo "::notice::LOGFILES $(wc -l < logs.txt)"
           i=0; for u in $(cat logs.txt); do curl -sL "$u" -o log$i.txt; i=$((i+1)); done
-          cat log*.txt 2>/dev/null | grep -iE "npm (ERR|error)|ERESOLVE|peer|error|conflict|could not resolve" | grep -v '"phase"' | head -40 | sed 's/^/::warning::LOG /' || true
+          cat log*.txt > alles.txt 2>/dev/null || true
+          echo "::notice::LOGGROOTTE $(wc -c < alles.txt)"
+          # logregels zijn JSON (bunyan); haal de tekst eruit
+          (jq -r 'select(.phase=="INSTALL_DEPENDENCIES") | .msg' alles.txt 2>/dev/null || cat alles.txt) | tail -60 | sed 's/^/::warning::LOG /' || true
       - name: Samenvatting
         if: always()
         run: |
