@@ -24,7 +24,7 @@ jobs:
           npx --yes eas-cli@latest build:list --limit 1 --json --non-interactive > builds.json || true
           jq -r '.[0].logFiles[]?' builds.json > logs.txt || true
           echo "::notice::LOGFILES $(wc -l < logs.txt)"
-          i=0; for u in $(cat logs.txt); do curl -sL "$u" -o log$i.txt; i=$((i+1)); done
+          i=0; for u in $(cat logs.txt); do curl -sL --compressed "$u" -o log$i.txt; echo "::notice::TYPE $(file -b log$i.txt)"; i=$((i+1)); done
           for f in log*.txt; do zcat -f "$f"; echo; done > alles.txt 2>/dev/null || true
           echo "::notice::LOGGROOTTE $(wc -c < alles.txt)"
           # logregels zijn JSON (bunyan); haal de tekst eruit
