@@ -1,0 +1,95 @@
+import { describe, test } from 'node:test';
+import assert from 'node:assert/strict';
+import { bouwQuery, leesWinkels, rangschik, schoonGemeente, MAX_WINKELS, Winkel } from '@/lib/winkels';
+
+describe('winkels in de buurt: query (WEEK-53)', () => {
+  test('geldige Belgische postcode geeft een query op postcode en op gemeente', () => {
+    const q = bouwQuery('1760', 'Roosdaal');
+    assert.ok(q);
+    assert.match(q!, /"addr:postcode"="1760"/);
+    assert.match(q!, /"addr:city"="Roosdaal"/);
+    assert.match(q!, /ISO3166-1"="BE"/);
+  });
+
+  test('zonder gemeente alleen op postcode', () => {
+    const q = bouwQuery('1760', '');
+    assert.ok(q);
+    assert.match(q!, /"addr:postcode"="1760"/);
+    assert.doesNotMatch(q!, /addr:city/);
+  });
+
+  test('ongeldige postcode geeft geen query', () => {
+    assert.equal(bouwQuery('', 'Roosdaal'), null);
+    assert.equal(bouwQuery('17', 'Roosdaal'), null);
+    assert.equal(bouwQuery('1760a', 'Roosdaal'), null);
+    assert.equal(bouwQuery('"1760"', 'Roosdaal'), null);
+  });
+
+  test('gemeente met vreemde tekens wordt veilig gemaakt', () => {
+    assert.equal(schoonGemeente('Sint-Pieters-Leeuw'), 'Sint-Pieters-Leeuw');
+    assert.equal(schoonGemeente('Roos"daal\\"; drop'), 'Roosdaal drop');
+    assert.equal(schoonGemeente('  Sint  Genesius-Rode '), 'Sint Genesius-Rode');
+    const q = bouwQuery('1760', 'Roos"daal')!;
+    assert.match(q, /"addr:city"="Roosdaal"/);
+  });
+});
+
+describe('winkels in de buurt: antwoord lezen (WEEK-53)', () => {
+  const antwoord = {
+    elements: [
+      { type: 'node', id: 1, lat: 50.9, lon: 4.1, tags: { name: 'Delhaize Roosdaal', shop: 'supermarket', 'addr:postcode': '1760', 'addr:city': 'Roosdaal' } },
+      { type: 'way', id: 2, center: { lat: 50.91, lon: 4.12 }, tags: { name: 'Slagerij Janssens', shop: 'butcher', 'addr:postcode': '1761', 'addr:city': 'Borchtlombeek' } },
+      { type: 'node', id: 3, tags: { name: 'Bakkerij Peeters', shop: 'bakery', 'addr:postcode': '1760', 'addr:city': 'Roosdaal' } },
+      { type: 'node', id: 4, tags: { shop: 'supermarket', 'addr:postcode': '1760' } },
+      { type: 'node', id: 5, tags: { name: 'Kledingwinkel', shop: 'clothes', 'addr:postcode': '1760' } },
+      { type: 'node', id: 6, tags: { name: 'Delhaize Roosdaal', shop: 'supermarket', 'addr:postcode': '1760' } },
+    ],
+  };
+
+  test('leest naam, soort, postcode en coördinaten', () => {
+    const w = leesWinkels(antwoord, '1760');
+    const slager = w.find((x) => x.naam === 'Slagerij Janssens')!;
+    assert.equal(slager.soort, 'slager');
+    assert.equal(slager.lat, 50.91);
+    assert.equal(slager.lon, 4.12);
+  });
+
+  test('slaat elementen zonder naam of met onbekende winkel over', () => {
+    const w = leesWinkels(antwoord, '1760');
+    assert.equal(w.some((x) => x.naam === 'Kledingwinkel'), false);
+    assert.equal(w.length, 3);
+  });
+
+  test('ontdubbelt dezelfde winkel op dezelfde postcode', () => {
+    const w = leesWinkels(antwoord, '1760');
+    assert.equal(w.filter((x) => x.naam === 'Delhaize Roosdaal').length, 1);
+  });
+
+  test('lokaal eerst: zelfde postcode vóór andere gemeenten', () => {
+    const w = leesWinkels(antwoord, '1760');
+    assert.equal(w[0].nabij, 'postcode');
+    assert.equal(w[w.length - 1].nabij, 'gemeente');
+    assert.equal(w[w.length - 1].naam, 'Slagerij Janssens');
+  });
+
+  test('onbruikbare invoer geeft een lege lijst', () => {
+    assert.deepEqual(leesWinkels(null, '1760'), []);
+    assert.deepEqual(leesWinkels('tekst', '1760'), []);
+    assert.deepEqual(leesWinkels({ elements: 'geen lijst' }, '1760'), []);
+  });
+
+  test('beperkt het aantal winkels', () => {
+    const veel = { elements: Array.from({ length: MAX_WINKELS + 5 }, (_, i) => ({ tags: { name: `Winkel ${i}`, shop: 'bakery', 'addr:postcode': '1760' } })) };
+    assert.equal(leesWinkels(veel, '1760').length, MAX_WINKELS);
+  });
+});
+
+describe('winkels in de buurt: rangschikken (WEEK-53)', () => {
+  const maak = (naam: string, soort: Winkel['soort'], nabij: Winkel['nabij']): Winkel => ({ naam, soort, nabij, postcode: '', gemeente: '' });
+
+  test('lokaal eerst, daarna op soort en naam', () => {
+    const r = rangschik([maak('Z', 'bakker', 'gemeente'), maak('B', 'supermarkt', 'postcode'), maak('A', 'bakker', 'postcode')]);
+    // Zelfde postcode eerst (op soort, dan naam); daarna de andere gemeenten.
+    assert.deepEqual(r.map((x) => x.naam), ['A', 'B', 'Z']);
+  });
+});

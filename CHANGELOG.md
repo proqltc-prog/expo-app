@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.30.0] – 2026-10-17
+
+Nieuw: winkels in de buurt. Met één tik zoekt de app supermarkten, slagers, bakkers en groentehandelaars bij je postcode en gemeente. Lokaal eerst, zonder iets op te leggen.
+
+- Jira: [WEEK-53](https://proqltc-1791495894841.atlassian.net/browse/WEEK-53)
+- Confluence: [WEEK-53 – Winkels in de buurt op basis van postcode](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6094860)
+
+### Gewijzigd
+- Knop 'Zoek winkels in de buurt' bij het adres. Enkel op verzoek.
+- Winkels via OpenStreetMap: eerst dezelfde postcode, dan dezelfde gemeente.
+- Bronvermelding © OpenStreetMap-bijdragers.
+
 ## [0.29.0] – 2026-10-17
 
 Nieuw: bovenaan de instellingen staat een korte uitleg 'Hoe werkt het?' met de vijf onderdelen van de app.
