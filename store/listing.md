@@ -2,7 +2,7 @@
 
 Limieten van Google Play: titel ≤ 30 tekens, korte beschrijving ≤ 80 tekens, volledige beschrijving ≤ 4000 tekens.
 Afbeeldingen: `store/icon-512.png` (icoon 512×512), `store/feature-graphic.png` (1024×500). Schermafbeeldingen (min. 2) volgen na de eerste testbuild.
-Categorie: Eten en drinken · Contactgegevens: [e-mailadres] · Privacybeleid: [URL van store/privacybeleid.md]
+Categorie: Eten en drinken · Contactgegevens: proqltc@gmail.com · Privacybeleid: [URL van store/privacybeleid.md]
 
 ## Nederlands (nl-BE)
 

@@ -26,7 +26,7 @@ Google vraagt de categorieën in het Engels. Hieronder staat per categorie wat d
 ## Beveiliging en rechten
 
 - Gegevens worden versleuteld verstuurd (HTTPS).
-- Gebruikers kunnen vragen om hun gegevens te laten wissen: via [e-mailadres] of door de app te verwijderen (gegevens op het toestel).
+- Gebruikers kunnen vragen om hun gegevens te laten wissen: via proqltc@gmail.com of door de app te verwijderen (gegevens op het toestel).
 - Gegevens worden niet verkocht.
 
 ## Opmerkingen voor de Play Console
