@@ -3,7 +3,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
-import { voegZelfToe } from '@/lib/frigo';
+import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
@@ -34,7 +34,8 @@ export default function Scan() {
   // Scanlimiet (WEEK-34): 3 per dag.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
   // Gescand vanaf de boodschappenlijst (WEEK-46): dan kan een product direct afgevinkt worden.
-  const { van } = useLocalSearchParams<{ van?: string }>();
+  // Met `item` (WEEK-49) worden de details van een product dat al in de frigo staat, gescand.
+  const { van, item } = useLocalSearchParams<{ van?: string; item?: string }>();
   const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [frigoItems, setFrigoItems] = useState<FrigoItem[]>([]);
   useFocusEffect(
@@ -93,6 +94,13 @@ export default function Scan() {
     Alert.alert(t('scan.inFrigo'), t('scan.inFrigoGedaan', { naam }));
     opnieuw();
     if (van === 'frigo') router.navigate('/frigo');
+  };
+
+  // Details van een product dat al in de frigo staat (WEEK-49): het item krijgt de gescande gegevens.
+  const bewaarDetails = async (id: string, product: Product) => {
+    await wijzigFrigo((f) => voegProductToe(f, id, product));
+    opnieuw();
+    router.navigate('/frigo');
   };
 
   // Afvinken op de lijst (WEEK-46): zoals afvinken in de lijst zelf; het product gaat dan in de frigo.
@@ -211,8 +219,18 @@ export default function Scan() {
           </View>
         );
       })()}
-      {/* Scannen vanaf de frigo (WEEK-47): het product gaat direct in de frigo. */}
-      {van === 'frigo' ? (
+      {/* Details van een frigo-item (WEEK-49): enkel de gegevens koppelen, het item zelf blijft zoals het is. */}
+      {item ? (
+        <View style={s.knoppen}>
+          <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
+            <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
+          </Pressable>
+          <Pressable style={[s.knop, { flex: 1 }]} onPress={() => bewaarDetails(item, p)}>
+            <Text style={s.knopTekst}>{t('scan.detailsBewaren')}</Text>
+          </Pressable>
+        </View>
+      ) : van === 'frigo' ? (
+        /* Scannen vanaf de frigo (WEEK-47): het product gaat direct in de frigo. */
         <View style={s.knoppen}>
           <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
             <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>

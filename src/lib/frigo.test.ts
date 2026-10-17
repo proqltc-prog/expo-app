@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegZelfToe } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesProduct, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe } from '@/lib/frigo';
+import type { Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
 const nu = new Date('2026-10-10T18:00:00Z');
@@ -271,5 +272,101 @@ describe('zelf toevoegen met details (WEEK-35)', () => {
     assert.equal(leesHoeveelheid('abc'), undefined);
     assert.equal(leesHoeveelheid('0'), undefined);
     assert.equal(leesHoeveelheid('-3'), undefined);
+  });
+});
+
+// ── Productdetails bij de frigo (WEEK-49) ──
+
+const yoghurt: Product = {
+  barcode: '5410188011234',
+  naam: 'Yoghurt natuur',
+  merk: 'Merk X',
+  nutriscore: 'b',
+  nova: 3,
+  additieven: ['E330'],
+  kcal: 61,
+  suikers: 4.7,
+  eiwitten: 3.5,
+  vet: 3.3,
+  zout: 0.1,
+  categorieen: ['en:dairies'],
+};
+
+describe('voegProductToe (WEEK-49)', () => {
+  test('koppelt de details aan het juiste item en laat de rest ongewijzigd', () => {
+    const frigo = voegZelfToe(voegZelfToe([], 'melk', nu), 'yoghurt', nu);
+    const [melk, yog] = frigo;
+    const na = voegProductToe(frigo, yog.id, yoghurt);
+    assert.deepEqual(na[1].product, yoghurt);
+    assert.equal(na[0].product, undefined, 'ander item krijgt geen details');
+    assert.deepEqual(na[0], melk);
+  });
+
+  test('onbekend id laat de frigo gelijk, en het origineel wordt nooit aangepast', () => {
+    const frigo = voegZelfToe([], 'melk', nu);
+    const na = voegProductToe(frigo, 'bestaat-niet', yoghurt);
+    assert.deepEqual(na, frigo);
+    assert.equal(frigo[0].product, undefined);
+  });
+});
+
+describe('productdetails bij zelf toevoegen en opslag', () => {
+  test('voegZelfToe bewaart meegegeven product', () => {
+    const [f] = voegZelfToe([], 'yoghurt', nu, { product: yoghurt });
+    assert.deepEqual(f.product, yoghurt);
+  });
+
+  test('regressie: zelf toevoegen zonder product heeft geen product-veld', () => {
+    const [f] = voegZelfToe([], 'melk', nu, { hoeveelheid: 1, eenheid: 'stuk' });
+    assert.equal('product' in f, false);
+  });
+
+  test('normaliseerFrigo bewaart een geldig product', () => {
+    const [f] = normaliseerFrigo([{ id: 'zelf:1', naam: 'Yoghurt', afdeling: 'zuivel', toegevoegdOp: nu.toISOString(), product: yoghurt }]);
+    assert.deepEqual(f.product, yoghurt);
+  });
+
+  test('regressie: oude frigo-items zonder product blijven zonder product', () => {
+    const [f] = normaliseerFrigo([{ id: 'zelf:1', naam: 'Melk', afdeling: 'zuivel', toegevoegdOp: nu.toISOString() }]);
+    assert.equal('product' in f, false);
+    assert.equal(f.naam, 'Melk');
+  });
+
+  test('ongeldig product wordt weggelaten, het item blijft', () => {
+    const [f] = normaliseerFrigo([{ id: 'zelf:1', naam: 'Melk', afdeling: 'zuivel', toegevoegdOp: nu.toISOString(), product: { naam: 'zonder barcode' } }]);
+    assert.equal(f.naam, 'Melk');
+    assert.equal('product' in f, false);
+  });
+
+  test('leesProduct laat ongeldige getallen en lijsten weg', () => {
+    const p = leesProduct({ barcode: '1', naam: 'x', kcal: 'veel', suikers: Number.NaN, additieven: ['E1', 3, null], categorieen: 'nee' });
+    assert.deepEqual(p, { barcode: '1', naam: 'x', additieven: ['E1'] });
+  });
+
+  test('leesProduct geeft niets voor geen object', () => {
+    assert.equal(leesProduct(null), undefined);
+    assert.equal(leesProduct('yoghurt'), undefined);
+  });
+});
+
+describe('productdetails op het frigo-scherm', () => {
+  test('een regel met één gescand exemplaar draagt de details', () => {
+    const [f] = voegZelfToe([], 'yoghurt', nu, { product: yoghurt });
+    const [regel] = frigoSecties([f])[0].regels;
+    assert.deepEqual(regel.product, yoghurt);
+  });
+
+  test('samengetelde regel neemt de details over van het exemplaar dat ze heeft, ook als het niet het eerste is', () => {
+    const eerste = voegZelfToe([], 'yoghurt', nu);
+    const beide = voegZelfToe(eerste, 'yoghurt', later);
+    const metDetails = voegProductToe(beide, beide[1].id, yoghurt);
+    const [regel] = frigoSecties(metDetails)[0].regels;
+    assert.equal(regel.ids.length, 2);
+    assert.deepEqual(regel.product, yoghurt);
+  });
+
+  test('regressie: een regel zonder details heeft geen product', () => {
+    const [regel] = frigoSecties(voegZelfToe([], 'melk', nu))[0].regels;
+    assert.equal(regel.product, undefined);
   });
 });
