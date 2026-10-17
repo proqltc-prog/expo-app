@@ -1,6 +1,6 @@
 # Privacybeleid Famenu
 
-*Versie 3 – 17 oktober 2026 · ontwerp, nog na te kijken door de eigenaar*
+*Versie 4 – 17 oktober 2026 · ontwerp, nog na te kijken door de eigenaar*
 
 Famenu helpt een gezin met het weekmenu, de boodschappenlijst en de virtuele frigo. We verzamelen zo weinig mogelijk gegevens.
 
@@ -31,9 +31,7 @@ De camera wordt enkel gebruikt om barcodes te lezen; er worden geen foto's bewaa
 
 ## Advertenties
 
-*[Vul dit deel in vóór de release met advertenties. Zolang er geen advertenties zijn, mag dit deel weg.]*
-
-De gratis versie toont advertenties van Google AdMob. Google kan daarvoor een advertentie-id van je toestel gebruiken. Je kan die zelf resetten of uitschakelen in de instellingen van je toestel. [Beschrijf of gepersonaliseerde advertenties aan staan, en hoe de gebruiker die kan uitzetten via de UMP-toestemming.]
+De gratis versie toont advertenties van Google AdMob. Google kan daarvoor een advertentie-id van je toestel gebruiken. Je kan die zelf resetten of uitschakelen in de instellingen van je toestel. In de EU toont de app eerst het toestemmingsscherm van Google: daar kies je of je gepersonaliseerde advertenties toestaat of weigert. Je keuze kan je later wijzigen via de advertentie-instellingen van je toestel. Met een beloond filmpje krijg je extra scans.
 
 ## Hoe lang?
 
@@ -51,7 +49,7 @@ Famenu is bedoeld voor volwassenen die voor hun gezin plannen. Het aantal kinder
 
 # Privacy policy Famenu (English)
 
-*Version 3 – 17 October 2026 · draft, pending review by the owner*
+*Version 4 – 17 October 2026 · draft, pending review by the owner*
 
 Famenu helps a family with the weekly menu, the shopping list and the virtual fridge. We collect as little data as possible.
 
@@ -60,6 +58,6 @@ Famenu helps a family with the weekly menu, the shopping list and the virtual fr
 - **AI suggestions:** your period (number of days), cooking time and style choices, the ingredients you want to avoid, your family profile and fridge contents are sent to Anthropic (Claude) via our server; processing may take place in the US. Anthropic does not use this data to train its models.
 - **Barcode scanning:** the barcode is looked up at Open Food Facts. The camera is only used to read barcodes; no photos are stored. The microphone is not used.
 - **Shop suggestion:** when you use it, your postcode and municipality are sent to OpenStreetMap services (Nominatim and Overpass) to find shops nearby. Servers may be outside the EU. The answers are kept in memory only while the app runs; they are not stored. We do not use your device's GPS location.
-- *[Advertising section: fill in before the release with advertisements.]*
+- **Advertising:** the free version shows Google AdMob ads. You can watch a video to get extra scans. Google may use an advertising ID from your device. In the EU you first see Google’s consent screen, where you accept or refuse personalised advertising.
 - No selling of data, no account with name or e-mail required.
 - Your rights: access, correction and deletion via proqltc@gmail.com; complaints to the Belgian Data Protection Authority.
