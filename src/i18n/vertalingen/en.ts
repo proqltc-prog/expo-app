@@ -178,6 +178,12 @@ export const en: Vertalingen = {
   'reden.eiwit': 'High in protein ({waarde} g/100 g)',
 
   'profiel.intro': 'Who’s joining for dinner? Tell us, and we’ll work out the rest.',
+  'howto.kop': 'How does it work?',
+  'howto.menu': 'Menu: tell us what you like. We make a weekly menu, and you swap a dish if it doesn’t suit you.',
+  'howto.lijst': 'List: with one tap, turn the weekly menu into your shopping list.',
+  'howto.frigo': 'Fridge: tick off what you already have at home. We take that into account when planning.',
+  'howto.scan': 'Scan: scan a product’s barcode to look it up straight away.',
+  'howto.gezin': 'Family: everyone sees the same list. That way everyone knows what still needs buying.',
   'profiel.gezin': 'Family',
   'profiel.volwassenen': 'Grown-ups',
   'profiel.kinderen': 'Little ones',

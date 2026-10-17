@@ -179,6 +179,12 @@ export const nl = {
   'reden.eiwit': 'Eiwitrijk ({waarde} g/100 g)',
 
   'profiel.intro': 'Wie komt er aan tafel? Geef het even door, dan rekenen wij de rest uit.',
+  'howto.kop': 'Hoe werkt het?',
+  'howto.menu': 'Menu: vertel wat je lekker vindt. Wij maken een weekmenu, en je vervangt een gerecht als het je niet past.',
+  'howto.lijst': 'Lijst: maak met één tik van het weekmenu je boodschappenlijst.',
+  'howto.frigo': 'Frigo: vink af wat je al in huis hebt. Dan houden we er bij het plannen rekening mee.',
+  'howto.scan': 'Scan: scan de barcode van een product om het meteen op te zoeken.',
+  'howto.gezin': 'Gezin: iedereen in het gezin ziet dezelfde lijst. Zo weet iedereen wat er nog moet.',
   'profiel.gezin': 'Gezin',
   'profiel.volwassenen': 'Grote mensen',
   'profiel.kinderen': 'Kleine snoetjes',

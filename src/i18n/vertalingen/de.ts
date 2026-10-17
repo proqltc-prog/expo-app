@@ -178,6 +178,12 @@ export const de: Vertalingen = {
   'reden.eiwit': 'Eiweißreich ({waarde} g/100 g)',
 
   'profiel.intro': 'Wer sitzt am Tisch? Sag es kurz, dann rechnen wir den Rest aus.',
+  'howto.kop': 'Wie funktioniert’s?',
+  'howto.menu': 'Menü: Sag uns, was du magst. Wir erstellen einen Wochenplan, und du tauschst ein Gericht aus, wenn es dir nicht passt.',
+  'howto.lijst': 'Liste: Mit einem Tipp machst du aus dem Wochenplan deine Einkaufsliste.',
+  'howto.frigo': 'Kühlschrank: Hake ab, was du schon zu Hause hast. Beim Planen berücksichtigen wir das.',
+  'howto.scan': 'Scan: Scanne den Barcode eines Produkts, um es sofort zu finden.',
+  'howto.gezin': 'Familie: Alle sehen dieselbe Liste. So weiß jeder, was noch fehlt.',
   'profiel.gezin': 'Familie',
   'profiel.volwassenen': 'Große',
   'profiel.kinderen': 'Kleine Racker',
