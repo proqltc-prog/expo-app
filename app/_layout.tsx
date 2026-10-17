@@ -42,6 +42,9 @@ function TabBladen() {
       <Tabs.Screen name="kookboek" options={{ title: t('kookboek.titel'), href: null }} />
       {/* Zelf kiezen (WEEK-44): een gerecht uit de receptenbank, vanuit het weekmenu. */}
       <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null }} />
+      {/* Mijn recepten (WEEK-45): eigen recepten beheren, bereikbaar vanuit het weekmenu. */}
+      <Tabs.Screen name="recepten" options={{ title: t('recepten.titel'), href: null }} />
+      <Tabs.Screen name="recept" options={{ title: t('recept.titelNieuw'), href: null }} />
     </Tabs>
   );
 }
