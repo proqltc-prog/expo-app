@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.44.0] – 2026-10-17
+
+Nieuw: houdbaarheidsdatum op de frigo. Vul de datum van de verpakking in; de app waarschuwt als een product bijna verloopt of verlopen is. Zonder datum staat er niets: er wordt niets geschat.
+
+- Jira: [WEEK-20](https://proqltc-1791495894841.atlassian.net/browse/WEEK-20)
+- Confluence: [WEEK-20 – Houdbaarheidsdatum van producten in de frigo](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6455325)
+
+### Gewijzigd
+- Nieuw: bij een frigo-item de knop "Houdbaarheid" om een datum (dd-mm-jjjj) in te vullen of te wissen. De datum geldt voor het oudste exemplaar.
+- Nieuw: waarschuwing "Bijna verlopen" tot 3 dagen voor de datum, en "Verlopen" daarna.
+- Niet in deze versie: uitlezen van de datum met de camera of uit de barcode, en AI-recepten op basis van bijna-verlopen producten.
+
 ## [0.43.0] – 2026-10-17
 
 Nieuw: het totaal van een gerecht. Als alle producten van een recept gescand en afgevinkt zijn, zie je op de boodschappenlijst de voeding (kcal, suikers, eiwitten, vet, zout) voor het hele gezin, en alle additieven.

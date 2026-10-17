@@ -3,6 +3,7 @@
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
+import { isoDatum } from '@/lib/houdbaarheid';
 
 export type FrigoItem = {
   id: string;
@@ -17,6 +18,8 @@ export type FrigoItem = {
   lijstId?: string;
   /** Productdetails uit de scanner (WEEK-49); ontbreekt als het product niet gescand is. */
   product?: Product;
+  /** Houdbaar tot, yyyy-mm-dd, zoals ingevuld of van de verpakking; ontbreekt = niet gekend (WEEK-20). */
+  houdbaarTot?: string;
 };
 
 /** Een regel op het frigo-scherm: hetzelfde product samengeteld. */
@@ -31,6 +34,8 @@ export type FrigoRegel = {
   ids: string[];
   /** De details van het eerste exemplaar dat gescand is. */
   product?: Product;
+  /** De vroegste houdbaarheidsdatum in deze groep (het product dat het eerst vervalt). */
+  houdbaarTot?: string;
 };
 
 export type FrigoSectie = { afdeling: Afdeling | 'overig'; regels: FrigoRegel[] };
@@ -80,7 +85,7 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
 }
 
 /** Extra gegevens bij zelf toevoegen (WEEK-35). */
-export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product };
+export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string };
 
 /** Eenheden die je kan kiezen bij zelf toevoegen. */
 export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
@@ -106,6 +111,7 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
       afdeling,
       toegevoegdOp: nu.toISOString(),
       ...(extra.product ? { product: extra.product } : {}),
+      ...(isoDatum(extra.houdbaarTot) ? { houdbaarTot: extra.houdbaarTot } : {}),
     },
   ];
 }
@@ -135,10 +141,12 @@ export function frigoSecties(frigo: readonly FrigoItem[]): FrigoSectie[] {
         oudsteOp: f.toegevoegdOp,
         ids: [f.id],
         ...(f.product ? { product: f.product } : {}),
+        ...(f.houdbaarTot ? { houdbaarTot: f.houdbaarTot } : {}),
       });
       continue;
     }
     if (!regel.product && f.product) regel.product = f.product;
+    if (f.houdbaarTot && (!regel.houdbaarTot || f.houdbaarTot < regel.houdbaarTot)) regel.houdbaarTot = f.houdbaarTot;
     if (f.hoeveelheid !== undefined) regel.hoeveelheid = Math.round(((regel.hoeveelheid ?? 0) + f.hoeveelheid) * 100) / 100;
     if (f.toegevoegdOp < regel.oudsteOp) regel.oudsteOp = f.toegevoegdOp;
     regel.ids.push(f.id);
@@ -188,6 +196,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
     const toegevoegdOp = typeof r.toegevoegdOp === 'string' && !Number.isNaN(Date.parse(r.toegevoegdOp)) ? r.toegevoegdOp : new Date(0).toISOString();
     const hoeveelheid = typeof r.hoeveelheid === 'number' && Number.isFinite(r.hoeveelheid) && r.hoeveelheid > 0 ? r.hoeveelheid : undefined;
     const product = leesProduct(r.product);
+    const houdbaarTot = isoDatum(r.houdbaarTot);
     return [{
       id: r.id,
       naam: r.naam.trim(),
@@ -197,6 +206,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
       toegevoegdOp,
       ...(typeof r.lijstId === 'string' ? { lijstId: r.lijstId } : {}),
       ...(product ? { product } : {}),
+      ...(houdbaarTot ? { houdbaarTot } : {}),
     }];
   });
 }
@@ -254,6 +264,16 @@ export function herstel(frigo: readonly FrigoItem[], verbruikt: readonly FrigoIt
     }
   }
   return resultaat;
+}
+
+/** Zet of wist de houdbaarheidsdatum van één frigo-item (WEEK-20). `undefined` wist de datum. Onbekend id: ongewijzigd. */
+export function zetHoudbaarheid(frigo: readonly FrigoItem[], id: string, houdbaarTot: string | undefined): FrigoItem[] {
+  return frigo.map((f) => {
+    const kopie: FrigoItem = { ...f };
+    delete kopie.houdbaarTot;
+    if (f.id === id && houdbaarTot) kopie.houdbaarTot = houdbaarTot;
+    return kopie;
+  });
 }
 
 /** Haalt producten handmatig uit de frigo (op, weggegooid…). */
