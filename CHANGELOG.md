@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.29.0] – 2026-10-17
+
+Nieuw: bovenaan de instellingen staat een korte uitleg 'Hoe werkt het?' met de vijf onderdelen van de app.
+
+- Jira: [WEEK-56](https://proqltc-1791495894841.atlassian.net/browse/WEEK-56)
+- Confluence: [WEEK-56 – Hoe werkt het? (uitleg in de instellingen)](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6324234)
+
+### Gewijzigd
+- Kaart 'Hoe werkt het?' bovenaan het instellingenscherm, in zes talen.
+
 ## [0.28.0] – 2026-10-17
 
 Verbetering: het gezinstabblad is weg. Taal en gezinsruimte staan achter een instellingen-icoon rechtsboven op het menu.

@@ -178,6 +178,12 @@ export const pt: Vertalingen = {
   'reden.eiwit': 'Rico em proteína ({waarde} g/100 g)',
 
   'profiel.intro': 'Quem se senta à mesa? Diz-nos, e nós tratamos do resto.',
+  'howto.kop': 'Como funciona?',
+  'howto.menu': 'Menu: diga-nos o que gosta. Preparamos um menu semanal, e troca um prato se não lhe agradar.',
+  'howto.lijst': 'Lista: com um toque, transforme o menu semanal na sua lista de compras.',
+  'howto.frigo': 'Frigorífico: marque o que já tem em casa. Temos isso em conta ao planear.',
+  'howto.scan': 'Digitalizar: digitalize o código de barras de um produto para o encontrar logo.',
+  'howto.gezin': 'Família: todos veem a mesma lista. Assim toda a gente sabe o que ainda falta comprar.',
   'profiel.gezin': 'Família',
   'profiel.volwassenen': 'Adultos',
   'profiel.kinderen': 'Pequenos',

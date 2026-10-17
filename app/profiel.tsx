@@ -78,6 +78,14 @@ export default function ProfielScherm() {
     <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
       <Text style={s.intro}>{t('profiel.intro')}</Text>
 
+      {/* Hoe werkt het? (WEEK-56): korte uitleg van de app, bovenaan de instellingen. */}
+      <View style={s.kaart}>
+        <Text style={s.waromKop}>{t('howto.kop')}</Text>
+        {['menu', 'lijst', 'frigo', 'scan', 'gezin'].map((k) => (
+          <Text key={k} style={s.hint}>• {t(`howto.${k}` as Sleutel)}</Text>
+        ))}
+      </View>
+
       <GezinsRuimte />
 
       <Text style={s.kop}>{t('profiel.gezin')}</Text>
