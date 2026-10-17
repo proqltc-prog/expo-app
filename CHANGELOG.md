@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.37.0] – 2026-10-17
+
+Nieuw: op het weekmenu kan je een gerecht zelf kiezen uit de receptenbank, een gerecht verwijderen, of een maaltijd toevoegen. Reset (↻) blijft zoals het was. Verwijderen haalt ook de ingrediënten van de boodschappenlijst, als ze er al op stonden.
+
+- Jira: [WEEK-44](https://proqltc-1791495894841.atlassian.net/browse/WEEK-44)
+- Confluence: [WEEK-44 – Gerechten op het weekmenu resetten, verwijderen of zelf kiezen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6422550)
+
+### Gewijzigd
+- Nieuw: knop "Zelf kiezen" per gerecht; een lijst met recepten voor hetzelfde moment, met zoekbalk en de voorkeuren als filter.
+- Nieuw: knop "Verwijderen" per gerecht (met bevestiging). Ingrediënten die op de boodschappenlijst staan, gaan mee weg, met een melding.
+- Nieuw: "+ Gerecht toevoegen" onder het weekmenu, op de eerste vrije dag voor het gekozen moment.
+- Gekookte gerechten kunnen niet verwijderd worden.
+
 ## [0.36.0] – 2026-10-17
 
 Nieuw: kies voor welke maaltijden het weekmenu is: ontbijt, middag en/of avond. Standaard blijft het avondmenu. Per dag komt er een plek per gekozen moment, en een vervangen ontbijt blijft een ontbijt. Er zijn nieuwe ontbijt- en middagrecepten in alle zes talen.
