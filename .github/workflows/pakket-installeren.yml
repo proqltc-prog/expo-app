@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci
+      - run: npm install --no-audit --no-fund
       - run: npx expo install react-native-google-mobile-ads
       - run: npm test
       - run: npm run typecheck:logica
@@ -33,6 +33,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json
+          git add package.json
           git commit -m "WEEK-38: react-native-google-mobile-ads toegevoegd"
           git push origin HEAD:${{ inputs.branch }}
