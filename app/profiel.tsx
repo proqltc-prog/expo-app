@@ -4,7 +4,9 @@ import { useFocusEffect } from 'expo-router';
 import {
   aantalPersonen,
   leesBedrag,
+  leesMaxKm,
   MAX_KINDEREN,
+  MAX_KM,
   MAX_VOLWASSENEN,
   Profiel,
   ProfielFout,
@@ -23,6 +25,7 @@ const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   kinderen: MAX_KINDEREN,
   budget: undefined,
   postcode: undefined,
+  maxKm: MAX_KM,
 };
 
 function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; max: number; onChange: (n: number) => void }) {
@@ -43,6 +46,7 @@ export default function ProfielScherm() {
   const { t, tn, zetVoorkeur } = useTaal();
   const [profiel, setProfiel] = useState<Profiel>(standaardProfiel());
   const [budgetTekst, setBudgetTekst] = useState('');
+  const [maxKmTekst, setMaxKmTekst] = useState('');
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
 
   useFocusEffect(
@@ -50,6 +54,7 @@ export default function ProfielScherm() {
       laadProfiel().then((p) => {
         setProfiel(p);
         setBudgetTekst(p.weekbudget === undefined ? '' : String(p.weekbudget).replace('.', ','));
+        setMaxKmTekst(p.maxKm === undefined ? '' : String(p.maxKm));
         setFouten([]);
       });
     }, [])
@@ -59,7 +64,7 @@ export default function ProfielScherm() {
   const wijzigAdres = (deel: Partial<Profiel['adres']>) => setProfiel((p) => ({ ...p, adres: { ...p.adres, ...deel } }));
 
   const bewaar = async () => {
-    const volledig: Profiel = { ...profiel, weekbudget: leesBedrag(budgetTekst) };
+    const volledig: Profiel = { ...profiel, weekbudget: leesBedrag(budgetTekst), maxKm: leesMaxKm(maxKmTekst) };
     const gevonden = valideerProfiel(volledig);
     setFouten(gevonden);
     if (gevonden.length) return;
@@ -106,23 +111,19 @@ export default function ProfielScherm() {
           keyboardType="decimal-pad"
           placeholder={t('profiel.budgetPlaceholder')}
         />
-      </View>
-
-      <Text style={s.kop}>{t('profiel.samenstelling')}</Text>
-      <View style={s.kaart}>
+        <Text style={s.label}>{t('profiel.maxKm')}</Text>
         <TextInput
-          style={[s.veld, s.meerRegels]}
-          value={profiel.samenstelling}
-          onChangeText={(t) => wijzig({ samenstelling: t })}
-          multiline
-          placeholder={t('profiel.samenstellingPlaceholder')}
+          style={s.veld}
+          value={maxKmTekst}
+          onChangeText={setMaxKmTekst}
+          keyboardType="number-pad"
+          placeholder={t('profiel.maxKmPlaceholder')}
         />
       </View>
 
       <Text style={s.kop}>{t('profiel.adres')}</Text>
       <View style={s.kaart}>
         <Text style={s.hint}>{t('profiel.adresHint')}</Text>
-        <TextInput style={s.veld} value={profiel.adres.straat} onChangeText={(t) => wijzigAdres({ straat: t })} placeholder={t('profiel.straat')} />
         <View style={s.rijVelden}>
           <TextInput
             style={[s.veld, { width: 100 }]}
@@ -182,7 +183,6 @@ const s = StyleSheet.create({
   tellerTekst: { color: KLEUR, fontSize: 20, fontWeight: '700' },
   tellerWaarde: { fontSize: 17, fontWeight: '600', minWidth: 24, textAlign: 'center' },
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
-  meerRegels: { minHeight: 80, paddingTop: 10, textAlignVertical: 'top' },
   rijVelden: { flexDirection: 'row', gap: 8 },
   hint: { color: '#777', fontSize: 13 },
   fout: { color: '#c62828' },

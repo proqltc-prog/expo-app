@@ -3,7 +3,6 @@
 import { isTaal, Taal } from '@/i18n';
 
 export type Adres = {
-  straat: string;
   postcode: string;
   gemeente: string;
   land: string;
@@ -15,8 +14,8 @@ export type Profiel = {
   kinderen: number;
   /** Budget voor de boodschappen per week in euro; undefined = geen budget opgegeven. */
   weekbudget?: number;
-  /** Vrije omschrijving van de gezinssamenstelling, bv. "kinderen eten kleine porties". */
-  samenstelling: string;
+  /** Hoeveel km het gezin maximaal wil rijden voor de boodschappen; undefined = niet opgegeven (WEEK-40). */
+  maxKm?: number;
   adres: Adres;
   /** Taal van de app; undefined = taal van het toestel (WEEK-22). */
   taal?: Taal;
@@ -24,14 +23,15 @@ export type Profiel = {
 
 export const MAX_VOLWASSENEN = 10;
 export const MAX_KINDEREN = 10;
+export const MAX_KM = 100;
 
 export function standaardProfiel(): Profiel {
   return {
     volwassenen: 2,
     kinderen: 0,
     weekbudget: undefined,
-    samenstelling: '',
-    adres: { straat: '', postcode: '', gemeente: '', land: 'België' },
+    maxKm: undefined,
+    adres: { postcode: '', gemeente: '', land: 'België' },
     taal: undefined,
   };
 }
@@ -60,11 +60,23 @@ export function leesBedrag(invoer: string): number | undefined {
   return Math.round(Number(genormaliseerd) * 100) / 100;
 }
 
+/**
+ * Leest de maximale afstand zoals de gebruiker ze typt. Leeg = undefined (geen limiet),
+ * alles wat geen geheel getal is geeft NaN (wordt door valideerProfiel geweigerd).
+ */
+export function leesMaxKm(invoer: string): number | undefined {
+  const t = invoer.trim();
+  if (t === '') return undefined;
+  if (!/^\d+$/.test(t)) return NaN;
+  return Number(t);
+}
+
 export type ProfielFout =
   | 'volwassenen'
   | 'kinderen'
   | 'budget'
-  | 'postcode';
+  | 'postcode'
+  | 'maxKm';
 
 /** Controleert een profiel en geeft de lijst met fouten terug (leeg = in orde). */
 export function valideerProfiel(p: Profiel): ProfielFout[] {
@@ -72,6 +84,7 @@ export function valideerProfiel(p: Profiel): ProfielFout[] {
   if (!Number.isInteger(p.volwassenen) || p.volwassenen < 1 || p.volwassenen > MAX_VOLWASSENEN) fouten.push('volwassenen');
   if (!Number.isInteger(p.kinderen) || p.kinderen < 0 || p.kinderen > MAX_KINDEREN) fouten.push('kinderen');
   if (p.weekbudget !== undefined && (!Number.isFinite(p.weekbudget) || p.weekbudget <= 0)) fouten.push('budget');
+  if (p.maxKm !== undefined && (!Number.isInteger(p.maxKm) || p.maxKm < 1 || p.maxKm > MAX_KM)) fouten.push('maxKm');
   if (p.adres.postcode.trim() !== '' && !/^[0-9A-Za-z -]{3,10}$/.test(p.adres.postcode.trim())) fouten.push('postcode');
   return fouten;
 }
@@ -98,9 +111,8 @@ export function normaliseerProfiel(ruw: unknown): Profiel {
     volwassenen,
     kinderen,
     weekbudget: budget,
-    samenstelling: tekst(r.samenstelling),
+    maxKm: typeof r.maxKm === 'number' && Number.isInteger(r.maxKm) && r.maxKm >= 1 && r.maxKm <= MAX_KM ? r.maxKm : undefined,
     adres: {
-      straat: tekst(adres.straat),
       postcode: tekst(adres.postcode),
       gemeente: tekst(adres.gemeente),
       land: tekst(adres.land, basis.adres.land),
@@ -112,14 +124,13 @@ export function normaliseerProfiel(ruw: unknown): Profiel {
 /**
  * Context voor de AI-planner. Gaat automatisch mee met elke vraag, zodat de
  * gebruiker het gezin niet in zijn prompt hoeft te herhalen.
- * Privacy: enkel gemeente en land, nooit straat of postcode.
+ * Privacy: enkel gemeente en land, nooit de postcode.
  */
 export function profielContext(p: Profiel): string {
   const regels: string[] = [];
   const kinderTekst = p.kinderen ? `, ${p.kinderen} ${p.kinderen === 1 ? 'kind' : 'kinderen'} (0 tot 12 jaar)` : '';
   regels.push(`Gezin: ${aantalPersonen(p)} personen – ${p.volwassenen} ${p.volwassenen === 1 ? 'volwassene' : 'volwassenen'}${kinderTekst}.`);
   if (p.weekbudget !== undefined) regels.push(`Budget voor boodschappen: € ${p.weekbudget.toFixed(2).replace('.', ',')} per week.`);
-  if (p.samenstelling.trim()) regels.push(`Opmerkingen over het gezin: ${p.samenstelling.trim()}`);
   const plaats = [p.adres.gemeente.trim(), p.adres.land.trim()].filter(Boolean).join(', ');
   if (plaats) regels.push(`Woonplaats: ${plaats}.`);
   return regels.join('\n');

@@ -5,7 +5,7 @@
 Smartphone-app (React Native / Expo) voor de wekelijkse maaltijdplanning en boodschappen van een gezin.
 
 - **Weekplanning** – beschrijf je week in een vrij tekstveld (aantal dagen, geen vlees, Nutri-Score, snel klaar…), kies kooktijd en stijl, en krijg een gevarieerd weekmenu. Je laatste 3 opdrachten staan klaar om te hergebruiken.
-- **Gezinsprofiel** – volwassenen, kinderen, budget, gezinssamenstelling en adres vul je één keer in; ze gaan automatisch mee bij elke planning.
+- **Gezinsprofiel** – volwassenen, kinderen, budget, maximale afstand en postcode/gemeente vul je één keer in; ze gaan automatisch mee bij elke planning.
 - **Boodschappenlijst** – automatisch uit het weekplan, met hoeveelheden voor je gezin + vaste items; af te vinken in de winkel.
 - **Kookboek** – bewaar geslaagde recepten als favoriet en laat een week willekeurig uit je kookboek samenstellen.
 - **Gezinsruimte** – deel weekplanning, boodschappenlijst, frigo en gezinsprofiel met je gezin via een code van 6 tekens; wijzigingen zijn meteen zichtbaar op elk toestel.
