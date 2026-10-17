@@ -6,7 +6,9 @@ import type { Vermijd } from '@/data/vermijden';
 import { KooktijdCode } from '@/lib/planner/types';
 import { kiesbareRecepten, voegToe, vervangDoorRecept } from '@/lib/planner/kies';
 import { zelfdeDag } from '@/lib/planner/bijwerken';
-import { laadKeuzes, wijzigPlan } from '@/opslag/plan';
+import { laadKeuzes, laadPlan, wijzigPlan } from '@/opslag/plan';
+import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
+import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { useTaal } from '@/ui/taal';
 
 // Zelf kiezen (WEEK-44): een recept uit de receptenbank kiezen, met de voorkeuren als filter en een zoekbalk.
@@ -29,6 +31,8 @@ export default function Kies() {
   const [vermijd, setVermijd] = useState<Vermijd[]>([]);
   const [zoek, setZoek] = useState('');
   const [bezig, setBezig] = useState(false);
+  // Tekst als een ander gezinslid het weekplan beheert: dan kies je hier niets (WEEK-30).
+  const [geenRecht, setGeenRecht] = useState<string | null>(null);
 
   // De voorkeuren van het weekmenu gelden ook hier als filter.
   useFocusEffect(
@@ -38,7 +42,15 @@ export default function Kies() {
         setStijlen(k.stijlen);
         setVermijd(k.vermijd);
       });
-    }, [])
+      Promise.all([laadPlan(), ikId(), laadLeden().catch(() => [] as GezinsLid[])]).then(([plan, id, leden]) => {
+        if (plan && !magPlanWijzigen(plan, id)) {
+          const naam = beheerderNaam(leden, plan.beheerder);
+          setGeenRecht(naam ? t('planning.alleenBeheerder', { naam }) : t('planning.alleenBeheerderOnbekend'));
+        } else {
+          setGeenRecht(null);
+        }
+      });
+    }, [t])
   );
 
   const recepten = useMemo(
@@ -47,7 +59,7 @@ export default function Kies() {
   );
 
   const kies = async (recept: BankRecept) => {
-    if (bezig) return;
+    if (bezig || geenRecht) return;
     setBezig(true);
     try {
       if (index !== undefined) {
@@ -80,6 +92,15 @@ export default function Kies() {
       setBezig(false);
     }
   };
+
+  if (geenRecht) {
+    return (
+      <View style={s.scherm}>
+        <Text style={s.moment}>{t(`moment.${moment}`)}</Text>
+        <Text style={s.melding}>{geenRecht}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={s.scherm}>
@@ -119,6 +140,7 @@ export default function Kies() {
 const s = StyleSheet.create({
   scherm: { flex: 1, padding: 16, gap: 10 },
   moment: { fontSize: 13, color: '#777', fontWeight: '600' },
+  melding: { fontSize: 15, lineHeight: 22, color: '#333', backgroundColor: '#fff8e1', padding: 14, borderRadius: 12 },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },

@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.46.0] – 2026-10-17
+
+**WEEK-30** – Eén beheerder van het weekplan. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-30) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6651972)
+
+- Het weekplan heeft één beheerder: wie het aanmaakt. Alleen die persoon kiest, vervangt, verwijdert of zet statussen op het plan; anderen zien het mee en krijgen de melding "Alleen {naam} kan dit weekplan wijzigen."
+- Het tabblad Kies toont een ander gezinslid enkel de melding, geen keuzelijst.
+- Zonder aanmelding (geen gezin) is er geen beheerder en blijft alles zoals voorheen.
+
 ## [0.45.0] – 2026-10-17
 
 Nieuw: de scanner geeft dagelijks 10 gratis scans (was 3). Is de limiet op, dan zie je hoe lang het nog duurt tot de teller om middernacht gereset wordt.
