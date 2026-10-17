@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.44.1] – 2026-10-17
+
+Herstel in de Play Store-tekst: de privacy-link stond nog als placeholder. Nu staat de echte link erin.
+
+- Jira: [WEEK-64](https://proqltc-1791495894841.atlassian.net/browse/WEEK-64)
+- Confluence: [WEEK-64 – Privacy-link in de store-tekst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6848544)
+
+### Gewijzigd
+- `store/listing.md`: de placeholder vervangen door https://proqltc-prog.github.io/famenu-privacy/.
+
 ## [0.44.0] – 2026-10-17
 
 Nieuw: houdbaarheidsdatum op de frigo. Vul de datum van de verpakking in; de app waarschuwt als een product bijna verloopt of verlopen is. Zonder datum staat er niets: er wordt niets geschat.
