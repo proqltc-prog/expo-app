@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.48.0] – 2026-10-17
+
+**WEEK-38** – Reclamefilmpjes met beloning (AdMob), eerste stap: extra scans. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6652012)
+
+- Op het scherm "limiet bereikt" kan je een filmpje bekijken voor 10 extra scans; de bonus geldt enkel voor die dag.
+- Het toestemmingsscherm (GDPR/UMP) en de advertenties via `react-native-google-mobile-ads`. Echte eenheid-ID's volgen voor de store-release; tot dan testadvertenties.
+- Het tijdelijke installatie-workflow voor de typings is verwijderd.
+
 ## [0.47.0] – 2026-10-17
 
 **WEEK-65** – Beheer van de gezinsruimte. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-65) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6651991)
