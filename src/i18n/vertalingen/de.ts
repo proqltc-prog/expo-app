@@ -178,12 +178,10 @@ export const de: Vertalingen = {
   'reden.eiwit': 'Eiweißreich ({waarde} g/100 g)',
 
   'profiel.intro': 'Wer sitzt am Tisch? Sag es kurz, dann rechnen wir den Rest aus.',
-  'winkels.geenPostcode': 'Erlaube den Standortzugriff oder trage zuerst eine gültige Postleitzahl in den Einstellungen ein.',
+  'winkels.geenPostcode': 'Trage im Profil eine gültige Postleitzahl ein, um Geschäfte vorzuschlagen.',
   'winkels.fout': 'Die Suche ist fehlgeschlagen. Versuch es später erneut.',
   'winkels.leeg': 'In deiner Nähe wurden keine Geschäfte gefunden.',
   'winkels.voorstelTitel': 'Wo kaufst du ein?',
-  'winkels.toon': 'Einkaufsvorschlag anzeigen',
-  'winkels.locatieUitleg': 'Wir nutzen deinen Standort nur, um Geschäfte in der Nähe zu finden. Er wird nicht gespeichert.',
   'winkels.nietGedekt': 'Für {soorten} haben wir innerhalb deiner maximalen Entfernung nichts gefunden.',
   'winkels.bron': 'Daten: © OpenStreetMap-Mitwirkende',
   'winkels.soort.supermarkt': 'Supermärkte',

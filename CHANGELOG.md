@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.33.0] – 2026-10-17
+
+Gewijzigd: het winkelvoorstel gebruikt de postcode uit het profiel in plaats van GPS. Bij elke wijziging van de boodschappenlijst wordt het voorstel opnieuw berekend. De GPS-toestemming vervalt.
+
+- Jira: [WEEK-60](https://proqltc-1791495894841.atlassian.net/browse/WEEK-60) (vervangt [WEEK-58](https://proqltc-1791495894841.atlassian.net/browse/WEEK-58) voor de locatie)
+- Confluence: [WEEK-60 – Winkelvoorstel op basis van postcode i.p.v. GPS](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6258726)
+
+### Gewijzigd
+- Verwijderd: GPS-locatie, expo-location en de toestemmingstekst. Geen knop meer; het voorstel verschijnt automatisch.
+- Nieuw: postcode wordt eenmalig omgezet naar een punt (OpenStreetMap Nominatim), zodat de maximale afstand uit het profiel werkt.
+- Winkels en postcodepunt worden per postcode bewaard; een andere postcode vraagt opnieuw het netwerk.
+- Zonder geldige postcode verschijnt een melding.
+- Regressietests op de winkelquery en het antwoord lezen.
+
 ## [0.32.0] – 2026-10-17
 
 Nieuw: het winkelvoorstel staat bovenaan de boodschappenpagina en werkt automatisch bij. Afstanden worden berekend met de GPS-locatie van het toestel (met terugval op de postcode). De locatie wordt enkel gevraagd na een tik op de knop en niet bewaard.
