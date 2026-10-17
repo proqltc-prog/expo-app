@@ -6,7 +6,7 @@ Voor **elke** nieuwe functionaliteit, verbetering of bugfix:
 
 1. **Jira** – maak een workitem aan in project **WEEK** (Weekplanner) op proqltc-1791495894841.atlassian.net (of neem het bestaande backlog-item) en zet het op *Actief*.
 2. **Code** – werk op een branch `feature/<JIRA-KEY>-korte-naam` of `fix/<JIRA-KEY>-korte-naam`; vermeld de Jira-key in elke commitboodschap (`WEEK-12: ...`).
-3. **Tests** – schrijf unit tests voor elke nieuwe of gewijzigde logica en voer ze uit (`npm test`). **Geen merge zonder groene tests**: de workflow `.github/workflows/test.yml` draait tests en typecontrole op elke pull request.
+3. **Tests** – schrijf unit tests voor elke nieuwe of gewijzigde logica en voer ze uit (`npm test`). Voeg daarnaast **regressietests** toe: tests die het bestaande gedrag vastleggen dat de wijziging kan raken, zodat bestaande functionaliteit niet stukgaat. **Geen merge zonder groene tests**: de workflow `.github/workflows/test.yml` draait tests en typecontrole op elke pull request.
 4. **Versie** – verhoog de versie volgens SemVer in `package.json` **en** `app.json`:
    - MINOR (0.x.0) voor nieuwe functionaliteit of verbetering
    - PATCH (0.x.y) voor bugfixes en kleine aanpassingen
