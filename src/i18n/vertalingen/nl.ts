@@ -179,12 +179,10 @@ export const nl = {
   'reden.eiwit': 'Eiwitrijk ({waarde} g/100 g)',
 
   'profiel.intro': 'Wie komt er aan tafel? Geef het even door, dan rekenen wij de rest uit.',
-  'winkels.geenPostcode': 'Geef toegang tot je locatie, of vul eerst een geldige postcode in bij je instellingen.',
+  'winkels.geenPostcode': 'Vul een geldige postcode in bij je profiel om winkels voor te stellen.',
   'winkels.fout': 'Winkels zoeken lukte niet. Probeer het later opnieuw.',
   'winkels.leeg': 'Geen winkels gevonden in jouw buurt.',
   'winkels.voorstelTitel': 'Waar doe je boodschappen?',
-  'winkels.toon': 'Toon winkelvoorstel',
-  'winkels.locatieUitleg': 'We gebruiken je locatie enkel om winkels in de buurt te zoeken. Ze wordt niet bewaard.',
   'winkels.nietGedekt': 'Voor {soorten} vonden we niets binnen je maximale afstand.',
   'winkels.bron': 'Gegevens: © OpenStreetMap-bijdragers',
   'winkels.soort.supermarkt': 'Supermarkten',

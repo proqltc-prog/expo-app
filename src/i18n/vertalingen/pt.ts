@@ -178,12 +178,10 @@ export const pt: Vertalingen = {
   'reden.eiwit': 'Rico em proteína ({waarde} g/100 g)',
 
   'profiel.intro': 'Quem se senta à mesa? Diz-nos, e nós tratamos do resto.',
-  'winkels.geenPostcode': 'Permita o acesso à localização ou introduza primeiro um código postal válido nas definições.',
+  'winkels.geenPostcode': 'Introduza um código postal válido no seu perfil para ver lojas sugeridas.',
   'winkels.fout': 'A procura falhou. Tente novamente mais tarde.',
   'winkels.leeg': 'Não foram encontradas lojas perto de si.',
   'winkels.voorstelTitel': 'Onde fazer as compras?',
-  'winkels.toon': 'Ver sugestão de lojas',
-  'winkels.locatieUitleg': 'Usamos a sua localização apenas para encontrar lojas perto. Não é guardada.',
   'winkels.nietGedekt': 'Para {soorten} não encontrámos nada dentro da sua distância máxima.',
   'winkels.bron': 'Dados: © contribuidores do OpenStreetMap',
   'winkels.soort.supermarkt': 'Supermercados',

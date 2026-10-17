@@ -178,12 +178,10 @@ export const en: Vertalingen = {
   'reden.eiwit': 'High in protein ({waarde} g/100 g)',
 
   'profiel.intro': 'Who’s joining for dinner? Tell us, and we’ll work out the rest.',
-  'winkels.geenPostcode': 'Allow location access, or enter a valid postcode in your settings first.',
+  'winkels.geenPostcode': 'Enter a valid postcode in your profile to see suggested shops.',
   'winkels.fout': 'Searching for shops failed. Please try again later.',
   'winkels.leeg': 'No shops found near you.',
   'winkels.voorstelTitel': 'Where to shop?',
-  'winkels.toon': 'Show shop suggestion',
-  'winkels.locatieUitleg': 'We only use your location to find nearby shops. It is not stored.',
   'winkels.nietGedekt': 'For {soorten} we found nothing within your maximum distance.',
   'winkels.bron': 'Data: © OpenStreetMap contributors',
   'winkels.soort.supermarkt': 'Supermarkets',
