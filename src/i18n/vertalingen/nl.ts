@@ -189,11 +189,10 @@ export const nl = {
   'profiel.budget': 'Budget',
   'profiel.budgetLabel': 'Boodschappenbudget per week (€)',
   'profiel.budgetPlaceholder': 'bv. 150 – leeg laten als je geen budget wil',
-  'profiel.samenstelling': 'Gezinssamenstelling',
-  'profiel.samenstellingPlaceholder': 'bv. kinderen eten kleine porties, niemand lust spruitjes, één persoon eet geen varkensvlees…',
+  'profiel.maxKm': 'Hoe ver mag het maximaal zijn voor de boodschappen? (km)',
+  'profiel.maxKmPlaceholder': 'bv. 10 – leeg laten als het niet uitmaakt',
   'profiel.adres': 'Adres',
   'profiel.adresHint': 'Optioneel. Enkel je gemeente en land worden aan de AI doorgegeven.',
-  'profiel.straat': 'Straat en nummer',
   'profiel.postcode': 'Postcode',
   'profiel.gemeente': 'Gemeente',
   'profiel.land': 'Land',
@@ -233,6 +232,7 @@ export const nl = {
   'fout.volwassenen': 'Kies tussen 1 en {max} volwassenen.',
   'fout.kinderen': 'Maximaal {max} kinderen.',
   'fout.budget': 'Vul een geldig bedrag in, of laat het budget leeg.',
+  'fout.maxKm': 'Vul een geheel getal van 1 tot {max} km in, of laat het leeg.',
   'fout.postcode': 'Deze postcode lijkt niet te kloppen.',
 } as const;
 

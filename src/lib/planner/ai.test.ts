@@ -12,7 +12,7 @@ const gezin: Profiel = {
   ...standaardProfiel(),
   kinderen: 2,
   weekbudget: 150,
-  adres: { straat: 'Dorpstraat 1', postcode: '1000', gemeente: 'Brussel', land: 'België' },
+  adres: { postcode: '1000', gemeente: 'Brussel', land: 'België' },
 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
   opdracht: '', kooktijden: [], stijlen: [], profiel: gezin, taal: 'fr', seed: 1, ...extra,

@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.25.0] – 2026-10-17
+
+Verbetering: het gezinsscherm vraagt enkel nog postcode en gemeente, en je kan een maximale afstand voor de boodschappen instellen. Het straatveld en het vrije veld voor de gezinssamenstelling zijn weg.
+
+- Jira: [WEEK-40](https://proqltc-1791495894841.atlassian.net/browse/WEEK-40)
+- Confluence: [WEEK-40 – Postcode, gemeente en maximale afstand](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/5996546)
+
+### Gewijzigd
+- Adres: enkel postcode en gemeente (en land), geen straat meer.
+- Nieuw: maximale afstand voor de boodschappen in km (1 tot 100, optioneel).
+- Het vrije veld voor de gezinssamenstelling is verwijderd.
+- Bestaande profielen met een straat of gezinssamenstelling blijven werken; die gegevens worden genegeerd.
+
 ## [0.24.0] – 2026-10-17
 
 Verbetering: het gezinsscherm vraagt het aantal kinderen tot 12 jaar in plaats van hun leeftijd. Elk kind telt als een halve portie.
