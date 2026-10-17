@@ -193,6 +193,8 @@ export const nl = {
   'profiel.maxKmPlaceholder': 'bv. 10 – leeg laten als het niet uitmaakt',
   'profiel.adres': 'Adres',
   'profiel.adresHint': 'Optioneel. Enkel je gemeente en land worden aan de AI doorgegeven.',
+  'profiel.winkelsTitel': 'Waarvoor is de postcode?',
+  'profiel.winkelsTekst': 'Later gebruiken we je postcode om lokale winkels te zoeken: supermarkten, slagers, bakkers en groentehandelaars. Zo koop je makkelijker in de buurt.',
   'profiel.postcode': 'Postcode',
   'profiel.gemeente': 'Gemeente',
   'profiel.land': 'Land',

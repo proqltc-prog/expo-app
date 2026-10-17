@@ -123,6 +123,10 @@ export default function ProfielScherm() {
 
       <Text style={s.kop}>{t('profiel.adres')}</Text>
       <View style={s.kaart}>
+        <View style={s.info}>
+          <Text style={s.waromKop}>{t('profiel.winkelsTitel')}</Text>
+          <Text style={s.hint}>{t('profiel.winkelsTekst')}</Text>
+        </View>
         <Text style={s.hint}>{t('profiel.adresHint')}</Text>
         <View style={s.rijVelden}>
           <TextInput
@@ -185,6 +189,7 @@ const s = StyleSheet.create({
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
   rijVelden: { flexDirection: 'row', gap: 8 },
   hint: { color: '#777', fontSize: 13 },
+  info: { backgroundColor: '#eef6f1', borderRadius: 10, padding: 12, gap: 4 },
   fout: { color: '#c62828' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6 },

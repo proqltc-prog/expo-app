@@ -192,6 +192,8 @@ export const pt: Vertalingen = {
   'profiel.maxKmPlaceholder': 'p. ex. 10 – deixe vazio se não importar',
   'profiel.adres': 'Morada',
   'profiel.adresHint': 'Opcional. Apenas o seu município e país são partilhados com a IA.',
+  'profiel.winkelsTitel': 'Para que serve o código postal?',
+  'profiel.winkelsTekst': 'Mais tarde vamos usar o seu código postal para encontrar lojas perto de si: supermercados, talhos, padarias e frutarias. Assim compra mais facilmente na sua zona.',
   'profiel.postcode': 'Código postal',
   'profiel.gemeente': 'Município',
   'profiel.land': 'País',

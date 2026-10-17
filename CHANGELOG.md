@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.27.0] – 2026-10-17
+
+Verbetering: het gezinsscherm legt uit waarom we de postcode vragen: om lokale winkels te vinden.
+
+- Jira: [WEEK-52](https://proqltc-1791495894841.atlassian.net/browse/WEEK-52)
+- Confluence: [WEEK-52 – Uitleg bij postcode in het gezinsscherm](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6193191)
+
+### Gewijzigd
+- Informatieve box boven de postcode, vertaald in alle zes talen.
+
 ## [0.26.1] – 2026-10-17
 
 Aanpassing: een bekeken reclamefilmpje geeft 10 extra scans voor die dag, in plaats van 3.
