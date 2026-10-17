@@ -17,7 +17,7 @@ const f = (naam: string, hoeveelheid: number | undefined, eenheid: string | unde
   id: `${naam}-${dagen}`, naam, afdeling: 'groenten-fruit', toegevoegdOp: dagenGeleden(dagen),
   ...(hoeveelheid !== undefined ? { hoeveelheid } : {}), ...(eenheid ? { eenheid } : {}), ...extra,
 });
-const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: [7, 4] };
+const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
   opdracht: '', kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42, ...extra,
 });

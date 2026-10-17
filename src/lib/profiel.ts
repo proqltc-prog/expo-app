@@ -11,8 +11,8 @@ export type Adres = {
 
 export type Profiel = {
   volwassenen: number;
-  /** Leeftijd van elk kind in jaren. */
-  kinderen: number[];
+  /** Aantal kinderen van 0 tot 12 jaar. Elk kind telt als een halve portie (WEEK-40). */
+  kinderen: number;
   /** Budget voor de boodschappen per week in euro; undefined = geen budget opgegeven. */
   weekbudget?: number;
   /** Vrije omschrijving van de gezinssamenstelling, bv. "kinderen eten kleine porties". */
@@ -24,12 +24,11 @@ export type Profiel = {
 
 export const MAX_VOLWASSENEN = 10;
 export const MAX_KINDEREN = 10;
-export const MAX_LEEFTIJD_KIND = 17;
 
 export function standaardProfiel(): Profiel {
   return {
     volwassenen: 2,
-    kinderen: [],
+    kinderen: 0,
     weekbudget: undefined,
     samenstelling: '',
     adres: { straat: '', postcode: '', gemeente: '', land: 'België' },
@@ -38,7 +37,7 @@ export function standaardProfiel(): Profiel {
 }
 
 export function aantalPersonen(p: Profiel): number {
-  return p.volwassenen + p.kinderen.length;
+  return p.volwassenen + p.kinderen;
 }
 
 /**
@@ -64,7 +63,6 @@ export function leesBedrag(invoer: string): number | undefined {
 export type ProfielFout =
   | 'volwassenen'
   | 'kinderen'
-  | 'leeftijd'
   | 'budget'
   | 'postcode';
 
@@ -72,8 +70,7 @@ export type ProfielFout =
 export function valideerProfiel(p: Profiel): ProfielFout[] {
   const fouten: ProfielFout[] = [];
   if (!Number.isInteger(p.volwassenen) || p.volwassenen < 1 || p.volwassenen > MAX_VOLWASSENEN) fouten.push('volwassenen');
-  if (p.kinderen.length > MAX_KINDEREN) fouten.push('kinderen');
-  if (p.kinderen.some((l) => !Number.isInteger(l) || l < 0 || l > MAX_LEEFTIJD_KIND)) fouten.push('leeftijd');
+  if (!Number.isInteger(p.kinderen) || p.kinderen < 0 || p.kinderen > MAX_KINDEREN) fouten.push('kinderen');
   if (p.weekbudget !== undefined && (!Number.isFinite(p.weekbudget) || p.weekbudget <= 0)) fouten.push('budget');
   if (p.adres.postcode.trim() !== '' && !/^[0-9A-Za-z -]{3,10}$/.test(p.adres.postcode.trim())) fouten.push('postcode');
   return fouten;
@@ -91,9 +88,10 @@ export function normaliseerProfiel(ruw: unknown): Profiel {
   if (!ruw || typeof ruw !== 'object') return basis;
   const r = ruw as Record<string, unknown>;
   const adres = (r.adres && typeof r.adres === 'object' ? r.adres : {}) as Record<string, unknown>;
+  // Oude profielen bewaarden de leeftijd van elk kind: dan telt het aantal items.
   const kinderen = Array.isArray(r.kinderen)
-    ? r.kinderen.filter((l): l is number => typeof l === 'number' && Number.isInteger(l) && l >= 0 && l <= MAX_LEEFTIJD_KIND).slice(0, MAX_KINDEREN)
-    : basis.kinderen;
+    ? Math.min(MAX_KINDEREN, r.kinderen.length)
+    : Math.min(MAX_KINDEREN, Math.max(0, Math.round(getal(r.kinderen, basis.kinderen))));
   const volwassenen = Math.min(MAX_VOLWASSENEN, Math.max(1, Math.round(getal(r.volwassenen, basis.volwassenen))));
   const budget = typeof r.weekbudget === 'number' && Number.isFinite(r.weekbudget) && r.weekbudget > 0 ? r.weekbudget : undefined;
   return {
@@ -118,9 +116,7 @@ export function normaliseerProfiel(ruw: unknown): Profiel {
  */
 export function profielContext(p: Profiel): string {
   const regels: string[] = [];
-  const kinderTekst = p.kinderen.length
-    ? `, ${p.kinderen.length} ${p.kinderen.length === 1 ? 'kind' : 'kinderen'} (${[...p.kinderen].sort((a, b) => a - b).map((l) => `${l} jaar`).join(', ')})`
-    : '';
+  const kinderTekst = p.kinderen ? `, ${p.kinderen} ${p.kinderen === 1 ? 'kind' : 'kinderen'} (0 tot 12 jaar)` : '';
   regels.push(`Gezin: ${aantalPersonen(p)} personen – ${p.volwassenen} ${p.volwassenen === 1 ? 'volwassene' : 'volwassenen'}${kinderTekst}.`);
   if (p.weekbudget !== undefined) regels.push(`Budget voor boodschappen: € ${p.weekbudget.toFixed(2).replace('.', ',')} per week.`);
   if (p.samenstelling.trim()) regels.push(`Opmerkingen over het gezin: ${p.samenstelling.trim()}`);

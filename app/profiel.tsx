@@ -5,7 +5,6 @@ import {
   aantalPersonen,
   leesBedrag,
   MAX_KINDEREN,
-  MAX_LEEFTIJD_KIND,
   MAX_VOLWASSENEN,
   Profiel,
   ProfielFout,
@@ -22,7 +21,6 @@ const KLEUR = '#2e7d4f';
 const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   volwassenen: MAX_VOLWASSENEN,
   kinderen: MAX_KINDEREN,
-  leeftijd: MAX_LEEFTIJD_KIND,
   budget: undefined,
   postcode: undefined,
 };
@@ -84,28 +82,18 @@ export default function ProfielScherm() {
           <Teller waarde={profiel.volwassenen} min={1} max={MAX_VOLWASSENEN} onChange={(n) => wijzig({ volwassenen: n })} />
         </View>
         <View style={s.rij}>
-          <Text style={s.label}>{t('profiel.kinderen')}</Text>
-          <Teller
-            waarde={profiel.kinderen.length}
-            min={0}
-            max={MAX_KINDEREN}
-            onChange={(n) =>
-              wijzig({ kinderen: n > profiel.kinderen.length ? [...profiel.kinderen, 6] : profiel.kinderen.slice(0, n) })
-            }
-          />
-        </View>
-        {profiel.kinderen.map((leeftijd, i) => (
-          <View key={i} style={[s.rij, s.subRij]}>
-            <Text style={s.subLabel}>{t('profiel.kindLeeftijd', { n: i + 1 })}</Text>
-            <Teller
-              waarde={leeftijd}
-              min={0}
-              max={MAX_LEEFTIJD_KIND}
-              onChange={(n) => wijzig({ kinderen: profiel.kinderen.map((l, j) => (j === i ? n : l)) })}
-            />
+          <View>
+            <Text style={s.label}>{t('profiel.kinderen')}</Text>
+            <Text style={s.hint}>{t('profiel.kinderHint')}</Text>
           </View>
-        ))}
+          <Teller waarde={profiel.kinderen} min={0} max={MAX_KINDEREN} onChange={(n) => wijzig({ kinderen: n })} />
+        </View>
         <Text style={s.totaal}>{t('profiel.samen', { personen: tn('algemeen.personen', aantalPersonen(profiel)) })}</Text>
+      </View>
+
+      <View style={s.waarom}>
+        <Text style={s.waromKop}>{t('profiel.waarom.titel')}</Text>
+        <Text style={s.hint}>{t('profiel.waarom.tekst')}</Text>
       </View>
 
       <Text style={s.kop}>{t('profiel.budget')}</Text>
@@ -184,9 +172,9 @@ const s = StyleSheet.create({
   kop: { fontWeight: '700', fontSize: 15, color: '#333', marginTop: 10 },
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5', gap: 10 },
   rij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  subRij: { paddingLeft: 12 },
   label: { fontSize: 16 },
-  subLabel: { fontSize: 14, color: '#555' },
+  waarom: { borderLeftWidth: 3, borderLeftColor: KLEUR, paddingLeft: 12, gap: 4, marginTop: 4 },
+  waromKop: { fontWeight: '700', fontSize: 15, color: '#333' },
   totaal: { color: '#777', fontSize: 13 },
   teller: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   tellerKnop: { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },

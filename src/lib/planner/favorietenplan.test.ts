@@ -14,7 +14,7 @@ const fav = (naam: string, extra: { soort?: Soort; minuten?: number; stijlen?: S
   personen: 4, porties: 3, opgeslagenOp: '2026-10-01T10:00:00.000Z',
 });
 const kookboek = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map((n) => fav(n));
-const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: [7, 4] }; // 3 porties
+const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 }; // 3 porties
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
   opdracht: '', kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 7, ...extra,
 });
@@ -102,7 +102,7 @@ describe('planUitFavorieten (WEEK-14)', () => {
   });
 
   test('hoeveelheden herrekend naar het huidige gezin', () => {
-    const klein: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: [] }; // 2 porties i.p.v. 3
+    const klein: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 0 }; // 2 porties i.p.v. 3
     const plan = planUitFavorieten([fav('A')], verzoek({ profiel: klein, opdracht: '1 dag' }))!;
     assert.equal(plan.dagen[0].recept.ingredienten[0].hoeveelheid, 200);
     assert.equal(plan.porties, 2);

@@ -1,14 +1,14 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { leesOpdracht } from '@/lib/planner/opdracht';
-import { kindPortie, porties, rondAf } from '@/lib/planner/hoeveelheid';
+import { KIND_PORTIE, porties, rondAf } from '@/lib/planner/hoeveelheid';
 import { naarPlanRecept, planLokaal, soortenSchema, STANDAARD_AANTAL_DAGEN, toeval } from '@/lib/planner/lokaal';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanVerzoek } from '@/lib/planner/types';
 import { RECEPTENBANK } from '@/data/receptenbank';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 
-const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: [7, 4] };
+const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
 const verzoek = (opdracht: string, extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
   opdracht, kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42, ...extra,
 });
@@ -48,11 +48,10 @@ describe('leesOpdracht', () => {
 });
 
 describe('porties en afronden', () => {
-  test('kinderen eten minder naargelang hun leeftijd', () => {
-    assert.equal(kindPortie(4), 0.5);
-    assert.equal(kindPortie(7), 0.75);
-    assert.equal(kindPortie(14), 1);
-    assert.equal(porties(gezin), 3.25);
+  test('elk kind telt als een halve portie, het totaal wordt naar boven afgerond', () => {
+    assert.equal(KIND_PORTIE, 0.5);
+    assert.equal(porties(gezin), 3);
+    assert.equal(porties({ ...standaardProfiel(), volwassenen: 2, kinderen: 1 }), 3);
     assert.equal(porties(standaardProfiel()), 2);
   });
   test('afronden naar winkelhoeveelheden', () => {
@@ -60,8 +59,9 @@ describe('porties en afronden', () => {
     assert.equal(rondAf(48.75, 'g'), 50);
     assert.equal(rondAf(32, 'ml'), 30);
     assert.equal(rondAf(3, 'g'), 5);
+    assert.equal(rondAf(0.5, 'stuk'), 1);
+    assert.equal(rondAf(1.2, 'stuk'), 2);
     assert.equal(rondAf(1.625, 'stuk'), 2);
-    assert.equal(rondAf(1.2, 'stuk'), 1.5);
     assert.equal(rondAf(6.5, 'stuk'), 7);
     assert.equal(rondAf(0, 'g'), 0);
   });
@@ -97,7 +97,7 @@ describe('planLokaal', () => {
     assert.equal(plan.dagen.length, STANDAARD_AANTAL_DAGEN);
     assert.deepEqual(plan.dagen.map((d) => d.dag), ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']);
     assert.equal(plan.bron, 'lokaal');
-    assert.equal(plan.porties, 3.25);
+    assert.equal(plan.porties, 3);
   });
 
   test('volgt het gevraagde aantal dagen', () => {

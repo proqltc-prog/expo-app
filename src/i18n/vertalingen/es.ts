@@ -177,11 +177,13 @@ export const es: Vertalingen = {
   'reden.zout': 'Mucha sal ({waarde} g/100 g)',
   'reden.eiwit': 'Rico en proteínas ({waarde} g/100 g)',
 
-  'profiel.intro': 'Rellena estos datos una sola vez. Se incluyen automáticamente en cada planificación semanal.',
+  'profiel.intro': '¿Quién se sienta a la mesa? Dinos cuántos sois y calculamos el resto.',
   'profiel.gezin': 'Familia',
-  'profiel.volwassenen': 'Adultos',
-  'profiel.kinderen': 'Niños',
-  'profiel.kindLeeftijd': 'Niño {n} – edad',
+  'profiel.volwassenen': 'Mayores',
+  'profiel.kinderen': 'Peques',
+  'profiel.waarom.titel': '¿Por qué lo preguntamos?',
+  'profiel.waarom.tekst': 'Así la app sabe exactamente lo que necesitas. Ni sobras que se pudren en la nevera, ni falta a mitad de receta. Solo buena comida.',
+  'profiel.kinderHint': '0 a 12 años',
   'profiel.samen': 'En total {personen}',
   'profiel.budget': 'Presupuesto',
   'profiel.budgetLabel': 'Presupuesto semanal para la compra (€)',
@@ -229,7 +231,6 @@ export const es: Vertalingen = {
 
   'fout.volwassenen': 'Elige entre 1 y {max} adultos.',
   'fout.kinderen': 'Como máximo {max} niños.',
-  'fout.leeftijd': 'La edad de un niño debe estar entre 0 y {max} años.',
   'fout.budget': 'Introduce un importe válido o deja el presupuesto vacío.',
   'fout.postcode': 'Este código postal no parece correcto.',
 };

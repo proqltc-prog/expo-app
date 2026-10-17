@@ -177,11 +177,13 @@ export const de: Vertalingen = {
   'reden.zout': 'Viel Salz ({waarde} g/100 g)',
   'reden.eiwit': 'Eiweißreich ({waarde} g/100 g)',
 
-  'profiel.intro': 'Diese Angaben machst du nur einmal. Sie werden bei jeder Wochenplanung automatisch berücksichtigt.',
+  'profiel.intro': 'Wer sitzt am Tisch? Sag es kurz, dann rechnen wir den Rest aus.',
   'profiel.gezin': 'Familie',
-  'profiel.volwassenen': 'Erwachsene',
-  'profiel.kinderen': 'Kinder',
-  'profiel.kindLeeftijd': 'Kind {n} – Alter',
+  'profiel.volwassenen': 'Große',
+  'profiel.kinderen': 'Kleine Racker',
+  'profiel.waarom.titel': 'Warum fragen wir das?',
+  'profiel.waarom.tekst': 'So weiß die App genau, was du brauchst. Kein Überschuss, der im Kühlschrank verstaubt, kein Mangel mitten im Rezept. Einfach lecker essen.',
+  'profiel.kinderHint': '0 bis 12 Jahre',
   'profiel.samen': 'Insgesamt {personen}',
   'profiel.budget': 'Budget',
   'profiel.budgetLabel': 'Einkaufsbudget pro Woche (€)',
@@ -229,7 +231,6 @@ export const de: Vertalingen = {
 
   'fout.volwassenen': 'Wähle zwischen 1 und {max} Erwachsenen.',
   'fout.kinderen': 'Höchstens {max} Kinder.',
-  'fout.leeftijd': 'Das Alter eines Kindes liegt zwischen 0 und {max} Jahren.',
   'fout.budget': 'Gib einen gültigen Betrag ein oder lass das Budget leer.',
   'fout.postcode': 'Diese Postleitzahl scheint nicht zu stimmen.',
 };
