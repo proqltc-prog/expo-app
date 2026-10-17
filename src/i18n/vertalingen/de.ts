@@ -11,8 +11,8 @@ export const de: Vertalingen = {
   'tab.frigo.titel': 'Virtueller Kühlschrank',
   'tab.scan': 'Scan',
   'tab.scan.titel': 'Produkt scannen',
-  'tab.gezin': 'Familie',
   'tab.gezin.titel': 'Familienprofil',
+  'tab.instellingen': 'Einstellungen',
   'kookboek.titel': 'Kochbuch',
 
   'dag.zondag': 'Sonntag',

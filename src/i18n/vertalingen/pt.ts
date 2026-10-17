@@ -11,8 +11,8 @@ export const pt: Vertalingen = {
   'tab.frigo.titel': 'Frigorífico virtual',
   'tab.scan': 'Digitalizar',
   'tab.scan.titel': 'Digitalizar um produto',
-  'tab.gezin': 'Família',
   'tab.gezin.titel': 'Perfil da família',
+  'tab.instellingen': 'Definições',
   'kookboek.titel': 'Livro de receitas',
 
   'dag.zondag': 'Domingo',
