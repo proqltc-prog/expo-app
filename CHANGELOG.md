@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.33.3] – 2026-10-17
+
+Documentatie: het privacybeleid is klaar als webpagina (`docs/privacybeleid/index.html`), om te publiceren als link in de Play Console. Het advertentiedeel staat er nog niet in; dat komt bij de AdMob-release.
+
+- Jira: [WEEK-62](https://proqltc-1791495894841.atlassian.net/browse/WEEK-62)
+- Confluence: [WEEK-62 – Privacybeleid als publieke webpagina](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6324255)
+
+### Gewijzigd
+- Nieuw: `scripts/build-privacybeleid.py` bouwt de pagina uit `store/privacybeleid.md`.
+- Nieuw: `docs/privacybeleid/index.html`, in Nederlands en Engels.
+
 ## [0.33.2] – 2026-10-17
 
 Documentatie: de uitgeversgegevens (Proqltc, Roosdaal, België) en het contactadres zijn ingevuld in het privacybeleid, de Play Data safety-tekst en de winkelteksten.
