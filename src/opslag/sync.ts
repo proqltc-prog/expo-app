@@ -562,6 +562,45 @@ export async function verlaatGezin(): Promise<void> {
   await koppelLos();
 }
 
+/** De beheerder van de gezinsruimte, of undefined als die niet bekend is (WEEK-65). */
+export async function laadBeheerderId(): Promise<string | undefined> {
+  const gezin = await laadGezin();
+  const sb = supabase();
+  if (!gezin || !sb) return undefined;
+  const { data, error } = await sb.from('gezinnen').select('beheerder_id').eq('id', gezin.id).maybeSingle();
+  if (error) throw error;
+  return (data as { beheerder_id: string | null } | null)?.beheerder_id ?? undefined;
+}
+
+/** Maakt een ander lid tot beheerder van de gezinsruimte (WEEK-65). */
+export async function maakBeheerder(gebruikerId: string): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('geen_backend');
+  await zorgVoorSessie();
+  const { error } = await sb.rpc('maak_beheerder', { p_gebruiker: gebruikerId });
+  if (error) throw new Error(error.message);
+}
+
+/** De beheerder verlaat het gezin en maakt een ander lid tot beheerder (WEEK-65). */
+export async function verlaatMetOpvolger(opvolgerId: string): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('geen_backend');
+  await zorgVoorSessie();
+  const { error } = await sb.rpc('verlaat_gezin_met_opvolger', { p_opvolger: opvolgerId });
+  if (error) throw new Error(error.message);
+  await koppelLos();
+}
+
+/** De beheerder heft de gezinsruimte op: die verdwijnt voor alle leden (WEEK-65). */
+export async function heffGezinOp(): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('geen_backend');
+  await zorgVoorSessie();
+  const { error } = await sb.rpc('hef_gezin_op');
+  if (error) throw new Error(error.message);
+  await koppelLos();
+}
+
 /** Het id van de aangemelde gebruiker, of undefined zonder aanmelding (WEEK-30). */
 export async function ikId(): Promise<string | undefined> {
   const sb = supabase();
