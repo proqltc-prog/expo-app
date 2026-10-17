@@ -243,6 +243,7 @@ export const de: Vertalingen = {
   'scan.inFrigoGedaan': '{naam} ist im Kühlschrank.',
   'scan.resterend': 'Heute noch {n} kostenlose Scans',
   'scan.limiet': 'Du hast heute deine {limiet} kostenlosen Scans verbraucht. Morgen geht es wieder.',
+  'scan.reset': 'Neue Scans um Mitternacht, in {uren} Std. {minuten} Min.',
   'scan.bron': 'Daten: Open Food Facts (openfoodfacts.org). Keine medizinische Beratung.',
 
   'voeding.kcal': 'Kalorien',

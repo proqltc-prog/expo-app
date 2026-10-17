@@ -244,6 +244,7 @@ export const nl = {
   'scan.inFrigoGedaan': '{naam} staat in de frigo.',
   'scan.resterend': 'Nog {n} gratis scans vandaag',
   'scan.limiet': 'Je hebt vandaag je {limiet} gratis scans gebruikt. Morgen kan het opnieuw.',
+  'scan.reset': 'Nieuwe scans om middernacht, over {uren} u {minuten} min.',
   'scan.bron': 'Gegevens: Open Food Facts (openfoodfacts.org). Geen medisch advies.',
 
   'voeding.kcal': 'Calorieën',

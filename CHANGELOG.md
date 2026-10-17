@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.45.0] – 2026-10-17
+
+Nieuw: de scanner geeft dagelijks 10 gratis scans (was 3). Is de limiet op, dan zie je hoe lang het nog duurt tot de teller om middernacht gereset wordt.
+
+- Jira: [WEEK-51](https://proqltc-1791495894841.atlassian.net/browse/WEEK-51)
+- Confluence: [WEEK-51 – Scanner: 10 scans per dag en aftelling tot de reset](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6324312)
+
+### Gewijzigd
+- Gewijzigd: gratis limiet van 3 naar 10 scans per dag.
+- Nieuw: bij een bereikte limiet de aftelling tot middernacht.
+- Gewijzigd: store-tekst in zes talen noemt 10 scans per dag.
+- Niet in deze versie: extra scans na een reclamefilmpje (WEEK-38, wacht op AdMob).
+
 ## [0.44.1] – 2026-10-17
 
 Herstel in de Play Store-tekst: de privacy-link stond nog als placeholder. Nu staat de echte link erin.

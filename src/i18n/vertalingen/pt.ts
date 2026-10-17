@@ -243,6 +243,7 @@ export const pt: Vertalingen = {
   'scan.inFrigoGedaan': '{naam} está no frigorífico.',
   'scan.resterend': 'Ainda tens {n} leituras grátis hoje',
   'scan.limiet': 'Já usaste as tuas {limiet} leituras grátis de hoje. Amanhã podes voltar a ler.',
+  'scan.reset': 'Novos escaneamentos à meia-noite, em {uren} h {minuten} min.',
   'scan.bron': 'Dados: Open Food Facts (openfoodfacts.org). Não é aconselhamento médico.',
 
   'voeding.kcal': 'Calorias',

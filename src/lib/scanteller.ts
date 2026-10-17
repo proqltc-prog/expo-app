@@ -1,7 +1,7 @@
-// Scanlimiet (WEEK-34): 3 scans per dag per toestel.
+// Scanlimiet (WEEK-34): 10 scans per dag per toestel (WEEK-51; was 3).
 // Reclamefilmpjes (WEEK-38) geven extra scans voor die dag: dat staat in `bonus`.
 
-export const GRATIS_SCANS_PER_DAG = 3;
+export const GRATIS_SCANS_PER_DAG = 10;
 
 export type ScanTeller = { dag: string; aantal: number; bonus?: number };
 
@@ -9,6 +9,12 @@ export type ScanTeller = { dag: string; aantal: number; bonus?: number };
 export function dagVan(nu: Date): string {
   const t = (n: number) => String(n).padStart(2, '0');
   return `${nu.getFullYear()}-${t(nu.getMonth() + 1)}-${t(nu.getDate())}`;
+}
+
+/** Minuten tot de volgende middernacht (de reset van de teller), afgerond naar boven (WEEK-51). */
+export function minutenTotReset(nu: Date): number {
+  const middernacht = new Date(nu.getFullYear(), nu.getMonth(), nu.getDate() + 1, 0, 0, 0);
+  return Math.ceil((middernacht.getTime() - nu.getTime()) / 60000);
 }
 
 /** Leest een bewaarde teller; onbruikbaar = nog niets gescand. */
