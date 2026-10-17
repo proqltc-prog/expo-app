@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm install --no-audit --no-fund
-      - run: npx expo install react-native-google-mobile-ads
+      - run: npx expo install react-native-google-mobile-ads || npm install react-native-google-mobile-ads --no-audit --no-fund --legacy-peer-deps
       - run: npm test
       - run: npm run typecheck:logica
       - name: Opslaan op de branch
