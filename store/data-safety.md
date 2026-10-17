@@ -31,5 +31,5 @@ Google vraagt de categorieën in het Engels. Hieronder staat per categorie wat d
 
 ## Opmerkingen voor de Play Console
 
-- Het advertentie-id staat pas op "ja" wanneer de AdMob-integratie (WEEK-38) live staat. Zet het dan aan en pas het privacybeleid aan.
+- Het advertentie-id staat op "ja" sinds v0.48.1 (AdMob-advertenties live in de app). Het privacybeleid vermeldt dit.
 - Bij twijfel over een categorie: kies de strengste keuze, zodat de verklaring klopt met wat de app echt doet.
