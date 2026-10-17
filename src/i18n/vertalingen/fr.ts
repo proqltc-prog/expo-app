@@ -177,11 +177,13 @@ export const fr: Vertalingen = {
   'reden.zout': 'Riche en sel ({waarde} g/100 g)',
   'reden.eiwit': 'Riche en protéines ({waarde} g/100 g)',
 
-  'profiel.intro': 'Vous ne remplissez ces données qu’une seule fois. Elles sont jointes automatiquement à chaque planning, pour ne pas devoir les répéter.',
+  'profiel.intro': 'Qui passe à table ? Dites-le-nous, on calcule le reste.',
   'profiel.gezin': 'Famille',
-  'profiel.volwassenen': 'Adultes',
-  'profiel.kinderen': 'Enfants',
-  'profiel.kindLeeftijd': 'Enfant {n} – âge',
+  'profiel.volwassenen': 'Grands',
+  'profiel.kinderen': 'Petits bouts',
+  'profiel.waarom.titel': 'Pourquoi on vous demande ça ?',
+  'profiel.waarom.tekst': 'Ainsi l’app sait exactement ce qu’il vous faut. Pas de surplus qui moisit dans le frigo, pas de manque au milieu de la recette. Juste bien manger.',
+  'profiel.kinderHint': '0 à 12 ans',
   'profiel.samen': 'Au total {personen}',
   'profiel.budget': 'Budget',
   'profiel.budgetLabel': 'Budget courses par semaine (€)',
@@ -229,7 +231,6 @@ export const fr: Vertalingen = {
 
   'fout.volwassenen': 'Choisissez entre 1 et {max} adultes.',
   'fout.kinderen': '{max} enfants au maximum.',
-  'fout.leeftijd': 'L’âge d’un enfant doit être compris entre 0 et {max} ans.',
   'fout.budget': 'Saisissez un montant valide ou laissez le budget vide.',
   'fout.postcode': 'Ce code postal ne semble pas correct.',
 };

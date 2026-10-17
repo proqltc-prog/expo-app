@@ -10,7 +10,7 @@ import { AFDELINGEN } from '@/data/ingredienten';
 
 const gezin: Profiel = {
   ...standaardProfiel(),
-  kinderen: [7, 4],
+  kinderen: 2,
   weekbudget: 150,
   adres: { straat: 'Dorpstraat 1', postcode: '1000', gemeente: 'Brussel', land: 'België' },
 };
@@ -60,7 +60,7 @@ describe('bouwAiVerzoek', () => {
   test('stuurt taal, profiel (zonder straat of postcode), porties en dagen mee', () => {
     const v = bouwAiVerzoek(verzoek({ opdracht: '4 jours', kooktijden: ['snel'], stijlen: ['italiaans'] }));
     assert.equal(v.taal, 'fr');
-    assert.equal(v.porties, 3.25);
+    assert.equal(v.porties, 3);
     assert.deepEqual(v.dagen, ['zondag', 'maandag', 'dinsdag', 'woensdag']);
     assert.deepEqual(v.kooktijden, ['snel']);
     assert.match(v.profiel, /4 personen/);

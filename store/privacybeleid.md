@@ -12,7 +12,7 @@ Famenu helpt een gezin met het weekmenu, de boodschappenlijst en de virtuele fri
 
 | Gegevens | Waar | Waarom |
 | --- | --- | --- |
-| Gezinsprofiel (aantal personen en leeftijden, budget, voorkeuren, woonplaats als je die invult), weekmenu, boodschappenlijst, frigo, favorieten | Op je toestel; als je een gezinsruimte gebruikt ook bij Supabase (servers in de EU, Frankfurt) | Om de app te laten werken en om alles te delen met de leden van je gezin |
+| Gezinsprofiel (aantal volwassenen en kinderen, budget, voorkeuren, woonplaats als je die invult), weekmenu, boodschappenlijst, frigo, favorieten | Op je toestel; als je een gezinsruimte gebruikt ook bij Supabase (servers in de EU, Frankfurt) | Om de app te laten werken en om alles te delen met de leden van je gezin |
 | Een anonieme gebruikers-id per toestel | Supabase (EU) | Aanmelding zonder e-mail of wachtwoord; toegang enkel voor de leden van je gezin |
 | Aantal AI-aanvragen per dag | Supabase (EU) | De daglimiet van de AI-planner |
 | Je opdracht, je gezinsprofiel en wat in je frigo zit, wanneer je een AI-voorstel vraagt | Anthropic (Claude), via onze server; verwerking kan in de VS gebeuren | Om een weekmenu op maat te maken. Anthropic gebruikt deze gegevens niet om zijn modellen te trainen. |
@@ -35,7 +35,7 @@ Je hebt het recht om je gegevens in te kijken, te laten verbeteren of te laten w
 
 ## Kinderen
 
-Famenu is bedoeld voor volwassenen die voor hun gezin plannen. Leeftijden van kinderen worden enkel gebruikt om porties te berekenen.
+Famenu is bedoeld voor volwassenen die voor hun gezin plannen. Het aantal kinderen (0 tot 12 jaar) wordt enkel gebruikt om porties te berekenen.
 
 ---
 

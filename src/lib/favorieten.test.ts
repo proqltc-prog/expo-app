@@ -80,7 +80,7 @@ describe('naarPlanRecept', () => {
   });
   test('herrekent naar het huidige gezin en rondt af naar koopbare hoeveelheden', () => {
     assert.deepEqual(naarPlanRecept(f, 2).ingredienten.map((i) => i.hoeveelheid), [140, 200, 1]);
-    assert.deepEqual(naarPlanRecept(f, 4.5).ingredienten.map((i) => i.hoeveelheid), [320, 450, 2.5]);
+    assert.deepEqual(naarPlanRecept(f, 4.5).ingredienten.map((i) => i.hoeveelheid), [320, 450, 3]);
   });
   test('neemt naam, soort, kooktijd en stijlen over', () => {
     const r = naarPlanRecept(f, 3);

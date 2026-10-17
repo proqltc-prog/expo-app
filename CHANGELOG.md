@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.24.0] – 2026-10-17
+
+Verbetering: het gezinsscherm vraagt het aantal kinderen tot 12 jaar in plaats van hun leeftijd. Elk kind telt als een halve portie.
+
+- Jira: [WEEK-40](https://proqltc-1791495894841.atlassian.net/browse/WEEK-40)
+- Confluence: (nog aan te vullen vóór de release)
+
+### Gewijzigd
+- Gezinsprofiel: aantal volwassenen en aantal kinderen (0 tot 12 jaar), zonder leeftijd per kind.
+- Porties: volwassenen + 0,5 per kind, het totaal naar boven afgerond (2 volwassenen + 1 kind = 3).
+- Ingrediënten in stuks worden altijd naar boven afgerond op een heel stuk.
+- Het profiel legt uit waarom we de aantallen vragen.
+- Bestaande profielen met een leeftijd per kind worden automatisch omgezet naar een aantal.
+
 ## [0.23.0] – 2026-10-17
 
 Verbetering: de betaalde versie is verwijderd. Alle functies zijn gratis; later bepalen we wat er via reclame toegankelijk wordt (WEEK-38).

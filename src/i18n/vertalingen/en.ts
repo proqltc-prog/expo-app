@@ -177,11 +177,13 @@ export const en: Vertalingen = {
   'reden.zout': 'High in salt ({waarde} g/100 g)',
   'reden.eiwit': 'High in protein ({waarde} g/100 g)',
 
-  'profiel.intro': 'Fill this in once. It is included automatically in every weekly plan, so you never have to repeat it.',
+  'profiel.intro': 'Who’s joining for dinner? Tell us, and we’ll work out the rest.',
   'profiel.gezin': 'Family',
-  'profiel.volwassenen': 'Adults',
-  'profiel.kinderen': 'Children',
-  'profiel.kindLeeftijd': 'Child {n} – age',
+  'profiel.volwassenen': 'Grown-ups',
+  'profiel.kinderen': 'Little ones',
+  'profiel.waarom.titel': 'Why we ask this',
+  'profiel.waarom.tekst': 'That way the app knows exactly what you need. No leftovers rotting in the fridge, no running out halfway through a recipe. Just good food.',
+  'profiel.kinderHint': '0 to 12 years',
   'profiel.samen': 'Total {personen}',
   'profiel.budget': 'Budget',
   'profiel.budgetLabel': 'Weekly grocery budget (€)',
@@ -229,7 +231,6 @@ export const en: Vertalingen = {
 
   'fout.volwassenen': 'Choose between 1 and {max} adults.',
   'fout.kinderen': 'At most {max} children.',
-  'fout.leeftijd': 'A child’s age must be between 0 and {max} years.',
   'fout.budget': 'Enter a valid amount, or leave the budget empty.',
   'fout.postcode': 'This postcode does not look right.',
 };

@@ -22,7 +22,7 @@ describe('standaardProfiel', () => {
 
 describe('aantalPersonen', () => {
   test('telt volwassenen en kinderen', () => {
-    assert.equal(aantalPersonen(gezin({ volwassenen: 2, kinderen: [7, 4] })), 4);
+    assert.equal(aantalPersonen(gezin({ volwassenen: 2, kinderen: 2 })), 4);
   });
 });
 
@@ -51,9 +51,10 @@ describe('valideerProfiel', () => {
   test('minstens één volwassene', () => {
     assert.deepEqual(valideerProfiel(gezin({ volwassenen: 0 })), ['volwassenen']);
   });
-  test('leeftijd van een kind tussen 0 en 17', () => {
-    assert.deepEqual(valideerProfiel(gezin({ kinderen: [7, 18] })), ['leeftijd']);
-    assert.deepEqual(valideerProfiel(gezin({ kinderen: [0, 17] })), []);
+  test('aantal kinderen is een geheel getal van 0 tot het maximum', () => {
+    assert.deepEqual(valideerProfiel(gezin({ kinderen: 0 })), []);
+    assert.deepEqual(valideerProfiel(gezin({ kinderen: 1.5 })), ['kinderen']);
+    assert.deepEqual(valideerProfiel(gezin({ kinderen: -1 })), ['kinderen']);
   });
   test('budget moet positief zijn als het ingevuld is', () => {
     assert.deepEqual(valideerProfiel(gezin({ weekbudget: 0 })), ['budget']);
@@ -66,7 +67,7 @@ describe('valideerProfiel', () => {
     assert.deepEqual(valideerProfiel(gezin({ adres: { ...adres, postcode: '17!' } })), ['postcode']);
   });
   test('te veel kinderen', () => {
-    assert.ok(valideerProfiel(gezin({ kinderen: Array(11).fill(5) })).includes('kinderen'));
+    assert.ok(valideerProfiel(gezin({ kinderen: 11 })).includes('kinderen'));
   });
 });
 
@@ -75,16 +76,20 @@ describe('normaliseerProfiel', () => {
     assert.deepEqual(normaliseerProfiel(null), standaardProfiel());
     assert.deepEqual(normaliseerProfiel('rommel'), standaardProfiel());
   });
+  test('oude profielen met een leeftijd per kind tellen het aantal kinderen', () => {
+    assert.equal(normaliseerProfiel({ kinderen: [7, 4] }).kinderen, 2);
+    assert.equal(normaliseerProfiel({ kinderen: [7, 'x', 4, 30] }).kinderen, 4);
+  });
   test('behoudt geldige velden en herstelt foute', () => {
     const p = normaliseerProfiel({
       volwassenen: 0,
-      kinderen: [7, 'x', 4, 30],
+      kinderen: 3,
       weekbudget: -5,
       samenstelling: 'geen pikant',
       adres: { gemeente: 'Roosdaal' },
     });
     assert.equal(p.volwassenen, 1);
-    assert.deepEqual(p.kinderen, [7, 4]);
+    assert.equal(p.kinderen, 3);
     assert.equal(p.weekbudget, undefined);
     assert.equal(p.samenstelling, 'geen pikant');
     assert.equal(p.adres.gemeente, 'Roosdaal');
@@ -104,7 +109,7 @@ describe('taalkeuze in het profiel', () => {
 describe('profielContext', () => {
   const p = gezin({
     volwassenen: 2,
-    kinderen: [7, 4],
+    kinderen: 2,
     weekbudget: 150,
     samenstelling: 'kinderen eten kleine porties',
     adres: { straat: 'Dorpstraat 1', postcode: '1000', gemeente: 'Brussel', land: 'België' },
@@ -112,7 +117,7 @@ describe('profielContext', () => {
   const context = profielContext(p);
 
   test('beschrijft gezin, budget en opmerkingen', () => {
-    assert.match(context, /4 personen – 2 volwassenen, 2 kinderen \(4 jaar, 7 jaar\)/);
+    assert.match(context, /4 personen – 2 volwassenen, 2 kinderen \(0 tot 12 jaar\)/);
     assert.match(context, /€ 150,00 per week/);
     assert.match(context, /kinderen eten kleine porties/);
     assert.match(context, /Woonplaats: Brussel, België/);
@@ -122,8 +127,8 @@ describe('profielContext', () => {
     assert.doesNotMatch(context, /1000/);
   });
   test('enkelvoud en lege velden', () => {
-    const c = profielContext(gezin({ volwassenen: 1, kinderen: [3], adres: { straat: '', postcode: '', gemeente: '', land: '' } }));
-    assert.match(c, /2 personen – 1 volwassene, 1 kind \(3 jaar\)/);
+    const c = profielContext(gezin({ volwassenen: 1, kinderen: 1, adres: { straat: '', postcode: '', gemeente: '', land: '' } }));
+    assert.match(c, /2 personen – 1 volwassene, 1 kind \(0 tot 12 jaar\)/);
     assert.doesNotMatch(c, /Budget/);
     assert.doesNotMatch(c, /Woonplaats/);
   });

@@ -1,21 +1,19 @@
 import type { Profiel } from '@/lib/profiel';
 
-/** Portie van een kind ten opzichte van een volwassene. */
-export function kindPortie(leeftijd: number): number {
-  if (leeftijd < 6) return 0.5;
-  if (leeftijd < 12) return 0.75;
-  return 1;
-}
+/** Een kind van 0 tot 12 jaar eet een halve volwassen portie (WEEK-40). */
+export const KIND_PORTIE = 0.5;
 
-/** Aantal volwassen porties voor het gezin (kinderen eten minder). */
+/**
+ * Aantal volwassen porties voor het gezin, naar boven afgerond op een heel getal.
+ * Bv. 2 volwassenen + 1 kind = 2,5 → 3.
+ */
 export function porties(p: Profiel): number {
-  const totaal = p.volwassenen + p.kinderen.reduce((som, l) => som + kindPortie(l), 0);
-  return Math.round(totaal * 100) / 100;
+  return Math.ceil(p.volwassenen + p.kinderen * KIND_PORTIE);
 }
 
 /**
  * Rondt een hoeveelheid af naar iets dat je in de winkel kan kopen of afwegen.
- * g/ml: op 5 onder 50, anders op 10. Stuks: op een halve onder 3, anders naar boven op een hele.
+ * g/ml: op 5 onder 50, anders op 10. Stuks: altijd naar boven op een heel stuk (een half ei wordt 1 ei).
  */
 export function rondAf(hoeveelheid: number, eenheid: string): number {
   if (hoeveelheid <= 0) return 0;
@@ -23,6 +21,5 @@ export function rondAf(hoeveelheid: number, eenheid: string): number {
     const stap = hoeveelheid < 50 ? 5 : 10;
     return Math.max(stap, Math.round(hoeveelheid / stap) * stap);
   }
-  if (hoeveelheid < 3) return Math.ceil(hoeveelheid * 2) / 2;
   return Math.ceil(hoeveelheid);
 }

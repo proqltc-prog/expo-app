@@ -6,7 +6,7 @@ import type { PlanVerzoek, Weekplan } from '@/lib/planner/types';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 import { RECEPTENBANK } from '@/data/receptenbank';
 
-const gezin: Profiel = { ...standaardProfiel(), kinderen: [7, 4] };
+const gezin: Profiel = { ...standaardProfiel(), kinderen: 2 };
 const plan = (opdracht = '7 dagen', extra: Partial<PlanVerzoek> = {}): Weekplan =>
   planLokaal({ opdracht, kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 5, ...extra });
 

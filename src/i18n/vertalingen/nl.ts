@@ -178,11 +178,13 @@ export const nl = {
   'reden.zout': 'Veel zout ({waarde} g/100 g)',
   'reden.eiwit': 'Eiwitrijk ({waarde} g/100 g)',
 
-  'profiel.intro': 'Deze gegevens vul je één keer in. Ze gaan automatisch mee bij elke weekplanning, zodat je ze niet telkens moet herhalen.',
+  'profiel.intro': 'Wie komt er aan tafel? Geef het even door, dan rekenen wij de rest uit.',
   'profiel.gezin': 'Gezin',
-  'profiel.volwassenen': 'Volwassenen',
-  'profiel.kinderen': 'Kinderen',
-  'profiel.kindLeeftijd': 'Kind {n} – leeftijd',
+  'profiel.volwassenen': 'Grote mensen',
+  'profiel.kinderen': 'Kleine snoetjes',
+  'profiel.waarom.titel': 'Waarom vragen we dit?',
+  'profiel.waarom.tekst': 'Zo weet de app precies hoeveel je nodig hebt. Geen overschot dat wegkwijnt in de koelkast, geen tekort halverwege het recept. Gewoon lekker eten.',
+  'profiel.kinderHint': '0 tot 12 jaar',
   'profiel.samen': 'Samen {personen}',
   'profiel.budget': 'Budget',
   'profiel.budgetLabel': 'Boodschappenbudget per week (€)',
@@ -230,7 +232,6 @@ export const nl = {
 
   'fout.volwassenen': 'Kies tussen 1 en {max} volwassenen.',
   'fout.kinderen': 'Maximaal {max} kinderen.',
-  'fout.leeftijd': 'De leeftijd van een kind ligt tussen 0 en {max} jaar.',
   'fout.budget': 'Vul een geldig bedrag in, of laat het budget leeg.',
   'fout.postcode': 'Deze postcode lijkt niet te kloppen.',
 } as const;
