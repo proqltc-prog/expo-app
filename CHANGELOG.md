@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.26.0] – 2026-10-17
+
+Nieuw (stap 1): logica voor reclamefilmpjes met beloning. Een filmpje geeft extra scans voor die dag. De knop en de advertentie volgen later.
+
+- Jira: [WEEK-38](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38)
+- Confluence: [WEEK-38 – Reclamefilmpjes via AdMob (stap 1: beloningslogica)](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6258689)
+
+### Gewijzigd
+- Nieuw: beloning per filmpje, 1 extra AI-vraag of 3 extra scans.
+- Scanteller: extra scans van vandaag als bonus. Het gratis maximum blijft 3 per dag.
+- Regressietests op de bestaande scanlimiet.
+
 ## [0.25.1] – 2026-10-17
 
 Werkafspraak: bij elke nieuwe functionaliteit of wijziging voegen we ook regressietests toe, zodat bestaand gedrag niet stukgaat.
