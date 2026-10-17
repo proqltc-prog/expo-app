@@ -6,11 +6,11 @@ import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProd
 import { voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
-import { wijzigFrigo } from '@/opslag/frigo';
+import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
 import { laadLijst, wijzigLijst } from '@/opslag/lijst';
-import { pasFrigoAan } from '@/lib/frigo';
+import { pasFrigoAan, type FrigoItem } from '@/lib/frigo';
 import { vinkAf, type LijstItem } from '@/lib/lijst';
-import { zoekOpLijst } from '@/lib/scanLijst';
+import { passendeNamen, zoekOpLijst } from '@/lib/scanLijst';
 import { werkOntbrekendBij } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
@@ -36,10 +36,12 @@ export default function Scan() {
   // Gescand vanaf de boodschappenlijst (WEEK-46): dan kan een product direct afgevinkt worden.
   const { van } = useLocalSearchParams<{ van?: string }>();
   const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
+  const [frigoItems, setFrigoItems] = useState<FrigoItem[]>([]);
   useFocusEffect(
     useCallback(() => {
       laadScanTeller().then(setTeller);
       laadLijst().then(setLijstItems);
+      laadFrigo().then(setFrigoItems);
     }, [])
   );
 
@@ -99,6 +101,15 @@ export default function Scan() {
     const frigo = await wijzigFrigo((f) => pasFrigoAan(f, matches, true, new Date()));
     await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
     Alert.alert(naam, t('scan.afgevinkt', { naam }));
+    opnieuw();
+    router.navigate('/lijst');
+  };
+
+  // Product staat al in de frigo (WEEK-48): van de lijst halen; de frigo blijft ongewijzigd.
+  const verwijderVanLijst = async (naam: string, matches: LijstItem[]) => {
+    const ids = matches.map((i) => i.id);
+    await wijzigLijst((huidig) => huidig.filter((i) => !ids.includes(i.id)));
+    Alert.alert(naam, t('scan.verwijderdVanLijst', { naam }));
     opnieuw();
     router.navigate('/lijst');
   };
@@ -183,12 +194,20 @@ export default function Scan() {
       {van === 'lijst' && (() => {
         const naam = scanNaam(p, t('scan.onbekend'));
         const matches = zoekOpLijst(lijstItems, naam);
-        return matches.length ? (
-          <Pressable style={s.knop} onPress={() => vinkOpLijstAf(naam, matches)}>
-            <Text style={s.knopTekst}>{t('scan.afvinkenOpLijst')}</Text>
-          </Pressable>
-        ) : (
-          <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>
+        if (!matches.length) return <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>;
+        const inFrigo = passendeNamen(frigoItems, naam).length > 0;
+        return (
+          <View style={{ gap: 8 }}>
+            {inFrigo && <Text style={s.bron}>{t('scan.alInFrigo')}</Text>}
+            <Pressable style={s.knop} onPress={() => vinkOpLijstAf(naam, matches)}>
+              <Text style={s.knopTekst}>{t('scan.afvinkenOpLijst')}</Text>
+            </Pressable>
+            {inFrigo && (
+              <Pressable style={[s.knop, { backgroundColor: '#c62828' }]} onPress={() => verwijderVanLijst(naam, matches)}>
+                <Text style={s.knopTekst}>{t('scan.verwijderVanLijst')}</Text>
+              </Pressable>
+            )}
+          </View>
         );
       })()}
       <View style={s.knoppen}>

@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { LijstItem } from '@/lib/lijst';
-import { zoekOpLijst } from '@/lib/scanLijst';
+import { passendeNamen, zoekOpLijst } from '@/lib/scanLijst';
 
 const item = (id: string, naam: string, afgevinkt = false): LijstItem => ({ id, naam, categorie: 'avondeten', afgevinkt });
 
@@ -31,5 +31,21 @@ describe('zoekOpLijst', () => {
 
   test('lege productnaam geeft niets', () => {
     assert.deepEqual(zoekOpLijst(lijst, '   '), []);
+  });
+});
+
+describe('passendeNamen (frigo, WEEK-48)', () => {
+  const frigo = [{ naam: 'Halfvolle melk' }, { naam: 'Zoete aardappel' }, { naam: 'Kaas' }];
+
+  test('vindt het frigoproduct bij een scan (regressie: hele woorden)', () => {
+    assert.deepEqual(passendeNamen(frigo, 'Halfvolle melk 1 l').map((f) => f.naam), ['Halfvolle melk']);
+  });
+
+  test('kaas past niet bij een product met een ander woord', () => {
+    assert.deepEqual(passendeNamen(frigo, 'Kaasstengels'), []);
+  });
+
+  test('een leeg item-naam telt niet mee', () => {
+    assert.deepEqual(passendeNamen([{ naam: '  ' }], 'melk'), []);
   });
 });

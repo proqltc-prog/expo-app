@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.40.0] – 2026-10-17
+
+Nieuw: als je op de boodschappenlijst scant en het product staat al in je frigo, kun je het van de lijst halen. De frigo blijft dan ongewijzigd.
+
+- Jira: [WEEK-48](https://proqltc-1791495894841.atlassian.net/browse/WEEK-48)
+- Confluence: [WEEK-48 – Product van de lijst verwijderen als het al in de frigo staat](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6520854)
+
+### Gewijzigd
+- Nieuw: "Dit staat al in je frigo." na een scan vanaf de lijst, met de knop "Verwijderen van de lijst".
+- Matchen op hele woorden, nu ook voor de frigo.
+
 ## [0.39.0] – 2026-10-17
 
 Nieuw: scannen vanaf de boodschappenlijst. Tik op Scan, scan een product en vink het af als het op je lijst staat. Het product gaat dan naar de frigo, net als bij afvinken in de lijst. Het tabblad Scan werkt zoals voorheen, los van lijst en frigo.
