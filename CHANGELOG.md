@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.48.4] – 2026-10-17
+
+**WEEK-38** – Android-build met de juiste Kotlin-versie, zodat de AdMob-advertenties in de build werken. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6193252)
+
+- `react-native-google-mobile-ads` terug naar 17.3.0; Kotlin 2.3.0 ingesteld via `expo-build-properties`, zodat de nieuwste AdMob-SDK compileert.
+
 ## [0.48.3] – 2026-10-17
 
 **WEEK-38** – AdMob-bibliotheek terug naar versie 16, zodat de Android-build slaagt. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6520892)
