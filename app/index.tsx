@@ -12,6 +12,7 @@ import { receptStatus } from '@/lib/planner/status';
 import { laadFrigo } from '@/opslag/frigo';
 import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favorieten';
 import { laadFavorieten, wijzigFavorieten } from '@/opslag/favorieten';
+import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadGezin } from '@/opslag/sync';
 import { trekFrigoAf } from '@/lib/frigo';
 import { aiPlanner as AI, aiTegoed } from '@/opslag/supabase';
@@ -68,6 +69,8 @@ export default function Weekplanning() {
   // Maaltijdmomenten: ontbijt, middag en/of avond (WEEK-43).
   const [momenten, setMomenten] = useState<Moment[]>(['avond']);
   const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
+  // Aantal eigen recepten voor de link naar Mijn recepten (WEEK-45).
+  const [eigenAantal, setEigenAantal] = useState(0);
   // Planmodus (WEEK-14): nieuwe recepten (AI of receptenbank) of random uit het kookboek.
   const [modus, setModus] = useState<'nieuw' | 'favorieten'>('nieuw');
 
@@ -131,6 +134,7 @@ export default function Weekplanning() {
       laadProfiel().then(setProfiel);
       laadPlan().then(setPlan);
       laadFavorieten().then(setFavorieten);
+      laadEigenRecepten().then((lijst) => setEigenAantal(lijst.length));
       aiTegoed().then(setTegoed);
     }, [])
   );
@@ -330,6 +334,10 @@ export default function Weekplanning() {
           <Text style={s.profiel}>{t('kookboek.link', { n: favorieten.length })}</Text>
         </Pressable>
       )}
+
+      <Pressable onPress={() => router.navigate('/recepten')}>
+        <Text style={s.profiel}>{t('recepten.link', { n: eigenAantal })}</Text>
+      </Pressable>
 
       {!plan && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
 

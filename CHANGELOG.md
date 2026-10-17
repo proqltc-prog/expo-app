@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.38.0] – 2026-10-17
+
+Nieuw: Mijn recepten. Voeg eigen recepten toe, wijzig ze of verwijder ze. Een recept geldt voor één volwassene; het gezin rekent de hoeveelheden om. Ingrediënten zoek je in de lijst van de app; een ingrediënt dat er niet tussen staat, voeg je zelf toe en vind je later terug. Eigen recepten blijven op dit toestel.
+
+- Jira: [WEEK-45](https://proqltc-1791495894841.atlassian.net/browse/WEEK-45)
+- Confluence: [WEEK-45 – Pagina Mijn recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6651932)
+
+### Gewijzigd
+- Nieuw: pagina Mijn recepten met bron Alle / Eigen / Favorieten, filters op soort, kooktijd en stijl, en een zoekbalk. Bereikbaar onder het weekmenu.
+- Nieuw: recept toevoegen en wijzigen (naam, soort, kooktijd, stijlen, ingrediënten, bereiding stap per stap) en verwijderen na bevestiging.
+- Nieuw: handmatig ingrediënt wordt meegezocht bij latere zoekopdrachten.
+
 ## [0.37.0] – 2026-10-17
 
 Nieuw: op het weekmenu kan je een gerecht zelf kiezen uit de receptenbank, een gerecht verwijderen, of een maaltijd toevoegen. Reset (↻) blijft zoals het was. Verwijderen haalt ook de ingrediënten van de boodschappenlijst, als ze er al op stonden.
