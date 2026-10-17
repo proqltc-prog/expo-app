@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
-import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
+import { GRATIS_SCANS_PER_DAG, magScannen, minutenTotReset, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
 import { laadLijst, wijzigLijst } from '@/opslag/lijst';
@@ -129,9 +129,12 @@ export default function Scan() {
   const rest = resterendeScans(teller, new Date());
 
   if (status.soort === 'scannen' && rest === 0) {
+    const reset = minutenTotReset(new Date());
     return (
       <View style={s.midden}>
         <Text style={s.tekst}>{t('scan.limiet', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
+        {/* Aftelling tot de reset om middernacht (WEEK-51). */}
+        <Text style={s.tekst}>{t('scan.reset', { uren: String(Math.floor(reset / 60)), minuten: String(reset % 60) })}</Text>
       </View>
     );
   }
