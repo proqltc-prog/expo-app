@@ -1,6 +1,6 @@
 // Scanteller op het toestel (WEEK-34).
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { leesTeller, ScanTeller, telScan } from '@/lib/scanteller';
+import { leesTeller, ScanTeller, telScan, voegBonusToe } from '@/lib/scanteller';
 import { SLEUTEL } from './sleutels';
 import { naElkaar } from './wachtrij';
 
@@ -17,6 +17,15 @@ export async function laadScanTeller(): Promise<ScanTeller | null> {
 export function registreerScan(): Promise<ScanTeller> {
   return naElkaar(async () => {
     const nieuw = telScan(await laadScanTeller(), new Date());
+    await AsyncStorage.setItem(SLEUTEL.scans, JSON.stringify(nieuw));
+    return nieuw;
+  });
+}
+
+/** Voegt extra scans toe voor vandaag na een bekeken reclamefilmpje (WEEK-38). */
+export function registreerBonusScans(extra: number): Promise<ScanTeller> {
+  return naElkaar(async () => {
+    const nieuw = voegBonusToe(await laadScanTeller(), new Date(), extra);
     await AsyncStorage.setItem(SLEUTEL.scans, JSON.stringify(nieuw));
     return nieuw;
   });
