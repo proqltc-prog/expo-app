@@ -69,6 +69,14 @@ export function wijzigPlanEnFrigo(
 }
 
 /**
+ * Zet de beheerder van het weekplan op de beheerder van het gezin (WEEK-65). Enkel de huidige
+ * beheerder van het plan kan dat, dus roep dit aan vóór de beheerder het gezin verlaat.
+ */
+export function wijsPlanBeheerderAan(gebruikerId: string): Promise<Weekplan | null> {
+  return wijzigPlan((plan) => (plan.beheerder === gebruikerId ? plan : { ...plan, beheerder: gebruikerId }));
+}
+
+/**
  * Bewaart het weekplan en deelt het met het gezin (WEEK-8). Het nieuwe plan krijgt de aangemelde
  * gebruiker als beheerder (WEEK-30). Geeft false als een ander gezinslid het bestaande plan beheert.
  */

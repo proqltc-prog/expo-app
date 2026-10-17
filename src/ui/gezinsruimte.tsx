@@ -3,17 +3,24 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { leesGezinFout, leesGezinscode, toonGezinscode } from '@/lib/sync';
+import { anderenLeden, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
+import { wijsPlanBeheerderAan } from '@/opslag/plan';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import {
   bijWijziging,
   Gezin,
   GezinsLid,
+  heffGezinOp,
+  ikId,
+  laadBeheerderId,
   laadGezin,
   laadLeden,
+  maakBeheerder,
   maakGezin,
   syncStatus,
   SyncStatus,
   verlaatGezin,
+  verlaatMetOpvolger,
   wordLid,
 } from '@/opslag/sync';
 import { Sleutel } from '@/i18n';
@@ -31,11 +38,17 @@ export function GezinsRuimte() {
   const [code, setCode] = useState('');
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
+  // Beheer (WEEK-65): wie is beheerder van het gezin, wie ben ik, en kiest de beheerder nu een opvolger?
+  const [beheerderId, setBeheerderId] = useState<string | undefined>(undefined);
+  const [mijnId, setMijnId] = useState<string | undefined>(undefined);
+  const [kiesOpvolger, setKiesOpvolger] = useState(false);
 
   const vernieuw = useCallback(async () => {
     const g = await laadGezin();
     setGezin(g);
     setLeden(g ? await laadLeden().catch(() => []) : []);
+    setBeheerderId(g ? await laadBeheerderId().catch(() => undefined) : undefined);
+    setMijnId(await ikId());
   }, []);
 
   useEffect(() => {
@@ -43,6 +56,8 @@ export function GezinsRuimte() {
     const stop = [
       bijWijziging('gezin', vernieuw),
       bijWijziging('leden', vernieuw),
+      // De beheerder van het weekplan volgt de beheerder van het gezin (WEEK-65).
+      bijWijziging('plan', vernieuw),
       bijWijziging('status', () => setStatus(syncStatus())),
     ];
     return () => stop.forEach((f) => f());
@@ -63,7 +78,13 @@ export function GezinsRuimte() {
     }
   };
 
-  const maak = () => voerUit(() => maakGezin(gezinsnaam, naam));
+  const maak = () =>
+    voerUit(async () => {
+      await maakGezin(gezinsnaam, naam);
+      // Wie het gezin maakt, is ook beheerder van het weekplan (WEEK-65).
+      const id = await ikId();
+      if (id) await wijsPlanBeheerderAan(id);
+    });
 
   const sluitAan = () => {
     const gelezen = leesGezinscode(code);
@@ -76,10 +97,61 @@ export function GezinsRuimte() {
 
   const deel = () => gezin && Share.share({ message: t('gezin.deelTekst', { code: toonGezinscode(gezin.code) }) });
 
-  const verlaat = () =>
+  const beheerder = ikBeheerder(beheerderId, mijnId);
+  const beheerderNaamTekst = leden.find((l) => l.id === beheerderId)?.naam;
+
+  const verlaat = () => {
+    // Een beheerder met andere leden kiest eerst een opvolger (WEEK-65).
+    if (vraagtOpvolgerBijVertrek(beheerder, leden, mijnId)) {
+      setKiesOpvolger(true);
+      return;
+    }
     Alert.alert(t('gezin.verlaat'), t('gezin.verlaatVraag'), [
       { text: t('gezin.annuleren'), style: 'cancel' },
       { text: t('gezin.verlaat'), style: 'destructive', onPress: () => voerUit(verlaatGezin) },
+    ]);
+  };
+
+  const maakLidBeheerder = (lid: GezinsLid) =>
+    Alert.alert(t('gezin.maakBeheerder'), t('gezin.maakBeheerderVraag', { naam: lid.naam || t('gezin.naamloos') }), [
+      { text: t('gezin.annuleren'), style: 'cancel' },
+      {
+        text: t('gezin.maakBeheerder'),
+        onPress: () =>
+          voerUit(async () => {
+            await maakBeheerder(lid.id);
+            // Nog steeds beheerder van het plan, dus dit mag (WEEK-65).
+            await wijsPlanBeheerderAan(lid.id);
+          }),
+      },
+    ]);
+
+  const naarOpvolger = (lid: GezinsLid) =>
+    Alert.alert(t('gezin.verlaat'), t('gezin.verlaatOpvolgerVraag', { naam: lid.naam || t('gezin.naamloos') }), [
+      { text: t('gezin.annuleren'), style: 'cancel' },
+      {
+        text: t('gezin.verlaat'),
+        style: 'destructive',
+        onPress: () => {
+          setKiesOpvolger(false);
+          voerUit(async () => {
+            // Eerst het plan overdragen: daarna mag ik het niet meer wijzigen.
+            await wijsPlanBeheerderAan(lid.id);
+            try {
+              await verlaatMetOpvolger(lid.id);
+            } catch (e) {
+              if (mijnId) await wijsPlanBeheerderAan(mijnId);
+              throw e;
+            }
+          });
+        },
+      },
+    ]);
+
+  const heffOp = () =>
+    Alert.alert(t('gezin.heffOp'), t('gezin.heffOpVraag'), [
+      { text: t('gezin.annuleren'), style: 'cancel' },
+      { text: t('gezin.heffOp'), style: 'destructive', onPress: () => voerUit(heffGezinOp) },
     ]);
 
   return (
@@ -121,18 +193,47 @@ export function GezinsRuimte() {
                 <Text style={s.knopKleinTekst}>{t('gezin.deel')}</Text>
               </Pressable>
             </View>
+            {beheerderNaamTekst && <Text style={s.label}>{t('gezin.beheerder', { naam: beheerderNaamTekst })}</Text>}
             {leden.length > 0 && (
               <>
                 <Text style={s.label}>{t('gezin.leden')}</Text>
                 {leden.map((l) => {
                   const naamLid = l.naam || t('gezin.naamloos');
-                  return <Text key={l.id} style={s.lid}>• {l.ikZelf ? t('gezin.jij', { naam: naamLid }) : naamLid}</Text>;
+                  return (
+                    <View key={l.id} style={s.rij}>
+                      <Text style={[s.lid, { flex: 1 }]}>• {l.ikZelf ? t('gezin.jij', { naam: naamLid }) : naamLid}</Text>
+                      {beheerder && !l.ikZelf && (
+                        <Pressable style={s.knopKlein} onPress={() => maakLidBeheerder(l)} disabled={bezig}>
+                          <Text style={s.knopKleinTekst}>{t('gezin.maakBeheerder')}</Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  );
                 })}
               </>
             )}
-            <Pressable onPress={verlaat} disabled={bezig} style={s.verlaat}>
-              {bezig ? <ActivityIndicator color="#c62828" /> : <Text style={s.verlaatTekst}>{t('gezin.verlaat')}</Text>}
-            </Pressable>
+            {kiesOpvolger ? (
+              <>
+                <Text style={s.uitleg}>{t('gezin.kiesOpvolger')}</Text>
+                {anderenLeden(leden, mijnId).map((l) => (
+                  <Pressable key={l.id} style={s.knopKlein} onPress={() => naarOpvolger(l)} disabled={bezig}>
+                    <Text style={s.knopKleinTekst}>{l.naam || t('gezin.naamloos')}</Text>
+                  </Pressable>
+                ))}
+                <Pressable onPress={() => setKiesOpvolger(false)} style={s.verlaat}>
+                  <Text style={s.uitleg}>{t('gezin.annuleren')}</Text>
+                </Pressable>
+              </>
+            ) : (
+              <Pressable onPress={verlaat} disabled={bezig} style={s.verlaat}>
+                {bezig ? <ActivityIndicator color="#c62828" /> : <Text style={s.verlaatTekst}>{t('gezin.verlaat')}</Text>}
+              </Pressable>
+            )}
+            {beheerder && (
+              <Pressable onPress={heffOp} disabled={bezig} style={s.verlaat}>
+                <Text style={s.verlaatTekst}>{t('gezin.heffOp')}</Text>
+              </Pressable>
+            )}
           </>
         )}
         {fout && <Text style={s.fout}>{fout}</Text>}

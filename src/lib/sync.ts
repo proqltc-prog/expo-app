@@ -178,13 +178,26 @@ export function toonGezinscode(code: string): string {
 }
 
 /** Foutcodes van de server-functies, vertaald naar een vertaalsleutel-achtervoegsel. */
-export type GezinFout = 'onbekendeCode' | 'teVeelPogingen' | 'alLid' | 'geenVerbinding' | 'onbekend';
+export type GezinFout =
+  | 'onbekendeCode'
+  | 'teVeelPogingen'
+  | 'alLid'
+  | 'geenVerbinding'
+  | 'opvolgerNodig'
+  | 'geenBeheerder'
+  | 'geenLid'
+  | 'geenOpvolger'
+  | 'onbekend';
 
 export function leesGezinFout(bericht: string | undefined | null): GezinFout {
   const t = bericht ?? '';
   if (t.includes('onbekende_code')) return 'onbekendeCode';
   if (t.includes('te_veel_pogingen')) return 'teVeelPogingen';
   if (t.includes('al_lid')) return 'alLid';
+  if (t.includes('opvolger_nodig')) return 'opvolgerNodig';
+  if (t.includes('geen_beheerder')) return 'geenBeheerder';
+  if (t.includes('geen_opvolger')) return 'geenOpvolger';
+  if (t.includes('geen_lid')) return 'geenLid';
   if (/network|fetch|timeout|offline|failed to fetch/i.test(t)) return 'geenVerbinding';
   return 'onbekend';
 }

@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.47.0] – 2026-10-17
+
+**WEEK-65** – Beheer van de gezinsruimte. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-65) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6651991)
+
+- De beheerder kan andere leden tot beheerder maken; het weekplan volgt die beheerder.
+- De beheerder die vertrekt, kiest eerst een opvolger. Het laatste lid dat vertrekt, verwijdert het gezin.
+- De beheerder kan de gezinsruimte opheffen; daarna is ze voor niemand meer toegankelijk.
+- Server: migratie `20261017180000_gezin_beheerder` (beheerder op het gezin, nieuwe functies), met SQL-test.
+
 ## [0.46.0] – 2026-10-17
 
 **WEEK-30** – Eén beheerder van het weekplan. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-30) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6651972)
