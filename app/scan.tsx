@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
@@ -7,7 +7,12 @@ import { voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
 import { wijzigFrigo } from '@/opslag/frigo';
-import { wijzigLijst } from '@/opslag/lijst';
+import { laadLijst, wijzigLijst } from '@/opslag/lijst';
+import { pasFrigoAan } from '@/lib/frigo';
+import { vinkAf, type LijstItem } from '@/lib/lijst';
+import { zoekOpLijst } from '@/lib/scanLijst';
+import { werkOntbrekendBij } from '@/lib/planner/status';
+import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -28,9 +33,13 @@ export default function Scan() {
   const bezig = useRef(false);
   // Scanlimiet (WEEK-34): 3 per dag.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
+  // Gescand vanaf de boodschappenlijst (WEEK-46): dan kan een product direct afgevinkt worden.
+  const { van } = useLocalSearchParams<{ van?: string }>();
+  const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   useFocusEffect(
     useCallback(() => {
       laadScanTeller().then(setTeller);
+      laadLijst().then(setLijstItems);
     }, [])
   );
 
@@ -81,6 +90,17 @@ export default function Scan() {
     await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), { afdeling: afdelingUitCategorieen(product.categorieen) }));
     Alert.alert(t('scan.inFrigo'), t('scan.inFrigoGedaan', { naam }));
     opnieuw();
+  };
+
+  // Afvinken op de lijst (WEEK-46): zoals afvinken in de lijst zelf; het product gaat dan in de frigo.
+  const vinkOpLijstAf = async (naam: string, matches: LijstItem[]) => {
+    const ids = matches.map((i) => i.id);
+    await wijzigLijst((huidig) => vinkAf(huidig, ids, true));
+    const frigo = await wijzigFrigo((f) => pasFrigoAan(f, matches, true, new Date()));
+    await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
+    Alert.alert(naam, t('scan.afgevinkt', { naam }));
+    opnieuw();
+    router.navigate('/lijst');
   };
 
   const rest = resterendeScans(teller, new Date());
@@ -160,6 +180,17 @@ export default function Scan() {
       <Text style={s.kop}>{t('scan.additieven')}</Text>
       <Text style={s.tekstLinks}>{p.additieven.length ? p.additieven.join(', ') : t('scan.geenAdditieven')}</Text>
 
+      {van === 'lijst' && (() => {
+        const naam = scanNaam(p, t('scan.onbekend'));
+        const matches = zoekOpLijst(lijstItems, naam);
+        return matches.length ? (
+          <Pressable style={s.knop} onPress={() => vinkOpLijstAf(naam, matches)}>
+            <Text style={s.knopTekst}>{t('scan.afvinkenOpLijst')}</Text>
+          </Pressable>
+        ) : (
+          <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>
+        );
+      })()}
       <View style={s.knoppen}>
         <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
           <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>

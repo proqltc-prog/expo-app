@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.39.0] – 2026-10-17
+
+Nieuw: scannen vanaf de boodschappenlijst. Tik op Scan, scan een product en vink het af als het op je lijst staat. Het product gaat dan naar de frigo, net als bij afvinken in de lijst. Het tabblad Scan werkt zoals voorheen, los van lijst en frigo.
+
+- Jira: [WEEK-46](https://proqltc-1791495894841.atlassian.net/browse/WEEK-46)
+- Confluence: [WEEK-46 – Scannen vanaf de boodschappenlijst om af te vinken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6422568)
+
+### Gewijzigd
+- Nieuw: knop Scan op de boodschappenlijst.
+- Nieuw: "Afvinken op de lijst" na een scan, voor openstaande items die bij het product horen (op hele woorden).
+- Gewijzigd: als een gescand product niet op de lijst staat, komt er een melding.
+
 ## [0.38.0] – 2026-10-17
 
 Nieuw: Mijn recepten. Voeg eigen recepten toe, wijzig ze of verwijder ze. Een recept geldt voor één volwassene; het gezin rekent de hoeveelheden om. Ingrediënten zoek je in de lijst van de app; een ingrediënt dat er niet tussen staat, voeg je zelf toe en vind je later terug. Eigen recepten blijven op dit toestel.

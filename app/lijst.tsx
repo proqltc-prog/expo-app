@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { eigenItem, LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
 import { bewaarWeergave, laadLijst, laadWeergave, wijzigLijst } from '@/opslag/lijst';
 import { bijWijziging, Gezin, laadGezin, syncStatus, SyncStatus } from '@/opslag/sync';
@@ -110,6 +110,10 @@ export default function Lijst() {
         <Pressable style={s.plus} onPress={voegToe}>
           <Text style={s.plusTekst}>+</Text>
         </Pressable>
+        {/* Scannen vanaf de lijst (WEEK-46): een gescand product wordt hier afgevinkt. */}
+        <Pressable style={s.scan} onPress={() => router.navigate('/scan?van=lijst')} accessibilityRole="button">
+          <Text style={s.scanTekst}>{t('lijst.scan')}</Text>
+        </Pressable>
       </View>
 
       <View style={s.schakelaar} accessibilityRole="tablist">
@@ -184,6 +188,8 @@ const s = StyleSheet.create({
   veld: { flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
+  scan: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  scanTekst: { color: KLEUR, fontWeight: '700' },
   schakelaar: { flexDirection: 'row', marginTop: 12, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, overflow: 'hidden' },
   optie: { flex: 1, paddingVertical: 8, alignItems: 'center' },
   optieAan: { backgroundColor: KLEUR },
