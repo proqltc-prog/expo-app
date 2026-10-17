@@ -1,6 +1,7 @@
 # Tijdelijk (WEEK-38): installeert react-native-google-mobile-ads op een branch via GitHub,
-# zodat het niet op een eigen computer hoeft. Starten: Actions › "Pakket installeren (WEEK-38)" › Run workflow.
-# Verwijderen zodra het pakket op de branch staat.
+# zodat het niet op een eigen computer hoeft, en zet de typedefinities erbij om de API na te kijken.
+# Starten: Actions › "Pakket installeren (WEEK-38)" › Run workflow.
+# Verwijderen zodra de AdMob-integratie af is.
 name: Pakket installeren (WEEK-38)
 
 on:
@@ -26,12 +27,17 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npx expo install react-native-google-mobile-ads || npm install react-native-google-mobile-ads --no-audit --no-fund --legacy-peer-deps
+      - name: Typedefinities van het pakket opslaan (tijdelijk)
+        run: |
+          mkdir -p tmp-typings
+          (cd node_modules/react-native-google-mobile-ads && find . -name '*.d.ts' -not -path './node_modules/*' | while read f; do mkdir -p "$GITHUB_WORKSPACE/tmp-typings/$(dirname "$f")"; cp "$f" "$GITHUB_WORKSPACE/tmp-typings/$f"; done)
+          cp node_modules/react-native-google-mobile-ads/package.json tmp-typings/package.json
       - run: npm test
       - run: npm run typecheck:logica
       - name: Opslaan op de branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json
+          git add package.json tmp-typings
           git commit -m "WEEK-38: react-native-google-mobile-ads toegevoegd"
           git push origin HEAD:${{ inputs.branch }}
