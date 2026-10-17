@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.26.1] – 2026-10-17
+
+Aanpassing: een bekeken reclamefilmpje geeft 10 extra scans voor die dag, in plaats van 3.
+
+- Jira: [WEEK-38](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38)
+- Confluence: [WEEK-38 – Reclamefilmpje geeft 10 extra scans](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6291457)
+
 ## [0.26.0] – 2026-10-17
 
 Nieuw (stap 1): logica voor reclamefilmpjes met beloning. Een filmpje geeft extra scans voor die dag. De knop en de advertentie volgen later.

@@ -5,7 +5,7 @@
 export const BELONING_AI_VRAAG = 1;
 
 /** Extra scans per bekeken filmpje. */
-export const BELONING_SCANS = 3;
+export const BELONING_SCANS = 10;
 
 export type BeloningSoort = 'ai' | 'scans';
 
