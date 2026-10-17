@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { aantalReceptRegels, planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
-import { voegOpdrachtToe } from '@/lib/opdrachten';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { planUitFavorieten, resetDagUitFavorieten } from '@/lib/planner/favorietenplan';
@@ -19,7 +18,8 @@ import { AiTegoed, tegoedTekst } from '@/lib/planner/tegoed';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
-import { bewaarKeuzes, bewaarOpdrachten, bewaarPlan, laadKeuzes, laadOpdrachten, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
+import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
+import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { laadProfiel } from '@/opslag/profiel';
 import { bijWijziging } from '@/opslag/sync';
 import { dagSleutel } from '@/i18n';
@@ -54,23 +54,23 @@ function Chips<T extends string>({ opties, gekozen, label, onWissel }: {
 export default function Weekplanning() {
   const { t, tn, taal } = useTaal();
   const [profiel, setProfiel] = useState<Profiel | null>(null);
-  const [opdracht, setOpdracht] = useState('');
-  const [vorige, setVorige] = useState<string[]>([]);
   const [plan, setPlan] = useState<Weekplan | null>(null);
   const [bezig, setBezig] = useState(false);
   const [bezigDag, setBezigDag] = useState<number | null>(null);
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
+  // Ingrediënten die de gebruiker niet wil (WEEK-41).
+  const [vermijd, setVermijd] = useState<Vermijd[]>([]);
   const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
   // Planmodus (WEEK-14): nieuwe recepten (AI of receptenbank) of random uit het kookboek.
   const [modus, setModus] = useState<'nieuw' | 'favorieten'>('nieuw');
 
   useEffect(() => {
     laadPlan().then(setPlan);
-    laadOpdrachten().then(setVorige);
     laadKeuzes().then((k) => {
       setKooktijden(k.kooktijden);
       setStijlen(k.stijlen);
+      setVermijd(k.vermijd);
     });
   }, []);
 
@@ -87,12 +87,17 @@ export default function Weekplanning() {
   const wisselKooktijd = (k: KooktijdCode) => {
     const nieuw = wissel(kooktijden, k);
     setKooktijden(nieuw);
-    bewaarKeuzes({ kooktijden: nieuw, stijlen });
+    bewaarKeuzes({ kooktijden: nieuw, stijlen, vermijd });
   };
   const wisselStijl = (st: StijlCode) => {
     const nieuw = wissel(stijlen, st);
     setStijlen(nieuw);
-    bewaarKeuzes({ kooktijden, stijlen: nieuw });
+    bewaarKeuzes({ kooktijden, stijlen: nieuw, vermijd });
+  };
+  const wisselVermijdKeuze = (v: Vermijd) => {
+    const nieuw = wissel(vermijd, v);
+    setVermijd(nieuw);
+    bewaarKeuzes({ kooktijden, stijlen, vermijd: nieuw });
   };
 
   // AI-tegoed van vandaag (WEEK-33): na elke AI-vraag opnieuw ophalen.
@@ -115,7 +120,8 @@ export default function Weekplanning() {
     try {
       // Frigo-voorrang (WEEK-12): wat al in huis is, gaat mee naar de planner.
       const frigo = await laadFrigo();
-      const verzoek = { opdracht, kooktijden, stijlen, profiel, taal, frigo };
+      // Vrije tekst is verwijderd (WEEK-41); de keuzes sturen het plan.
+      const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, profiel, taal, frigo };
       const nieuw = modus === 'favorieten' ? planUitFavorieten(favorieten, verzoek, plan) : await planWeek(verzoek, AI);
       if (!nieuw) {
         Alert.alert(t('planning.modusFavorieten'), t('planning.geenFavorieten'));
@@ -123,9 +129,6 @@ export default function Weekplanning() {
       }
       setPlan(nieuw);
       await bewaarPlan(nieuw);
-      const geschiedenis = voegOpdrachtToe(vorige, opdracht);
-      setVorige(geschiedenis);
-      await bewaarOpdrachten(geschiedenis);
     } finally {
       setBezig(false);
       if (modus === 'nieuw') vernieuwTegoed();
@@ -224,26 +227,8 @@ export default function Weekplanning() {
       <Text style={s.blokKop}>{t('planning.stijl')}</Text>
       <Chips opties={STIJLEN} gekozen={stijlen} label={(st) => t(`stijl.${st}`)} onWissel={wisselStijl} />
 
-      <TextInput
-        style={s.veld}
-        value={opdracht}
-        onChangeText={setOpdracht}
-        placeholder={t('planning.placeholder')}
-        multiline
-        accessibilityLabel={t('planning.placeholder')}
-      />
-
-      {vorige.length > 0 && (
-        <View style={s.vorige}>
-          <Text style={s.vorigeKop}>{t('planning.vorige')}</Text>
-          {vorige.map((o) => (
-            // Aantikken laadt de opdracht in het veld; versturen gebeurt pas met de knop.
-            <Pressable key={o} style={s.vorigeItem} onPress={() => setOpdracht(o)}>
-              <Text style={s.vorigeTekst} numberOfLines={2}>↺ {o}</Text>
-            </Pressable>
-          ))}
-        </View>
-      )}
+      <Text style={s.blokKop}>{t('vermijd.kop')}</Text>
+      <Chips opties={VERMIJDBAAR} gekozen={vermijd} label={(v) => t(`vermijd.${v}`)} onWissel={wisselVermijdKeuze} />
 
       <View style={s.modus} accessibilityRole="tablist">
         {(['nieuw', 'favorieten'] as const).map((m) => {
@@ -361,14 +346,6 @@ const s = StyleSheet.create({
   chipTekst: { color: KLEUR, fontWeight: '600', fontSize: 13 },
   chipTekstAan: { color: '#fff' },
   melding: { backgroundColor: '#fff8e1', color: '#7a5b00', borderRadius: 10, padding: 10, fontSize: 13 },
-  veld: {
-    borderWidth: 1, borderColor: '#ddd', borderRadius: 12, padding: 12, minHeight: 96,
-    backgroundColor: '#fff', textAlignVertical: 'top', fontSize: 15,
-  },
-  vorige: { gap: 6 },
-  vorigeKop: { color: '#777', fontSize: 13, fontWeight: '600' },
-  vorigeItem: { backgroundColor: '#eef6f1', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12 },
-  vorigeTekst: { color: '#1f5c3a' },
   leeg: { color: '#777', textAlign: 'center', marginTop: 8 },
   bron: { color: '#999', fontSize: 12 },
   tegoed: { color: '#666', fontSize: 12, textAlign: 'center', marginTop: 6 },
