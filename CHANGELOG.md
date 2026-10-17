@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.28.0] – 2026-10-17
+
+Verbetering: het gezinstabblad is weg. Taal en gezinsruimte staan achter een instellingen-icoon rechtsboven op het menu.
+
+- Jira: [WEEK-39](https://proqltc-1791495894841.atlassian.net/browse/WEEK-39)
+- Confluence: [WEEK-39 – Instellingen-icoon op het menu](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6258708)
+
+### Gewijzigd
+- Instellingen-icoon (⚙) rechtsboven op het menu, opent het gezinsscherm met taal en gezinsruimte.
+- Het gezin-tabblad is verwijderd uit de tabbalk.
+
 ## [0.27.1] – 2026-10-17
 
 Aanpassing: de uitleg bij de postcode zegt nu dat we winkels in de buurt voorstellen, eerst lokaal, zonder iets op te leggen.

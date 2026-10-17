@@ -12,8 +12,8 @@ export const nl = {
   'tab.frigo.titel': 'Virtuele frigo',
   'tab.scan': 'Scan',
   'tab.scan.titel': 'Product scannen',
-  'tab.gezin': 'Gezin',
   'tab.gezin.titel': 'Gezinsprofiel',
+  'tab.instellingen': 'Instellingen',
   'kookboek.titel': 'Kookboek',
 
   'dag.zondag': 'Zondag',
