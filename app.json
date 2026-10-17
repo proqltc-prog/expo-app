@@ -3,7 +3,7 @@
     "name": "Famenu",
     "slug": "famenu",
     "scheme": "famenu",
-    "version": "0.48.4",
+    "version": "0.48.5",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -34,14 +34,6 @@
         {
           "androidAppId": "ca-app-pub-8394022188610476~8402661164",
           "iosAppId": "ca-app-pub-3940256099942544~1458002511"
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "kotlinVersion": "2.3.0"
-          }
         }
       ]
     ],
