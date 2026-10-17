@@ -3,7 +3,7 @@
     "name": "Famenu",
     "slug": "famenu",
     "scheme": "famenu",
-    "version": "0.31.0",
+    "version": "0.32.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -22,6 +22,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Famenu gebruikt je locatie enkel om winkels in de buurt te zoeken. Je locatie wordt niet bewaard."
+        }
+      ],
       [
         "expo-camera",
         {

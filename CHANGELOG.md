@@ -8,6 +8,23 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.32.0] – 2026-10-17
+
+Nieuw: het winkelvoorstel staat bovenaan de boodschappenpagina en werkt automatisch bij. Afstanden worden berekend met de GPS-locatie van het toestel (met terugval op de postcode). De locatie wordt enkel gevraagd na een tik op de knop en niet bewaard.
+
+- Jira: [WEEK-57](https://proqltc-1791495894841.atlassian.net/browse/WEEK-57) (stap 2: weergave), [WEEK-58](https://proqltc-1791495894841.atlassian.net/browse/WEEK-58)
+- Confluence: [WEEK-58 – GPS-locatie voor afstand naar winkels](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6094890)
+
+### Gewijzigd
+- Nieuw: knop "Toon winkelvoorstel" op de boodschappenpagina, met de winkels per type en hun afstand.
+- Nieuw: GPS-locatie via expo-location; zonder toestemming wordt de postcode uit het profiel gebruikt.
+- Winkels worden per locatie en straal in het geheugen bewaard; een wijziging van de lijst vraagt geen nieuw netwerkverzoek.
+- Het voorstel wordt opnieuw berekend bij elke wijziging van de lijst, ook na het aanvaarden van een recept.
+- Winkels die niet binnen de maximale afstand liggen, worden expliciet vermeld.
+- De postcode-zoekknop is verplaatst van het profiel naar de boodschappenpagina.
+- Vertalingen in zes talen.
+- Regressietests op de winkelzoeker van WEEK-53.
+
 ## [0.31.0] – 2026-10-17
 
 Nieuw (stap 1): logica voor een automatisch winkelvoorstel. Het kiest het minste aantal winkels dat de boodschappenlijst dekt, binnen de maximale afstand. De weergave volgt later.

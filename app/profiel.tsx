@@ -14,8 +14,6 @@ import {
   valideerProfiel,
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
-import { zoekWinkels } from '@/opslag/winkels';
-import type { Winkel, WinkelSoort } from '@/lib/winkels';
 import { Sleutel, Taal, TALEN, vertaal } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
@@ -50,8 +48,6 @@ export default function ProfielScherm() {
   const [budgetTekst, setBudgetTekst] = useState('');
   const [maxKmTekst, setMaxKmTekst] = useState('');
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
-  const [winkelStatus, setWinkelStatus] = useState<'stil' | 'laden' | 'fout' | 'klaar'>('stil');
-  const [winkels, setWinkels] = useState<Winkel[]>([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -66,24 +62,6 @@ export default function ProfielScherm() {
 
   const wijzig = (deel: Partial<Profiel>) => setProfiel((p) => ({ ...p, ...deel }));
   const wijzigAdres = (deel: Partial<Profiel['adres']>) => setProfiel((p) => ({ ...p, adres: { ...p.adres, ...deel } }));
-
-  /** Zoekt winkels in de buurt (WEEK-53), enkel als de gebruiker erom vraagt. */
-  const zoekBuurt = async () => {
-    if (!profiel.adres.postcode.trim()) {
-      setWinkelStatus('fout');
-      setWinkels([]);
-      return;
-    }
-    setWinkelStatus('laden');
-    try {
-      const gevonden = await zoekWinkels(profiel.adres.postcode, profiel.adres.gemeente);
-      setWinkels(gevonden);
-      setWinkelStatus('klaar');
-    } catch {
-      setWinkels([]);
-      setWinkelStatus('fout');
-    }
-  };
 
   const bewaar = async () => {
     const volledig: Profiel = { ...profiel, weekbudget: leesBedrag(budgetTekst), maxKm: leesMaxKm(maxKmTekst) };
@@ -169,37 +147,6 @@ export default function ProfielScherm() {
           <TextInput style={[s.veld, { flex: 1 }]} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} placeholder={t('profiel.gemeente')} />
         </View>
         <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} placeholder={t('profiel.land')} />
-        <Pressable style={[s.knopKlein, winkelStatus === 'laden' && s.uit]} onPress={zoekBuurt} disabled={winkelStatus === 'laden'}>
-          <Text style={s.knopKleinTekst}>{winkelStatus === 'laden' ? t('winkels.laden') : t('winkels.zoek')}</Text>
-        </Pressable>
-        {winkelStatus === 'fout' && <Text style={s.fout}>{profiel.adres.postcode.trim() ? t('winkels.fout') : t('winkels.geenPostcode')}</Text>}
-        {winkelStatus === 'klaar' && winkels.length === 0 && <Text style={s.hint}>{t('winkels.leeg')}</Text>}
-        {winkelStatus === 'klaar' && winkels.length > 0 && (
-          <View style={s.winkelLijst}>
-            {(['postcode', 'gemeente'] as const).map((nabij) => {
-              const groep = winkels.filter((w) => w.nabij === nabij);
-              if (!groep.length) return null;
-              return (
-                <View key={nabij} style={{ gap: 6 }}>
-                  <Text style={s.waromKop}>{t(nabij === 'postcode' ? 'winkels.postcode' : 'winkels.gemeente')}</Text>
-                  {(['supermarkt', 'slager', 'bakker', 'groenteboer'] as WinkelSoort[]).map((soort) => {
-                    const deel = groep.filter((w) => w.soort === soort);
-                    if (!deel.length) return null;
-                    return (
-                      <View key={soort} style={{ gap: 2 }}>
-                        <Text style={s.hint}>{t(`winkels.soort.${soort}` as Sleutel)}</Text>
-                        {deel.map((w) => (
-                          <Text key={`${w.naam}-${w.postcode}`} style={s.label}>• {w.naam}{w.gemeente ? `, ${w.gemeente}` : ''}</Text>
-                        ))}
-                      </View>
-                    );
-                  })}
-                </View>
-              );
-            })}
-            <Text style={s.hint}>{t('winkels.bron')}</Text>
-          </View>
-        )}
       </View>
 
       <Text style={s.kop}>{t('profiel.taal')}</Text>
@@ -258,8 +205,5 @@ const s = StyleSheet.create({
   chipTekst: { color: KLEUR, fontWeight: '600' },
   chipTekstActief: { color: '#fff' },
   knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 8 },
-  knopKlein: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingVertical: 10, alignItems: 'center' },
-  knopKleinTekst: { color: KLEUR, fontWeight: '700' },
-  winkelLijst: { gap: 10, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 10 },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });
