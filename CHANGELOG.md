@@ -13,7 +13,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 Verbetering: het gezinsscherm vraagt het aantal kinderen tot 12 jaar in plaats van hun leeftijd. Elk kind telt als een halve portie.
 
 - Jira: [WEEK-40](https://proqltc-1791495894841.atlassian.net/browse/WEEK-40)
-- Confluence: (nog aan te vullen vóór de release)
+- Confluence: [WEEK-40 – Gezin met aantal kinderen i.p.v. leeftijd](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/5931033)
 
 ### Gewijzigd
 - Gezinsprofiel: aantal volwassenen en aantal kinderen (0 tot 12 jaar), zonder leeftijd per kind.
