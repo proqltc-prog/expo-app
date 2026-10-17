@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwQuery, leesWinkels, rangschik, schoonGemeente, MAX_WINKELS, Winkel } from '@/lib/winkels';
+import { bouwQuery, bouwQueryRond, leesWinkels, rangschik, schoonGemeente, MAX_WINKELS, Winkel } from '@/lib/winkels';
 
 describe('winkels in de buurt: query (WEEK-53)', () => {
   test('geldige Belgische postcode geeft een query op postcode en op gemeente', () => {
@@ -31,6 +31,26 @@ describe('winkels in de buurt: query (WEEK-53)', () => {
     assert.equal(schoonGemeente('  Sint  Genesius-Rode '), 'Sint Genesius-Rode');
     const q = bouwQuery('1760', 'Roos"daal')!;
     assert.match(q, /"addr:city"="Roosdaal"/);
+  });
+});
+
+describe('winkels rond een GPS-punt (WEEK-58)', () => {
+  test('zoekt rond het punt, met de straal in meter', () => {
+    const q = bouwQueryRond(50.94, 4.12, 15000)!;
+    assert.match(q, /around:15000,50\.940,4\.120/);
+    assert.match(q, /"shop"~"\^\(supermarket\|butcher\|bakery\|greengrocer\)\$"/);
+  });
+
+  test('rondt de coördinaten af op 3 decimalen, geen exacte locatie', () => {
+    const q = bouwQueryRond(50.9412345, 4.1287654, 5000)!;
+    assert.match(q, /around:5000,50\.941,4\.129/);
+    assert.doesNotMatch(q, /50\.9412345/);
+  });
+
+  test('ongeldige invoer geeft null', () => {
+    assert.equal(bouwQueryRond(Number.NaN, 4.1, 5000), null);
+    assert.equal(bouwQueryRond(50.9, 4.1, 0), null);
+    assert.equal(bouwQueryRond(50.9, 4.1, -3), null);
   });
 });
 

@@ -10,6 +10,7 @@ import { werkOntbrekendBij } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { categorieNaam, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
+import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 
 const KLEUR = '#2e7d4f';
 
@@ -139,6 +140,7 @@ export default function Lijst() {
         {alleRegels.length ? t('lijst.teller', { open, totaal: alleRegels.length }) : t('lijst.leeg')}
       </Text>
       <SectionList
+        ListHeaderComponent={<WinkelVoorstel items={items} />}
         sections={data}
         keyExtractor={(r, i) => `${r.sleutel}-${i}`}
         renderSectionHeader={({ section }) => <Text style={s.kop}>{section.title}</Text>}

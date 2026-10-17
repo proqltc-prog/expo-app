@@ -55,6 +55,23 @@ export function bouwQuery(postcode: string, gemeente: string): string | null {
   ].join('\n');
 }
 
+/**
+ * Overpass-query voor winkels rond een punt (GPS). Coördinaten worden afgerond op 3 decimalen
+ * (± 100 meter), zodat we geen exacte locatie doorsturen. Geeft null bij ongeldige invoer.
+ */
+export function bouwQueryRond(lat: number, lon: number, straalM: number): string | null {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon) || !(straalM > 0)) return null;
+  const soorten = Object.keys(WINKEL_TAGS).join('|');
+  const straal = Math.min(Math.round(straalM), 50000);
+  return [
+    '[out:json][timeout:25];',
+    '(',
+    `nwr(around:${straal},${lat.toFixed(3)},${lon.toFixed(3)})["shop"~"^(${soorten})$"];`,
+    ');',
+    `out center ${MAX_WINKELS * 3};`,
+  ].join('\n');
+}
+
 /** Sorteert lokaal eerst, dan op soort en naam, en beperkt tot MAX_WINKELS. */
 export function rangschik(winkels: Winkel[]): Winkel[] {
   const volgorde: Record<Nabij, number> = { postcode: 0, gemeente: 1 };
