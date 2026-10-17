@@ -6,7 +6,7 @@ Famenu helpt een gezin met het weekmenu, de boodschappenlijst en de virtuele fri
 
 ## Wie is verantwoordelijk?
 
-[Naam van de uitgever], [adres], België – contact: [e-mailadres].
+Proqltc, Roosdaal, België – contact: proqltc@gmail.com.
 
 ## Welke gegevens en waarom?
 
@@ -37,7 +37,7 @@ De gratis versie toont advertenties van Google AdMob. Google kan daarvoor een ad
 
 ## Hoe lang?
 
-Gegevens in de gezinsruimte blijven bewaard zolang je lid bent. Verlaat je de gezinsruimte, dan blijven de gedeelde gegevens bij de andere leden. Verwijder je de app, dan verdwijnen de gegevens op je toestel. Wil je dat we alles van jouw gezinsruimte wissen, stuur dan een e-mail naar [e-mailadres].
+Gegevens in de gezinsruimte blijven bewaard zolang je lid bent. Verlaat je de gezinsruimte, dan blijven de gedeelde gegevens bij de andere leden. Verwijder je de app, dan verdwijnen de gegevens op je toestel. Wil je dat we alles van jouw gezinsruimte wissen, stuur dan een e-mail naar proqltc@gmail.com.
 
 ## Je rechten
 
@@ -62,4 +62,4 @@ Famenu helps a family with the weekly menu, the shopping list and the virtual fr
 - **Shop suggestion:** when you use it, your postcode and municipality are sent to OpenStreetMap services (Nominatim and Overpass) to find shops nearby. Servers may be outside the EU. The answers are kept in memory only while the app runs; they are not stored. We do not use your device's GPS location.
 - *[Advertising section: fill in before the release with advertisements.]*
 - No selling of data, no account with name or e-mail required.
-- Your rights: access, correction and deletion via [e-mail address]; complaints to the Belgian Data Protection Authority.
+- Your rights: access, correction and deletion via proqltc@gmail.com; complaints to the Belgian Data Protection Authority.

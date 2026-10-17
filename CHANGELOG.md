@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.33.2] – 2026-10-17
+
+Documentatie: de uitgeversgegevens (Proqltc, Roosdaal, België) en het contactadres zijn ingevuld in het privacybeleid, de Play Data safety-tekst en de winkelteksten.
+
+- Jira: [WEEK-61](https://proqltc-1791495894841.atlassian.net/browse/WEEK-61) (vervolg op [WEEK-59](https://proqltc-1791495894841.atlassian.net/browse/WEEK-59))
+- Confluence: [WEEK-61 – Uitgeversgegevens invullen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6520833)
+
+### Gewijzigd
+- `store/privacybeleid.md`, `store/data-safety.md`, `store/listing.md`: placeholders voor uitgever en contact ingevuld.
+
 ## [0.33.1] – 2026-10-17
 
 Documentatie: het privacybeleid en de Play Data safety-tekst beschrijven nu de postcode die naar OpenStreetMap gaat voor het winkelvoorstel, en dat er geen GPS-locatie gebruikt wordt.
