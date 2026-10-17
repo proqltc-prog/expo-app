@@ -1,4 +1,5 @@
 import type { Afdeling } from '@/data/ingredienten';
+import type { Vermijd } from '@/data/vermijden';
 import type { Basis, Soort, StijlCode } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import type { Profiel } from '@/lib/profiel';
@@ -55,6 +56,8 @@ export type PlanVerzoek = {
   opdracht: string;
   kooktijden: KooktijdCode[];
   stijlen: StijlCode[];
+  /** Ingrediënten die vermeden worden (WEEK-41). */
+  vermijd?: Vermijd[];
   profiel: Profiel;
   taal: Taal;
   seed?: number;
@@ -67,6 +70,8 @@ export type Weekplan = {
   opdracht: string;
   kooktijden: KooktijdCode[];
   stijlen: StijlCode[];
+  /** Ingrediënten die bij het maken van dit plan vermeden werden; ook bij het vervangen van een dag (WEEK-41). */
+  vermijd?: Vermijd[];
   taal: Taal;
   /** Aantal volwassen porties waarvoor de hoeveelheden berekend zijn. */
   porties: number;

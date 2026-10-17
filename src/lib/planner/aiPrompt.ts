@@ -17,6 +17,8 @@ export type AiVerzoek = {
   dagen: string[];
   /** Recepten die al in het plan staan en niet herhaald mogen worden (bv. bij een reset van één dag). */
   vermijd?: string[];
+  /** Ingrediënten die niet mogen voorkomen, ook niet in saus of als garnituur (WEEK-41). */
+  uitsluiten?: string[];
   /** Wat al in huis is, het oudste eerst, bv. "spinazie (200 g, 5 days)" (WEEK-12). */
   frigo?: string[];
 };
@@ -112,6 +114,7 @@ export function gebruikersBericht(v: AiVerzoek): string {
     `User request: ${v.opdracht.trim() || '(none – make a balanced, varied week)'}`,
   ];
   if (v.vermijd?.length) regels.push(`Avoid these recipes: ${v.vermijd.join('; ')}`);
+  if (v.uitsluiten?.length) regels.push(`Do not use these ingredients, not even in a sauce or as garnish: ${v.uitsluiten.join('; ')}`);
   if (v.frigo?.length) regels.push(`In the fridge (oldest first): ${v.frigo.join('; ')}`);
   return regels.join('\n');
 }

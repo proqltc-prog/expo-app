@@ -8,6 +8,21 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.34.0] – 2026-10-17
+
+Nieuw: ingrediënten vermijden. Het vrije tekstveld op het eerste tabblad is weg; in de plaats kies je wat je niet wil (varkensvlees, schaaldieren, zuivel, vis, eieren, noten). De keuze geldt voor de lokale planner, de AI, het kookboek en het vervangen van één dag.
+
+- Jira: [WEEK-41](https://proqltc-1791495894841.atlassian.net/browse/WEEK-41)
+- Confluence: [WEEK-41 – Ingrediënten vermijden](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6553602)
+
+### Gewijzigd
+- Verwijderd: vrij tekstveld en de lijst met vorige opdrachten op het eerste tabblad. Het aantal dagen wordt niet meer via tekst gekozen (standaard 6 dagen).
+- Nieuw: keuzes om ingrediënten te vermijden, onthouden op het toestel en opgeslagen bij het weekplan.
+- Recepten met een verboden ingrediënt komen niet in het plan, ook niet bij het vervangen van één dag.
+- De AI krijgt de uitsluitingen mee. Een AI-recept met een verboden ingrediënt wordt afgekeurd; dan neemt de lokale planner het over.
+- Privacybeleid bijgewerkt: de keuzes gaan mee naar de AI.
+- Regressietests op de planner, het vervangen van een dag en het opslaan van plannen.
+
 ## [0.33.4] – 2026-10-17
 
 Documentatie: de privacypagina heeft een link naar de Engelse versie, zodat die meteen zichtbaar is.

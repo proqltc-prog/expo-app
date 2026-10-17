@@ -10,6 +10,7 @@ import { porties as berekenPorties } from './hoeveelheid';
 import { dagenVoorPlan, STANDAARD_AANTAL_DAGEN, toeval } from './lokaal';
 import { frigoScoreNamen, markeerUitFrigo } from './frigovoorrang';
 import { kooktijdVan, PlanDag, PlanVerzoek, Weekplan } from './types';
+import { heeftVermijdNaam } from './vermijden';
 
 const klein = (t: string) => t.trim().toLocaleLowerCase();
 
@@ -20,11 +21,11 @@ function magVolgensWensen(f: Favoriet, w: Wensen): boolean {
 /** Favorieten die passen bij de wensen en keuzes; versoepelt stijl en daarna kooktijd als er te weinig zijn. */
 export function passendeFavorieten(
   favorieten: readonly Favoriet[],
-  verzoek: Pick<PlanVerzoek, 'opdracht' | 'kooktijden' | 'stijlen'>,
+  verzoek: Pick<PlanVerzoek, 'opdracht' | 'kooktijden' | 'stijlen' | 'vermijd'>,
   nodig: number
 ): { favorieten: Favoriet[]; versoepeld: boolean } {
   const w = leesOpdracht(verzoek.opdracht);
-  const toegelaten = favorieten.filter((f) => magVolgensWensen(f, w));
+  const toegelaten = favorieten.filter((f) => magVolgensWensen(f, w) && !heeftVermijdNaam(f.ingredienten, verzoek.vermijd ?? []));
   const pastTijd = (f: Favoriet) => !verzoek.kooktijden.length || verzoek.kooktijden.includes(kooktijdVan(f.minuten));
   const pastStijl = (f: Favoriet) => !verzoek.stijlen.length || f.stijlen.some((s) => verzoek.stijlen.includes(s));
   const beide = toegelaten.filter((f) => pastTijd(f) && pastStijl(f));
@@ -83,6 +84,7 @@ export function planUitFavorieten(
     opdracht: verzoek.opdracht,
     kooktijden: verzoek.kooktijden,
     stijlen: verzoek.stijlen,
+    ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),
     taal: verzoek.taal,
     porties,
     bron: 'favorieten',

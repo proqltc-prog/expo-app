@@ -1,8 +1,10 @@
 // Controle van een weekplan dat van buitenaf komt (opslag op het toestel of AI-antwoord).
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
+import type { Vermijd } from '@/data/vermijden';
 import { STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
 import { isTaal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
+import { normaliseerVermijd } from './vermijden';
 import { DagCode, KooktijdCode, KOOKTIJDEN, PlanDag, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 
 const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
@@ -67,6 +69,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     opdracht: tekst(ruw.opdracht),
     kooktijden: Array.isArray(ruw.kooktijden) ? ruw.kooktijden.filter((k): k is KooktijdCode => KOOKTIJDEN.includes(k as KooktijdCode)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [],
+    ...(normaliseerVermijd(ruw.vermijd).length ? { vermijd: normaliseerVermijd(ruw.vermijd) } : {}),
     taal: isTaal(ruw.taal) ? ruw.taal : 'nl',
     porties: typeof ruw.porties === 'number' && ruw.porties > 0 ? ruw.porties : 2,
     bron: ruw.bron === 'ai' || ruw.bron === 'favorieten' ? ruw.bron : 'lokaal',
@@ -80,10 +83,11 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
 }
 
 /** Leest bewaarde keuzes voor kooktijd en stijl veilig in. */
-export function normaliseerKeuzes(ruw: unknown): { kooktijden: KooktijdCode[]; stijlen: StijlCode[] } {
-  if (!isObject(ruw)) return { kooktijden: [], stijlen: [] };
+export function normaliseerKeuzes(ruw: unknown): { kooktijden: KooktijdCode[]; stijlen: StijlCode[]; vermijd: Vermijd[] } {
+  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [] };
   return {
     kooktijden: Array.isArray(ruw.kooktijden) ? KOOKTIJDEN.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? STIJLEN.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
+    vermijd: normaliseerVermijd(ruw.vermijd),
   };
 }

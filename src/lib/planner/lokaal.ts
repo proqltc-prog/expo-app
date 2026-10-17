@@ -8,6 +8,7 @@ import { porties as berekenPorties, rondAf } from './hoeveelheid';
 import { DagCode, KooktijdCode, kooktijdVan, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 import type { StijlCode } from '@/data/receptenbank';
 import { kiesEersteDag, markeerUitFrigo } from './frigovoorrang';
+import { bankReceptVermijdt } from './vermijden';
 
 export const STANDAARD_AANTAL_DAGEN = 6;
 
@@ -153,7 +154,7 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
   const dagen = dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   const random = toeval(verzoek.seed ?? Date.now());
   const { recepten: kandidaten, versoepeld } = filterOpKeuzes(
-    passendeRecepten(w, bank),
+    passendeRecepten(w, bank.filter((r) => !bankReceptVermijdt(r, verzoek.vermijd ?? []))),
     verzoek.kooktijden,
     verzoek.stijlen,
     dagen.length
@@ -177,6 +178,7 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
     opdracht: verzoek.opdracht,
     kooktijden: verzoek.kooktijden,
     stijlen: verzoek.stijlen,
+    ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),
     taal: verzoek.taal,
     porties,
     bron: 'lokaal',

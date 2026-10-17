@@ -8,6 +8,8 @@ import { normaliseerRecept } from './normaliseer';
 import { markeerUitFrigo } from './frigovoorrang';
 import type { FrigoItem } from '@/lib/frigo';
 import type { AiVerzoek } from './aiPrompt';
+import { heeftVermijdNaam } from './vermijden';
+import { VERMIJD_AI } from '@/data/vermijden';
 import { DagCode, kooktijdVan, PlanDag, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 
 export type AiInstelling = {
@@ -60,6 +62,7 @@ export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?:
     stijlen: [...verzoek.stijlen],
     dagen: dagen ?? dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
     ...(vermijd?.length ? { vermijd } : {}),
+    ...(verzoek.vermijd?.length ? { uitsluiten: verzoek.vermijd.map((v) => VERMIJD_AI[v]) } : {}),
     ...(frigo.length ? { frigo } : {}),
   };
 }
@@ -81,6 +84,7 @@ export function leesAiAntwoord(ruw: unknown, verzoek: PlanVerzoek, gevraagdeDage
     if (resultaat.some((r) => r.dag === dag)) continue;
     const recept = normaliseerRecept(ruwRecept);
     if (!recept) continue;
+    if (heeftVermijdNaam([...recept.ingredienten, { naam: recept.naam }], verzoek.vermijd ?? [])) continue;
     if (w.zonderVlees && recept.soort === 'vlees') continue;
     if (w.zonderVis && recept.soort === 'vis') continue;
     if (verzoek.kooktijden.length && !verzoek.kooktijden.includes(kooktijdVan(recept.minuten))) continue;
@@ -139,6 +143,7 @@ export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = 
       opdracht: verzoek.opdracht,
       kooktijden: verzoek.kooktijden,
       stijlen: verzoek.stijlen,
+      ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),
       taal: verzoek.taal,
       porties: berekenPorties(verzoek.profiel),
       bron: 'ai',
