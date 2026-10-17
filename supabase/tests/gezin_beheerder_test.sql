@@ -36,8 +36,8 @@ begin
 
   -- Gewoon lid B verlaat zonder opvolger-eis (regressie)
   perform public.verlaat_gezin();
-  select count(*) into n from public.gezinsleden where gezin_id = g.id; if n <> 2 then raise exception 'FOUT B niet weg, leden %', n; end if;
   reset role;
+  select count(*) into n from public.gezinsleden where gezin_id = g.id; if n <> 2 then raise exception 'FOUT B niet weg, leden %', n; end if;
 
   -- A (beheerder) verlaat zonder opvolger: geweigerd
   perform set_config('request.jwt.claims', json_build_object('sub', a, 'role', 'authenticated')::text, true);
