@@ -2,6 +2,7 @@
 // Opslag op het toestel staat in src/opslag/frigo.ts.
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
+import type { Product } from '@/lib/openfoodfacts';
 
 export type FrigoItem = {
   id: string;
@@ -14,6 +15,8 @@ export type FrigoItem = {
   toegevoegdOp: string;
   /** Het lijstitem waaruit dit product kwam, zodat een vinkje ongedaan maken het weer weghaalt. */
   lijstId?: string;
+  /** Productdetails uit de scanner (WEEK-49); ontbreekt als het product niet gescand is. */
+  product?: Product;
 };
 
 /** Een regel op het frigo-scherm: hetzelfde product samengeteld. */
@@ -26,6 +29,8 @@ export type FrigoRegel = {
   /** Tijdstip van het oudste exemplaar. */
   oudsteOp: string;
   ids: string[];
+  /** De details van het eerste exemplaar dat gescand is. */
+  product?: Product;
 };
 
 export type FrigoSectie = { afdeling: Afdeling | 'overig'; regels: FrigoRegel[] };
@@ -75,7 +80,7 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
 }
 
 /** Extra gegevens bij zelf toevoegen (WEEK-35). */
-export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig' };
+export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product };
 
 /** Eenheden die je kan kiezen bij zelf toevoegen. */
 export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
@@ -100,6 +105,7 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
       ...(eenheid ? { eenheid } : {}),
       afdeling,
       toegevoegdOp: nu.toISOString(),
+      ...(extra.product ? { product: extra.product } : {}),
     },
   ];
 }
@@ -128,9 +134,11 @@ export function frigoSecties(frigo: readonly FrigoItem[]): FrigoSectie[] {
         afdeling: f.afdeling,
         oudsteOp: f.toegevoegdOp,
         ids: [f.id],
+        ...(f.product ? { product: f.product } : {}),
       });
       continue;
     }
+    if (!regel.product && f.product) regel.product = f.product;
     if (f.hoeveelheid !== undefined) regel.hoeveelheid = Math.round(((regel.hoeveelheid ?? 0) + f.hoeveelheid) * 100) / 100;
     if (f.toegevoegdOp < regel.oudsteOp) regel.oudsteOp = f.toegevoegdOp;
     regel.ids.push(f.id);
@@ -150,6 +158,28 @@ export function aantalProducten(frigo: readonly FrigoItem[]): number {
 
 const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 
+/** Leest bewaarde productdetails veilig in (WEEK-49); ongeldige velden worden weggelaten, een product zonder barcode of naam niet. */
+export function leesProduct(ruw: unknown): Product | undefined {
+  if (!isObject(ruw) || typeof ruw.barcode !== 'string' || !ruw.barcode || typeof ruw.naam !== 'string') return undefined;
+  const p: Product = {
+    barcode: ruw.barcode,
+    naam: ruw.naam,
+    additieven: Array.isArray(ruw.additieven) ? ruw.additieven.filter((a): a is string => typeof a === 'string') : [],
+  };
+  if (typeof ruw.merk === 'string' && ruw.merk) p.merk = ruw.merk;
+  if (typeof ruw.nutriscore === 'string' && ruw.nutriscore) p.nutriscore = ruw.nutriscore;
+  for (const k of ['nova', 'kcal', 'suikers', 'eiwitten', 'vet', 'zout'] as const) {
+    const v = ruw[k];
+    if (typeof v === 'number' && Number.isFinite(v)) p[k] = v;
+  }
+  if (Array.isArray(ruw.categorieen)) p.categorieen = ruw.categorieen.filter((c): c is string => typeof c === 'string');
+  return p;
+}
+
+/** Koppelt gescande productdetails aan een bestaand frigo-item (WEEK-49). Onbekend id: ongewijzigd. */
+export function voegProductToe(frigo: readonly FrigoItem[], id: string, product: Product): FrigoItem[] {
+  return frigo.map((f) => (f.id === id ? { ...f, product } : { ...f }));
+}
 /** Leest een bewaarde frigo veilig in; onbruikbare items worden overgeslagen. */
 export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
   if (!Array.isArray(ruw)) return [];
@@ -157,6 +187,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
     if (!isObject(r) || typeof r.id !== 'string' || typeof r.naam !== 'string' || !r.naam.trim()) return [];
     const toegevoegdOp = typeof r.toegevoegdOp === 'string' && !Number.isNaN(Date.parse(r.toegevoegdOp)) ? r.toegevoegdOp : new Date(0).toISOString();
     const hoeveelheid = typeof r.hoeveelheid === 'number' && Number.isFinite(r.hoeveelheid) && r.hoeveelheid > 0 ? r.hoeveelheid : undefined;
+    const product = leesProduct(r.product);
     return [{
       id: r.id,
       naam: r.naam.trim(),
@@ -165,6 +196,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
       afdeling: typeof r.afdeling === 'string' && isAfdeling(r.afdeling) ? r.afdeling : 'overig',
       toegevoegdOp,
       ...(typeof r.lijstId === 'string' ? { lijstId: r.lijstId } : {}),
+      ...(product ? { product } : {}),
     }];
   });
 }

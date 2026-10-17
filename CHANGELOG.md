@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.42.0] – 2026-10-17
+
+Nieuw: productdetails bij frigo-items. Een gescand product in de frigo kan je later opnieuw bekijken: oordeel, voeding per 100 g en additieven. Een product zonder details toon je met één tik "Scan voor details".
+
+- Jira: [WEEK-49](https://proqltc-1791495894841.atlassian.net/browse/WEEK-49)
+- Confluence: [WEEK-49 – Productdetails raadplegen van aangekochte producten in de frigo](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6848516)
+
+### Gewijzigd
+- Nieuw: bij een gescand product in de frigo staat "Productdetails" om oordeel, voeding en additieven te zien.
+- Nieuw: bij een product zonder details staat "Scan voor details"; de scanner koppelt de gegevens aan dat frigo-item.
+- Bestaande frigo-items zonder scan blijven ongewijzigd.
+
 ## [0.41.0] – 2026-10-17
 
 Nieuw: scannen op de frigo. Tik op Scan en scan een product dat je net gekocht hebt; het gaat direct in de frigo, in de juiste afdeling.
