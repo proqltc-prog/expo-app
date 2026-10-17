@@ -71,7 +71,7 @@ De app heet **Famenu**, met de vaste interne naam `be.famenu.app`. Die naam kan 
   - `development` maakt een ontwikkelversie.
 - Een build start je via GitHub › Actions › **Android-build** › Run workflow, waar je het profiel kiest. Daarvoor is het GitHub-secret `EXPO_TOKEN` nodig (expo.dev › Account settings › Access tokens).
 - De versiecode beheert EAS zelf (`appVersionSource: remote`). De zichtbare versie volgt `app.json`.
-- Teksten voor de winkel in 6 talen, het icoon en de feature graphic staan in `store/`. Het ontwerp van het privacybeleid staat in `store/privacybeleid.md`.
+- Teksten voor de winkel in 6 talen, het icoon en de feature graphic staan in `store/`. Het ontwerp van het privacybeleid staat in `store/privacybeleid.md`, de Play Data safety-tekst in `store/data-safety.md`.
 - Het icoon (`assets/`) is een eerste versie en mag vervangen worden door een eigen ontwerp.
 
 ## Structuur

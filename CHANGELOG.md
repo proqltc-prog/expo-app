@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.33.1] – 2026-10-17
+
+Documentatie: het privacybeleid en de Play Data safety-tekst beschrijven nu de postcode die naar OpenStreetMap gaat voor het winkelvoorstel, en dat er geen GPS-locatie gebruikt wordt.
+
+- Jira: [WEEK-59](https://proqltc-1791495894841.atlassian.net/browse/WEEK-59)
+- Confluence: [WEEK-59 – Privacybeleid bijwerken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6127626)
+
+### Gewijzigd
+- `store/privacybeleid.md`: versie 2, nieuwe rij voor postcode en gemeente, open deel voor advertenties.
+- Nieuw: `store/data-safety.md` met de Play Data safety-tekst.
+
 ## [0.33.0] – 2026-10-17
 
 Gewijzigd: het winkelvoorstel gebruikt de postcode uit het profiel in plaats van GPS. Bij elke wijziging van de boodschappenlijst wordt het voorstel opnieuw berekend. De GPS-toestemming vervalt.
