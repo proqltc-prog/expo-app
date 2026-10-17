@@ -40,6 +40,8 @@ function TabBladen() {
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null }} />
       {/* Kookboek (WEEK-21): geen eigen tabblad, bereikbaar vanuit het weekmenu. */}
       <Tabs.Screen name="kookboek" options={{ title: t('kookboek.titel'), href: null }} />
+      {/* Zelf kiezen (WEEK-44): een gerecht uit de receptenbank, vanuit het weekmenu. */}
+      <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null }} />
     </Tabs>
   );
 }

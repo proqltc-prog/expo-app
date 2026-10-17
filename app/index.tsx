@@ -7,6 +7,7 @@ import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { planUitFavorieten, resetDagUitFavorieten } from '@/lib/planner/favorietenplan';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
+import { verwijderDag, zonderReceptVanLijst } from '@/lib/planner/kies';
 import { receptStatus } from '@/lib/planner/status';
 import { laadFrigo } from '@/opslag/frigo';
 import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favorieten';
@@ -210,6 +211,51 @@ export default function Weekplanning() {
     Alert.alert(t('menu.klaar.titel'), t('planning.opLijstKlaar', { namen: dag.ontbreekt.join(', ') }));
   };
 
+  // Gerecht verwijderen (WEEK-44): het gerecht gaat uit het plan, de ingrediënten ook van de lijst.
+  // Niet voor een gekookt gerecht; enkel de items van dat recept op die dag gaan weg.
+  const verwijderMaaltijd = (index: number) => {
+    const dag = plan?.dagen[index];
+    if (!plan || !dag || dag.gedaan) return;
+    const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: dag.recept.naam };
+    Alert.alert(t('planning.verwijderen'), t('planning.verwijderVraag'), [
+      { text: t('planning.annuleer'), style: 'cancel' },
+      {
+        text: t('planning.verwijderen'),
+        style: 'destructive',
+        onPress: async () => {
+          let gewijzigd = false;
+          const bewaard = await wijzigPlan((huidig) => {
+            const nieuw = verwijderDag(huidig, index, verwacht);
+            gewijzigd = nieuw !== huidig;
+            return nieuw;
+          });
+          if (!bewaard || !gewijzigd) return;
+          setPlan(bewaard);
+          // Melding enkel als er ingrediënten van de lijst gingen.
+          let n = 0;
+          await wijzigLijst((items) => {
+            const r = zonderReceptVanLijst(items, dag.dag, dag.recept.naam);
+            n = r.verwijderd;
+            return r.over;
+          });
+          if (n) Alert.alert(t('planning.verwijderen'), t('planning.verwijderdVanLijst', { n }));
+        },
+      },
+    ]);
+  };
+
+  // Zelf kiezen (WEEK-44): een ander gerecht uit de receptenbank voor deze dag.
+  const kiesZelf = (index: number) => {
+    const dag = plan?.dagen[index];
+    if (!plan || !dag) return;
+    router.push(
+      `/kies?moment=${dag.moment ?? 'avond'}&index=${index}&gemaaktOp=${encodeURIComponent(plan.gemaaktOp)}&naam=${encodeURIComponent(dag.recept.naam)}`
+    );
+  };
+
+  // Een maaltijd toevoegen (WEEK-44): op het eerste gekozen moment.
+  const voegMaaltijdToe = () => router.push(`/kies?moment=${momenten[0] ?? 'avond'}`);
+
   const naarLijst = async () => {
     if (!plan) return;
     // Wat al in huis is, komt niet (of minder) op de lijst (WEEK-12).
@@ -330,6 +376,16 @@ export default function Weekplanning() {
               ) : (
                 !gedaan && <Text style={s.gepland}>{t('status.gepland')}</Text>
               )}
+              {!gedaan && (
+                <View style={s.acties}>
+                  <Pressable style={s.kiesKnop} onPress={() => kiesZelf(index)} accessibilityRole="button">
+                    <Text style={s.kiesKnopTekst}>{t('planning.zelfKiezen')}</Text>
+                  </Pressable>
+                  <Pressable style={s.kiesKnop} onPress={() => verwijderMaaltijd(index)} accessibilityRole="button">
+                    <Text style={s.kiesKnopTekst}>{t('planning.verwijderen')}</Text>
+                  </Pressable>
+                </View>
+              )}
               <View style={s.rij}>
                 <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                 <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
@@ -356,6 +412,9 @@ export default function Weekplanning() {
                 ))}
             </View>
           ))}
+          <Pressable style={s.tweedeKnop} onPress={voegMaaltijdToe} accessibilityRole="button">
+            <Text style={s.tweedeKnopTekst}>{t('planning.toevoegen')}</Text>
+          </Pressable>
           <Pressable style={s.knop} onPress={naarLijst}>
             <Text style={s.knopTekst}>{t('menu.naarLijst')}</Text>
           </Pressable>
@@ -407,6 +466,11 @@ const s = StyleSheet.create({
   gedaanKnopAan: { backgroundColor: KLEUR },
   gedaanTekst: { color: KLEUR, fontSize: 12, fontWeight: '700' },
   gedaanTekstAan: { color: '#fff' },
+  acties: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', marginTop: 8 },
+  kiesKnop: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
+  kiesKnopTekst: { color: KLEUR, fontSize: 12, fontWeight: '700' },
+  tweedeKnop: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, alignItems: 'center' },
+  tweedeKnopTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
   knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
   uit: { opacity: 0.6 },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
