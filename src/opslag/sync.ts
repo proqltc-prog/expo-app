@@ -562,6 +562,18 @@ export async function verlaatGezin(): Promise<void> {
   await koppelLos();
 }
 
+/** Het id van de aangemelde gebruiker, of undefined zonder aanmelding (WEEK-30). */
+export async function ikId(): Promise<string | undefined> {
+  const sb = supabase();
+  if (!sb) return undefined;
+  try {
+    const { data } = await sb.auth.getSession();
+    return data.session?.user.id;
+  } catch {
+    return undefined;
+  }
+}
+
 /** De leden van de gezinsruimte, in volgorde van aansluiten. */
 export async function laadLeden(): Promise<GezinsLid[]> {
   const gezin = await laadGezin();

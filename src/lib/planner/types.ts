@@ -78,6 +78,8 @@ export type Weekplan = {
   stijlen: StijlCode[];
   /** Ingrediënten die bij het maken van dit plan vermeden werden; ook bij het vervangen van een dag (WEEK-41). */
   vermijd?: Vermijd[];
+  /** Gebruiker-id van de beheerder: enkel die mag het plan wijzigen (WEEK-30). Ontbreekt bij een plan zonder gezin. */
+  beheerder?: string;
   taal: Taal;
   /** Aantal volwassen porties waarvoor de hoeveelheden berekend zijn. */
   porties: number;

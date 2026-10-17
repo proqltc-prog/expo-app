@@ -24,7 +24,8 @@ import { wijzigLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { laadProfiel } from '@/opslag/profiel';
-import { bijWijziging } from '@/opslag/sync';
+import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
+import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { dagSleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -73,6 +74,9 @@ export default function Weekplanning() {
   const [eigenAantal, setEigenAantal] = useState(0);
   // Planmodus (WEEK-14): nieuwe recepten (AI of receptenbank) of random uit het kookboek.
   const [modus, setModus] = useState<'nieuw' | 'favorieten'>('nieuw');
+  // Beheer (WEEK-30): alleen de beheerder van het plan wijzigt het; de rest ziet het mee.
+  const [mijnId, setMijnId] = useState<string | undefined>(undefined);
+  const [leden, setLeden] = useState<GezinsLid[]>([]);
 
   useEffect(() => {
     laadPlan().then(setPlan);
@@ -136,11 +140,21 @@ export default function Weekplanning() {
       laadFavorieten().then(setFavorieten);
       laadEigenRecepten().then((lijst) => setEigenAantal(lijst.length));
       aiTegoed().then(setTegoed);
+      ikId().then(setMijnId);
+      laadLeden().then(setLeden).catch(() => setLeden([]));
     }, [])
   );
 
+  // Mag ik dit plan wijzigen? Zonder plan (nog) wel: het nieuwe plan wordt dan van mij (WEEK-30).
+  const mag = !plan || magPlanWijzigen(plan, mijnId);
+  const beheerTekst = plan?.beheerder
+    ? beheerderNaam(leden, plan.beheerder)
+      ? t('planning.alleenBeheerder', { naam: beheerderNaam(leden, plan.beheerder) ?? '' })
+      : t('planning.alleenBeheerderOnbekend')
+    : '';
+
   const maakPlan = async () => {
-    if (!profiel || bezig) return;
+    if (!profiel || bezig || !mag) return;
     setBezig(true);
     try {
       // Frigo-voorrang (WEEK-12): wat al in huis is, gaat mee naar de planner.
@@ -152,8 +166,12 @@ export default function Weekplanning() {
         Alert.alert(t('planning.modusFavorieten'), t('planning.geenFavorieten'));
         return;
       }
+      // Pas tonen als het bewaard is: een ander gezinslid kan het plan intussen hebben overgenomen.
+      if (!(await bewaarPlan(nieuw))) {
+        Alert.alert(t('planning.beheerTitel'), beheerTekst);
+        return;
+      }
       setPlan(nieuw);
-      await bewaarPlan(nieuw);
     } finally {
       setBezig(false);
       if (modus === 'nieuw') vernieuwTegoed();
@@ -162,7 +180,7 @@ export default function Weekplanning() {
 
   // Enkel die ene dag krijgt een nieuw recept; de rest van de week blijft staan.
   const herdoeDag = async (index: number) => {
-    if (!plan || !profiel || bezigDag !== null) return;
+    if (!plan || !profiel || bezigDag !== null || !mag) return;
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
@@ -186,7 +204,7 @@ export default function Weekplanning() {
   // Plan en frigo samen in één stap op de nieuwste versie; de knop is uitgeschakeld tot het klaar is (WEEK-28).
   const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
   const wisselGedaanKnop = async (index: number) => {
-    if (!plan || bezigGedaan !== null) return;
+    if (!plan || bezigGedaan !== null || !mag) return;
     setBezigGedaan(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
@@ -219,7 +237,7 @@ export default function Weekplanning() {
   // Niet voor een gekookt gerecht; enkel de items van dat recept op die dag gaan weg.
   const verwijderMaaltijd = (index: number) => {
     const dag = plan?.dagen[index];
-    if (!plan || !dag || dag.gedaan) return;
+    if (!plan || !dag || dag.gedaan || !mag) return;
     const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: dag.recept.naam };
     Alert.alert(t('planning.verwijderen'), t('planning.verwijderVraag'), [
       { text: t('planning.annuleer'), style: 'cancel' },
@@ -251,14 +269,17 @@ export default function Weekplanning() {
   // Zelf kiezen (WEEK-44): een ander gerecht uit de receptenbank voor deze dag.
   const kiesZelf = (index: number) => {
     const dag = plan?.dagen[index];
-    if (!plan || !dag) return;
+    if (!plan || !dag || !mag) return;
     router.push(
       `/kies?moment=${dag.moment ?? 'avond'}&index=${index}&gemaaktOp=${encodeURIComponent(plan.gemaaktOp)}&naam=${encodeURIComponent(dag.recept.naam)}`
     );
   };
 
   // Een maaltijd toevoegen (WEEK-44): op het eerste gekozen moment.
-  const voegMaaltijdToe = () => router.push(`/kies?moment=${momenten[0] ?? 'avond'}`);
+  const voegMaaltijdToe = () => {
+    if (!mag) return;
+    router.push(`/kies?moment=${momenten[0] ?? 'avond'}`);
+  };
 
   const naarLijst = async () => {
     if (!plan) return;
@@ -321,7 +342,7 @@ export default function Weekplanning() {
         })}
       </View>
 
-      <Pressable style={[s.knop, bezig && s.uit]} onPress={maakPlan} disabled={bezig || !profiel}>
+      <Pressable style={[s.knop, bezig && s.uit]} onPress={maakPlan} disabled={bezig || !profiel || !mag}>
         {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
       </Pressable>
       {modus === 'nieuw' && tegoed && (() => {
@@ -340,6 +361,8 @@ export default function Weekplanning() {
       </Pressable>
 
       {!plan && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
+
+      {plan && !mag && <Text style={s.melding}>{beheerTekst}</Text>}
 
       {plan && (
         <>
@@ -376,7 +399,7 @@ export default function Weekplanning() {
                     <Pressable style={s.kleineKnop} onPress={() => ontbrekendOpLijst(index)}>
                       <Text style={s.kleineKnopTekst}>{t('planning.opLijst')}</Text>
                     </Pressable>
-                    <Pressable style={s.kleineKnop} onPress={() => herdoeDag(index)} disabled={bezigDag !== null}>
+                    <Pressable style={s.kleineKnop} onPress={() => herdoeDag(index)} disabled={bezigDag !== null || !mag}>
                       <Text style={s.kleineKnopTekst}>{t('planning.anderGerecht')}</Text>
                     </Pressable>
                   </View>
@@ -386,10 +409,10 @@ export default function Weekplanning() {
               )}
               {!gedaan && (
                 <View style={s.acties}>
-                  <Pressable style={s.kiesKnop} onPress={() => kiesZelf(index)} accessibilityRole="button">
+                  <Pressable style={s.kiesKnop} onPress={() => kiesZelf(index)} accessibilityRole="button" disabled={!mag}>
                     <Text style={s.kiesKnopTekst}>{t('planning.zelfKiezen')}</Text>
                   </Pressable>
-                  <Pressable style={s.kiesKnop} onPress={() => verwijderMaaltijd(index)} accessibilityRole="button">
+                  <Pressable style={s.kiesKnop} onPress={() => verwijderMaaltijd(index)} accessibilityRole="button" disabled={!mag}>
                     <Text style={s.kiesKnopTekst}>{t('planning.verwijderen')}</Text>
                   </Pressable>
                 </View>
@@ -401,7 +424,7 @@ export default function Weekplanning() {
                 <Pressable
                   style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
                   onPress={() => wisselGedaanKnop(index)}
-                  disabled={bezigGedaan !== null}
+                  disabled={bezigGedaan !== null || !mag}
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: !!gedaan }}
                   accessibilityLabel={t('planning.gedaanLabel', { recept: recept.naam })}
@@ -420,7 +443,7 @@ export default function Weekplanning() {
                 ))}
             </View>
           ))}
-          <Pressable style={s.tweedeKnop} onPress={voegMaaltijdToe} accessibilityRole="button">
+          <Pressable style={s.tweedeKnop} onPress={voegMaaltijdToe} accessibilityRole="button" disabled={!mag}>
             <Text style={s.tweedeKnopTekst}>{t('planning.toevoegen')}</Text>
           </Pressable>
           <Pressable style={s.knop} onPress={naarLijst}>

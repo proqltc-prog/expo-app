@@ -82,6 +82,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     ...(ruw.aiLimiet === true ? { aiLimiet: true } : {}),
     ...(ruw.herhaald === true ? { herhaald: true } : {}),
     ...(ruw.kort === true ? { kort: true } : {}),
+    ...(tekst(ruw.beheerder) ? { beheerder: tekst(ruw.beheerder) } : {}),
   };
 }
 

@@ -6,7 +6,8 @@ import type { KooktijdCode, Weekplan } from '@/lib/planner/types';
 import type { Vermijd } from '@/data/vermijden';
 import type { Moment, StijlCode } from '@/data/receptenbank';
 import { SLEUTEL } from './sleutels';
-import { registreerDocument, registreerItems } from './sync';
+import { ikId, registreerDocument, registreerItems } from './sync';
+import { magPlanWijzigen } from '@/lib/planner/beheer';
 import { laadFrigo } from './frigo';
 import type { FrigoItem } from '@/lib/frigo';
 import { naElkaar } from './wachtrij';
@@ -34,6 +35,8 @@ export function wijzigPlan(wijziging: (plan: Weekplan) => Weekplan): Promise<Wee
   return naElkaar(async () => {
     const plan = await laadPlan();
     if (!plan) return null;
+    // Alleen de beheerder wijzigt het plan (WEEK-30): voor anderen blijft het ongewijzigd.
+    if (!magPlanWijzigen(plan, await ikId())) return plan;
     const nieuw = wijziging(plan);
     if (nieuw === plan) return plan;
     await AsyncStorage.setItem(PLAN, JSON.stringify(nieuw));
@@ -45,6 +48,7 @@ export function wijzigPlan(wijziging: (plan: Weekplan) => Weekplan): Promise<Wee
 /**
  * Past weekplan én frigo samen aan in één stap, op de nieuwste versie van allebei (WEEK-28),
  * bv. een recept op "gedaan" zetten. Bewaart en deelt enkel wat echt verandert.
+ * Een statuswijziging (gedaan) kan enkel de beheerder doen (WEEK-30): voor anderen blijft alles ongewijzigd.
  */
 export function wijzigPlanEnFrigo(
   wijziging: (plan: Weekplan, frigo: FrigoItem[]) => { plan: Weekplan; frigo: FrigoItem[] }
@@ -52,6 +56,7 @@ export function wijzigPlanEnFrigo(
   return naElkaar(async () => {
     const plan = await laadPlan();
     if (!plan) return null;
+    if (!magPlanWijzigen(plan, await ikId())) return plan;
     const frigo = await laadFrigo();
     const resultaat = wijziging(plan, frigo);
     if (resultaat.plan === plan) return plan;
@@ -63,11 +68,19 @@ export function wijzigPlanEnFrigo(
   });
 }
 
-/** Bewaart het weekplan en deelt het met het gezin (WEEK-8). */
-export function bewaarPlan(plan: Weekplan): Promise<void> {
+/**
+ * Bewaart het weekplan en deelt het met het gezin (WEEK-8). Het nieuwe plan krijgt de aangemelde
+ * gebruiker als beheerder (WEEK-30). Geeft false als een ander gezinslid het bestaande plan beheert.
+ */
+export function bewaarPlan(plan: Weekplan): Promise<boolean> {
   return naElkaar(async () => {
-    await AsyncStorage.setItem(PLAN, JSON.stringify(plan));
-    await registreerDocument('plan', plan);
+    const mijnId = await ikId();
+    const huidig = await laadPlan();
+    if (huidig && !magPlanWijzigen(huidig, mijnId)) return false;
+    const nieuw: Weekplan = mijnId ? { ...plan, beheerder: mijnId } : plan;
+    await AsyncStorage.setItem(PLAN, JSON.stringify(nieuw));
+    await registreerDocument('plan', nieuw);
+    return true;
   });
 }
 
