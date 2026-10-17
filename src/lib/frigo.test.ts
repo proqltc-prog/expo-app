@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesProduct, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesProduct, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, zetHoudbaarheid } from '@/lib/frigo';
 import type { Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
@@ -368,5 +368,57 @@ describe('productdetails op het frigo-scherm', () => {
   test('regressie: een regel zonder details heeft geen product', () => {
     const [regel] = frigoSecties(voegZelfToe([], 'melk', nu))[0].regels;
     assert.equal(regel.product, undefined);
+  });
+});
+
+// ── Houdbaarheid (WEEK-20) ──
+
+describe('houdbaarheid op de frigo (WEEK-20)', () => {
+  test('zetHoudbaarheid zet de datum op het juiste item en wist ze weer', () => {
+    const frigo = voegZelfToe(voegZelfToe([], 'melk', nu), 'yoghurt', nu);
+    const [melk, yog] = frigo;
+    const met = zetHoudbaarheid(frigo, yog.id, '2026-10-25');
+    assert.equal(met[1].houdbaarTot, '2026-10-25');
+    assert.equal(met[0].houdbaarTot, undefined, 'ander item ongewijzigd');
+    assert.deepEqual(met[0], melk);
+    const gewist = zetHoudbaarheid(met, yog.id, undefined);
+    assert.equal('houdbaarTot' in gewist[1], false);
+  });
+
+  test('onbekend id laat de frigo gelijk', () => {
+    const frigo = voegZelfToe([], 'melk', nu);
+    assert.deepEqual(zetHoudbaarheid(frigo, 'bestaat-niet', '2026-10-25'), frigo);
+  });
+
+  test('regressie: zelf toevoegen zonder datum heeft geen houdbaarTot-veld', () => {
+    const [f] = voegZelfToe([], 'melk', nu, { hoeveelheid: 1, eenheid: 'stuk' });
+    assert.equal('houdbaarTot' in f, false);
+  });
+
+  test('voegZelfToe bewaart een geldige datum en negeert een ongeldige', () => {
+    const [geldig] = voegZelfToe([], 'melk', nu, { houdbaarTot: '2026-10-25' });
+    const [ongeldig] = voegZelfToe([], 'melk', nu, { houdbaarTot: '31-02-2026' });
+    assert.equal(geldig.houdbaarTot, '2026-10-25');
+    assert.equal('houdbaarTot' in ongeldig, false);
+  });
+
+  test('normaliseerFrigo bewaart een geldige datum en laat een ongeldige weg', () => {
+    const [a] = normaliseerFrigo([{ id: 'z:1', naam: 'Melk', afdeling: 'zuivel', toegevoegdOp: nu.toISOString(), houdbaarTot: '2026-10-25' }]);
+    const [b] = normaliseerFrigo([{ id: 'z:2', naam: 'Melk', afdeling: 'zuivel', toegevoegdOp: nu.toISOString(), houdbaarTot: 'morgen' }]);
+    assert.equal(a.houdbaarTot, '2026-10-25');
+    assert.equal('houdbaarTot' in b, false);
+  });
+
+  test('een regel toont de vroegste datum van zijn exemplaren', () => {
+    const a = zetHoudbaarheid(voegZelfToe([], 'melk', nu), voegZelfToe([], 'melk', nu)[0].id, '2026-11-01');
+    const frigo = voegZelfToe(a, 'melk', later);
+    const later2 = zetHoudbaarheid(frigo, frigo[1].id, '2026-10-25');
+    const [regel] = frigoSecties(later2)[0].regels;
+    assert.equal(regel.houdbaarTot, '2026-10-25');
+  });
+
+  test('regressie: een regel zonder datum heeft geen houdbaarTot', () => {
+    const [regel] = frigoSecties(voegZelfToe([], 'melk', nu))[0].regels;
+    assert.equal(regel.houdbaarTot, undefined);
   });
 });

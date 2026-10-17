@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, voegZelfToe, ZELF_EENHEDEN } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, voegZelfToe, zetHoudbaarheid, ZELF_EENHEDEN } from '@/lib/frigo';
+import { houdbaarStatus, leesDatum } from '@/lib/houdbaarheid';
 import { beoordeel, Oordeel, Product } from '@/lib/openfoodfacts';
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { markeerOntbrekend } from '@/lib/planner/status';
@@ -62,6 +63,10 @@ export default function Frigo() {
   const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>('overig');
   // Welk product de details open heeft staan (WEEK-49); één tegelijk.
   const [open, setOpen] = useState<string | null>(null);
+  // Welk product de houdbaarheid open heeft staan, en wat er getypt is (WEEK-20).
+  const [houdbaarOpen, setHoudbaarOpen] = useState<string | null>(null);
+  const [houdbaarTekst, setHoudbaarTekst] = useState('');
+  const [houdbaarFout, setHoudbaarFout] = useState(false);
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
   useFocusEffect(
@@ -92,6 +97,25 @@ export default function Frigo() {
     });
     setFrigo(na);
     await wijzigPlan((plan) => markeerOntbrekend(plan, verwijderd, na));
+  };
+
+  // Houdbaarheid (WEEK-20): geldt voor het oudste exemplaar, dat eerst in de frigo stond (ids[0]).
+  const bewaarHoudbaar = async (id: string) => {
+    const iso = leesDatum(houdbaarTekst);
+    if (!iso) {
+      setHoudbaarFout(true);
+      return;
+    }
+    setHoudbaarFout(false);
+    setHoudbaarOpen(null);
+    setHoudbaarTekst('');
+    setFrigo(await wijzigFrigo((f) => zetHoudbaarheid(f, id, iso)));
+  };
+
+  const wisHoudbaar = async (id: string) => {
+    setHoudbaarOpen(null);
+    setHoudbaarTekst('');
+    setFrigo(await wijzigFrigo((f) => zetHoudbaarheid(f, id, undefined)));
   };
 
   const secties = useMemo(
@@ -161,6 +185,12 @@ export default function Frigo() {
                 <View style={s.tekstBlok}>
                   <Text style={s.naam}>{item.naam}</Text>
                   <Text style={s.sinds}>{t('frigo.sinds', { datum: datumKort(taal, item.oudsteOp) })}</Text>
+                  {item.houdbaarTot && (() => {
+                    const status = houdbaarStatus(item.houdbaarTot, new Date());
+                    const datum = datumKort(taal, item.houdbaarTot);
+                    const tekst = status === 'verlopen' ? t('frigo.verlopen', { datum }) : status === 'bijnaVerlopen' ? t('frigo.bijnaVerlopen', { datum }) : t('frigo.houdbaarTot', { datum });
+                    return <Text style={[s.houdbaar, status === 'verlopen' && s.verlopen, status === 'bijnaVerlopen' && s.bijna]}>{tekst}</Text>;
+                  })()}
                 </View>
                 {item.hoeveelheid ? <Text style={s.hoeveelheid}>{hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}</Text> : null}
                 <Pressable
@@ -173,6 +203,46 @@ export default function Frigo() {
                   <Text style={s.wegTekst}>×</Text>
                 </Pressable>
               </View>
+              {/* Houdbaarheid (WEEK-20): een echte datum invullen of van de verpakking overnemen; geen schatting. */}
+              <Pressable
+                onPress={() => {
+                  setHoudbaarFout(false);
+                  setHoudbaarTekst('');
+                  setHoudbaarOpen(houdbaarOpen === item.sleutel ? null : item.sleutel);
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: houdbaarOpen === item.sleutel }}
+              >
+                <Text style={s.rijLink}>{t('frigo.houdbaarheid')} {houdbaarOpen === item.sleutel ? '▴' : '▾'}</Text>
+              </Pressable>
+              {houdbaarOpen === item.sleutel && (
+                <View style={s.houdbaarBlok}>
+                  <Text style={s.houdbaarUitleg}>{t('frigo.houdbaarUitleg')}</Text>
+                  <View style={s.rij}>
+                    <TextInput
+                      style={[s.veld, s.getal, { width: 150 }, houdbaarFout && s.veldFout]}
+                      placeholder={t('frigo.houdbaarPlaceholder')}
+                      value={houdbaarTekst}
+                      onChangeText={(x) => {
+                        setHoudbaarTekst(x);
+                        setHoudbaarFout(false);
+                      }}
+                      onSubmitEditing={() => bewaarHoudbaar(item.ids[0])}
+                      returnKeyType="done"
+                      accessibilityLabel={t('frigo.houdbaarheid')}
+                    />
+                    <Pressable style={s.houdbaarKnop} onPress={() => bewaarHoudbaar(item.ids[0])} accessibilityRole="button">
+                      <Text style={s.houdbaarKnopTekst}>{t('frigo.houdbaarOpslaan')}</Text>
+                    </Pressable>
+                    {item.houdbaarTot && (
+                      <Pressable style={s.houdbaarWis} onPress={() => wisHoudbaar(item.ids[0])} accessibilityRole="button">
+                        <Text style={s.houdbaarWisTekst}>{t('frigo.houdbaarWis')}</Text>
+                      </Pressable>
+                    )}
+                  </View>
+                  {houdbaarFout && <Text style={s.fout}>{t('frigo.houdbaarFout')}</Text>}
+                </View>
+              )}
               {/* Details (WEEK-49): openen als het product gescand is, anders scannen om ze toe te voegen. */}
               {item.product ? (
                 <Pressable onPress={() => setOpen(toon ? null : item.sleutel)} accessibilityRole="button" accessibilityState={{ expanded: toon }}>
@@ -227,6 +297,17 @@ const s = StyleSheet.create({
   label: { color: '#fff', fontSize: 18, fontWeight: '700' },
   reden: { color: '#444' },
   productKop: { fontWeight: '700', marginTop: 8 },
+  houdbaar: { fontSize: 12, color: '#777', marginTop: 2 },
+  bijna: { color: '#e65100', fontWeight: '600' },
+  verlopen: { color: '#c62828', fontWeight: '700' },
+  houdbaarBlok: { gap: 6, marginBottom: 8 },
+  houdbaarUitleg: { fontSize: 12, color: '#777' },
+  veldFout: { borderColor: '#c62828' },
+  fout: { color: '#c62828', fontSize: 13 },
+  houdbaarKnop: { height: 44, paddingHorizontal: 12, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  houdbaarKnopTekst: { color: '#fff', fontWeight: '700' },
+  houdbaarWis: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ccc', alignItems: 'center', justifyContent: 'center' },
+  houdbaarWisTekst: { color: '#444' },
   tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   tekst: { color: '#444' },
