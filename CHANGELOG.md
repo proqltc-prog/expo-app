@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.48.1] – 2026-10-17
+
+**WEEK-38** – Echte beloningseenheid voor Android. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6291501)
+
+- Beloonde filmpjes op Android tonen echte advertenties in plaats van testadvertenties.
+
 ## [0.48.0] – 2026-10-17
 
 **WEEK-38** – Reclamefilmpjes met beloning (AdMob), eerste stap: extra scans. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6652012)
