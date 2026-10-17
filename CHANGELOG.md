@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.41.0] – 2026-10-17
+
+Nieuw: scannen op de frigo. Tik op Scan en scan een product dat je net gekocht hebt; het gaat direct in de frigo, in de juiste afdeling.
+
+- Jira: [WEEK-47](https://proqltc-1791495894841.atlassian.net/browse/WEEK-47)
+- Confluence: [WEEK-47 – Aangekochte producten scannen in de frigo](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6258754)
+
+### Gewijzigd
+- Nieuw: knop Scan op de frigo-pagina.
+- Nieuw: na een scan vanaf de frigo staat "In de frigo zetten" vooraan; daarna keer je terug naar de frigo.
+
 ## [0.40.0] – 2026-10-17
 
 Nieuw: als je op de boodschappenlijst scant en het product staat al in je frigo, kun je het van de lijst halen. De frigo blijft dan ongewijzigd.
