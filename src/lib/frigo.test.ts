@@ -233,7 +233,7 @@ describe('verbruik (WEEK-19)', () => {
 });
 
 describe('zelf toevoegen met details (WEEK-35)', () => {
-  test('gratis: enkel een naam, afdeling overig', () => {
+  test('enkel een naam: afdeling overig', () => {
     const [f] = voegZelfToe([], '  kaas ', nu);
     assert.equal(f.naam, 'kaas');
     assert.equal(f.afdeling, 'overig');
@@ -241,7 +241,7 @@ describe('zelf toevoegen met details (WEEK-35)', () => {
     assert.equal(f.toegevoegdOp, nu.toISOString());
   });
 
-  test('betalend: hoeveelheid, eenheid en afdeling', () => {
+  test('met details: hoeveelheid, eenheid en afdeling', () => {
     const [f] = voegZelfToe([], 'melk', nu, { hoeveelheid: 1000, eenheid: 'ml', afdeling: 'zuivel-eieren' });
     assert.deepEqual(
       { naam: f.naam, hoeveelheid: f.hoeveelheid, eenheid: f.eenheid, afdeling: f.afdeling },

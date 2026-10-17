@@ -3,7 +3,6 @@ import { Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View }
 import { useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, voegZelfToe, ZELF_EENHEDEN } from '@/lib/frigo';
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
-import { laadBetalend } from '@/opslag/abonnement';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
@@ -17,8 +16,6 @@ export default function Frigo() {
   const { t, tn, taal } = useTaal();
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [nieuw, setNieuw] = useState('');
-  // Betalende versie (WEEK-35): hoeveelheid, eenheid en afdeling bij zelf toevoegen.
-  const [betalend, setBetalend] = useState(false);
   const [details, setDetails] = useState(false);
   const [hoeveelheid, setHoeveelheid] = useState('');
   const [eenheid, setEenheid] = useState<(typeof ZELF_EENHEDEN)[number]>('g');
@@ -28,7 +25,6 @@ export default function Frigo() {
   useFocusEffect(
     useCallback(() => {
       laadFrigo().then(setFrigo);
-      laadBetalend().then(setBetalend);
     }, [])
   );
 
@@ -39,7 +35,7 @@ export default function Frigo() {
     const naam = nieuw.trim();
     if (!naam) return;
     setNieuw('');
-    const extra = betalend && details ? { hoeveelheid: leesHoeveelheid(hoeveelheid), eenheid, afdeling } : {};
+    const extra = details ? { hoeveelheid: leesHoeveelheid(hoeveelheid), eenheid, afdeling } : {};
     setHoeveelheid('');
     setFrigo(await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), extra)));
   };
@@ -78,39 +74,33 @@ export default function Frigo() {
           <Text style={s.plusTekst}>+</Text>
         </Pressable>
       </View>
-      {betalend ? (
-        <>
-          <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
-            <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
-          </Pressable>
-          {details && (
-            <View style={s.details}>
-              <View style={s.rij}>
-                <TextInput
-                  style={[s.veld, s.getal]}
-                  placeholder={t('frigo.hoeveelheid')}
-                  value={hoeveelheid}
-                  onChangeText={setHoeveelheid}
-                  keyboardType="decimal-pad"
-                />
-                {ZELF_EENHEDEN.map((e) => (
-                  <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityState={{ selected: eenheid === e }}>
-                    <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
-                  </Pressable>
-                ))}
-              </View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rij}>
-                {[...AFDELINGEN, 'overig' as const].map((a) => (
-                  <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityState={{ selected: afdeling === a }}>
-                    <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </View>
-          )}
-        </>
-      ) : (
-        <Text style={s.betalend}>{t('frigo.meerBetalend')}</Text>
+      <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
+        <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
+      </Pressable>
+      {details && (
+        <View style={s.details}>
+          <View style={s.rij}>
+            <TextInput
+              style={[s.veld, s.getal]}
+              placeholder={t('frigo.hoeveelheid')}
+              value={hoeveelheid}
+              onChangeText={setHoeveelheid}
+              keyboardType="decimal-pad"
+            />
+            {ZELF_EENHEDEN.map((e) => (
+              <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityState={{ selected: eenheid === e }}>
+                <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rij}>
+            {[...AFDELINGEN, 'overig' as const].map((a) => (
+              <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityState={{ selected: afdeling === a }}>
+                <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
       )}
       <Text style={s.teller}>{aantal ? tn('frigo.teller', aantal) : t('frigo.leeg')}</Text>
       <SectionList
@@ -158,7 +148,6 @@ const s = StyleSheet.create({
   chipAan: { backgroundColor: KLEUR, borderColor: KLEUR },
   chipTekst: { color: '#444' },
   chipTekstAan: { color: '#fff', fontWeight: '600' },
-  betalend: { color: '#999', fontSize: 12, marginTop: 6 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   tekstBlok: { flex: 1 },

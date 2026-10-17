@@ -2,7 +2,7 @@
 // De API-sleutel blijft op de server; de app kent enkel het adres van deze functie.
 //
 // Enkel aangemelde toestellen (anonieme sessie van de app) mogen de functie gebruiken, met een limiet
-// per gezin per dag: 1 gratis, 3 voor een betalend gezin (WEEK-33, ai_toegestaan in de database).
+// per gezin per dag: 1 (WEEK-33, ai_toegestaan in de database).
 //
 // Uitrollen:
 //   supabase functions deploy plan-week

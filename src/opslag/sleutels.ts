@@ -10,8 +10,6 @@ export const SLEUTEL = {
   keuzes: 'planningkeuzes:v1',
   profiel: 'gezinsprofiel:v1',
   gezin: 'gezin:v1',
-  /** Laatst gekende status van de betalende versie (WEEK-35), voor gebruik zonder internet. */
-  betalend: 'betalend:v1',
   /** Aantal scans vandaag op dit toestel (WEEK-34). */
   scans: 'scans:v1',
   /** Synchronisatietoestand per soort/document (zie src/opslag/sync.ts). */
