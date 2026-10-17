@@ -74,7 +74,7 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
   return frigo.filter((f) => !f.lijstId || !terug.has(f.lijstId));
 }
 
-/** Extra gegevens bij zelf toevoegen (betalende versie, WEEK-35). */
+/** Extra gegevens bij zelf toevoegen (WEEK-35). */
 export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig' };
 
 /** Eenheden die je kan kiezen bij zelf toevoegen. */
@@ -82,7 +82,7 @@ export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
 
 /**
  * Voegt een product toe dat de gebruiker zelf in de frigo zet (bv. wat al in huis was).
- * Gratis: enkel een naam. Betalend (WEEK-35): ook hoeveelheid, eenheid en afdeling (manueel of via de scanner).
+ * Een naam is genoeg. Daarnaast kan je hoeveelheid, eenheid en afdeling meegeven (manueel of via de scanner).
  */
 export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date, extra: ZelfExtra = {}): FrigoItem[] {
   const n = naam.trim().slice(0, 100);

@@ -114,7 +114,6 @@ export const de: Vertalingen = {
   'frigo.details': 'Menge und Abteilung',
   'frigo.hoeveelheid': 'Menge',
   'frigo.stuks': 'Stück',
-  'frigo.meerBetalend': 'Menge, Abteilung und direkt in den Kühlschrank scannen: in der Bezahlversion.',
   'kookboek.uitleg': 'Eure Lieblingsgerichte. War ein Gericht aus dem Wochenmenü lecker, tippe auf „Als Favorit speichern“.',
   'kookboek.leeg': 'Noch keine Favoriten.',
   'kookboek.voor': 'für {personen}',
@@ -158,10 +157,8 @@ export const de: Vertalingen = {
   'scan.accepteren': 'Annehmen',
   'scan.inFrigo': 'In den Kühlschrank',
   'scan.inFrigoGedaan': '{naam} ist im Kühlschrank.',
-  'scan.frigoBetalend': 'Direkt in den Kühlschrank scannen gibt es in der Bezahlversion.',
   'scan.resterend': 'Heute noch {n} kostenlose Scans',
   'scan.limiet': 'Du hast heute deine {limiet} kostenlosen Scans verbraucht. Morgen geht es wieder.',
-  'scan.limietBetalend': 'Unbegrenzt scannen gibt es in der Bezahlversion.',
   'scan.bron': 'Daten: Open Food Facts (openfoodfacts.org). Keine medizinische Beratung.',
 
   'voeding.kcal': 'Kalorien',

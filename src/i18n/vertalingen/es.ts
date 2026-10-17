@@ -114,7 +114,6 @@ export const es: Vertalingen = {
   'frigo.details': 'Cantidad y sección',
   'frigo.hoeveelheid': 'Cantidad',
   'frigo.stuks': 'unidades',
-  'frigo.meerBetalend': 'Cantidad, sección y escanear directamente a la nevera: en la versión de pago.',
   'kookboek.uitleg': 'Vuestros platos favoritos. ¿Os ha gustado un plato del menú? Toca «Guardar como favorito».',
   'kookboek.leeg': 'Todavía no hay favoritos.',
   'kookboek.voor': 'para {personen}',
@@ -158,10 +157,8 @@ export const es: Vertalingen = {
   'scan.accepteren': 'Aceptar',
   'scan.inFrigo': 'A la nevera',
   'scan.inFrigoGedaan': '{naam} está en la nevera.',
-  'scan.frigoBetalend': 'Escanear directamente a la nevera está en la versión de pago.',
   'scan.resterend': 'Te quedan {n} escaneos gratis hoy',
   'scan.limiet': 'Has usado tus {limiet} escaneos gratis de hoy. Mañana podrás volver a escanear.',
-  'scan.limietBetalend': 'Escaneos ilimitados en la versión de pago.',
   'scan.bron': 'Datos: Open Food Facts (openfoodfacts.org). No es consejo médico.',
 
   'voeding.kcal': 'Calorías',

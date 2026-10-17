@@ -8,6 +8,21 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.23.0] – 2026-10-17
+
+Verbetering: de betaalde versie is verwijderd. Alle functies zijn gratis; later bepalen we wat er via reclame toegankelijk wordt (WEEK-38).
+
+- Jira: [WEEK-54](https://proqltc-1791495894841.atlassian.net/browse/WEEK-54)
+- Confluence: (nog aan te vullen vóór de release)
+
+### Gewijzigd
+- Frigo: hoeveelheid, eenheid, afdeling en scannen rechtstreeks in de frigo zijn voor iedereen beschikbaar.
+- Scanner: het product in de frigo zetten kan voor iedereen. De limiet van 3 scans per dag blijft als basis.
+- AI-planner: de limiet van 1 voorstel per gezin per dag blijft als basis.
+
+### Verwijderd
+- De tabel `gezin_abonnement` in de database, en de functies en teksten die erover gaan (WEEK-35, WEEK-36).
+
 ## [0.22.2] – 2026-10-11
 
 Bugfix: de Android-build bij Expo faalde bij het installeren van de afhankelijkheden. npm haalde react-dom 19.3 binnen, dat niet past bij react 19.1.

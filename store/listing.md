@@ -20,7 +20,7 @@ Famenu plant in een paar tikken het avondeten voor de hele week, op maat van jou
 • Scanner: scan een barcode en zie meteen of een product gezond is.
 • In 6 talen: Nederlands, Frans, Duits, Engels, Spaans en Portugees.
 
-Gratis: 1 AI-weekmenu per dag en 3 scans per dag. Met Famenu Plus (betalend, per gezin): meer AI-voorstellen, onbeperkt scannen en meer frigo-functies.
+Gratis: 1 AI-weekmenu per dag en 3 scans per dag.
 
 ## Français (fr-BE)
 
@@ -38,7 +38,7 @@ Famenu planifie en quelques gestes les repas du soir de toute la semaine, sur me
 • Scanner : scannez un code-barres et voyez si un produit est sain.
 • En 6 langues.
 
-Gratuit : 1 menu IA par jour et 3 scans par jour. Famenu Plus (payant, par famille) : plus de propositions IA, scans illimités et plus de fonctions frigo.
+Gratuit : 1 menu IA par jour et 3 scans par jour.
 
 ## Deutsch (de-DE)
 
@@ -56,7 +56,7 @@ Famenu plant mit wenigen Tipps das Abendessen für die ganze Woche – passend f
 • Scanner: Barcode scannen und sehen, wie gesund ein Produkt ist.
 • In 6 Sprachen.
 
-Kostenlos: 1 KI-Wochenmenü und 3 Scans pro Tag. Famenu Plus (kostenpflichtig, pro Familie): mehr KI-Vorschläge, unbegrenzt scannen, mehr Kühlschrank-Funktionen.
+Kostenlos: 1 KI-Wochenmenü und 3 Scans pro Tag.
 
 ## English (en-GB)
 
@@ -74,7 +74,7 @@ Famenu plans the whole week’s dinners in a few taps, tailored to your family.
 • Scanner: scan a barcode and see how healthy a product is.
 • In 6 languages.
 
-Free: 1 AI weekly menu and 3 scans per day. Famenu Plus (paid, per family): more AI suggestions, unlimited scanning and extra fridge features.
+Free: 1 AI weekly menu and 3 scans per day.
 
 ## Español (es-ES)
 
@@ -92,7 +92,7 @@ Famenu planifica en pocos toques las cenas de toda la semana, a la medida de tu 
 • Escáner: escanea un código de barras y mira si un producto es sano.
 • En 6 idiomas.
 
-Gratis: 1 menú con IA y 3 escaneos al día. Famenu Plus (de pago, por familia): más propuestas de IA, escaneos ilimitados y más funciones de nevera.
+Gratis: 1 menú con IA y 3 escaneos al día.
 
 ## Português (pt-PT)
 
@@ -110,4 +110,4 @@ O Famenu planeia em poucos toques os jantares da semana inteira, à medida da tu
 • Leitor: lê um código de barras e vê se um produto é saudável.
 • Em 6 línguas.
 
-Grátis: 1 menu com IA e 3 leituras por dia. Famenu Plus (pago, por família): mais propostas de IA, leituras ilimitadas e mais funções de frigorífico.
+Grátis: 1 menu com IA e 3 leituras por dia.

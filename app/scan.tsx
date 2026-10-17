@@ -4,7 +4,6 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegZelfToe } from '@/lib/frigo';
-import { laadBetalend } from '@/opslag/abonnement';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
 import { wijzigFrigo } from '@/opslag/frigo';
@@ -27,12 +26,10 @@ export default function Scan() {
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
-  const [betalend, setBetalend] = useState(false);
-  // Scanlimiet (WEEK-34): gratis 3 per dag, betalend onbeperkt.
+  // Scanlimiet (WEEK-34): 3 per dag.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
   useFocusEffect(
     useCallback(() => {
-      laadBetalend().then(setBetalend);
       laadScanTeller().then(setTeller);
     }, [])
   );
@@ -53,7 +50,7 @@ export default function Scan() {
   const opScan = async ({ data }: BarcodeScanningResult) => {
     if (bezig.current) return;
     bezig.current = true;
-    if (!magScannen(teller, new Date(), betalend)) {
+    if (!magScannen(teller, new Date())) {
       bezig.current = false;
       return;
     }
@@ -78,7 +75,7 @@ export default function Scan() {
     opnieuw();
   };
 
-  // Betalende versie (WEEK-35): het gescande product rechtstreeks in de frigo, in de juiste afdeling.
+  // Het gescande product rechtstreeks in de frigo, in de juiste afdeling (WEEK-35).
   const naarFrigo = async (product: Product) => {
     const naam = scanNaam(product, t('scan.onbekend'));
     await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), { afdeling: afdelingUitCategorieen(product.categorieen) }));
@@ -86,13 +83,12 @@ export default function Scan() {
     opnieuw();
   };
 
-  const rest = resterendeScans(teller, new Date(), betalend);
+  const rest = resterendeScans(teller, new Date());
 
   if (status.soort === 'scannen' && rest === 0) {
     return (
       <View style={s.midden}>
         <Text style={s.tekst}>{t('scan.limiet', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
-        <Text style={s.bron}>{t('scan.limietBetalend')}</Text>
       </View>
     );
   }
@@ -109,7 +105,7 @@ export default function Scan() {
         <View style={s.overlay}>
           <View style={s.kader} />
           <Text style={s.hint}>{t('scan.richt')}</Text>
-          {rest !== null && <Text style={s.hint}>{t('scan.resterend', { n: rest })}</Text>}
+          <Text style={s.hint}>{t('scan.resterend', { n: rest })}</Text>
         </View>
       </View>
     );
@@ -172,13 +168,9 @@ export default function Scan() {
           <Text style={s.knopTekst}>{t('scan.accepteren')}</Text>
         </Pressable>
       </View>
-      {betalend ? (
-        <Pressable style={[s.knop, s.frigoKnop]} onPress={() => naarFrigo(p)}>
-          <Text style={[s.knopTekst, { color: KLEUR }]}>{t('scan.inFrigo')}</Text>
-        </Pressable>
-      ) : (
-        <Text style={s.bron}>{t('scan.frigoBetalend')}</Text>
-      )}
+      <Pressable style={[s.knop, s.frigoKnop]} onPress={() => naarFrigo(p)}>
+        <Text style={[s.knopTekst, { color: KLEUR }]}>{t('scan.inFrigo')}</Text>
+      </Pressable>
       <Text style={s.bron}>{t('scan.bron')}</Text>
     </ScrollView>
   );

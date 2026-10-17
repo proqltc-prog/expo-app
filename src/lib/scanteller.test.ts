@@ -12,24 +12,24 @@ describe('scanlimiet (WEEK-34)', () => {
     assert.equal(GRATIS_SCANS_PER_DAG, 3);
     let teller = null;
     for (let i = 0; i < 3; i++) {
-      assert.equal(magScannen(teller, ochtend, false), true);
+      assert.equal(magScannen(teller, ochtend), true);
       teller = telScan(teller, ochtend);
     }
-    assert.equal(resterendeScans(teller, avond, false), 0);
-    assert.equal(magScannen(teller, avond, false), false);
+    assert.equal(resterendeScans(teller, avond), 0);
+    assert.equal(magScannen(teller, avond), false);
   });
 
   test('een nieuwe dag begint opnieuw', () => {
     const vol = { dag: dagVan(ochtend), aantal: 3 };
-    assert.equal(magScannen(vol, morgen, false), true);
-    assert.equal(resterendeScans(vol, morgen, false), 3);
+    assert.equal(magScannen(vol, morgen), true);
+    assert.equal(resterendeScans(vol, morgen), 3);
     assert.deepEqual(telScan(vol, morgen), { dag: dagVan(morgen), aantal: 1 });
   });
 
-  test('betalend: onbeperkt', () => {
+  test('op is op: ook met veel scans blijft het bij nul', () => {
     const veel = { dag: dagVan(ochtend), aantal: 50 };
-    assert.equal(resterendeScans(veel, ochtend, true), null);
-    assert.equal(magScannen(veel, ochtend, true), true);
+    assert.equal(resterendeScans(veel, ochtend), 0);
+    assert.equal(magScannen(veel, ochtend), false);
   });
 
   test('dag volgens de klok van het toestel', () => {

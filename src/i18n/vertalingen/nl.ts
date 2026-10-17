@@ -115,7 +115,6 @@ export const nl = {
   'frigo.details': 'Hoeveelheid en afdeling',
   'frigo.hoeveelheid': 'Hoeveelheid',
   'frigo.stuks': 'stuks',
-  'frigo.meerBetalend': 'Hoeveelheid, afdeling en rechtstreeks in de frigo scannen: in de betalende versie.',
   'kookboek.uitleg': 'Je favoriete gerechten. Kook je een recept uit het weekmenu en was het lekker, tik dan op „Bewaar als favoriet”.',
   'kookboek.leeg': 'Nog geen favorieten.',
   'kookboek.voor': 'voor {personen}',
@@ -159,10 +158,8 @@ export const nl = {
   'scan.accepteren': 'Accepteren',
   'scan.inFrigo': 'In de frigo',
   'scan.inFrigoGedaan': '{naam} staat in de frigo.',
-  'scan.frigoBetalend': 'Rechtstreeks in de frigo scannen kan in de betalende versie.',
   'scan.resterend': 'Nog {n} gratis scans vandaag',
   'scan.limiet': 'Je hebt vandaag je {limiet} gratis scans gebruikt. Morgen kan het opnieuw.',
-  'scan.limietBetalend': 'Onbeperkt scannen kan in de betalende versie.',
   'scan.bron': 'Gegevens: Open Food Facts (openfoodfacts.org). Geen medisch advies.',
 
   'voeding.kcal': 'Calorieën',

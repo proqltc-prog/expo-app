@@ -1,5 +1,5 @@
-// Scanlimiet (WEEK-34): gratis 3 scans per dag per toestel, betalend onbeperkt.
-// Later (WEEK-38) geeft een reclamefilmpje 3 extra scans.
+// Scanlimiet (WEEK-34): 3 scans per dag per toestel.
+// Later (WEEK-38) kan reclame extra scans vrijmaken.
 
 export const GRATIS_SCANS_PER_DAG = 3;
 
@@ -25,15 +25,13 @@ export function scansVandaag(teller: ScanTeller | null, nu: Date): number {
   return teller && teller.dag === dagVan(nu) ? teller.aantal : 0;
 }
 
-/** Hoeveel gratis scans er vandaag nog over zijn; null = onbeperkt (betalend). */
-export function resterendeScans(teller: ScanTeller | null, nu: Date, betalend: boolean): number | null {
-  if (betalend) return null;
+/** Hoeveel scans er vandaag nog over zijn. */
+export function resterendeScans(teller: ScanTeller | null, nu: Date): number {
   return Math.max(0, GRATIS_SCANS_PER_DAG - scansVandaag(teller, nu));
 }
 
-export function magScannen(teller: ScanTeller | null, nu: Date, betalend: boolean): boolean {
-  const rest = resterendeScans(teller, nu, betalend);
-  return rest === null || rest > 0;
+export function magScannen(teller: ScanTeller | null, nu: Date): boolean {
+  return resterendeScans(teller, nu) > 0;
 }
 
 /** Telt één scan; begint opnieuw bij 1 op een nieuwe dag. */
