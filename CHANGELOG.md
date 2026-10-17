@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.43.0] – 2026-10-17
+
+Nieuw: het totaal van een gerecht. Als alle producten van een recept gescand en afgevinkt zijn, zie je op de boodschappenlijst de voeding (kcal, suikers, eiwitten, vet, zout) voor het hele gezin, en alle additieven.
+
+- Jira: [WEEK-50](https://proqltc-1791495894841.atlassian.net/browse/WEEK-50)
+- Confluence: [WEEK-50 – Totaal voeding en additieven van een gerecht na scannen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6455306)
+
+### Gewijzigd
+- Nieuw: boven elk recept op de lijst een blok "Totaal voor het gezin", zodra alle ingrediënten gescand zijn.
+- Nieuw: bij afvinken via de scanner krijgt het ingrediënt de productdetails mee (WEEK-49).
+- Ingrediënten in stuk of teentje tellen niet mee in het totaal; ze staan bij "Niet berekend".
+
 ## [0.42.0] – 2026-10-17
 
 Nieuw: productdetails bij frigo-items. Een gescand product in de frigo kan je later opnieuw bekijken: oordeel, voeding per 100 g en additieven. Een product zonder details toon je met één tik "Scan voor details".

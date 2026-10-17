@@ -104,10 +104,13 @@ export default function Scan() {
   };
 
   // Afvinken op de lijst (WEEK-46): zoals afvinken in de lijst zelf; het product gaat dan in de frigo.
-  const vinkOpLijstAf = async (naam: string, matches: LijstItem[]) => {
+  const vinkOpLijstAf = async (naam: string, matches: LijstItem[], product: Product) => {
     const ids = matches.map((i) => i.id);
     await wijzigLijst((huidig) => vinkAf(huidig, ids, true));
-    const frigo = await wijzigFrigo((f) => pasFrigoAan(f, matches, true, new Date()));
+    // De gescande details gaan mee naar de frigo-items (WEEK-50): zo kan het gerecht later zijn totaal tonen.
+    const frigo = await wijzigFrigo((f) =>
+      matches.reduce((na, i) => voegProductToe(na, `lijst:${i.id}`, product), pasFrigoAan(f, matches, true, new Date()))
+    );
     await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
     Alert.alert(naam, t('scan.afgevinkt', { naam }));
     opnieuw();
@@ -208,7 +211,7 @@ export default function Scan() {
         return (
           <View style={{ gap: 8 }}>
             {inFrigo && <Text style={s.bron}>{t('scan.alInFrigo')}</Text>}
-            <Pressable style={s.knop} onPress={() => vinkOpLijstAf(naam, matches)}>
+            <Pressable style={s.knop} onPress={() => vinkOpLijstAf(naam, matches, p)}>
               <Text style={s.knopTekst}>{t('scan.afvinkenOpLijst')}</Text>
             </Pressable>
             {inFrigo && (
