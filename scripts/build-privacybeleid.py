@@ -31,5 +31,10 @@ hr{border:0;border-top:1px solid #ddd;margin:2rem 0}
 html = re.sub(r'<link rel="stylesheet" href="[^"]*" ?/?>', css, html)
 # Dubbele titel uit het pandoc-kopblok weglaten; de body heeft al een H1.
 html = re.sub(r'<header id="title-block-header">.*?</header>', '', html, flags=re.S)
+# Taalkeuze bovenaan en bij de Engelse versie, zodat de Engelse tekst meteen zichtbaar is (WEEK-63).
+html = html.replace('<h1 id="privacybeleid-famenu">Privacybeleid Famenu</h1>',
+  '<h1 id="privacybeleid-famenu">Privacybeleid Famenu</h1>\n<p><a href="#privacy-policy-famenu-english">English version below</a></p>', 1)
+html = html.replace('<h1 id="privacy-policy-famenu-english">',
+  '<p><a href="#privacybeleid-famenu">Nederlandse versie hierboven</a></p>\n<h1 id="privacy-policy-famenu-english">', 1)
 uit.write_text(html, encoding='utf-8')
 print('geschreven:', uit)
