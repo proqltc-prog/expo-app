@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.31.0] – 2026-10-17
+
+Nieuw (stap 1): logica voor een automatisch winkelvoorstel. Het kiest het minste aantal winkels dat de boodschappenlijst dekt, binnen de maximale afstand. De weergave volgt later.
+
+- Jira: [WEEK-57](https://proqltc-1791495894841.atlassian.net/browse/WEEK-57)
+- Confluence: [WEEK-57 – Automatisch winkelvoorstel (stap 1: logica)](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6422529)
+
+### Gewijzigd
+- Nieuw: afdeling naar winkeltype, dekking door supermarkten, keuze met zo weinig mogelijk stops, afstand (haversine).
+- Regressietests op de winkelzoeker van WEEK-53.
+
 ## [0.30.0] – 2026-10-17
 
 Nieuw: winkels in de buurt. Met één tik zoekt de app supermarkten, slagers, bakkers en groentehandelaars bij je postcode en gemeente. Lokaal eerst, zonder iets op te leggen.
