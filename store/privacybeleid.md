@@ -1,6 +1,6 @@
 # Privacybeleid Famenu
 
-*Versie 2 – 17 oktober 2026 · ontwerp, nog na te kijken door de eigenaar*
+*Versie 3 – 17 oktober 2026 · ontwerp, nog na te kijken door de eigenaar*
 
 Famenu helpt een gezin met het weekmenu, de boodschappenlijst en de virtuele frigo. We verzamelen zo weinig mogelijk gegevens.
 
@@ -15,7 +15,7 @@ Proqltc, Roosdaal, België – contact: proqltc@gmail.com.
 | Gezinsprofiel (aantal volwassenen en kinderen, budget, voorkeuren, woonplaats als je die invult), weekmenu, boodschappenlijst, frigo, favorieten | Op je toestel; als je een gezinsruimte gebruikt ook bij Supabase (servers in de EU, Frankfurt) | Om de app te laten werken en om alles te delen met de leden van je gezin |
 | Een anonieme gebruikers-id per toestel | Supabase (EU) | Aanmelding zonder e-mail of wachtwoord; toegang enkel voor de leden van je gezin |
 | Aantal AI-aanvragen per dag | Supabase (EU) | De daglimiet van de AI-planner |
-| Je kooktijd- en stijlkeuzes, de ingrediënten die je wil vermijden, je gezinsprofiel en wat in je frigo zit, wanneer je een AI-voorstel vraagt | Anthropic (Claude), via onze server; verwerking kan in de VS gebeuren | Om een weekmenu op maat te maken. Anthropic gebruikt deze gegevens niet om zijn modellen te trainen. |
+| Je periode (aantal dagen), kooktijd- en stijlkeuzes, de ingrediënten die je wil vermijden, je gezinsprofiel en wat in je frigo zit, wanneer je een AI-voorstel vraagt | Anthropic (Claude), via onze server; verwerking kan in de VS gebeuren | Om een weekmenu op maat te maken. Anthropic gebruikt deze gegevens niet om zijn modellen te trainen. |
 | De barcode van een gescand product | Open Food Facts | Om de productinformatie op te zoeken |
 | Je postcode en gemeente, enkel als je het winkelvoorstel gebruikt | OpenStreetMap-diensten (Nominatim en Overpass); de servers kunnen buiten de EU staan | Om de postcode om te zetten naar een plaats en om supermarkten en lokale winkels in de buurt op te zoeken |
 
@@ -51,13 +51,13 @@ Famenu is bedoeld voor volwassenen die voor hun gezin plannen. Het aantal kinder
 
 # Privacy policy Famenu (English)
 
-*Version 2 – 17 October 2026 · draft, pending review by the owner*
+*Version 3 – 17 October 2026 · draft, pending review by the owner*
 
 Famenu helps a family with the weekly menu, the shopping list and the virtual fridge. We collect as little data as possible.
 
 - **Family profile, menu, list, fridge, favourites:** stored on your device and, if you use a family space, at Supabase (EU servers, Frankfurt) to share with your family members.
 - **Anonymous user id per device** and **number of AI requests per day:** Supabase (EU), for sign-in without e-mail and for the daily AI limit.
-- **AI suggestions:** your cooking time and style choices, the ingredients you want to avoid, your family profile and fridge contents are sent to Anthropic (Claude) via our server; processing may take place in the US. Anthropic does not use this data to train its models.
+- **AI suggestions:** your period (number of days), cooking time and style choices, the ingredients you want to avoid, your family profile and fridge contents are sent to Anthropic (Claude) via our server; processing may take place in the US. Anthropic does not use this data to train its models.
 - **Barcode scanning:** the barcode is looked up at Open Food Facts. The camera is only used to read barcodes; no photos are stored. The microphone is not used.
 - **Shop suggestion:** when you use it, your postcode and municipality are sent to OpenStreetMap services (Nominatim and Overpass) to find shops nearby. Servers may be outside the EU. The answers are kept in memory only while the app runs; they are not stored. We do not use your device's GPS location.
 - *[Advertising section: fill in before the release with advertisements.]*

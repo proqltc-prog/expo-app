@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.35.0] – 2026-10-17
+
+Nieuw: periode kiezen. Op het eerste tabblad kies je hoeveel dagen het weekmenu telt: 2 tot en met 7 (7 is een volle week). De keuze wordt onthouden en geldt voor de lokale planner, de AI en het kookboek. Zonder keuze blijft het standaard 6 dagen.
+
+- Jira: [WEEK-42](https://proqltc-1791495894841.atlassian.net/browse/WEEK-42)
+- Confluence: [WEEK-42 – Periode kiezen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6324276)
+
+### Gewijzigd
+- Nieuw: keuze voor de periode (aantal dagen) op het eerste tabblad, onthouden op het toestel.
+- Een gekozen periode gaat voor een getal in de opdracht; het plan, de AI-aanvraag en het kookboek gebruiken hetzelfde aantal dagen.
+- Privacybeleid versie 3: het aantal dagen wordt, net als de andere keuzes, meegestuurd naar de AI.
+
 ## [0.34.0] – 2026-10-17
 
 Nieuw: ingrediënten vermijden. Het vrije tekstveld op het eerste tabblad is weg; in de plaats kies je wat je niet wil (varkensvlees, schaaldieren, zuivel, vis, eieren, noten). De keuze geldt voor de lokale planner, de AI, het kookboek en het vervangen van één dag.

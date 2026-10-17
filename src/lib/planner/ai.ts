@@ -60,7 +60,7 @@ export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?:
     opdracht: verzoek.opdracht,
     kooktijden: [...verzoek.kooktijden],
     stijlen: [...verzoek.stijlen],
-    dagen: dagen ?? dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
+    dagen: dagen ?? dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
     ...(vermijd?.length ? { vermijd } : {}),
     ...(verzoek.vermijd?.length ? { uitsluiten: verzoek.vermijd.map((v) => VERMIJD_AI[v]) } : {}),
     ...(frigo.length ? { frigo } : {}),
@@ -135,7 +135,7 @@ export async function vraagAi(
 export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = {}): Promise<Weekplan> {
   if (!instelling.url) return planLokaal(verzoek);
   const w = leesOpdracht(verzoek.opdracht);
-  const dagen = dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   try {
     const planDagen = await vraagAi(verzoek, instelling, dagen);
     return {

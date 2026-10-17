@@ -54,7 +54,7 @@ export function planUitFavorieten(
   vorigPlan?: Weekplan | null
 ): Weekplan | null {
   const w = leesOpdracht(verzoek.opdracht);
-  const dagen = dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   const { favorieten: kandidaten, versoepeld } = passendeFavorieten(favorieten, verzoek, dagen.length);
   if (!kandidaten.length) return null;
 

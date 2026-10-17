@@ -5,6 +5,7 @@ import { STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
 import { isTaal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { normaliseerVermijd } from './vermijden';
+import { normaliseerPeriode, PERIODE_STANDAARD } from './periode';
 import { DagCode, KooktijdCode, KOOKTIJDEN, PlanDag, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 
 const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
@@ -83,11 +84,17 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
 }
 
 /** Leest bewaarde keuzes voor kooktijd en stijl veilig in. */
-export function normaliseerKeuzes(ruw: unknown): { kooktijden: KooktijdCode[]; stijlen: StijlCode[]; vermijd: Vermijd[] } {
-  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [] };
+export function normaliseerKeuzes(ruw: unknown): {
+  kooktijden: KooktijdCode[];
+  stijlen: StijlCode[];
+  vermijd: Vermijd[];
+  aantalDagen: number;
+} {
+  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD };
   return {
     kooktijden: Array.isArray(ruw.kooktijden) ? KOOKTIJDEN.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? STIJLEN.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
     vermijd: normaliseerVermijd(ruw.vermijd),
+    aantalDagen: normaliseerPeriode(ruw.aantalDagen) ?? PERIODE_STANDAARD,
   };
 }

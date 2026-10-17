@@ -1,6 +1,6 @@
 # Play Data safety – Famenu
 
-*Versie 1 – 17 oktober 2026 · concept om over te nemen in de Google Play Console (Data safety). Nog na te kijken door de eigenaar.*
+*Versie 2 – 17 oktober 2026 · concept om over te nemen in de Google Play Console (Data safety). Nog na te kijken door de eigenaar.*
 
 Google vraagt de categorieën in het Engels. Hieronder staat per categorie wat de app verzamelt of doorstuurt, en waarom. Gegevens die enkel op het toestel blijven, tellen niet mee.
 
@@ -12,7 +12,7 @@ Google vraagt de categorieën in het Engels. Hieronder staat per categorie wat d
 | Personal info – Address | Postcode en gemeente uit het profiel | Zelfde als hierboven | Optioneel, zelfde voorwaarde | App functionality |
 | Personal info – Other / User IDs | Anonieme gebruikers-id per toestel | Supabase (EU) | Verplicht voor de gezinsruimte | Account management, app functionality |
 | App activity – Other actions | Aantal AI-aanvragen per dag | Supabase (EU) | Verplicht voor de AI-planner | App functionality (daglimiet) |
-| Messages / User-generated content | Kooktijd- en stijlkeuzes, te vermijden ingrediënten, gezinsprofiel en frigo-inhoud bij een AI-voorstel | Anthropic (Claude), via onze server | Optioneel: enkel bij gebruik van de AI-planner | App functionality |
+| Messages / User-generated content | Periode (aantal dagen), kooktijd- en stijlkeuzes, te vermijden ingrediënten, gezinsprofiel en frigo-inhoud bij een AI-voorstel | Anthropic (Claude), via onze server | Optioneel: enkel bij gebruik van de AI-planner | App functionality |
 | Food / Other | Gescande barcode | Open Food Facts | Optioneel: enkel bij het scannen | App functionality |
 | Device or other IDs – Advertising ID | Google advertentie-id | Google AdMob | Automatisch zodra advertenties actief zijn | Advertising or marketing |
 
