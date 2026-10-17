@@ -13,7 +13,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 Verbetering: de betaalde versie is verwijderd. Alle functies zijn gratis; later bepalen we wat er via reclame toegankelijk wordt (WEEK-38).
 
 - Jira: [WEEK-54](https://proqltc-1791495894841.atlassian.net/browse/WEEK-54)
-- Confluence: (nog aan te vullen vóór de release)
+- Confluence: [WEEK-54 – Betaalde versie verwijderd](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/5931010)
 
 ### Gewijzigd
 - Frigo: hoeveelheid, eenheid, afdeling en scannen rechtstreeks in de frigo zijn voor iedereen beschikbaar.
