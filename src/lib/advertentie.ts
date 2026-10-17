@@ -8,7 +8,7 @@ export type Platform = 'android' | 'ios';
  * Vul dit in vóór een store-release (AdMob → Apps → Famenu → Advertentie-eenheden → Beloond).
  */
 export const ECHTE_BELONING_EENHEDEN: Record<Platform, string | null> = {
-  android: null,
+  android: 'ca-app-pub-8394022188610476/3811398201',
   ios: null,
 };
 

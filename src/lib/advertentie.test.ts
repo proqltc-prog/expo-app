@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { kiesEenheid } from './advertentie';
+import { ECHTE_BELONING_EENHEDEN, kiesEenheid } from './advertentie';
 import { beloningVoor } from './beloning';
 import { voegBonusToe, magScannen, resterendeScans, GRATIS_SCANS_PER_DAG, ScanTeller } from './scanteller';
 
@@ -36,4 +36,9 @@ test('regressie: een bonus van gisteren telt niet meer vandaag', () => {
   const nu = new Date(2026, 9, 17, 12, 0, 0);
   const gisteren: ScanTeller = { dag: '2026-10-16', aantal: 4, bonus: 10 };
   assert.equal(resterendeScans(gisteren, nu), GRATIS_SCANS_PER_DAG);
+});
+
+// Regressie: de echte Android-beloningseenheid van Famenu blijft ingevuld.
+test('de Android-beloningseenheid is de echte AdMob-eenheid', () => {
+  assert.equal(ECHTE_BELONING_EENHEDEN.android, 'ca-app-pub-8394022188610476/3811398201');
 });
