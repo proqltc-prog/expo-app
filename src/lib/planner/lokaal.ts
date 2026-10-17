@@ -2,7 +2,8 @@
 // Wordt gebruikt als er geen AI-planner is ingesteld of als die faalt.
 import { afdelingVan, ingredientNaam } from '@/data/ingredienten';
 import { PERIODE_STANDAARD } from './periode';
-import { BankRecept, RECEPTENBANK, Soort } from '@/data/receptenbank';
+import { momentVan, normaliseerMomenten } from './moment';
+import { BankRecept, Moment, RECEPTENBANK, Soort } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import { leesOpdracht, Wensen } from './opdracht';
 import { porties as berekenPorties, rondAf } from './hoeveelheid';
@@ -153,25 +154,40 @@ export function dagenVoorPlan(aantal: number): DagCode[] {
 export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = RECEPTENBANK): Weekplan {
   const w = leesOpdracht(verzoek.opdracht);
   const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const momenten = normaliseerMomenten(verzoek.momenten);
+  // Elke dag krijgt één plek per gekozen moment, dag voor dag (WEEK-43).
+  const sloten = dagen.flatMap((dag) => momenten.map((moment) => ({ dag, moment })));
   const random = toeval(verzoek.seed ?? Date.now());
-  const { recepten: kandidaten, versoepeld } = filterOpKeuzes(
-    passendeRecepten(w, bank.filter((r) => !bankReceptVermijdt(r, verzoek.vermijd ?? []))),
-    verzoek.kooktijden,
-    verzoek.stijlen,
-    dagen.length
-  );
-  const schema = soortenSchema(w, dagen.length);
+  const beschikbaar = bank.filter((r) => !bankReceptVermijdt(r, verzoek.vermijd ?? []));
+  let versoepeld = false;
+  const kandidatenPerMoment = new Map<Moment, BankRecept[]>();
+  for (const moment of momenten) {
+    const keuze = filterOpKeuzes(
+      passendeRecepten(w, beschikbaar.filter((r) => momentVan(r) === moment)),
+      verzoek.kooktijden,
+      verzoek.stijlen,
+      dagen.length
+    );
+    versoepeld ||= keuze.versoepeld;
+    kandidatenPerMoment.set(moment, keuze.recepten);
+  }
+  const schema = soortenSchema(w, sloten.length);
   const porties = berekenPorties(verzoek.profiel);
 
   const gekozen: BankRecept[] = [];
   const planDagen: PlanDag[] = [];
-  // Frigo-voorrang (WEEK-12): dag 1 maakt op wat al (het langst) in huis is.
-  const eerste = verzoek.frigo?.length ? kiesEersteDag(kandidaten, verzoek.frigo, verzoek.taal, new Date()) : undefined;
-  dagen.forEach((dag, i) => {
+  // Frigo-voorrang (WEEK-12): de eerste plek maakt op wat al (het langst) in huis is.
+  const eerste = verzoek.frigo?.length
+    ? kiesEersteDag(kandidatenPerMoment.get(sloten[0].moment) ?? [], verzoek.frigo, verzoek.taal, new Date())
+    : undefined;
+  sloten.forEach(({ dag, moment }, i) => {
+    const kandidaten = kandidatenPerMoment.get(moment) ?? [];
     const recept = i === 0 && eerste ? eerste : kiesRecept(kandidaten, schema[i], { gekozen, dag: i }, w, random);
     if (!recept) return;
     gekozen.push(recept);
-    planDagen.push({ dag, recept: naarPlanRecept(recept, verzoek.taal, porties) });
+    // Het moment staat er enkel bij als het niet het gewone avondplan is.
+    const momentVeld = momenten.length > 1 || moment !== 'avond' ? { moment } : {};
+    planDagen.push({ dag, ...momentVeld, recept: naarPlanRecept(recept, verzoek.taal, porties) });
   });
 
   return {

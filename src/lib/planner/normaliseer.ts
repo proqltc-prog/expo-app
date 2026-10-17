@@ -1,7 +1,8 @@
 // Controle van een weekplan dat van buitenaf komt (opslag op het toestel of AI-antwoord).
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
-import { STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
+import { MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
+import { normaliseerMomenten } from './moment';
 import { isTaal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { normaliseerVermijd } from './vermijden';
@@ -52,6 +53,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
       const recept = normaliseerRecept(d.recept);
       if (!recept) return null;
       const dag: PlanDag = { dag: d.dag as DagCode, recept };
+      if (MOMENTEN.includes(d.moment as Moment)) dag.moment = d.moment as Moment;
       const ontbreekt = Array.isArray(d.ontbreekt) ? d.ontbreekt.filter((n): n is string => typeof n === 'string' && !!n.trim()) : [];
       if (ontbreekt.length) dag.ontbreekt = ontbreekt;
       const uitFrigo = Array.isArray(d.uitFrigo) ? d.uitFrigo.filter((n): n is string => typeof n === 'string' && !!n.trim()) : [];
@@ -89,12 +91,14 @@ export function normaliseerKeuzes(ruw: unknown): {
   stijlen: StijlCode[];
   vermijd: Vermijd[];
   aantalDagen: number;
+  momenten: Moment[];
 } {
-  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD };
+  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'] };
   return {
     kooktijden: Array.isArray(ruw.kooktijden) ? KOOKTIJDEN.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? STIJLEN.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
     vermijd: normaliseerVermijd(ruw.vermijd),
     aantalDagen: normaliseerPeriode(ruw.aantalDagen) ?? PERIODE_STANDAARD,
+    momenten: normaliseerMomenten(ruw.momenten),
   };
 }

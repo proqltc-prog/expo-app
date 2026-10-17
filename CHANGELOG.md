@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.36.0] – 2026-10-17
+
+Nieuw: kies voor welke maaltijden het weekmenu is: ontbijt, middag en/of avond. Standaard blijft het avondmenu. Per dag komt er een plek per gekozen moment, en een vervangen ontbijt blijft een ontbijt. Er zijn nieuwe ontbijt- en middagrecepten in alle zes talen.
+
+- Jira: [WEEK-43](https://proqltc-1791495894841.atlassian.net/browse/WEEK-43)
+- Confluence: [WEEK-43 – Ontbijt, middag en/of avond kiezen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6717441)
+
+### Gewijzigd
+- Nieuw: keuze voor de maaltijden (ontbijt, middag, avond), onthouden op het toestel. Op het kookboek niet zichtbaar.
+- Nieuw: 4 ontbijtrecepten en 4 middagrecepten, met nieuwe ingrediënten (yoghurt, muesli, havermout, fruit, komkommer, avocado, honing).
+- Ontbijt en middag gaan via de lokale planner; de AI-planner kent nog enkel avondrecepten.
+
 ## [0.35.0] – 2026-10-17
 
 Nieuw: periode kiezen. Op het eerste tabblad kies je hoeveel dagen het weekmenu telt: 2 tot en met 7 (7 is een volle week). De keuze wordt onthouden en geldt voor de lokale planner, de AI en het kookboek. Zonder keuze blijft het standaard 6 dagen.

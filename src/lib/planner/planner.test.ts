@@ -262,7 +262,8 @@ describe('kooktijd en stijl (WEEK-10)', () => {
       stijlen: ['licht'],
       vermijd: [],
       aantalDagen: 6,
+      momenten: ['avond'],
     });
-    assert.deepEqual(normaliseerKeuzes(null), { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: 6 });
+    assert.deepEqual(normaliseerKeuzes(null), { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: 6, momenten: ['avond'] });
   });
 });

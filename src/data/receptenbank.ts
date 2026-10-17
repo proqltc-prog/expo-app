@@ -6,6 +6,9 @@ export type Soort = 'vegetarisch' | 'vis' | 'vlees';
 export type StijlCode = 'klassiek' | 'italiaans' | 'aziatisch' | 'mexicaans' | 'mediterraan' | 'comfort' | 'licht';
 export type Basis = 'pasta' | 'rijst' | 'aardappel' | 'brood' | 'wrap' | 'noedels' | 'granen';
 export type Eenheid = 'g' | 'ml' | 'stuk' | 'teentje';
+/** Wanneer het recept gegeten wordt (WEEK-43). Zonder moment geldt avond. */
+export type Moment = 'ontbijt' | 'middag' | 'avond';
+export const MOMENTEN: readonly Moment[] = ['ontbijt', 'middag', 'avond'];
 
 export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'comfort', 'licht'];
 
@@ -17,6 +20,8 @@ export type BankRecept = {
   stijlen: readonly StijlCode[];
   basis: Basis;
   ingredienten: readonly (readonly [IngredientCode, number, Eenheid])[];
+  /** Zonder moment geldt het recept voor avond. */
+  moment?: Moment;
 };
 
 export const RECEPTENBANK: readonly BankRecept[] = [
@@ -167,5 +172,47 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     id: 'hachis-parmentier', soort: 'vlees', minuten: 50, stijlen: ['comfort', 'klassiek'], basis: 'aardappel',
     namen: ['Hachis parmentier', 'Hachis parmentier', 'Hackfleisch-Kartoffelauflauf', 'Cottage pie', 'Pastel de carne y puré', 'Empadão de carne'],
     ingredienten: [['gehakt', 100, 'g'], ['aardappelen', 250, 'g'], ['wortelen', 80, 'g'], ['melk', 50, 'ml']],
+  },
+  // ── ontbijt (WEEK-43) ──
+  {
+    id: 'havermout-fruit', soort: 'vegetarisch', minuten: 10, stijlen: ['licht'], basis: 'granen', moment: 'ontbijt',
+    namen: ['Havermout met fruit', 'Flocons d’avoine aux fruits', 'Haferflocken mit Obst', 'Oatmeal with fruit', 'Avena con fruta', 'Aveia com fruta'],
+    ingredienten: [['havermout', 60, 'g'], ['melk', 150, 'ml'], ['fruit', 100, 'g'], ['honing', 10, 'ml']],
+  },
+  {
+    id: 'yoghurt-muesli', soort: 'vegetarisch', minuten: 5, stijlen: ['licht'], basis: 'granen', moment: 'ontbijt',
+    namen: ['Yoghurt met muesli en fruit', 'Yaourt, muesli et fruits', 'Joghurt mit Müsli und Obst', 'Yogurt with muesli and fruit', 'Yogur con muesli y fruta', 'Iogurte com muesli e fruta'],
+    ingredienten: [['yoghurt', 150, 'g'], ['muesli', 50, 'g'], ['fruit', 100, 'g']],
+  },
+  {
+    id: 'boterham-kaas', soort: 'vegetarisch', minuten: 5, stijlen: ['klassiek'], basis: 'brood', moment: 'ontbijt',
+    namen: ['Boterhammen met kaas en komkommer', 'Tartines au fromage et concombre', 'Brote mit Käse und Gurke', 'Sandwiches with cheese and cucumber', 'Bocadillos de queso y pepino', 'Sandes de queijo e pepino'],
+    ingredienten: [['brood', 100, 'g'], ['kaas', 30, 'g'], ['komkommer', 0.5, 'stuk']],
+  },
+  {
+    id: 'avocado-ei', soort: 'vegetarisch', minuten: 15, stijlen: ['licht'], basis: 'brood', moment: 'ontbijt',
+    namen: ['Avocadotoast met ei', 'Toast à l’avocat et œuf', 'Avocado-Toast mit Ei', 'Avocado toast with egg', 'Tostada de aguacate y huevo', 'Torrada de abacate e ovo'],
+    ingredienten: [['brood', 80, 'g'], ['avocado', 0.5, 'stuk'], ['eieren', 1, 'stuk']],
+  },
+  // ── middag (WEEK-43) ──
+  {
+    id: 'tonijnsalade', soort: 'vis', minuten: 10, stijlen: ['licht'], basis: 'brood', moment: 'middag',
+    namen: ['Tonijnsalade op brood', 'Salade au thon sur pain', 'Thunfischsalat auf Brot', 'Tuna salad on bread', 'Ensalada de atún con pan', 'Salada de atum com pão'],
+    ingredienten: [['tonijn', 80, 'g'], ['sla', 50, 'g'], ['tomaten', 0.5, 'stuk'], ['brood', 80, 'g']],
+  },
+  {
+    id: 'kipwrap', soort: 'vlees', minuten: 15, stijlen: ['mexicaans'], basis: 'wrap', moment: 'middag',
+    namen: ['Kipwrap met sla en tomaat', 'Wrap au poulet, laitue et tomate', 'Hähnchen-Wrap mit Salat und Tomate', 'Chicken wrap with lettuce and tomato', 'Wrap de pollo con lechuga y tomate', 'Wrap de frango com alface e tomate'],
+    ingredienten: [['kipfilet', 100, 'g'], ['tortillas', 1, 'stuk'], ['sla', 40, 'g'], ['tomaten', 0.5, 'stuk'], ['kaas', 20, 'g']],
+  },
+  {
+    id: 'pastasalade', soort: 'vegetarisch', minuten: 20, stijlen: ['mediterraan'], basis: 'pasta', moment: 'middag',
+    namen: ['Pastasalade met feta', 'Salade de pâtes à la feta', 'Nudelsalat mit Feta', 'Pasta salad with feta', 'Ensalada de pasta con feta', 'Salada de massa com feta'],
+    ingredienten: [['pasta', 100, 'g'], ['tomaten', 0.5, 'stuk'], ['feta', 40, 'g'], ['komkommer', 0.5, 'stuk']],
+  },
+  {
+    id: 'eiersalade-brood', soort: 'vegetarisch', minuten: 15, stijlen: ['klassiek'], basis: 'brood', moment: 'middag',
+    namen: ['Eiersalade op brood', 'Salade d’œufs sur pain', 'Eiersalat auf Brot', 'Egg salad on bread', 'Ensalada de huevo sobre pan', 'Salada de ovo em pão'],
+    ingredienten: [['eieren', 2, 'stuk'], ['sla', 40, 'g'], ['brood', 100, 'g'], ['komkommer', 0.5, 'stuk']],
   },
 ];

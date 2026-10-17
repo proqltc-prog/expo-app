@@ -4,7 +4,7 @@ import { normaliseerKeuzes, normaliseerWeekplan } from '@/lib/planner/normalisee
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import type { KooktijdCode, Weekplan } from '@/lib/planner/types';
 import type { Vermijd } from '@/data/vermijden';
-import type { StijlCode } from '@/data/receptenbank';
+import type { Moment, StijlCode } from '@/data/receptenbank';
 import { SLEUTEL } from './sleutels';
 import { registreerDocument, registreerItems } from './sync';
 import { laadFrigo } from './frigo';
@@ -15,7 +15,7 @@ const PLAN = SLEUTEL.plan;
 const OPDRACHTEN = SLEUTEL.opdrachten;
 const KEUZES = SLEUTEL.keuzes;
 
-export type Keuzes = { kooktijden: KooktijdCode[]; stijlen: StijlCode[]; vermijd: Vermijd[]; aantalDagen: number };
+export type Keuzes = { kooktijden: KooktijdCode[]; stijlen: StijlCode[]; vermijd: Vermijd[]; aantalDagen: number; momenten: Moment[] };
 
 export async function laadPlan(): Promise<Weekplan | null> {
   try {
@@ -89,7 +89,7 @@ export async function laadKeuzes(): Promise<Keuzes> {
     const ruw = await AsyncStorage.getItem(KEUZES);
     return normaliseerKeuzes(ruw ? JSON.parse(ruw) : null);
   } catch {
-    return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD };
+    return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'] };
   }
 }
 
