@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.25.1] – 2026-10-17
+
+Werkafspraak: bij elke nieuwe functionaliteit of wijziging voegen we ook regressietests toe, zodat bestaand gedrag niet stukgaat.
+
+- Jira: [WEEK-55](https://proqltc-1791495894841.atlassian.net/browse/WEEK-55)
+- Confluence: [WEEK-55 – Regressietests bij elke nieuwe bouw](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6193163)
+
+### Gewijzigd
+- CLAUDE.md, punt 3: regressietests voor het bestaande gedrag, naast de unit tests voor nieuwe logica.
+
 ## [0.25.0] – 2026-10-17
 
 Verbetering: het gezinsscherm vraagt enkel nog postcode en gemeente, en je kan een maximale afstand voor de boodschappen instellen. Het straatveld en het vrije veld voor de gezinssamenstelling zijn weg.
