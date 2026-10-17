@@ -76,6 +76,7 @@ export const pt: Vertalingen = {
   'moment.ontbijt': 'Pequeno-almoço',
   'moment.middag': 'Almoço',
   'moment.avond': 'Jantar',
+  'frigo.scan': 'Escanear',
   'scan.alInFrigo': 'Isto já está no teu frigorífico.',
   'scan.verwijderVanLijst': 'Remover da lista',
   'scan.verwijderdVanLijst': '{naam} foi removido da tua lista.',

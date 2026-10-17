@@ -92,6 +92,7 @@ export default function Scan() {
     await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), { afdeling: afdelingUitCategorieen(product.categorieen) }));
     Alert.alert(t('scan.inFrigo'), t('scan.inFrigoGedaan', { naam }));
     opnieuw();
+    if (van === 'frigo') router.navigate('/frigo');
   };
 
   // Afvinken op de lijst (WEEK-46): zoals afvinken in de lijst zelf; het product gaat dan in de frigo.
@@ -210,17 +211,31 @@ export default function Scan() {
           </View>
         );
       })()}
-      <View style={s.knoppen}>
-        <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
-          <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
-        </Pressable>
-        <Pressable style={[s.knop, { flex: 1 }]} onPress={() => accepteer(p)}>
-          <Text style={s.knopTekst}>{t('scan.accepteren')}</Text>
-        </Pressable>
-      </View>
-      <Pressable style={[s.knop, s.frigoKnop]} onPress={() => naarFrigo(p)}>
-        <Text style={[s.knopTekst, { color: KLEUR }]}>{t('scan.inFrigo')}</Text>
-      </Pressable>
+      {/* Scannen vanaf de frigo (WEEK-47): het product gaat direct in de frigo. */}
+      {van === 'frigo' ? (
+        <View style={s.knoppen}>
+          <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
+            <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
+          </Pressable>
+          <Pressable style={[s.knop, { flex: 1 }]} onPress={() => naarFrigo(p)}>
+            <Text style={s.knopTekst}>{t('scan.inFrigo')}</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          <View style={s.knoppen}>
+            <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
+              <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
+            </Pressable>
+            <Pressable style={[s.knop, { flex: 1 }]} onPress={() => accepteer(p)}>
+              <Text style={s.knopTekst}>{t('scan.accepteren')}</Text>
+            </Pressable>
+          </View>
+          <Pressable style={[s.knop, s.frigoKnop]} onPress={() => naarFrigo(p)}>
+            <Text style={[s.knopTekst, { color: KLEUR }]}>{t('scan.inFrigo')}</Text>
+          </Pressable>
+        </>
+      )}
       <Text style={s.bron}>{t('scan.bron')}</Text>
     </ScrollView>
   );

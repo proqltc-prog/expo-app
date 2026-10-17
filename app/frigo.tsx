@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, voegZelfToe, ZELF_EENHEDEN } from '@/lib/frigo';
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { markeerOntbrekend } from '@/lib/planner/status';
@@ -73,6 +73,10 @@ export default function Frigo() {
         <Pressable style={s.plus} onPress={voegToe} accessibilityRole="button" accessibilityLabel={t('frigo.toevoegen')}>
           <Text style={s.plusTekst}>+</Text>
         </Pressable>
+        {/* Scannen vanaf de frigo (WEEK-47): aangekochte producten direct in de frigo zetten. */}
+        <Pressable style={s.scan} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button">
+          <Text style={s.scanTekst}>{t('frigo.scan')}</Text>
+        </Pressable>
       </View>
       <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
         <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
@@ -139,6 +143,8 @@ const s = StyleSheet.create({
   veld: { flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
+  scan: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  scanTekst: { color: KLEUR, fontWeight: '700' },
   teller: { color: '#666', marginVertical: 10 },
   detailsLink: { color: KLEUR, fontWeight: '600', marginTop: 8 },
   details: { gap: 8, marginTop: 8 },

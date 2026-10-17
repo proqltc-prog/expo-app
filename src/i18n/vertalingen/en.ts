@@ -76,6 +76,7 @@ export const en: Vertalingen = {
   'moment.ontbijt': 'Breakfast',
   'moment.middag': 'Lunch',
   'moment.avond': 'Dinner',
+  'frigo.scan': 'Scan',
   'scan.alInFrigo': 'This is already in your fridge.',
   'scan.verwijderVanLijst': 'Remove from the list',
   'scan.verwijderdVanLijst': '{naam} was removed from your list.',

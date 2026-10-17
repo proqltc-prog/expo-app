@@ -77,6 +77,7 @@ export const nl = {
   'moment.ontbijt': 'Ontbijt',
   'moment.middag': 'Middag',
   'moment.avond': 'Avond',
+  'frigo.scan': 'Scan',
   'scan.alInFrigo': 'Dit staat al in je frigo.',
   'scan.verwijderVanLijst': 'Verwijderen van de lijst',
   'scan.verwijderdVanLijst': '{naam} is van je lijst gehaald.',
