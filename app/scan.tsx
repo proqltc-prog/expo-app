@@ -5,7 +5,9 @@ import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-ca
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, minutenTotReset, resterendeScans, ScanTeller } from '@/lib/scanteller';
-import { laadScanTeller, registreerScan } from '@/opslag/scanteller';
+import { laadScanTeller, registreerBonusScans, registreerScan } from '@/opslag/scanteller';
+import { bekijkBeloondFilmpje } from '@/opslag/advertentie';
+import { BELONING_SCANS, beloningVoor } from '@/lib/beloning';
 import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
 import { laadLijst, wijzigLijst } from '@/opslag/lijst';
 import { pasFrigoAan, type FrigoItem } from '@/lib/frigo';
@@ -33,6 +35,8 @@ export default function Scan() {
   const bezig = useRef(false);
   // Scanlimiet (WEEK-34): 3 per dag.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
+  // Reclamefilmpje voor extra scans (WEEK-38): knop uitgeschakeld tijdens het laden.
+  const [filmpjeBezig, setFilmpjeBezig] = useState(false);
   // Gescand vanaf de boodschappenlijst (WEEK-46): dan kan een product direct afgevinkt worden.
   // Met `item` (WEEK-49) worden de details van een product dat al in de frigo staat, gescand.
   const { van, item } = useLocalSearchParams<{ van?: string; item?: string }>();
@@ -128,6 +132,18 @@ export default function Scan() {
 
   const rest = resterendeScans(teller, new Date());
 
+  // Beloond filmpje (WEEK-38): pas na een volledig bekeken filmpje komen er extra scans bij.
+  const kijkFilmpje = async () => {
+    setFilmpjeBezig(true);
+    try {
+      const gezien = await bekijkBeloondFilmpje();
+      if (gezien) setTeller(await registreerBonusScans(beloningVoor('scans')));
+      else Alert.alert(t('scan.filmpjeTitel'), t('scan.filmpjeNiet'));
+    } finally {
+      setFilmpjeBezig(false);
+    }
+  };
+
   if (status.soort === 'scannen' && rest === 0) {
     const reset = minutenTotReset(new Date());
     return (
@@ -135,6 +151,9 @@ export default function Scan() {
         <Text style={s.tekst}>{t('scan.limiet', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
         {/* Aftelling tot de reset om middernacht (WEEK-51). */}
         <Text style={s.tekst}>{t('scan.reset', { uren: String(Math.floor(reset / 60)), minuten: String(reset % 60) })}</Text>
+        <Pressable style={s.knop} onPress={kijkFilmpje} disabled={filmpjeBezig}>
+          <Text style={s.knopTekst}>{t('scan.filmpje', { n: BELONING_SCANS })}</Text>
+        </Pressable>
       </View>
     );
   }

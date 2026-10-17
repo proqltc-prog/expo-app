@@ -247,6 +247,9 @@ export const es: Vertalingen = {
   'scan.resterend': 'Te quedan {n} escaneos gratis hoy',
   'scan.limiet': 'Has usado tus {limiet} escaneos gratis de hoy. Mañana podrás volver a escanear.',
   'scan.reset': 'Nuevos escaneos a medianoche, en {uren} h {minuten} min.',
+  'scan.filmpje': 'Ver un vídeo para {n} escaneos extra',
+  'scan.filmpjeNiet': 'El vídeo no está disponible ahora. Inténtalo más tarde.',
+  'scan.filmpjeTitel': 'Escaneos extra',
   'scan.bron': 'Datos: Open Food Facts (openfoodfacts.org). No es consejo médico.',
 
   'voeding.kcal': 'Calorías',

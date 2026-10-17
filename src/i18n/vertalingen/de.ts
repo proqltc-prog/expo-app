@@ -247,6 +247,9 @@ export const de: Vertalingen = {
   'scan.resterend': 'Heute noch {n} kostenlose Scans',
   'scan.limiet': 'Du hast heute deine {limiet} kostenlosen Scans verbraucht. Morgen geht es wieder.',
   'scan.reset': 'Neue Scans um Mitternacht, in {uren} Std. {minuten} Min.',
+  'scan.filmpje': 'Video ansehen für {n} zusätzliche Scans',
+  'scan.filmpjeNiet': 'Das Video ist gerade nicht verfügbar. Versuch es später noch einmal.',
+  'scan.filmpjeTitel': 'Zusätzliche Scans',
   'scan.bron': 'Daten: Open Food Facts (openfoodfacts.org). Keine medizinische Beratung.',
 
   'voeding.kcal': 'Kalorien',
