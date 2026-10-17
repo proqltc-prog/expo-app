@@ -6,6 +6,7 @@ import { AiInstelling, terugvalVelden, vraagAi } from './ai';
 import { leesOpdracht } from './opdracht';
 import { filterOpKeuzes, naarPlanRecept, passendeRecepten, toeval } from './lokaal';
 import { bankReceptVermijdt } from './vermijden';
+import { momentVan } from './moment';
 import type { PlanVerzoek, Weekplan } from './types';
 
 const naamSleutel = (naam: string) => naam.trim().toLocaleLowerCase();
@@ -33,7 +34,9 @@ export function kiesVervanging(
   const huidig = plan.dagen[index];
   if (!huidig) return undefined;
   const w = leesOpdracht(plan.opdracht);
-  const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []));
+  // Een ontbijt wordt weer een ontbijt, een avondrecept weer een avondrecept (WEEK-43).
+  const moment = huidig.moment ?? 'avond';
+  const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []) && momentVan(r) === moment);
   const { recepten } = filterOpKeuzes(passendeRecepten(w, toegestaan), plan.kooktijden, plan.stijlen, 1);
 
   const andereDagen = plan.dagen.filter((_, i) => i !== index);
@@ -64,7 +67,9 @@ export function resetDagLokaal(plan: Weekplan, index: number, seed: number = Dat
   if (!nieuw) return plan;
   return {
     ...plan,
-    dagen: plan.dagen.map((d, i) => (i === index ? { dag: d.dag, recept: naarPlanRecept(nieuw, plan.taal, plan.porties) } : d)),
+    dagen: plan.dagen.map((d, i) =>
+      i === index ? { dag: d.dag, ...(d.moment ? { moment: d.moment } : {}), recept: naarPlanRecept(nieuw, plan.taal, plan.porties) } : d
+    ),
   };
 }
 
@@ -81,7 +86,8 @@ export async function resetDag(
 ): Promise<Weekplan> {
   const huidig = plan.dagen[index];
   if (!huidig) return plan;
-  if (!instelling.url) return resetDagLokaal(plan, index, seed);
+  // De AI kent enkel avondrecepten: ontbijt en middag gaan lokaal (WEEK-43).
+  if (!instelling.url || (huidig.moment && huidig.moment !== 'avond')) return resetDagLokaal(plan, index, seed);
   try {
     const vermijd = plan.dagen.map((d) => d.recept.naam);
     const [vervanging] = await vraagAi(verzoekUitPlan(plan, profiel, seed), instelling, [huidig.dag], vermijd);

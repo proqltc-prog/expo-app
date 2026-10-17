@@ -2,6 +2,7 @@
 // Faalt er iets (geen internet, time-out, ongeldig antwoord), dan valt de app terug op de lokale planner.
 import { profielContext } from '@/lib/profiel';
 import { leesOpdracht } from './opdracht';
+import { isAlleenAvond } from './moment';
 import { porties as berekenPorties } from './hoeveelheid';
 import { dagenVoorPlan, planLokaal, STANDAARD_AANTAL_DAGEN } from './lokaal';
 import { normaliseerRecept } from './normaliseer';
@@ -133,7 +134,8 @@ export async function vraagAi(
  * `terugval` staat op true als de AI ingesteld was maar faalde.
  */
 export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = {}): Promise<Weekplan> {
-  if (!instelling.url) return planLokaal(verzoek);
+  // De AI kent enkel avondrecepten: ontbijt of middag gaat lokaal, tot de AI-prompt het moment kent (WEEK-43).
+  if (!instelling.url || !isAlleenAvond(verzoek.momenten)) return planLokaal(verzoek);
   const w = leesOpdracht(verzoek.opdracht);
   const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   try {

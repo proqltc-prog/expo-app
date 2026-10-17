@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
+import { Moment, MOMENTEN, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { aantalReceptRegels, planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
@@ -64,6 +64,8 @@ export default function Weekplanning() {
   const [vermijd, setVermijd] = useState<Vermijd[]>([]);
   // Periode: hoeveel dagen het plan telt (WEEK-42).
   const [aantalDagen, setAantalDagen] = useState<number>(PERIODE_STANDAARD);
+  // Maaltijdmomenten: ontbijt, middag en/of avond (WEEK-43).
+  const [momenten, setMomenten] = useState<Moment[]>(['avond']);
   const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
   // Planmodus (WEEK-14): nieuwe recepten (AI of receptenbank) of random uit het kookboek.
   const [modus, setModus] = useState<'nieuw' | 'favorieten'>('nieuw');
@@ -75,6 +77,7 @@ export default function Weekplanning() {
       setStijlen(k.stijlen);
       setVermijd(k.vermijd);
       setAantalDagen(k.aantalDagen);
+      setMomenten(k.momenten);
     });
   }, []);
 
@@ -91,22 +94,30 @@ export default function Weekplanning() {
   const wisselKooktijd = (k: KooktijdCode) => {
     const nieuw = wissel(kooktijden, k);
     setKooktijden(nieuw);
-    bewaarKeuzes({ kooktijden: nieuw, stijlen, vermijd, aantalDagen });
+    bewaarKeuzes({ kooktijden: nieuw, stijlen, vermijd, aantalDagen, momenten });
   };
   const wisselStijl = (st: StijlCode) => {
     const nieuw = wissel(stijlen, st);
     setStijlen(nieuw);
-    bewaarKeuzes({ kooktijden, stijlen: nieuw, vermijd, aantalDagen });
+    bewaarKeuzes({ kooktijden, stijlen: nieuw, vermijd, aantalDagen, momenten });
   };
   const wisselVermijdKeuze = (v: Vermijd) => {
     const nieuw = wissel(vermijd, v);
     setVermijd(nieuw);
-    bewaarKeuzes({ kooktijden, stijlen, vermijd: nieuw, aantalDagen });
+    bewaarKeuzes({ kooktijden, stijlen, vermijd: nieuw, aantalDagen, momenten });
+  };
+  // Minstens één moment blijft aan; de volgorde is altijd ontbijt, middag, avond.
+  const wisselMoment = (m: Moment) => {
+    const ruw = wissel(momenten, m);
+    if (!ruw.length) return;
+    const nieuw = MOMENTEN.filter((x) => ruw.includes(x));
+    setMomenten(nieuw);
+    bewaarKeuzes({ kooktijden, stijlen, vermijd, aantalDagen, momenten: nieuw });
   };
   // Een periode is een enkele keuze: opnieuw tikken op dezelfde laat hem staan.
   const kiesPeriode = (n: number) => {
     setAantalDagen(n);
-    bewaarKeuzes({ kooktijden, stijlen, vermijd, aantalDagen: n });
+    bewaarKeuzes({ kooktijden, stijlen, vermijd, aantalDagen: n, momenten });
   };
 
   // AI-tegoed van vandaag (WEEK-33): na elke AI-vraag opnieuw ophalen.
@@ -130,7 +141,7 @@ export default function Weekplanning() {
       // Frigo-voorrang (WEEK-12): wat al in huis is, gaat mee naar de planner.
       const frigo = await laadFrigo();
       // Vrije tekst is verwijderd (WEEK-41); de keuzes sturen het plan.
-      const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, aantalDagen, profiel, taal, frigo };
+      const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, aantalDagen, momenten, profiel, taal, frigo };
       const nieuw = modus === 'favorieten' ? planUitFavorieten(favorieten, verzoek, plan) : await planWeek(verzoek, AI);
       if (!nieuw) {
         Alert.alert(t('planning.modusFavorieten'), t('planning.geenFavorieten'));
@@ -234,6 +245,13 @@ export default function Weekplanning() {
       <Text style={s.blokKop}>{t('planning.periode')}</Text>
       <Chips opties={PERIODE_OPTIES as readonly number[]} gekozen={[aantalDagen]} label={(n) => tn('periode.dagen', n)} onWissel={kiesPeriode} />
 
+      {modus === 'nieuw' && (
+        <>
+          <Text style={s.blokKop}>{t('planning.moment')}</Text>
+          <Chips opties={MOMENTEN} gekozen={momenten} label={(m) => t(`moment.${m}`)} onWissel={wisselMoment} />
+        </>
+      )}
+
       <Text style={s.blokKop}>{t('planning.kooktijd')}</Text>
       <Chips opties={KOOKTIJDEN} gekozen={kooktijden} label={(k) => t(`kooktijd.${k}`)} onWissel={wisselKooktijd} />
       <Text style={s.blokKop}>{t('planning.stijl')}</Text>
@@ -278,10 +296,10 @@ export default function Weekplanning() {
           {plan.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
           {plan.terugval && <Text style={s.melding}>{t(plan.aiLimiet ? 'planning.aiLimiet' : 'planning.aiMislukt')}</Text>}
           {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-          {plan.dagen.map(({ dag, recept, gedaan, ontbreekt, uitFrigo }, index) => (
-            <View key={dag} style={[s.kaart, gedaan && s.kaartGedaan]}>
+          {plan.dagen.map(({ dag, moment, recept, gedaan, ontbreekt, uitFrigo }, index) => (
+            <View key={`${index}-${dag}`} style={[s.kaart, gedaan && s.kaartGedaan]}>
               <View style={s.kaartKop}>
-                <Text style={s.dag}>{t(dagSleutel(dag))}</Text>
+                <Text style={s.dag}>{t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
                 {!gedaan && <Pressable
                   style={s.reset}
                   onPress={() => herdoeDag(index)}

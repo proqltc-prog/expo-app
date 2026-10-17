@@ -1,6 +1,6 @@
 import type { Afdeling } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
-import type { Basis, Soort, StijlCode } from '@/data/receptenbank';
+import type { Basis, Moment, Soort, StijlCode } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import type { Profiel } from '@/lib/profiel';
 import type { FrigoItem } from '@/lib/frigo';
@@ -40,6 +40,8 @@ export type PlanRecept = {
 
 export type PlanDag = {
   dag: DagCode;
+  /** Ontbijt, middag of avond (WEEK-43). Ontbreekt: avond. */
+  moment?: Moment;
   recept: PlanRecept;
   /** Het recept is gekookt (WEEK-19). */
   gedaan?: boolean;
@@ -60,6 +62,8 @@ export type PlanVerzoek = {
   vermijd?: Vermijd[];
   /** Gekozen periode in dagen (WEEK-42); gaat voor een getal in de opdracht. */
   aantalDagen?: number;
+  /** Gekozen maaltijdmomenten (WEEK-43); leeg of ontbrekend is avond. */
+  momenten?: Moment[];
   profiel: Profiel;
   taal: Taal;
   seed?: number;
