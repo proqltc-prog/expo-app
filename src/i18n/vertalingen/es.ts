@@ -193,7 +193,7 @@ export const es: Vertalingen = {
   'profiel.adres': 'Dirección',
   'profiel.adresHint': 'Opcional. Solo tu municipio y país se comparten con la IA.',
   'profiel.winkelsTitel': '¿Para qué es el código postal?',
-  'profiel.winkelsTekst': 'Más adelante usaremos tu código postal para buscar tiendas cercanas: supermercados, carnicerías, panaderías y fruterías. Así compras más fácil cerca de casa.',
+  'profiel.winkelsTekst': 'Usamos tu código postal para sugerirte supermercados y comercios de tu barrio. Primero miramos las tiendas más cercanas. No se impone nada: tú eliges dónde compras.',
   'profiel.postcode': 'Código postal',
   'profiel.gemeente': 'Municipio',
   'profiel.land': 'País',

@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.27.1] – 2026-10-17
+
+Aanpassing: de uitleg bij de postcode zegt nu dat we winkels in de buurt voorstellen, eerst lokaal, zonder iets op te leggen.
+
+- Jira: [WEEK-52](https://proqltc-1791495894841.atlassian.net/browse/WEEK-52)
+- Confluence: [WEEK-52 – Tekst: postcode om winkels in de buurt voor te stellen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6389761)
+
 ## [0.27.0] – 2026-10-17
 
 Verbetering: het gezinsscherm legt uit waarom we de postcode vragen: om lokale winkels te vinden.

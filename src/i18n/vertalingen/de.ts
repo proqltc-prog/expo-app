@@ -193,7 +193,7 @@ export const de: Vertalingen = {
   'profiel.adres': 'Adresse',
   'profiel.adresHint': 'Optional. Nur Ort und Land werden an die KI weitergegeben.',
   'profiel.winkelsTitel': 'Wofür brauchen wir die Postleitzahl?',
-  'profiel.winkelsTekst': 'Später nutzen wir deine Postleitzahl, um Geschäfte in der Nähe zu finden: Supermärkte, Metzgereien, Bäckereien und Gemüsehändler. So kaufst du einfacher in deiner Nähe ein.',
+  'profiel.winkelsTekst': 'Wir nutzen deine Postleitzahl, um dir Supermärkte und Händler in deiner Nähe vorzuschlagen. Zuerst schauen wir nach Geschäften in der Nähe. Nichts wird vorgegeben: du entscheidest selbst, wo du einkaufst.',
   'profiel.postcode': 'Postleitzahl',
   'profiel.gemeente': 'Ort',
   'profiel.land': 'Land',

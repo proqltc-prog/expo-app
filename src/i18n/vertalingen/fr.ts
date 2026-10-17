@@ -193,7 +193,7 @@ export const fr: Vertalingen = {
   'profiel.adres': 'Adresse',
   'profiel.adresHint': 'Facultatif. Seuls votre commune et votre pays sont transmis à l’IA.',
   'profiel.winkelsTitel': 'À quoi sert le code postal ?',
-  'profiel.winkelsTekst': 'Plus tard, nous utiliserons ton code postal pour trouver les commerces proches : supermarchés, boucheries, boulangeries et primeurs. Tu feras tes courses plus facilement près de chez toi.',
+  'profiel.winkelsTekst': 'Nous utilisons ton code postal pour te proposer des supermarchés et des commerçants de ton quartier. Nous regardons d’abord les commerces les plus proches. Rien n’est imposé : tu choisis toi-même où tu fais tes courses.',
   'profiel.postcode': 'Code postal',
   'profiel.gemeente': 'Commune',
   'profiel.land': 'Pays',
