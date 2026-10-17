@@ -2,21 +2,47 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { eigenItem, LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
+import { FrigoItem } from '@/lib/frigo';
+import type { DagCode } from '@/lib/planner/types';
+import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
+import { laadFrigo } from '@/opslag/frigo';
 import { bewaarWeergave, laadLijst, laadWeergave, wijzigLijst } from '@/opslag/lijst';
 import { bijWijziging, Gezin, laadGezin, syncStatus, SyncStatus } from '@/opslag/sync';
 import { pasFrigoAan } from '@/lib/frigo';
 import { wijzigFrigo } from '@/opslag/frigo';
 import { werkOntbrekendBij } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
-import { categorieNaam, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
+import { categorieNaam, dagSleutel, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 
 const KLEUR = '#2e7d4f';
 
+/** Totaal voeding en additieven van een gerecht, zodra alle producten gescand zijn (WEEK-50). */
+function GerechtRegel({ lijst, frigo, dag, recept }: { lijst: LijstItem[]; frigo: FrigoItem[]; dag: DagCode; recept: string }) {
+  const { t, taal } = useTaal();
+  const d = gerechtDetails(lijst, frigo, dag, recept);
+  if (!d) return null;
+  const waarden = VOEDINGSSTOFFEN.flatMap((n) => {
+    const v = d.totaal[n];
+    return v === undefined ? [] : [`${t(`voeding.${n}` as Sleutel)} ${getal(taal, v)} ${n === 'kcal' ? 'kcal' : 'g'}`];
+  });
+  return (
+    <View style={s.gerecht}>
+      <Text style={s.gerechtTitel}>{t('gerecht.totaal')}</Text>
+      {waarden.length > 0 && <Text style={s.gerechtTekst}>{waarden.join(' · ')}</Text>}
+      <Text style={s.gerechtTekst}>
+        {t('gerecht.additieven')}: {d.additieven.length ? d.additieven.join(', ') : t('scan.geenAdditieven')}
+      </Text>
+      {d.nietBerekend.length > 0 && <Text style={s.gerechtKlein}>{t('gerecht.nietBerekend', { namen: d.nietBerekend.join(', ') })}</Text>}
+    </View>
+  );
+}
+
 export default function Lijst() {
   const { t, taal } = useTaal();
   const [items, setItems] = useState<LijstItem[]>([]);
+  const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [nieuw, setNieuw] = useState('');
   const [weergave, setWeergave] = useState<Weergave>('recept');
   const [gezin, setGezin] = useState<Gezin | null>(null);
@@ -39,10 +65,12 @@ export default function Lijst() {
 
   // Live: een ander gezinslid vinkte iets af of voegde iets toe (WEEK-8).
   useEffect(() => bijWijziging('lijst', () => laadLijst().then(setItems)), []);
+  useEffect(() => bijWijziging('frigo', () => laadFrigo().then(setFrigo)), []);
 
   useFocusEffect(
     useCallback(() => {
       laadLijst().then(setItems);
+      laadFrigo().then(setFrigo);
     }, [])
   );
 
@@ -147,7 +175,12 @@ export default function Lijst() {
         ListHeaderComponent={<WinkelVoorstel items={items} />}
         sections={data}
         keyExtractor={(r, i) => `${r.sleutel}-${i}`}
-        renderSectionHeader={({ section }) => <Text style={s.kop}>{section.title}</Text>}
+        renderSectionHeader={({ section }) => (
+          <View>
+            <Text style={s.kop}>{section.title}</Text>
+            {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
+          </View>
+        )}
         renderItem={({ item }) => (
           <Pressable style={s.item} onPress={() => toggle(item)}>
             <View style={[s.vinkje, item.afgevinkt && s.vinkjeAan]}>
@@ -210,4 +243,8 @@ const s = StyleSheet.create({
   hoeveelheid: { fontSize: 14, color: '#777' },
   doorgehaald: { textDecorationLine: 'line-through', color: '#aaa' },
   wis: { alignItems: 'center', padding: 12 },
+  gerecht: { backgroundColor: '#f4faf6', borderRadius: 10, padding: 10, gap: 4, marginBottom: 6 },
+  gerechtTitel: { fontWeight: '700', fontSize: 13, color: KLEUR },
+  gerechtTekst: { fontSize: 13, color: '#444' },
+  gerechtKlein: { fontSize: 12, color: '#888' },
 });
