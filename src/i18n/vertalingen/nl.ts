@@ -194,7 +194,7 @@ export const nl = {
   'profiel.adres': 'Adres',
   'profiel.adresHint': 'Optioneel. Enkel je gemeente en land worden aan de AI doorgegeven.',
   'profiel.winkelsTitel': 'Waarvoor is de postcode?',
-  'profiel.winkelsTekst': 'Later gebruiken we je postcode om lokale winkels te zoeken: supermarkten, slagers, bakkers en groentehandelaars. Zo koop je makkelijker in de buurt.',
+  'profiel.winkelsTekst': 'We gebruiken je postcode om supermarkten en lokale handelaars in de buurt voor te stellen. We kijken eerst naar winkels dichtbij. Er wordt niets opgelegd: jij kiest zelf waar je boodschappen doet.',
   'profiel.postcode': 'Postcode',
   'profiel.gemeente': 'Gemeente',
   'profiel.land': 'Land',

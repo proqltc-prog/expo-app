@@ -193,7 +193,7 @@ export const pt: Vertalingen = {
   'profiel.adres': 'Morada',
   'profiel.adresHint': 'Opcional. Apenas o seu município e país são partilhados com a IA.',
   'profiel.winkelsTitel': 'Para que serve o código postal?',
-  'profiel.winkelsTekst': 'Mais tarde vamos usar o seu código postal para encontrar lojas perto de si: supermercados, talhos, padarias e frutarias. Assim compra mais facilmente na sua zona.',
+  'profiel.winkelsTekst': 'Usamos o seu código postal para sugerir supermercados e comércios locais perto de si. Vemos primeiro as lojas mais próximas. Nada é imposto: escolhe você onde faz as compras.',
   'profiel.postcode': 'Código postal',
   'profiel.gemeente': 'Município',
   'profiel.land': 'País',
