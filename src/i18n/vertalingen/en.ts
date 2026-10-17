@@ -192,6 +192,8 @@ export const en: Vertalingen = {
   'profiel.maxKmPlaceholder': 'e.g. 10 – leave empty if it does not matter',
   'profiel.adres': 'Address',
   'profiel.adresHint': 'Optional. Only your town and country are shared with the AI.',
+  'profiel.winkelsTitel': 'What is the postcode for?',
+  'profiel.winkelsTekst': 'Later we will use your postcode to find local shops: supermarkets, butchers, bakers and greengrocers. That makes shopping close to home easier.',
   'profiel.postcode': 'Postcode',
   'profiel.gemeente': 'Town',
   'profiel.land': 'Country',
