@@ -1,0 +1,198 @@
+/**
+ * Collapsible Placement.
+ * The collapsible placement defines how the expanded region anchors to the banner ad.
+ */
+export type CollapsiblePlacement = 'top' | 'bottom';
+export interface ServerSideVerificationOptions {
+    /**
+     * User identifier.
+     * If no user identifier is provided by the app, this query parameter will not be present in the SSV callback.
+     */
+    userId?: string;
+    /**
+     * Custom data string.
+     * If no custom data string is provided by the app, this query parameter value will not be present in the SSV callback.
+     */
+    customData?: string;
+}
+/**
+ * The `RequestOptions` interface. Used when passing additional request options before an advert is loaded.
+ */
+export interface RequestOptions {
+    /**
+     * If `true` only non-personalized ads will be loaded.
+     *
+     * Google serves personalized ads by default. This option must be `true` if users who are within the EEA have only
+     * given consent to non-personalized ads.
+     */
+    requestNonPersonalizedAdsOnly?: boolean;
+    /**
+     * Attaches additional properties to an ad request for direct campaign delivery.
+     *
+     * Takes an array of string key/value pairs.
+     *
+     * #### Example
+     *
+     * Attaches `?campaign=abc&user=123` to the ad request:
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('ca-app-pub-3940256099942544/1033173712', {
+     *   networkExtras: {
+     *     campaign: 'abc',
+     *     user: '123',
+     *   },
+     * });
+     */
+    networkExtras?: {
+        [key: string]: string;
+    } & {
+        collapsible?: CollapsiblePlacement;
+    };
+    /**
+     * An array of keywords to be sent when loading the ad.
+     *
+     * Setting keywords helps deliver more specific ads to a user based on the keywords.
+     *
+     * #### Example
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('ca-app-pub-3940256099942544/1033173712', {
+     *   keywords: ['fashion', 'clothing'],
+     * });
+     * ```
+     */
+    keywords?: string[];
+    /**
+     * URL of the content currently being displayed. Used for brand safety so
+     * displayed ads can have a content rating more appropriate to that page.
+     *
+     * HTTP or HTTPS only. Max length of 512.
+     *
+     * Pair with {@link RequestOptions.neighboringContentUrls} when the ad sits
+     * next to other web content (for example articles in a feed).
+     *
+     * #### Example
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('ca-app-pub-3940256099942544/1033173712', {
+     *   contentUrl: 'https://www.example.com/article-a',
+     * });
+     * ```
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/targeting#content_url
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/targeting#content_url
+     */
+    contentUrl?: string;
+    /**
+     * URLs representing web content near an ad. Used for brand safety so displayed
+     * ads can have a content rating more appropriate to neighboring content.
+     *
+     * HTTP or HTTPS only. Maximum of 4 URLs. Each URL max length of 512.
+     *
+     * Pair with {@link RequestOptions.contentUrl} for the page currently on screen.
+     *
+     * #### Example
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('ca-app-pub-3940256099942544/1033173712', {
+     *   contentUrl: 'https://www.example.com/article-a',
+     *   neighboringContentUrls: [
+     *     'https://www.example.com/article-b',
+     *     'https://www.example.com/article-c',
+     *   ],
+     * });
+     * ```
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/targeting#content_url
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/targeting#brand_safety_beta
+     */
+    neighboringContentUrls?: string[];
+    /**
+     * key-value pairs used for custom targeting
+     *
+     * Takes an object whose values are strings, finite numbers, or arrays of strings and numbers.
+     * Numbers are converted to strings before the request reaches the native SDK. Keys whose value
+     * is `undefined` are omitted; any other value type (including non-finite numbers, `null`,
+     * booleans, objects, and nested arrays) is rejected when the request options are validated: a
+     * synchronous throw, or a rejected promise for async APIs such as `AdPools.create`.
+     */
+    customTargeting?: Record<string, string | number | (string | number)[]>;
+    /**
+     * Google Ad Manager ad exclusion labels for the request. Line items and creatives carrying any
+     * of these labels are not served for this request. Define the labels in Ad Manager first.
+     *
+     * Takes an array of strings. An empty array sends no exclusions. Any other value (including
+     * `null` or an array containing non-string members) is rejected when the request options are
+     * validated: a synchronous throw, or a rejected promise for async APIs such as `AdPools.create`.
+     *
+     * Category exclusions are an Ad Manager feature; use them with Ad Manager ad units.
+     *
+     * #### Example
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('/12345/ad-unit', {
+     *   categoryExclusions: ['airline', 'automotive'],
+     * });
+     * ```
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/targeting#category_exclusions
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/api/reference/Classes/GAMRequest
+     */
+    categoryExclusions?: string[];
+    /**
+     * Sets the request agent string to identify the ad request's origin. Third party libraries that reference the Mobile
+     * Ads SDK should call this method to denote the platform from which the ad request originated. For example, if a
+     * third party ad network called "CoolAds network" mediates requests to the Mobile Ads SDK, it should call this
+     * method with "CoolAds".
+     *
+     * #### Example
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('ca-app-pub-3940256099942544/1033173712', {
+     *   requestAgent: 'CoolAds',
+     * });
+     * ```
+     */
+    requestAgent?: string;
+    /**
+     * Server Side Verification(SSV) Options
+     * See [Google Mobile SDK Docs](https://developers.google.com/admob/android/ssv) for more information.
+     */
+    serverSideVerificationOptions?: ServerSideVerificationOptions;
+    /**
+     * Publisher provided identifier (PPID) for use in frequency capping, audience segmentation and targeting,
+     * sequential ad rotation, and other audience-based ad delivery controls across devices.
+     * See [this article](https://support.google.com/admanager/answer/2880055) for more information.
+     */
+    publisherProvidedId?: string;
+    /**
+     * Publisher Provided Signals (PPS) for Google Ad Manager.
+     *
+     * PPS allows publishers to send IAB taxonomy signals to help ad buyers
+     * evaluate and bid on inventory more effectively.
+     *
+     * Keys are IAB taxonomy names (e.g. `IAB_CONTENT_2_2`, `IAB_AUDIENCE_1_1`).
+     * Values are arrays of taxonomy IDs as integers.
+     *
+     * On Android, values are passed as `putIntegerArrayList` in the extras Bundle.
+     * On iOS, values are passed as `NSArray<NSNumber>` in GADExtras.
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/targeting#publisher_provided_signals
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/targeting#publisher_provided_signals
+     *
+     * #### Example
+     *
+     * ```js
+     * InterstitialAd.createForAdRequest('/12345/ad-unit', {
+     *   publisherProvidedSignals: {
+     *     IAB_CONTENT_2_2: [533, 483],    // Soccer, Sports
+     *     IAB_AUDIENCE_1_1: [6, 284],     // Sports & Fitness, Soccer
+     *   },
+     * });
+     * ```
+     */
+    publisherProvidedSignals?: {
+        [key: string]: number[];
+    };
+}
+//# sourceMappingURL=RequestOptions.d.ts.map

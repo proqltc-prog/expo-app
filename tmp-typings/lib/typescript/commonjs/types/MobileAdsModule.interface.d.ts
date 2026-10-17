@@ -1,0 +1,158 @@
+import { AdapterStatus } from './AdapterStatus';
+import { RequestConfiguration } from './RequestConfiguration';
+/**
+ * The Google Mobile Ads service interface.
+ */
+export interface MobileAdsModuleInterface {
+    /**
+     * Initialize the SDK.
+     */
+    initialize(): Promise<AdapterStatus[]>;
+    /**
+     * Sets request options for all future ad requests.
+     *
+     * #### Example
+     *
+     * ```js
+     * import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
+     *
+     * await mobileAds().setRequestConfiguration({
+     *   // Update all future requests suitable for parental guidance
+     *   maxAdContentRating: MaxAdContentRating.PG,
+     * });
+     * ```
+     *
+     * @param requestConfiguration An RequestConfiguration interface used on all future Google Mobile Ads ad requests.
+     */
+    setRequestConfiguration(requestConfiguration: RequestConfiguration): Promise<void>;
+    /**
+     * Opens the Ad Inspector. Ad inspector is an in-app overlay that enables authorized devices to perform real-time analysis of test ad requests directly within a mobile app.
+     *
+     * The promise will resolve when the inspector is closed.
+     * Also, the promise will reject if ad inspector is closed due to an error.
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/ad-inspector
+     */
+    openAdInspector(): Promise<void>;
+    /**
+     * Opens the Ad Debug Menu.
+     *
+     * Android: `initialize` needs to be called before calling this function.
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/debug
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/debug
+     *
+     * @param adUnit Any valid ad unit from your Ad Manager account is sufficient to open the debug options menu.
+     */
+    openDebugMenu(adUnit: string): void;
+    /**
+     * Sets the application's audio volume. Affects audio volumes of all ads relative to other audio output.
+     *
+     * Warning: Lowering your app's audio volume reduces video ad eligibility and may reduce your app's ad revenue.
+     * You should only utilize this API if your app provides custom volume controls to the user, and you should reflect
+     * the user's volume choice in this API.
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/global-settings
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/global-settings
+     *
+     * @param volume the volume as a float from 0 (muted) to 1.0 (full media volume). Defaults to 1.0
+     */
+    setAppVolume(volume: number): void;
+    /**
+     * Indicates whether the application's audio is muted. Affects initial mute state for all ads.
+     *
+     * Warning: Muting your application reduces video ad eligibility and may reduce your app's ad revenue.
+     * You should only utilize this API if your app provides a custom mute control to the user, and you should
+     * reflect the user's mute decision in this API.
+     *
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/android/global-settings
+     * @see https://developers.google.com/ad-manager/mobile-ads-sdk/ios/global-settings
+     *
+     * @param muted true if the app is muted, false otherwise. Defaults to false.
+     */
+    setAppMuted(muted: boolean): void;
+    /**
+     * iOS only. Tells the Google Mobile Ads SDK whether the app manages `AVAudioSession`.
+     *
+     * Maps to `GADAudioVideoManager.audioSessionIsApplicationManaged` on
+     * `GADMobileAds.sharedInstance.audioVideoManager`. When `true`, the SDK stops
+     * changing the shared audio session during video ad playback (category switches
+     * that can interrupt or pause in-page video). When `false` (default), the SDK
+     * may manage `AVAudioSession` itself.
+     *
+     * No-op on Android: classic `play-services-ads` 25.5.0 and Next-Gen
+     * `ads-mobile-sdk` 1.5.0 have no equivalent API.
+     *
+     * Must be applied on the main thread (this module already dispatches there on iOS).
+     *
+     * #### Example
+     *
+     * ```js
+     * import mobileAds from 'react-native-google-mobile-ads';
+     *
+     * // Call before ads that may play video, if your app owns AVAudioSession.
+     * mobileAds().setAudioSessionIsApplicationManaged(true);
+     * ```
+     *
+     * @param managed `true` if the application manages the audio session; `false` otherwise.
+     */
+    setAudioSessionIsApplicationManaged(managed: boolean): void;
+    /**
+     * Registers an in-app WebView with the Google Mobile Ads SDK so ad traffic inside that
+     * WebView is classified as in-app (WebView API for Ads).
+     *
+     * Pass a React Native view tag from `findNodeHandle` (or equivalent) for any host that
+     * owns an `android.webkit.WebView` / `WKWebView` — typically a `react-native-webview`
+     * ref after mount. Nested WebViews under the tagged view are resolved automatically.
+     * This package does not depend on `react-native-webview`.
+     *
+     * Call after `initialize()`. Rejects when the tag cannot be resolved to a WebView.
+     *
+     * #### Example
+     *
+     * ```js
+     * import { findNodeHandle } from 'react-native';
+     * import { WebView } from 'react-native-webview';
+     * import mobileAds from 'react-native-google-mobile-ads';
+     *
+     * const ref = useRef(null);
+     * <WebView
+     *   ref={ref}
+     *   onLoadEnd={() => {
+     *     const tag = findNodeHandle(ref.current);
+     *     if (tag != null) {
+     *       mobileAds().registerWebView(tag);
+     *     }
+     *   }}
+     * />
+     * ```
+     *
+     * @param viewTag React Native view tag for the WebView host (or a parent containing one).
+     */
+    registerWebView(viewTag: number): Promise<void>;
+    /**
+     * Prevents the Google Mobile Ads SDK from initializing mediation adapters.
+     * Stub today: no-op. When native-wired: queued until `initialize()`;
+     * rejected if called after initialization.
+     */
+    disableMediationAdapterInitialization(): void;
+    /**
+     * Disables SDK crash reporting.
+     * Stub today: no-op. When native-wired: no-op on classic Android;
+     * queued until `initialize()`; rejected if called after initialization.
+     */
+    disableSdkCrashReporting(): void;
+    /**
+     * Enables or disables publisher first-party ID.
+     * Stub today: resolves immediately without applying the flag.
+     * When native-wired: void on both platforms (no iOS boolean parity);
+     * queued until `initialize()`; rejected if called after initialization.
+     */
+    setPublisherFirstPartyIdEnabled(enabled: boolean): Promise<void>;
+    /**
+     * Returns a version string for diagnostics.
+     * Stub today: JS package version. When native-wired: linked native SDK version.
+     */
+    getVersion(): string;
+}
+//# sourceMappingURL=MobileAdsModule.interface.d.ts.map

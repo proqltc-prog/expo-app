@@ -1,0 +1,114 @@
+import { AdEventListener } from './AdEventListener';
+import { AdEventsListener } from './AdEventsListener';
+import { AdShowOptions } from './AdShowOptions';
+import type { ResponseInfo } from './ResponseInfo';
+/**
+ * Base class for InterstitialAd, RewardedAd, NativeAd and BannerAd.
+ */
+export interface MobileAdInterface {
+    /**
+     * The Ad Unit ID for this Gogole Mobile Ads ad.
+     */
+    adUnitId: string;
+    /**
+     * Whether the advert is loaded and can be shown.
+     */
+    loaded: boolean;
+    /**
+     * Snapshot of the loaded ad's response info, or null before load / after destroy.
+     */
+    responseInfo: ResponseInfo | null;
+    /**
+     * Start loading the advert with the provided RequestOptions.
+     *
+     * It is recommended you setup ad event handlers before calling this method.
+     */
+    load(): void;
+    /**
+     * Show the loaded advert to the user.
+     *
+     * Uses two error channels:
+     *
+     * - **Rejects** the returned promise when the show did not happen: the ad
+     *   has not loaded, a show is already in flight, or the platform declines.
+     *   Handle these with `.catch()` (or `try { await } catch`).
+     * - **Throws synchronously** for programmer errors: the ad has been
+     *   destroyed, or `showOptions` are structurally invalid (checked only on a
+     *   loaded ad with no show in flight, so otherwise the rejection comes
+     *   first). Fix the call site.
+     *
+     * The fullscreen hooks' `show` absorbs both channels.
+     *
+     * #### Example
+     *
+     * ```js
+     * // Create InterstitialAd/RewardedAd
+     * const advert = InterstitialAd.createForAdRequest('...');
+     *
+     * advert.addAdEventListener(AdEventType.LOADED, () => {
+     *   advert
+     *     .show({
+     *       immersiveModeEnabled: true,
+     *     })
+     *     .catch(console.warn);
+     * });
+     * ```
+     *
+     * @param showOptions An optional `AdShowOptions` interface.
+     */
+    show(showOptions?: AdShowOptions): Promise<void>;
+    /**
+     * Listen to ad events. See AdEventTypes for more information.
+     *
+     * Returns an unsubscriber function to stop listening to further events.
+     *
+     * #### Example
+     *
+     * ```js
+     * // Create InterstitialAd/RewardedAd
+     * const advert = InterstitialAd.createForAdRequest('...');
+     *
+     * const unsubscribe = advert.addAdEventsListener(({ type, payload }) => {
+     * });
+     *
+     * // Sometime later...
+     * unsubscribe();
+     * ```
+     *
+     * @param listener A listener callback containing a event type, error and data.
+     */
+    addAdEventsListener<T extends never>(listener: AdEventsListener<T>): () => void;
+    /**
+     * Listen to ad events. See AdEventTypes for more information.
+     *
+     * Returns an unsubscriber function to stop listening to further events.
+     *
+     * #### Example
+     *
+     * ```js
+     * // Create InterstitialAd/RewardedAd
+     * const advert = InterstitialAd.createForAdRequest('...');
+     *
+     * const unsubscribe = advert.addAdEventListener(AdEventType.LOADED, () => {
+     *
+     * });
+     *
+     * // Sometime later...
+     * unsubscribe();
+     * ```
+     *
+     * @param type The event type, e.g. `AdEventType.LOADED`.
+     * @param listener A listener callback containing a event type, error and data.
+     */
+    addAdEventListener<T extends never>(type: T, listener: AdEventListener<T>): void;
+    /**
+     * Remove all registered event listeners.
+     */
+    removeAllListeners(): void;
+    /**
+     * Release native resources for this ad instance.
+     * Idempotent; safe to call from React effect cleanup.
+     */
+    destroy(): void;
+}
+//# sourceMappingURL=MobileAd.interface.d.ts.map
