@@ -16,6 +16,7 @@ import { trekFrigoAf } from '@/lib/frigo';
 import { aiPlanner as AI, aiTegoed } from '@/opslag/supabase';
 import { AiTegoed, tegoedTekst } from '@/lib/planner/tegoed';
 import { KooktijdCode, KOOKTIJDEN, Weekplan } from '@/lib/planner/types';
+import { PERIODE_OPTIES, PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
@@ -31,7 +32,7 @@ const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88
 /** Zet een waarde aan of uit in een lijst (multi-select). */
 const wissel = <T,>(lijst: T[], waarde: T) => (lijst.includes(waarde) ? lijst.filter((x) => x !== waarde) : [...lijst, waarde]);
 
-function Chips<T extends string>({ opties, gekozen, label, onWissel }: {
+function Chips<T extends string | number>({ opties, gekozen, label, onWissel }: {
   opties: readonly T[];
   gekozen: T[];
   label: (o: T) => string;
@@ -42,7 +43,7 @@ function Chips<T extends string>({ opties, gekozen, label, onWissel }: {
       {opties.map((o) => {
         const aan = gekozen.includes(o);
         return (
-          <Pressable key={o} style={[s.chip, aan && s.chipAan]} onPress={() => onWissel(o)} accessibilityState={{ selected: aan }}>
+          <Pressable key={String(o)} style={[s.chip, aan && s.chipAan]} onPress={() => onWissel(o)} accessibilityState={{ selected: aan }}>
             <Text style={[s.chipTekst, aan && s.chipTekstAan]}>{label(o)}</Text>
           </Pressable>
         );
@@ -61,6 +62,8 @@ export default function Weekplanning() {
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
   // Ingrediënten die de gebruiker niet wil (WEEK-41).
   const [vermijd, setVermijd] = useState<Vermijd[]>([]);
+  // Periode: hoeveel dagen het plan telt (WEEK-42).
+  const [aantalDagen, setAantalDagen] = useState<number>(PERIODE_STANDAARD);
   const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
   // Planmodus (WEEK-14): nieuwe recepten (AI of receptenbank) of random uit het kookboek.
   const [modus, setModus] = useState<'nieuw' | 'favorieten'>('nieuw');
@@ -71,6 +74,7 @@ export default function Weekplanning() {
       setKooktijden(k.kooktijden);
       setStijlen(k.stijlen);
       setVermijd(k.vermijd);
+      setAantalDagen(k.aantalDagen);
     });
   }, []);
 
@@ -87,17 +91,22 @@ export default function Weekplanning() {
   const wisselKooktijd = (k: KooktijdCode) => {
     const nieuw = wissel(kooktijden, k);
     setKooktijden(nieuw);
-    bewaarKeuzes({ kooktijden: nieuw, stijlen, vermijd });
+    bewaarKeuzes({ kooktijden: nieuw, stijlen, vermijd, aantalDagen });
   };
   const wisselStijl = (st: StijlCode) => {
     const nieuw = wissel(stijlen, st);
     setStijlen(nieuw);
-    bewaarKeuzes({ kooktijden, stijlen: nieuw, vermijd });
+    bewaarKeuzes({ kooktijden, stijlen: nieuw, vermijd, aantalDagen });
   };
   const wisselVermijdKeuze = (v: Vermijd) => {
     const nieuw = wissel(vermijd, v);
     setVermijd(nieuw);
-    bewaarKeuzes({ kooktijden, stijlen, vermijd: nieuw });
+    bewaarKeuzes({ kooktijden, stijlen, vermijd: nieuw, aantalDagen });
+  };
+  // Een periode is een enkele keuze: opnieuw tikken op dezelfde laat hem staan.
+  const kiesPeriode = (n: number) => {
+    setAantalDagen(n);
+    bewaarKeuzes({ kooktijden, stijlen, vermijd, aantalDagen: n });
   };
 
   // AI-tegoed van vandaag (WEEK-33): na elke AI-vraag opnieuw ophalen.
@@ -121,7 +130,7 @@ export default function Weekplanning() {
       // Frigo-voorrang (WEEK-12): wat al in huis is, gaat mee naar de planner.
       const frigo = await laadFrigo();
       // Vrije tekst is verwijderd (WEEK-41); de keuzes sturen het plan.
-      const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, profiel, taal, frigo };
+      const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, aantalDagen, profiel, taal, frigo };
       const nieuw = modus === 'favorieten' ? planUitFavorieten(favorieten, verzoek, plan) : await planWeek(verzoek, AI);
       if (!nieuw) {
         Alert.alert(t('planning.modusFavorieten'), t('planning.geenFavorieten'));
@@ -221,6 +230,9 @@ export default function Weekplanning() {
           <Text style={s.profiel}>{t('menu.voorPersonen', { personen: tn('algemeen.personen', aantalPersonen(profiel)) })}</Text>
         </Pressable>
       )}
+
+      <Text style={s.blokKop}>{t('planning.periode')}</Text>
+      <Chips opties={PERIODE_OPTIES as readonly number[]} gekozen={[aantalDagen]} label={(n) => tn('periode.dagen', n)} onWissel={kiesPeriode} />
 
       <Text style={s.blokKop}>{t('planning.kooktijd')}</Text>
       <Chips opties={KOOKTIJDEN} gekozen={kooktijden} label={(k) => t(`kooktijd.${k}`)} onWissel={wisselKooktijd} />

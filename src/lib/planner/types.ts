@@ -58,6 +58,8 @@ export type PlanVerzoek = {
   stijlen: StijlCode[];
   /** Ingrediënten die vermeden worden (WEEK-41). */
   vermijd?: Vermijd[];
+  /** Gekozen periode in dagen (WEEK-42); gaat voor een getal in de opdracht. */
+  aantalDagen?: number;
   profiel: Profiel;
   taal: Taal;
   seed?: number;

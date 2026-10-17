@@ -1,6 +1,7 @@
 // Lokale planner: stelt een weekplan samen uit de receptenbank, zonder internet.
 // Wordt gebruikt als er geen AI-planner is ingesteld of als die faalt.
 import { afdelingVan, ingredientNaam } from '@/data/ingredienten';
+import { PERIODE_STANDAARD } from './periode';
 import { BankRecept, RECEPTENBANK, Soort } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import { leesOpdracht, Wensen } from './opdracht';
@@ -10,7 +11,7 @@ import type { StijlCode } from '@/data/receptenbank';
 import { kiesEersteDag, markeerUitFrigo } from './frigovoorrang';
 import { bankReceptVermijdt } from './vermijden';
 
-export const STANDAARD_AANTAL_DAGEN = 6;
+export const STANDAARD_AANTAL_DAGEN = PERIODE_STANDAARD;
 
 /** Ingrediënten die het recept duur maken (voor "goedkoop"). */
 const DUUR = new Set(['zalmfilet', 'scampi', 'rundvlees', 'kabeljauw']);
@@ -151,7 +152,7 @@ export function dagenVoorPlan(aantal: number): DagCode[] {
 
 export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = RECEPTENBANK): Weekplan {
   const w = leesOpdracht(verzoek.opdracht);
-  const dagen = dagenVoorPlan(w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   const random = toeval(verzoek.seed ?? Date.now());
   const { recepten: kandidaten, versoepeld } = filterOpKeuzes(
     passendeRecepten(w, bank.filter((r) => !bankReceptVermijdt(r, verzoek.vermijd ?? []))),
