@@ -6,6 +6,8 @@ import { aantalReceptRegels, planSleutel, voegPlanToe, zetOntbrekendOpLijst } fr
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { planUitFavorieten, resetDagUitFavorieten } from '@/lib/planner/favorietenplan';
+import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
+import { laadDbRecepten } from '@/opslag/receptenbank';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
 import { verwijderDag, zonderReceptVanLijst } from '@/lib/planner/kies';
 import { receptStatus } from '@/lib/planner/status';
@@ -161,7 +163,14 @@ export default function Weekplanning() {
       const frigo = await laadFrigo();
       // Vrije tekst is verwijderd (WEEK-41); de keuzes sturen het plan.
       const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, aantalDagen, momenten, profiel, taal, frigo };
-      const nieuw = modus === 'favorieten' ? planUitFavorieten(favorieten, verzoek, plan) : await planWeek(verzoek, AI);
+      // WEEK-68: eerst de goedgekeurde recepten uit de database; de AI-planner blijft de terugval.
+      let nieuw: Weekplan | null | undefined;
+      if (modus === 'favorieten') {
+        nieuw = planUitFavorieten(favorieten, verzoek, plan);
+      } else {
+        const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
+        nieuw = planUitDatabase(verzoek, pool) ?? (await planWeek(verzoek, AI));
+      }
       if (!nieuw) {
         Alert.alert(t('planning.modusFavorieten'), t('planning.geenFavorieten'));
         return;
@@ -184,7 +193,15 @@ export default function Weekplanning() {
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
-      const nieuw = plan.bron === 'favorieten' ? resetDagUitFavorieten(plan, index, favorieten) : await resetDag(plan, index, profiel, AI);
+      let nieuw: Weekplan;
+      if (plan.bron === 'favorieten') {
+        nieuw = resetDagUitFavorieten(plan, index, favorieten);
+      } else if (plan.bron === 'db') {
+        const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
+        nieuw = vervangDbDag(plan, index, pool, Date.now());
+      } else {
+        nieuw = await resetDag(plan, index, profiel, AI);
+      }
       // Enkel die ene dag in het nieuwste plan vervangen: wat intussen veranderde, blijft (WEEK-28).
       const nieuweDag = nieuw.dagen[index];
       const bewaard = nieuweDag
