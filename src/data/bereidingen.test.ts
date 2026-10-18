@@ -28,3 +28,24 @@ describe('bereidingen van de receptenbank (WEEK-81)', () => {
     for (const id of Object.keys(BEREIDINGEN)) assert.ok(ids.has(id), `onbekend id ${id}`);
   });
 });
+
+describe('bereidingen zonder hoeveelheden (WEEK-74)', () => {
+  // Een getal met een maat- of tellingseenheid (400 g, 2 eetlepels, 3 stuks). Tijden en temperaturen vallen daar niet onder.
+  const hoeveelheid = /\d+\s?(g|kg|ml|cl|dl|l|el|tl|stuks?|tbsp|tsp|cups?|oz|gram|grammes?|cuill\S*|eetlepels?|theelepels?|pièces?|cucharadas?|cucharaditas?|pezzi|cucchiai\S*)\b/i;
+
+  test('geen enkele stap bevat een hoeveelheid, in alle zes talen', () => {
+    for (const [id, talen] of Object.entries(BEREIDINGEN)) {
+      for (const [taal, stappen] of Object.entries(talen)) {
+        for (const stap of stappen) {
+          assert.doesNotMatch(stap, hoeveelheid, `hoeveelheid in ${id} (${taal}): ${stap}`);
+        }
+      }
+    }
+  });
+
+  test('de controle vangt een hoeveelheid wél op', () => {
+    assert.match('Kook 400 g spaghetti.', hoeveelheid);
+    assert.match('Voeg 2 eetlepels olie toe.', hoeveelheid);
+    assert.doesNotMatch('Kook 20 minuten op 180 °C.', hoeveelheid);
+  });
+});
