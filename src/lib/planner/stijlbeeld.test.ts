@@ -44,3 +44,18 @@ describe('beeldVoorReceptStijl (WEEK-73)', () => {
     assert.equal(beeldVoorReceptStijl('onbekend'), undefined);
   });
 });
+
+describe('databasestijlen thais, japans en koreaans (WEEK-86)', () => {
+  test('elk van de drie heeft een eigen beeld, niet het Chinese beeld', () => {
+    assert.equal(beeldVoorReceptStijl('thais'), 'thais');
+    assert.equal(beeldVoorReceptStijl('japans'), 'japans');
+    assert.equal(beeldVoorReceptStijl('koreaans'), 'koreaans');
+  });
+  test('de bestaande databasestijlen blijven ongewijzigd (regressie)', () => {
+    assert.equal(beeldVoorReceptStijl('mediterraan'), 'mediterraan');
+    assert.equal(beeldVoorReceptStijl('italiaans'), 'italiaans');
+    assert.equal(beeldVoorReceptStijl('mexicaans'), 'mexicaans');
+    assert.equal(beeldVoorReceptStijl('aziatisch'), 'chinees');
+    assert.equal(beeldVoorReceptStijl('klassiek'), 'belgisch');
+  });
+});

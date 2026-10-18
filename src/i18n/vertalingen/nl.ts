@@ -181,6 +181,9 @@ export const nl = {
   'stijl.aziatisch': 'Aziatisch',
   'stijl.mexicaans': 'Mexicaans',
   'stijl.mediterraan': 'Mediterraan',
+  'stijl.thais': 'Thais',
+  'stijl.japans': 'Japans',
+  'stijl.koreaans': 'Koreaans',
   'stijl.comfort': 'Comfortfood',
   'stijl.licht': 'Licht / fris',
 

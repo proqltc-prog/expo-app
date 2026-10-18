@@ -31,11 +31,17 @@ describe('stijl naar databasestijlen', () => {
   test('mediterraan en italiaans blijven zichzelf', () => {
     assert.deepEqual(stijlNaarDb(['mediterraan', 'italiaans']), ['mediterraan', 'italiaans']);
   });
-  test('de Aziatische keukens vallen samen onder aziatisch', () => {
-    assert.deepEqual(stijlNaarDb(['chinees', 'japans', 'koreaans', 'thais', 'indiaas']), ['aziatisch']);
+  test('chinees en indiaas vallen samen onder aziatisch', () => {
+    assert.deepEqual(stijlNaarDb(['chinees', 'indiaas']), ['aziatisch']);
+  });
+  test('thais, japans en koreaans hebben elk een eigen databasestijl (WEEK-86)', () => {
+    assert.deepEqual(stijlNaarDb(['thais']), ['thais']);
+    assert.deepEqual(stijlNaarDb(['japans']), ['japans']);
+    assert.deepEqual(stijlNaarDb(['koreaans']), ['koreaans']);
   });
   test('dubbele keuzes komen maar één keer voor', () => {
-    assert.deepEqual(stijlNaarDb(['chinees', 'thais']), ['aziatisch']);
+    assert.deepEqual(stijlNaarDb(['chinees', 'indiaas']), ['aziatisch']);
+    assert.deepEqual(stijlNaarDb(['thais', 'thais']), ['thais']);
   });
   test('elke stijl uit het scherm heeft minstens één databasestijl', () => {
     for (const m of ['ontbijt', 'middag', 'avond'] as const) {
@@ -49,7 +55,7 @@ describe('stijl naar databasestijlen', () => {
     assert.deepEqual(stijlNaarDb(['hartig']), ['klassiek']);
     const alles = ['ontbijt', 'middag', 'avond'].flatMap((m) => stijlOpties(m as 'ontbijt').map((o) => o.id));
     for (const code of stijlNaarDb(alles)) {
-      assert.ok(['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan'].includes(code), code);
+      assert.ok(['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'thais', 'japans', 'koreaans'].includes(code), code);
     }
   });
 });

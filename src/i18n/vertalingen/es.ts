@@ -180,6 +180,9 @@ export const es: Vertalingen = {
   'stijl.aziatisch': 'Asiático',
   'stijl.mexicaans': 'Mexicano',
   'stijl.mediterraan': 'Mediterráneo',
+  'stijl.thais': 'Tailandés',
+  'stijl.japans': 'Japonés',
+  'stijl.koreaans': 'Coreano',
   'stijl.comfort': 'Comida reconfortante',
   'stijl.licht': 'Ligero / fresco',
 
