@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.69.3] – 2026-10-18
+
+**Jira:** [WEEK-85](https://proqltc-1791495894841.atlassian.net/browse/WEEK-85) (opruiming, testfout) · **Confluence:** [WEEK-85](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8323073)
+
+- De test "met hetzelfde seed is het plan hetzelfde" faalde af en toe, omdat het moment van maken van het plan verschilt. De test vergelijkt nu de plannen zonder dat moment.
+- Geen wijziging in de planner zelf.
+
 ## [0.69.2] – 2026-10-18
 
 **Jira:** [WEEK-74](https://proqltc-1791495894841.atlassian.net/browse/WEEK-74) (controle, Actief) · **Confluence:** [WEEK-74](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192040)

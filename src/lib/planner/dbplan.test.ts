@@ -88,9 +88,10 @@ describe('planUitDatabase: wensen en versoepelen (WEEK-68)', () => {
     assert.equal(uit.dagen.length, 3);
     assert.ok(uit.dagen.every((d) => d.recept.id === 'db-1'));
   });
-  test('met hetzelfde seed is het plan hetzelfde', () => {
+  test('met hetzelfde seed is het plan hetzelfde (zonder het moment van maken, dat per aanroep verschilt)', () => {
     const p = pool(...Array.from({ length: 8 }, (_, i) => dbRecept(i + 1)));
-    assert.deepEqual(plan(p, { seed: 42 }), plan(p, { seed: 42 }));
+    const zonderTijd = (w: ReturnType<typeof plan>) => ({ ...w, gemaaktOp: '' });
+    assert.deepEqual(zonderTijd(plan(p, { seed: 42 })), zonderTijd(plan(p, { seed: 42 })));
   });
   test('het plan is van bron db en bewaart de wensen', () => {
     const uit = plan(pool(dbRecept(1)), { aantalDagen: 1, kooktijden: ['snel'], stijlen: ['klassiek'] })!;
