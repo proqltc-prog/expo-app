@@ -30,14 +30,14 @@ const STIJL_NAAR_DB: Record<string, StijlCode[]> = {
   mediterraan: ['mediterraan'],
   italiaans: ['italiaans'],
   frans: ['klassiek'],
-  belgisch: ['klassiek', 'comfort'],
+  belgisch: ['klassiek'],
   mexicaans: ['mexicaans'],
   chinees: ['aziatisch'],
   japans: ['aziatisch'],
   koreaans: ['aziatisch'],
   thais: ['aziatisch'],
   indiaas: ['aziatisch'],
-  hartig: ['comfort', 'klassiek'],
+  hartig: ['klassiek'],
   zoet: ['klassiek'],
 };
 

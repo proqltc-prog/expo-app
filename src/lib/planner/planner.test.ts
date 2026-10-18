@@ -242,9 +242,9 @@ describe('kooktijd en stijl (WEEK-10)', () => {
 
   test('filterOpKeuzes vult eerst aan met recepten die de kooktijd halen', async () => {
     const { filterOpKeuzes } = await import('@/lib/planner/lokaal');
-    const { recepten, versoepeld } = filterOpKeuzes([...RECEPTENBANK], ['snel'], ['comfort'], 4);
+    const { recepten, versoepeld } = filterOpKeuzes([...RECEPTENBANK], ['snel'], ['mediterraan'], 5);
     assert.ok(versoepeld);
-    assert.equal(recepten.length, 4);
+    assert.equal(recepten.length, 5);
     assert.ok(recepten.every((r) => r.minuten <= 20));
   });
 

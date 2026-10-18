@@ -94,7 +94,7 @@ describe('leesDbRecept: ruwe rijen uit Supabase (WEEK-68)', () => {
     porties: 1,
     kooktijd_min: 15,
     moment: 'middag',
-    stijl: 'licht',
+    stijl: 'klassiek',
     soort: 'vegetarisch',
     basis: null,
     recept_vertalingen: [

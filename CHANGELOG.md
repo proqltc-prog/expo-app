@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.69.0] – 2026-10-18
+
+**Jira:** [WEEK-78](https://proqltc-1791495894841.atlassian.net/browse/WEEK-78) (verbetering, deel 2) · **Confluence:** [WEEK-78 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192022)
+
+- De stijlen licht en comfort zijn verwijderd uit de receptenbank, ook in de database. Het weekmenu kiest nog uit klassiek, italiaans, aziatisch, mexicaans en mediterraan.
+- Keuzes belgisch en hartig vallen nu onder klassiek. Recept 10 hoort bij italiaans in plaats van belgisch.
+- Regressietests leggen de stijlmapping vast, zodat de lokale, AI- en databaseplanner dezelfde geldige stijlen gebruiken.
+
 ## [0.68.0] – 2026-10-18
 
 **Jira:** [WEEK-81](https://proqltc-1791495894841.atlassian.net/browse/WEEK-81) (verbetering) · **Confluence:** [WEEK-81](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7766089)

@@ -18,7 +18,7 @@ const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
 });
 
 const recept = (naam: string, soort = 'vegetarisch', minuten = 20) => ({
-  naam, soort, minuten, stijlen: ['licht'],
+  naam, soort, minuten, stijlen: ['klassiek'],
   ingredienten: [{ naam: 'poireau', hoeveelheid: 2, eenheid: 'stuk', afdeling: 'groenten-fruit' }],
 });
 const antwoordVoor = (dagen: DagCode[], soort = 'vegetarisch', minuten = 20) => ({
