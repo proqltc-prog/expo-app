@@ -317,6 +317,7 @@ export const de: Vertalingen = {
   'profiel.land': 'Land',
   'profiel.taal': 'Sprache',
   'profiel.taalToestel': 'Gerätesprache',
+  'profiel.taalHint': 'Nur auf diesem Gerät. Familienmitglieder und deine anderen Geräte sehen das nicht.',
   'profiel.bewaar': 'Profil speichern',
   'profiel.bewaard.titel': 'Gespeichert',
   'profiel.bewaard.tekst': 'Das Profil gilt jetzt für jede Wochenplanung ({personen}).',

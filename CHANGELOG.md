@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.66.0] – 2026-10-18
+
+**Jira:** [WEEK-80](https://proqltc-1791495894841.atlassian.net/browse/WEEK-80) (verbetering) · **Confluence:** [WEEK-80](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7471141)
+
+- De taal van de app hoort bij het toestel van één gebruiker. Ze gaat niet meer naar het gezin of naar andere toestellen.
+- De taalkeuze staat op het instellingenscherm in een eigen blok 'Taal op dit toestel', los van de gezinsgegevens.
+
 ## [0.65.0] – 2026-10-18
 
 **Jira:** [WEEK-79](https://proqltc-1791495894841.atlassian.net/browse/WEEK-79) (verbetering) · **Confluence:** [WEEK-79](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7962626)

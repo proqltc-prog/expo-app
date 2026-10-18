@@ -317,6 +317,7 @@ export const pt: Vertalingen = {
   'profiel.land': 'País',
   'profiel.taal': 'Idioma',
   'profiel.taalToestel': 'Idioma do dispositivo',
+  'profiel.taalHint': 'Apenas neste dispositivo. Os membros da família e os seus outros dispositivos não o veem.',
   'profiel.bewaar': 'Guardar perfil',
   'profiel.bewaard.titel': 'Guardado',
   'profiel.bewaard.tekst': 'O perfil aplica-se agora a cada planeamento semanal ({personen}).',

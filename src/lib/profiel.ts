@@ -1,8 +1,6 @@
 // Gezinsprofiel: vaste gegevens die één keer ingevuld worden en daarna
 // automatisch meegaan met elke AI-vraag (WEEK-7). Pure logica, zonder opslag.
 // WEEK-69: budget en maximale afstand zijn verwijderd. Oude waarden in de opslag worden genegeerd.
-import { isTaal, Taal } from '@/i18n';
-
 export type Adres = {
   postcode: string;
   gemeente: string;
@@ -14,8 +12,6 @@ export type Profiel = {
   /** Aantal kinderen van 0 tot 12 jaar. Elk kind telt als een halve portie (WEEK-40). */
   kinderen: number;
   adres: Adres;
-  /** Taal van de app; undefined = taal van het toestel (WEEK-22). */
-  taal?: Taal;
 };
 
 export const MAX_VOLWASSENEN = 10;
@@ -26,7 +22,6 @@ export function standaardProfiel(): Profiel {
     volwassenen: 2,
     kinderen: 0,
     adres: { postcode: '', gemeente: '', land: 'België' },
-    taal: undefined,
   };
 }
 
@@ -70,7 +65,6 @@ export function normaliseerProfiel(ruw: unknown): Profiel {
       gemeente: tekst(adres.gemeente),
       land: tekst(adres.land, basis.adres.land),
     },
-    taal: isTaal(r.taal) ? r.taal : undefined,
   };
 }
 

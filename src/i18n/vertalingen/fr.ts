@@ -317,6 +317,7 @@ export const fr: Vertalingen = {
   'profiel.land': 'Pays',
   'profiel.taal': 'Langue',
   'profiel.taalToestel': 'Langue de l’appareil',
+  'profiel.taalHint': 'Uniquement sur cet appareil. Les autres membres de la famille et vos autres appareils ne le voient pas.',
   'profiel.bewaar': 'Enregistrer le profil',
   'profiel.bewaard.titel': 'Enregistré',
   'profiel.bewaard.tekst': 'Le profil s’applique désormais à chaque planning ({personen}).',
