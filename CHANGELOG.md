@@ -10,7 +10,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.57.0] – 2026-10-18
 
-**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4b) · **Confluence:** [WEEK-68 deel 4b](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/PAGINA_ID_4B)
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4b) · **Confluence:** [WEEK-68 deel 4b](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700481)
 
 - Het weekmenu heeft vijf stappen: periode (met kalender-icoon), moment en kooktijd, stijl (met landenkleuren), vermijden (optioneel) en het plan.
 - Met een bestaand plan opent het scherm direct op het plan.
