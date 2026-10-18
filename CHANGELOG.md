@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.54.0] – 2026-10-18
+
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 3) · **Confluence:** [WEEK-68 deel 3](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503874)
+
+- Het weekmenu stelt het plan nu eerst samen uit de goedgekeurde recepten in de database, met het gezin als schaal.
+- Wanneer de database geen passend recept geeft, blijft de AI-planner de terugval.
+- Eén dag vervangen werkt ook voor een plan uit de database; de rest van de week blijft staan.
+
 ## [0.53.0] – 2026-10-18
 
 **Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 2) · **Confluence:** [WEEK-68 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7536650)
