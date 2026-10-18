@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.61.0] – 2026-10-18
+
+**Jira:** [WEEK-77](https://proqltc-1791495894841.atlassian.net/browse/WEEK-77) (verbetering) · **Confluence:** [WEEK-77](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700514)
+
+- De tabbladen Winkels en Boodschappen hebben nu een lijnicoontje.
+- Elke categorie in de lijst heeft een eigen lijnicoontje, zoals fruit, huishouden en avondeten.
+- Nieuwe dependency: @expo/vector-icons (de versie die bij Expo 54 hoort).
+
 ## [0.60.0] – 2026-10-18
 
 **Jira:** [WEEK-76](https://proqltc-1791495894841.atlassian.net/browse/WEEK-76) (verbetering) · **Confluence:** [WEEK-76](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503935)
