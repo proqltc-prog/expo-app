@@ -227,12 +227,13 @@ export default function Scan() {
 
       {/* Per product (WEEK-70): het gescande product gaat enkel naar het lijstitem waarvandaan gescand werd. */}
       {van === 'lijst' && lijstItem && (() => {
-        const doel = lijstItems.find((i) => i.id === lijstItem);
+        const ids = lijstItem.split(',');
+        const doel = lijstItems.filter((i) => ids.includes(i.id));
         const naam = scanNaam(p, t('scan.onbekend'));
-        if (!doel) return <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>;
+        if (!doel.length) return <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>;
         return (
           <View style={s.knoppen}>
-            <Pressable style={[s.knop, { flex: 1 }]} onPress={() => vinkOpLijstAf(naam, [doel], p)} accessibilityRole="button">
+            <Pressable style={[s.knop, { flex: 1 }]} onPress={() => vinkOpLijstAf(naam, doel, p)} accessibilityRole="button">
               <Text style={s.knopTekst}>{t('scan.productToevoegen')}</Text>
             </Pressable>
             <Pressable style={[s.knop, { flex: 1, backgroundColor: '#777' }]} onPress={opnieuw} accessibilityRole="button">

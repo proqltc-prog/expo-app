@@ -181,7 +181,7 @@ export default function Lijst() {
                 style={s.scanKnop}
                 onPress={(e) => {
                   e.stopPropagation?.();
-                  router.navigate(`/scan?van=lijst&lijstItem=${encodeURIComponent(item.id)}`);
+                  router.navigate(`/scan?van=lijst&lijstItem=${encodeURIComponent(item.ids.join(','))}`);
                 }}
                 accessibilityRole="button"
                 accessibilityLabel={t('lijst.scanProduct')}
