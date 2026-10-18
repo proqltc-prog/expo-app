@@ -556,6 +556,7 @@ export default function Weekplanning() {
                       </Pressable>
                     </View>
                     </View>
+                    </View>
                   </View>
                 );
               })}
