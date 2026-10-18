@@ -14,9 +14,6 @@ import { bankReceptVermijdt } from './vermijden';
 
 export const STANDAARD_AANTAL_DAGEN = PERIODE_STANDAARD;
 
-/** Ingrediënten die het recept duur maken (voor "goedkoop"). */
-const DUUR = new Set(['zalmfilet', 'scampi', 'rundvlees', 'kabeljauw']);
-
 /** Eenvoudige, reproduceerbare toevalsgenerator (mulberry32). */
 export function toeval(seed: number): () => number {
   let a = seed >>> 0;
@@ -54,7 +51,6 @@ export function passendeRecepten(w: Wensen, bank: readonly BankRecept[] = RECEPT
 function voorkeurScore(r: BankRecept, w: Wensen): number {
   let score = 0;
   if (w.snel) score += r.minuten <= 20 ? 3 : r.minuten <= 30 ? 1 : -3;
-  if (w.goedkoop) score -= r.ingredienten.some(([code]) => DUUR.has(code)) ? 3 : 0;
   // Standaard: liefst geen uren in de keuken op een weekdag.
   if (!w.snel && r.minuten > 60) score -= 1;
   return score;

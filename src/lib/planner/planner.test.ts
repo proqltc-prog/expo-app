@@ -140,14 +140,6 @@ describe('planLokaal', () => {
     assert.ok(plan.dagen.every((d) => d.recept.minuten <= 30));
   });
 
-  test('"goedkoop" vermijdt dure ingrediënten', () => {
-    for (let seed = 0; seed < 20; seed++) {
-      const plan = planLokaal(verzoek('goedkoop', { seed }));
-      const namen = plan.dagen.flatMap((d) => d.recept.ingredienten.map((i) => i.naam));
-      assert.ok(!namen.includes('stoofvlees') && !namen.includes('zalmfilet'), `seed ${seed}`);
-    }
-  });
-
   test('is reproduceerbaar met dezelfde seed', () => {
     const ids = (seed: number) => planLokaal(verzoek('', { seed })).dagen.map((d) => d.recept.id);
     assert.deepEqual(ids(11), ids(11));
