@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, MOMENTEN, Soort } from '@/data/receptenbank';
-import { landenkleuren } from '@/data/landen';
+import { Stijlbeeld } from '@/ui/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
 import { planWeek } from '@/lib/planner/ai';
@@ -412,7 +412,6 @@ export default function Weekplanning() {
           <View style={s.tegels}>
             {stijlOpties.map((o) => {
               const aan = keuzes.stijlen.includes(o.id);
-              const [a, b, c] = landenkleuren(o.id);
               return (
                 <Pressable
                   key={o.id}
@@ -421,11 +420,7 @@ export default function Weekplanning() {
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: aan }}
                 >
-                  <View style={s.streepRij}>
-                    <View style={[s.streep, { backgroundColor: a }]} />
-                    <View style={[s.streep, { backgroundColor: b }]} />
-                    <View style={[s.streep, { backgroundColor: c }]} />
-                  </View>
+                  <Stijlbeeld id={o.id} />
                   <Text style={[s.tegelTekst, aan && s.tegelTekstAan]}>{t(STIJL_SLEUTEL[o.id as keyof typeof STIJL_SLEUTEL] ?? 'stijlOptie.hartig')}</Text>
                 </Pressable>
               );
@@ -610,8 +605,6 @@ const s = StyleSheet.create({
   tegels: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   tegel: { width: '48%', borderWidth: 1.5, borderColor: LIJN, borderRadius: 14, overflow: 'hidden', backgroundColor: '#fff' },
   tegelAan: { borderColor: PETROL, borderWidth: 2.5 },
-  streepRij: { flexDirection: 'row', height: 14 },
-  streep: { flex: 1 },
   tegelTekst: { padding: 10, fontWeight: '700', color: INKT },
   tegelTekstAan: { color: PETROL },
   melding: { backgroundColor: ORANJE_ZACHT, color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
