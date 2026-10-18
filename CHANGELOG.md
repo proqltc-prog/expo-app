@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.69.1] – 2026-10-18
+
+**Jira:** [WEEK-83](https://proqltc-1791495894841.atlassian.net/browse/WEEK-83) (opruiming) · **Confluence:** [WEEK-83](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159234)
+
+- Confluence-links in het changelog voor v0.53.0 t/m v0.56.0 wijzen nu naar de juiste pagina's.
+- Ontbrekende Confluence-pagina voor [WEEK-68 deel 4a](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7602210) alsnog aangemaakt.
+- Opmerking in het scan-scherm bijgewerkt naar de huidige scanlimiet.
+
 ## [0.69.0] – 2026-10-18
 
 **Jira:** [WEEK-78](https://proqltc-1791495894841.atlassian.net/browse/WEEK-78) (verbetering, deel 2) · **Confluence:** [WEEK-78 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192022)
@@ -122,7 +130,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.56.0] – 2026-10-18
 
-**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 1) · **Confluence:** [WEEK-71 deel 1](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
+**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 1) · **Confluence:** [WEEK-71 deel 1](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7831553)
 
 - De frigo kent twee soorten producten: planner-frigo (uit de catalogus, telt mee bij het koken) en losse producten (vrij ingegeven, de gebruiker beheert ze zelf).
 - Bij "Gekookt" gaan enkel planner-producten uit de frigo; losse producten blijven staan.
@@ -132,7 +140,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.55.0] – 2026-10-18
 
-**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4a) · **Confluence:** [WEEK-68 deel 4](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4a) · **Confluence:** [WEEK-68 deel 4a](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7602210)
 
 - Kooktijden, stijlen en vermijden hangen af van het moment: ochtend heeft Snel, Rustig en Uitgebreid; middag en avond hebben Snel en Verfijnd.
 - Nieuwe landenkeuken-stijlen voor middag en avond; "Ovenschotels" en "Snel en eenvoudig" zijn weggehaald.
@@ -142,7 +150,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.54.0] – 2026-10-18
 
-**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 3) · **Confluence:** [WEEK-68 deel 3](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503874)
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 3) · **Confluence:** [WEEK-68 deel 3](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
 
 - Het weekmenu stelt het plan nu eerst samen uit de goedgekeurde recepten in de database, met het gezin als schaal.
 - Wanneer de database geen passend recept geeft, blijft de AI-planner de terugval.
@@ -150,7 +158,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.53.0] – 2026-10-18
 
-**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 2) · **Confluence:** [WEEK-68 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7536650)
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 2) · **Confluence:** [WEEK-68 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503874)
 
 - Weekplan uit de database: kiezen uit de goedgekeurde recepten, met moment, kooktijd en stijl als filter.
 - Gezin en kooktijden worden afgewogen; wanneer er te weinig recepten passen, worden de eisen stap voor stap versoepeld.
