@@ -256,6 +256,7 @@ export const en: Vertalingen = {
   'scan.filmpjeNiet': 'The video isn’t available right now. Try again later.',
   'scan.filmpjeTitel': 'Extra scans',
   'scan.bron': 'Data: Open Food Facts (openfoodfacts.org). Not medical advice.',
+  'scan.terug': 'Back',
 
   'voeding.kcal': 'Calories',
   'voeding.suikers': 'Sugars',

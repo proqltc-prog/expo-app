@@ -14,6 +14,7 @@ import { pasFrigoAan, type FrigoItem } from '@/lib/frigo';
 import { vinkAf, type LijstItem } from '@/lib/lijst';
 import { passendeNamen, zoekOpLijst } from '@/lib/scanLijst';
 import { werkOntbrekendBij } from '@/lib/planner/status';
+import { additiefWeergave } from '@/data/additieven';
 import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
@@ -83,12 +84,6 @@ export default function Scan() {
   const opnieuw = () => {
     bezig.current = false;
     setStatus({ soort: 'scannen' });
-  };
-
-  const accepteer = async (product: Product) => {
-    const naam = scanNaam(product, t('scan.onbekend'));
-    await wijzigLijst((lijst) => [...lijst, { id: `scan-${product.barcode}-${Date.now()}`, naam, categorie: 'gescand', afgevinkt: true }]);
-    opnieuw();
   };
 
   // Het gescande product rechtstreeks in de frigo, in de juiste afdeling (WEEK-35).
@@ -222,8 +217,21 @@ export default function Scan() {
         ))}
       </View>
 
+      {/* Uitleg per additief (WEEK-71): het E-nummer, met naam en functie als het bekend is. */}
       <Text style={s.kop}>{t('scan.additieven')}</Text>
-      <Text style={s.tekstLinks}>{p.additieven.length ? p.additieven.join(', ') : t('scan.geenAdditieven')}</Text>
+      {p.additieven.length ? (
+        p.additieven.map((tag) => {
+          const { code, omschrijving } = additiefWeergave(tag, taal);
+          return (
+            <View key={tag} style={s.additief}>
+              <Text style={s.additiefCode}>{code}</Text>
+              <Text style={s.tekstLinks}>{omschrijving ?? ''}</Text>
+            </View>
+          );
+        })
+      ) : (
+        <Text style={s.tekstLinks}>{t('scan.geenAdditieven')}</Text>
+      )}
 
       {/* Per product (WEEK-70): het gescande product gaat enkel naar het lijstitem waarvandaan gescand werd. */}
       {van === 'lijst' && lijstItem && (() => {
@@ -282,19 +290,10 @@ export default function Scan() {
           </Pressable>
         </View>
       ) : (
-        <>
-          <View style={s.knoppen}>
-            <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
-              <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
-            </Pressable>
-            <Pressable style={[s.knop, { flex: 1 }]} onPress={() => accepteer(p)}>
-              <Text style={s.knopTekst}>{t('scan.accepteren')}</Text>
-            </Pressable>
-          </View>
-          <Pressable style={[s.knop, s.frigoKnop]} onPress={() => naarFrigo(p)}>
-            <Text style={[s.knopTekst, { color: KLEUR }]}>{t('scan.inFrigo')}</Text>
-          </Pressable>
-        </>
+        /* Gewoon scannen (WEEK-71): enkel terug naar de camera, geen afwijzen of op de lijst zetten. */
+        <Pressable style={s.knop} onPress={opnieuw} accessibilityRole="button">
+          <Text style={s.knopTekst}>{t('scan.terug')}</Text>
+        </Pressable>
       )}
       <Text style={s.bron}>{t('scan.bron')}</Text>
     </ScrollView>
@@ -321,6 +320,7 @@ const s = StyleSheet.create({
   tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
-  frigoKnop: { backgroundColor: '#fff', borderWidth: 2, borderColor: KLEUR, marginTop: 4 },
   bron: { color: '#999', fontSize: 12, marginTop: 12, textAlign: 'center' },
+  additief: { flexDirection: 'row', gap: 10, alignItems: 'baseline', paddingVertical: 2 },
+  additiefCode: { fontWeight: '700', color: KLEUR, minWidth: 64 },
 });
