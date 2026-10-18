@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.69.2] – 2026-10-18
+
+**Jira:** [WEEK-74](https://proqltc-1791495894841.atlassian.net/browse/WEEK-74) (controle, Actief) · **Confluence:** [WEEK-74](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192040)
+
+- Regressietest: geen enkele bereidingsstap in de zes talen bevat nog een hoeveelheid. De stappen zijn schaalbaar.
+- De native-speaker controle van de fr- en en-teksten staat nog open; het workitem blijft daarom Actief.
+
 ## [0.69.1] – 2026-10-18
 
 **Jira:** [WEEK-83](https://proqltc-1791495894841.atlassian.net/browse/WEEK-83) (opruiming) · **Confluence:** [WEEK-83](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159234)
