@@ -6,7 +6,7 @@ export type AiTaal = 'nl' | 'fr' | 'de' | 'en' | 'es' | 'pt';
 /** Wat de app naar de server stuurt. */
 export type AiVerzoek = {
   taal: AiTaal;
-  /** Tekst uit profielContext(): gezin, budget, opmerkingen, woonplaats. */
+  /** Tekst uit profielContext(): gezin en woonplaats. */
   profiel: string;
   /** Aantal volwassen porties waarvoor hoeveelheden berekend moeten worden. */
   porties: number;

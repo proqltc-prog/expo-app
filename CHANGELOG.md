@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.50.0] – 2026-10-18
+
+**Jira:** [WEEK-69](https://proqltc-1791495894841.atlassian.net/browse/WEEK-69) · **Confluence:** [WEEK-69 Gezinssamenstelling](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7471105)
+
+- Budget en maximale afstand verdwenen uit het gezinsprofiel. Oude opgeslagen waarden worden genegeerd.
+- Bij het invullen van een Belgische postcode worden gemeente en land automatisch voorgesteld.
+- Winkelvoorstel: geen km-limiet meer; de dichtstbijzijnde winkel wordt gekozen.
+- Tests bijgewerkt, regressietests toegevoegd voor oude profielen en het postcode-voorstel.
+
 ## [0.49.0] – 2026-10-18
 
 **Jira:** [WEEK-67](https://proqltc-1791495894841.atlassian.net/browse/WEEK-67) · **Confluence:** [WEEK-67 Schaalregel en dagbevestiging](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7340033)

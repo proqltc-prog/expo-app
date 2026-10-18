@@ -15,7 +15,7 @@ import { useTaal } from '@/ui/taal';
 const KLEUR = '#2e7d4f';
 
 type Stat = 'laden' | 'klaar' | 'fout' | 'geenPostcode';
-type Adres = { postcode: string; gemeente: string; maxKm?: number };
+type Adres = { postcode: string; gemeente: string };
 type Opgehaald = { positie: Positie; winkels: Winkel[] };
 
 /** Afstand als "350 m" of "2,3 km". */
@@ -35,7 +35,7 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
     useCallback(() => {
       let actief = true;
       laadProfiel().then((p) => {
-        if (actief) setAdres({ postcode: p.adres.postcode, gemeente: p.adres.gemeente, maxKm: p.maxKm });
+        if (actief) setAdres({ postcode: p.adres.postcode, gemeente: p.adres.gemeente });
       });
       return () => {
         actief = false;
@@ -87,8 +87,8 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
 
   // Elke wijziging van de lijst (ook na een recept) rekent het voorstel opnieuw uit.
   const voorstel: Voorstel = useMemo(
-    () => kiesWinkels(nodig, opgehaald?.winkels ?? [], opgehaald?.positie, adres.maxKm),
-    [nodig, opgehaald, adres.maxKm],
+    () => kiesWinkels(nodig, opgehaald?.winkels ?? [], opgehaald?.positie),
+    [nodig, opgehaald],
   );
 
   if (!nodig.length) return null;

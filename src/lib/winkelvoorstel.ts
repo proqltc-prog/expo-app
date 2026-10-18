@@ -47,10 +47,10 @@ function dekt(winkel: WinkelSoort, nodig: WinkelSoort): boolean {
 
 /**
  * Kiest het kleinste aantal winkels dat alle nodige winkeltypes dekt.
- * Per winkeltype wordt de dichtstbijzijnde winkel genomen (binnen maxKm, als die bekend is).
+ * Per winkeltype wordt de dichtstbijzijnde winkel genomen, ook als die ver weg ligt (WEEK-69: geen km-limiet meer).
  * Bij gelijke aantallen wint de kortste totale afstand.
  */
-export function kiesWinkels(nodig: WinkelSoort[], winkels: Winkel[], positie?: Positie, maxKm?: number): Voorstel {
+export function kiesWinkels(nodig: WinkelSoort[], winkels: Winkel[], positie?: Positie): Voorstel {
   if (!nodig.length) return { stops: [], nietGedekt: [] };
 
   const beste = new Map<WinkelSoort, Stop>();
@@ -58,7 +58,6 @@ export function kiesWinkels(nodig: WinkelSoort[], winkels: Winkel[], positie?: P
     const afstand = positie && winkel.lat !== undefined && winkel.lon !== undefined
       ? afstandKm(positie, { lat: winkel.lat, lon: winkel.lon })
       : undefined;
-    if (afstand !== undefined && maxKm !== undefined && afstand > maxKm) continue;
     const huidige = beste.get(winkel.soort);
     // Zonder afstand blijft de volgorde van rangschik (lokaal eerst) gelden: de eerste wint.
     if (!huidige || (afstand !== undefined && (huidige.afstandKm === undefined || afstand < huidige.afstandKm))) {

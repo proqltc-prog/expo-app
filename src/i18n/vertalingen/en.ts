@@ -292,13 +292,9 @@ export const en: Vertalingen = {
   'profiel.waarom.tekst': 'That way the app knows exactly what you need. No leftovers rotting in the fridge, no running out halfway through a recipe. Just good food.',
   'profiel.kinderHint': '0 to 12 years',
   'profiel.samen': 'Total {personen}',
-  'profiel.budget': 'Budget',
-  'profiel.budgetLabel': 'Weekly grocery budget (€)',
-  'profiel.budgetPlaceholder': 'e.g. 150 – leave empty for no budget',
-  'profiel.maxKm': 'Maximum distance for shopping (km)',
-  'profiel.maxKmPlaceholder': 'e.g. 10 – leave empty if it does not matter',
   'profiel.adres': 'Address',
   'profiel.adresHint': 'Optional. Only your town and country are shared with the AI.',
+  'profiel.plaatsVoorstel': 'The municipality and country are suggested automatically based on your postcode.',
   'profiel.winkelsTitel': 'What is the postcode for?',
   'profiel.winkelsTekst': 'We use your postcode to suggest supermarkets and local shops nearby. We look at shops close to home first. Nothing is imposed: you choose yourself where you shop.',
   'profiel.postcode': 'Postcode',
@@ -350,7 +346,5 @@ export const en: Vertalingen = {
 
   'fout.volwassenen': 'Choose between 1 and {max} adults.',
   'fout.kinderen': 'At most {max} children.',
-  'fout.budget': 'Enter a valid amount, or leave the budget empty.',
-  'fout.maxKm': 'Enter a whole number from 1 to {max} km, or leave it empty.',
   'fout.postcode': 'This postcode does not look right.',
 };

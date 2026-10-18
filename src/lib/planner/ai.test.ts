@@ -11,7 +11,6 @@ import { AFDELINGEN } from '@/data/ingredienten';
 const gezin: Profiel = {
   ...standaardProfiel(),
   kinderen: 2,
-  weekbudget: 150,
   adres: { postcode: '1000', gemeente: 'Brussel', land: 'België' },
 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({

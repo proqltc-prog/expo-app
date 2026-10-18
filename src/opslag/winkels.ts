@@ -1,5 +1,5 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
-import { bouwPostcodeUrl, leesPunt } from '@/lib/postcodepunt';
+import { bouwPostcodeUrl, leesPlaats, leesPunt } from '@/lib/postcodepunt';
 import { bouwQuery, leesWinkels, Winkel } from '@/lib/winkels';
 import type { Positie } from '@/lib/winkelvoorstel';
 
@@ -28,4 +28,13 @@ export async function zoekPostcodePunt(postcode: string, gemeente: string): Prom
   const antwoord = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!antwoord.ok) throw new Error(`Nominatim ${antwoord.status}`);
   return leesPunt(await antwoord.json());
+}
+
+/** Gemeente en land bij een postcode (Nominatim), voor het invulvoorstel in het profiel (WEEK-69). */
+export async function zoekPlaats(postcode: string): Promise<{ gemeente: string; land: string } | undefined> {
+  const url = bouwPostcodeUrl(postcode, '');
+  if (!url) return undefined;
+  const antwoord = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!antwoord.ok) throw new Error(`Nominatim ${antwoord.status}`);
+  return leesPlaats(await antwoord.json());
 }

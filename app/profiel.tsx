@@ -3,10 +3,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { useFocusEffect } from 'expo-router';
 import {
   aantalPersonen,
-  leesBedrag,
-  leesMaxKm,
   MAX_KINDEREN,
-  MAX_KM,
   MAX_VOLWASSENEN,
   Profiel,
   ProfielFout,
@@ -14,6 +11,7 @@ import {
   valideerProfiel,
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
+import { zoekPlaats } from '@/opslag/winkels';
 import { Sleutel, Taal, TALEN, vertaal } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
@@ -23,9 +21,7 @@ const KLEUR = '#2e7d4f';
 const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   volwassenen: MAX_VOLWASSENEN,
   kinderen: MAX_KINDEREN,
-  budget: undefined,
   postcode: undefined,
-  maxKm: MAX_KM,
 };
 
 function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; max: number; onChange: (n: number) => void }) {
@@ -45,16 +41,12 @@ function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; m
 export default function ProfielScherm() {
   const { t, tn, zetVoorkeur } = useTaal();
   const [profiel, setProfiel] = useState<Profiel>(standaardProfiel());
-  const [budgetTekst, setBudgetTekst] = useState('');
-  const [maxKmTekst, setMaxKmTekst] = useState('');
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
 
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then((p) => {
         setProfiel(p);
-        setBudgetTekst(p.weekbudget === undefined ? '' : String(p.weekbudget).replace('.', ','));
-        setMaxKmTekst(p.maxKm === undefined ? '' : String(p.maxKm));
         setFouten([]);
       });
     }, [])
@@ -63,15 +55,31 @@ export default function ProfielScherm() {
   const wijzig = (deel: Partial<Profiel>) => setProfiel((p) => ({ ...p, ...deel }));
   const wijzigAdres = (deel: Partial<Profiel['adres']>) => setProfiel((p) => ({ ...p, adres: { ...p.adres, ...deel } }));
 
+  // WEEK-69: bij een volledige Belgische postcode stellen we de gemeente en het land voor.
+  // Het antwoord wordt enkel gebruikt als de postcode dan nog steeds dezelfde is.
+  const wijzigPostcode = (postcode: string) => {
+    wijzigAdres({ postcode });
+    const pc = postcode.trim();
+    if (!/^\d{4}$/.test(pc)) return;
+    zoekPlaats(pc)
+      .then((plaats) => {
+        if (!plaats) return;
+        setProfiel((p) =>
+          p.adres.postcode.trim() === pc ? { ...p, adres: { ...p.adres, gemeente: plaats.gemeente, land: plaats.land } } : p,
+        );
+      })
+      .catch(() => {
+        // Geen voorstel bij een netwerkfout: de gebruiker vult de gemeente zelf in.
+      });
+  };
+
   const bewaar = async () => {
-    const volledig: Profiel = { ...profiel, weekbudget: leesBedrag(budgetTekst), maxKm: leesMaxKm(maxKmTekst) };
-    const gevonden = valideerProfiel(volledig);
+    const gevonden = valideerProfiel(profiel);
     setFouten(gevonden);
     if (gevonden.length) return;
-    await bewaarProfiel(volledig);
-    setProfiel(volledig);
-    zetVoorkeur(volledig.taal);
-    Alert.alert(t('profiel.bewaard.titel'), t('profiel.bewaard.tekst', { personen: tn('algemeen.personen', aantalPersonen(volledig)) }));
+    await bewaarProfiel(profiel);
+    zetVoorkeur(profiel.taal);
+    Alert.alert(t('profiel.bewaard.titel'), t('profiel.bewaard.tekst', { personen: tn('algemeen.personen', aantalPersonen(profiel)) }));
   };
 
   return (
@@ -109,26 +117,6 @@ export default function ProfielScherm() {
         <Text style={s.hint}>{t('profiel.waarom.tekst')}</Text>
       </View>
 
-      <Text style={s.kop}>{t('profiel.budget')}</Text>
-      <View style={s.kaart}>
-        <Text style={s.label}>{t('profiel.budgetLabel')}</Text>
-        <TextInput
-          style={s.veld}
-          value={budgetTekst}
-          onChangeText={setBudgetTekst}
-          keyboardType="decimal-pad"
-          placeholder={t('profiel.budgetPlaceholder')}
-        />
-        <Text style={s.label}>{t('profiel.maxKm')}</Text>
-        <TextInput
-          style={s.veld}
-          value={maxKmTekst}
-          onChangeText={setMaxKmTekst}
-          keyboardType="number-pad"
-          placeholder={t('profiel.maxKmPlaceholder')}
-        />
-      </View>
-
       <Text style={s.kop}>{t('profiel.adres')}</Text>
       <View style={s.kaart}>
         <View style={s.info}>
@@ -136,11 +124,12 @@ export default function ProfielScherm() {
           <Text style={s.hint}>{t('profiel.winkelsTekst')}</Text>
         </View>
         <Text style={s.hint}>{t('profiel.adresHint')}</Text>
+        <Text style={s.hint}>{t('profiel.plaatsVoorstel')}</Text>
         <View style={s.rijVelden}>
           <TextInput
             style={[s.veld, { width: 100 }]}
             value={profiel.adres.postcode}
-            onChangeText={(t) => wijzigAdres({ postcode: t })}
+            onChangeText={wijzigPostcode}
             placeholder={t('profiel.postcode')}
             keyboardType="number-pad"
           />

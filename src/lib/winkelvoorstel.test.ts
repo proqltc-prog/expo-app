@@ -56,10 +56,16 @@ describe('winkelvoorstel: kiezen met zo weinig mogelijk stops (WEEK-57)', () => 
     assert.equal(v.stops[0].winkel.naam, 'Dichtbij');
   });
 
-  test('een winkel buiten de maximale afstand telt niet mee', () => {
-    const v = kiesWinkels(['slager'], [w('Ver weg', 'slager', 51.5, 4.1)], hier, 5);
-    assert.deepEqual(v.stops, []);
-    assert.deepEqual(v.nietGedekt, ['slager']);
+  test('zonder km-limiet wordt ook een verre winkel de dichtstbijzijnde keuze (WEEK-69)', () => {
+    const v = kiesWinkels(['slager'], [w('Ver weg', 'slager', 51.5, 4.1)], hier);
+    assert.equal(v.stops.length, 1);
+    assert.equal(v.stops[0].winkel.naam, 'Ver weg');
+    assert.deepEqual(v.nietGedekt, []);
+  });
+
+  test('de dichtstbijzijnde winkel wint, ook als alle winkels ver weg liggen', () => {
+    const v = kiesWinkels(['slager'], [w('Verder', 'slager', 51.5, 4.1), w('Iets dichterbij', 'slager', 51.2, 4.1)], hier);
+    assert.equal(v.stops[0].winkel.naam, 'Iets dichterbij');
   });
 
   test('een soort zonder winkel komt in nietGedekt', () => {

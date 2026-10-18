@@ -9,7 +9,7 @@ export const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
 export function bouwPostcodeUrl(postcode: string, gemeente: string): string | null {
   const pc = postcode.trim();
   if (!BELGISCHE_POSTCODE.test(pc)) return null;
-  const params = new URLSearchParams({ format: 'jsonv2', limit: '1', country: 'Belgium', postalcode: pc });
+  const params = new URLSearchParams({ format: 'jsonv2', limit: '1', country: 'Belgium', postalcode: pc, addressdetails: '1' });
   const gem = gemeente.replace(/[^\p{L}\p{N} '-]/gu, '').replace(/\s+/g, ' ').trim();
   if (gem) params.set('city', gem);
   return `${NOMINATIM_ENDPOINT}?${params.toString()}`;
@@ -23,4 +23,15 @@ export function leesPunt(ruw: unknown): Positie | undefined {
   const lon = Number(eerste?.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return undefined;
   return { lat, lon };
+}
+
+/** Gemeente en land van het eerste resultaat (WEEK-69). Undefined als er geen gemeente te vinden is. */
+export function leesPlaats(ruw: unknown): { gemeente: string; land: string } | undefined {
+  if (!Array.isArray(ruw) || !ruw.length) return undefined;
+  const adres = (ruw[0] as { address?: Record<string, unknown> })?.address;
+  if (!adres || typeof adres !== 'object') return undefined;
+  const kandidaat = ['city', 'town', 'municipality', 'village', 'hamlet'].map((k) => adres[k]).find((v) => typeof v === 'string' && v.trim());
+  if (typeof kandidaat !== 'string') return undefined;
+  const land = typeof adres.country === 'string' && adres.country.trim() ? adres.country.trim() : 'België';
+  return { gemeente: kandidaat.trim(), land };
 }

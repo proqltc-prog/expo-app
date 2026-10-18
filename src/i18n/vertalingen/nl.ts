@@ -293,13 +293,9 @@ export const nl = {
   'profiel.waarom.tekst': 'Zo weet de app precies hoeveel je nodig hebt. Geen overschot dat wegkwijnt in de koelkast, geen tekort halverwege het recept. Gewoon lekker eten.',
   'profiel.kinderHint': '0 tot 12 jaar',
   'profiel.samen': 'Samen {personen}',
-  'profiel.budget': 'Budget',
-  'profiel.budgetLabel': 'Boodschappenbudget per week (€)',
-  'profiel.budgetPlaceholder': 'bv. 150 – leeg laten als je geen budget wil',
-  'profiel.maxKm': 'Hoe ver mag het maximaal zijn voor de boodschappen? (km)',
-  'profiel.maxKmPlaceholder': 'bv. 10 – leeg laten als het niet uitmaakt',
   'profiel.adres': 'Adres',
   'profiel.adresHint': 'Optioneel. Enkel je gemeente en land worden aan de AI doorgegeven.',
+  'profiel.plaatsVoorstel': 'Gemeente en land stellen we automatisch voor op basis van je postcode.',
   'profiel.winkelsTitel': 'Waarvoor is de postcode?',
   'profiel.winkelsTekst': 'We gebruiken je postcode om supermarkten en lokale handelaars in de buurt voor te stellen. We kijken eerst naar winkels dichtbij. Er wordt niets opgelegd: jij kiest zelf waar je boodschappen doet.',
   'profiel.postcode': 'Postcode',
@@ -351,8 +347,6 @@ export const nl = {
 
   'fout.volwassenen': 'Kies tussen 1 en {max} volwassenen.',
   'fout.kinderen': 'Maximaal {max} kinderen.',
-  'fout.budget': 'Vul een geldig bedrag in, of laat het budget leeg.',
-  'fout.maxKm': 'Vul een geheel getal van 1 tot {max} km in, of laat het leeg.',
   'fout.postcode': 'Deze postcode lijkt niet te kloppen.',
 } as const;
 
