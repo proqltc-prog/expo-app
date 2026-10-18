@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.65.0] – 2026-10-18
+
+**Jira:** [WEEK-79](https://proqltc-1791495894841.atlassian.net/browse/WEEK-79) (verbetering) · **Confluence:** [WEEK-79](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7962626)
+
+- Bij de eerste opening kiest de gebruiker eerst zijn taal. Daarna gaat de app naar de gezinsruimte. Bij elke volgende opening komt de gebruiker op het menu.
+- De taal wordt op het toestel opgeslagen, niet in het gedeelde gezinsprofiel (vervolg in WEEK-80).
+
 ## [0.64.0] – 2026-10-18
 
 **Jira:** [WEEK-78](https://proqltc-1791495894841.atlassian.net/browse/WEEK-78) (verbetering) · **Confluence:** [WEEK-78](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7766072)

@@ -1,9 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AppState, Pressable, Text } from 'react-native';
 import { router, Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
+import { laadProfiel } from '@/opslag/profiel';
+import { laadWelkomGezien } from '@/opslag/welkom';
+import { welkomNodig } from '@/lib/welkom';
 
 const KLEUR = '#2e7d4f';
 
@@ -23,15 +26,18 @@ function InstellingenKnop() {
   );
 }
 
-function TabBladen() {
+function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
   const { t } = useTaal();
   return (
     <Tabs
+      initialRouteName={startNaam}
       screenOptions={{
         tabBarActiveTintColor: KLEUR,
         headerTitleStyle: { fontWeight: '700' },
       }}
     >
+      {/* Welkomstscherm (WEEK-79): alleen bij de eerste opening, zonder tabbalk en koptekst. */}
+      <Tabs.Screen name="welkom" options={{ headerShown: false, tabBarStyle: { display: 'none' }, href: null }} />
       <Tabs.Screen name="index" options={{ title: t('tab.menu.titel'), tabBarLabel: t('tab.menu'), headerRight: () => <InstellingenKnop /> }} />
       <Tabs.Screen name="lijst" options={{ title: t('tab.lijst.titel'), tabBarLabel: t('tab.lijst') }} />
       <Tabs.Screen name="frigo" options={{ title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
@@ -59,10 +65,23 @@ export default function Layout() {
     return () => sub.remove();
   }, []);
 
+  // Eerste opening (WEEK-79): eerst het welkomstscherm met de taalkeuze, daarna de gezinsruimte.
+  // Bij elke volgende opening het menu. Pas tonen als het vaststaat, zodat het menu niet even zichtbaar is.
+  const [start, setStart] = useState<'index' | 'welkom' | undefined>(undefined);
+  useEffect(() => {
+    let actief = true;
+    Promise.all([laadWelkomGezien(), laadProfiel()]).then(([gezien, profiel]) => {
+      if (actief) setStart(welkomNodig(gezien, profiel.taal) ? 'welkom' : 'index');
+    });
+    return () => {
+      actief = false;
+    };
+  }, []);
+
   return (
     <TaalProvider>
       <StatusBar style="auto" />
-      <TabBladen />
+      {start ? <TabBladen startNaam={start} /> : null}
     </TaalProvider>
   );
 }

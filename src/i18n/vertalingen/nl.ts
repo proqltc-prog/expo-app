@@ -3,6 +3,8 @@
 // Sleutels die eindigen op _1 / _n zijn enkelvoud / meervoud (zie tn()).
 export const nl = {
   'taal.naam': 'Nederlands',
+  'welkom.titel': 'Welkom bij Gezond Boodschappen',
+  'welkom.tekst': 'Kies je taal. Daarna stel je je gezinsruimte in.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
