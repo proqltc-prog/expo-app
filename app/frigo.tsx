@@ -13,8 +13,14 @@ import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
-const KLEUR = '#2e7d4f';
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#2e7d4f', matig: '#f9a825', slecht: '#c62828' };
+// Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
+const KLEUR = '#0F6B66';
+const PAPIER = '#F8F8F4';
+const ORANJE = '#E8680F';
+const ORANJE_ZACHT = '#FDE8D6';
+const INKT = '#17201A';
+const MUTED = '#5E6B63';
+const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#0F6B66', matig: '#E8680F', slecht: '#B23A05' };
 
 /** Productdetails van een gescand frigo-item (WEEK-49): oordeel, voeding per 100 g en additieven. */
 function ProductDetails({ product: p }: { product: Product }) {
@@ -147,17 +153,6 @@ export default function Frigo() {
 
   const kop = (
     <View>
-      <View style={s.tabs} accessibilityRole="tablist">
-        {(['planner', 'los'] as const).map((k) => {
-          const aan = sheet === k;
-          return (
-            <Pressable key={k} style={[s.tab, aan && s.tabAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
-              <Text style={[s.tabTekst, aan && s.tabTekstAan]}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
       {sheet === 'planner' ? (
         <>
           <Text style={s.uitleg}>{t('frigo.plannerUitleg')}</Text>
@@ -230,6 +225,18 @@ export default function Frigo() {
 
   return (
     <View style={s.scherm}>
+      {/* Tabbladen bovenaan: altijd zichtbaar, ook als de lijst scrolt. */}
+      <View style={s.tabs} accessibilityRole="tablist">
+        {(['planner', 'los'] as const).map((k) => {
+          const aan = sheet === k;
+          return (
+            <Pressable key={k} style={[s.tab, aan && s.tabAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
+              <Text style={s.tabIcoon} accessibilityElementsHidden importantForAccessibility="no">{k === 'planner' ? '🛒' : '📦'}</Text>
+              <Text style={[s.tabTekst, aan && s.tabTekstAan]}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
       {/* De kop (sheets, zoeken, invoer) scrolt mee met de lijst. */}
       <SectionList
         sections={secties}
@@ -324,15 +331,15 @@ export default function Frigo() {
 }
 
 const s = StyleSheet.create({
-  scherm: { flex: 1, paddingHorizontal: 16 },
-  uitleg: { color: '#555', marginTop: 12 },
+  scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
+  uitleg: { color: MUTED, marginTop: 12 },
   invoer: { flexDirection: 'row', gap: 8, marginTop: 12 },
   veld: { flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
   scan: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   scanTekst: { color: KLEUR, fontWeight: '700' },
-  teller: { color: '#666', marginVertical: 10 },
+  teller: { color: MUTED, marginVertical: 10, fontWeight: '600' },
   detailsLink: { color: KLEUR, fontWeight: '600', marginTop: 8 },
   details: { gap: 8, marginTop: 8 },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -341,11 +348,11 @@ const s = StyleSheet.create({
   chipAan: { backgroundColor: KLEUR, borderColor: KLEUR },
   chipTekst: { color: '#444' },
   chipTekstAan: { color: '#fff', fontWeight: '600' },
-  kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
-  item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
+  kop: { fontWeight: '800', fontSize: 15, color: INKT, marginTop: 18, marginBottom: 2 },
+  item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, marginTop: 8, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#E4E8E1' },
   tekstBlok: { flex: 1 },
-  naam: { fontSize: 16 },
-  sinds: { fontSize: 12, color: '#999', marginTop: 2 },
+  naam: { fontSize: 16, fontWeight: '600', color: INKT },
+  sinds: { fontSize: 12, color: MUTED, marginTop: 2 },
   hoeveelheid: { fontSize: 14, color: '#777' },
   weg: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f1f1' },
   wegTekst: { fontSize: 18, color: '#888', fontWeight: '700', lineHeight: 20 },
@@ -357,13 +364,13 @@ const s = StyleSheet.create({
   reden: { color: '#444' },
   productKop: { fontWeight: '700', marginTop: 8 },
   houdbaar: { fontSize: 12, color: '#777', marginTop: 2 },
-  bijna: { color: '#e65100', fontWeight: '600' },
-  verlopen: { color: '#c62828', fontWeight: '700' },
+  bijna: { color: ORANJE, fontWeight: '700' },
+  verlopen: { color: '#B23A05', fontWeight: '700' },
   houdbaarBlok: { gap: 6, marginBottom: 8 },
   houdbaarUitleg: { fontSize: 12, color: '#777' },
-  veldFout: { borderColor: '#c62828' },
-  fout: { color: '#c62828', fontSize: 13 },
-  houdbaarKnop: { height: 44, paddingHorizontal: 12, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  veldFout: { borderColor: '#B23A05' },
+  fout: { color: '#B23A05', fontSize: 13 },
+  houdbaarKnop: { height: 44, paddingHorizontal: 12, borderRadius: 14, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   houdbaarKnopTekst: { color: '#fff', fontWeight: '700' },
   houdbaarWis: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ccc', alignItems: 'center', justifyContent: 'center' },
   houdbaarWisTekst: { color: '#444' },
@@ -371,7 +378,8 @@ const s = StyleSheet.create({
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   tekst: { color: '#444' },
   tabs: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  tab: { flex: 1, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  tab: { flex: 1, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 16, paddingVertical: 8, alignItems: 'center', gap: 2 },
+  tabIcoon: { fontSize: 20 },
   tabAan: { backgroundColor: KLEUR },
   tabTekst: { color: KLEUR, fontWeight: '700' },
   tabTekstAan: { color: '#fff' },
