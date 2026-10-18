@@ -1,0 +1,2693 @@
+[
+  {
+    "slug": "mediterraan-caprese-pasta",
+    "stijl": "mediterraan",
+    "stijlen": [
+      "mediterraan"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "pasta",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 15,
+    "tags": [
+      "pasta",
+      "snel"
+    ],
+    "titel": {
+      "nl": "Pasta caprese met mozzarella en basilicum",
+      "fr": "Pâtes caprese à la mozzarella et au basilic",
+      "de": "Caprese-Nudeln mit Mozzarella und Basilikum",
+      "en": "Caprese pasta with mozzarella and basil",
+      "es": "Pasta caprese con mozzarella y albahaca",
+      "pt": "Massa caprese com mozzarella e manjericão"
+    },
+    "ingredienten": [
+      {
+        "code": "pasta_penne",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "tomaat",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "mozzarella",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "basilicum",
+        "h": 3,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "balsamicoazijn",
+        "h": 5,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de pasta al dente volgens de verpakking. Giet af.",
+          "fr": "Faites cuire les pâtes al dente selon le paquet. Égouttez.",
+          "de": "Nudeln al dente garen laut Packung. Abgießen.",
+          "en": "Cook the pasta al dente as per the packet. Drain.",
+          "es": "Cuece la pasta al dente según el paquete. Escurre.",
+          "pt": "Cozinhe a massa al dente conforme a embalagem. Escorra."
+        },
+        "timer_sec": 600
+      },
+      {
+        "tekst": {
+          "nl": "Snijd tomaat en mozzarella in blokjes. Meng met olie, balsamico en gescheurd basilicum.",
+          "fr": "Coupez tomate et mozzarella en dés. Mélangez avec l'huile, le vinaigre balsamique et le basilic déchiré.",
+          "de": "Tomate und Mozzarella würfeln. Mit Öl, Balsamico und zerrissenem Basilikum mischen.",
+          "en": "Dice tomato and mozzarella. Mix with oil, balsamic and torn basil.",
+          "es": "Corta el tomate y la mozzarella en dados. Mezcla con aceite, balsámico y albahaca rota.",
+          "pt": "Corte o tomate e a mozzarella em cubos. Misture com azeite, balsâmico e manjericão rasgado."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Schep de warme pasta door het mengsel en serveer direct.",
+          "fr": "Mélangez les pâtes chaudes au mélange et servez aussitôt.",
+          "de": "Die warme Pasta unter die Mischung heben und sofort servieren.",
+          "en": "Toss the warm pasta through the mixture and serve right away.",
+          "es": "Mezcla la pasta caliente con la mezcla y sirve enseguida.",
+          "pt": "Misture a massa quente na mistura e sirva logo."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "mediterraan-kip-citroen-olijven",
+    "stijl": "mediterraan",
+    "stijlen": [
+      "mediterraan"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 30,
+    "tags": [
+      "kip"
+    ],
+    "titel": {
+      "nl": "Kip met citroen en olijven",
+      "fr": "Poulet au citron et aux olives",
+      "de": "Hähnchen mit Zitrone und Oliven",
+      "en": "Chicken with lemon and olives",
+      "es": "Pollo con limón y aceitunas",
+      "pt": "Frango com limão e azeitonas"
+    },
+    "ingredienten": [
+      {
+        "code": "kipfilet",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "citroen",
+        "h": 20,
+        "e": "g"
+      },
+      {
+        "code": "olijven",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "knoflook",
+        "h": 1,
+        "e": "teentje"
+      },
+      {
+        "code": "oregano",
+        "h": 1,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "kippenbouillon",
+        "h": 100,
+        "e": "ml"
+      },
+      {
+        "code": "rijst_basmati",
+        "h": 70,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Bak de kip 5 minuten in de olie tot hij bruin is.",
+          "fr": "Faites cuire le riz. Faites dorer le poulet 5 minutes dans l'huile.",
+          "de": "Reis garen. Hähnchen 5 Minuten in Öl anbraten.",
+          "en": "Cook the rice. Brown the chicken 5 minutes in oil.",
+          "es": "Cuece el arroz. Dora el pollo 5 minutos en aceite.",
+          "pt": "Cozinhe o arroz. Doure o frango 5 minutos no azeite."
+        },
+        "timer_sec": 600
+      },
+      {
+        "tekst": {
+          "nl": "Voeg knoflook, olijven, oregano, citroenschijfjes en bouillon toe. Laat 12 minuten zachtjes garen.",
+          "fr": "Ajoutez l'ail, les olives, l'origan, les rondelles de citron et le bouillon. Laissez cuire doucement 12 minutes.",
+          "de": "Knoblauch, Oliven, Oregano, Zitronenscheiben und Brühe dazugeben. 12 Minuten sanft garen.",
+          "en": "Add garlic, olives, oregano, lemon slices and stock. Simmer gently 12 minutes.",
+          "es": "Añade el ajo, las aceitunas, el orégano, las rodajas de limón y el caldo. Cuece suavemente 12 minutos.",
+          "pt": "Junte o alho, as azeitonas, o orégãos, as rodelas de limão e o caldo. Cozinhe suavemente 12 minutos."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Serveer de kip met rijst en de pan-jus.",
+          "fr": "Servez le poulet avec le riz et le jus de cuisson.",
+          "de": "Hähnchen mit Reis und dem Bratensaft servieren.",
+          "en": "Serve the chicken with rice and the pan juices.",
+          "es": "Sirve el pollo con arroz y el jugo de la sartén.",
+          "pt": "Sirva o frango com arroz e o molho da frigideira."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "mediterraan-couscous-groente",
+    "stijl": "mediterraan",
+    "stijlen": [
+      "mediterraan"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "granen",
+    "bereiding": "oven",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 30,
+    "tags": [
+      "couscous",
+      "groente"
+    ],
+    "titel": {
+      "nl": "Geroosterde groente met couscous en feta",
+      "fr": "Légumes rôtis, couscous et feta",
+      "de": "Geröstetes Gemüse mit Couscous und Feta",
+      "en": "Roasted vegetables with couscous and feta",
+      "es": "Verduras asadas con cuscús y feta",
+      "pt": "Legumes assados com cuscuz e feta"
+    },
+    "ingredienten": [
+      {
+        "code": "courgette",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "paprika",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "aubergine",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "couscous",
+        "h": 70,
+        "e": "g"
+      },
+      {
+        "code": "feta",
+        "h": 50,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "oregano",
+        "h": 1,
+        "e": "g"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 100,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Verwarm de oven voor op 220 °C. Snijd groente in stukken, meng met olie en oregano en rooster 20 minuten.",
+          "fr": "Préchauffez le four à 220 °C. Coupez les légumes en morceaux, mélangez avec l'huile et l'origan et rôtissez 20 minutes.",
+          "de": "Den Ofen auf 220 °C vorheizen. Gemüse in Stücke schneiden, mit Öl und Oregano mischen und 20 Minuten rösten.",
+          "en": "Preheat the oven to 220 °C. Cut vegetables into pieces, toss with oil and oregano and roast 20 minutes.",
+          "es": "Precalienta el horno a 220 °C. Corta las verduras, mezcla con aceite y orégano y asa 20 minutos.",
+          "pt": "Pré-aqueça o forno a 220 °C. Corte os legumes, misture com azeite e orégãos e asse 20 minutos."
+        },
+        "timer_sec": 1200
+      },
+      {
+        "tekst": {
+          "nl": "Giet kokend bouillon over de couscous, dek af en laat 5 minuten staan. Vork los.",
+          "fr": "Versez le bouillon bouillant sur le couscous, couvrez et laissez 5 minutes. Égrenez à la fourchette.",
+          "de": "Kochende Brühe über den Couscous gießen, zudecken und 5 Minuten quellen lassen. Mit der Gabel auflockern.",
+          "en": "Pour boiling stock over the couscous, cover and rest 5 minutes. Fluff with a fork.",
+          "es": "Vierte el caldo hirviendo sobre el cuscús, tapa y deja reposar 5 minutos. Esponja con un tenedor.",
+          "pt": "Deite o caldo a ferver sobre o cuscuz, tape e deixe repousar 5 minutos. Solte com um garfo."
+        },
+        "timer_sec": 300
+      },
+      {
+        "tekst": {
+          "nl": "Meng de groente door de couscous, verkruimel feta erover en serveer.",
+          "fr": "Mélangez les légumes au couscous, émiettez la feta dessus et servez.",
+          "de": "Gemüse unter den Couscous mischen, Feta darüberbröckeln und servieren.",
+          "en": "Mix vegetables into the couscous, crumble feta on top and serve.",
+          "es": "Mezcla las verduras con el cuscús, desmenuza el feta encima y sirve.",
+          "pt": "Misture os legumes no cuscuz, desfaça o feta por cima e sirva."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "mediterraan-tonijn-bonen-salade",
+    "stijl": "mediterraan",
+    "stijlen": [
+      "mediterraan"
+    ],
+    "moment": "middag",
+    "soort": "vis",
+    "basis": "brood",
+    "bereiding": "rauw",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 10,
+    "tags": [
+      "salade",
+      "snel"
+    ],
+    "titel": {
+      "nl": "Tonijnsalade met witte bonen en tomaat",
+      "fr": "Salade de thon, haricots blancs et tomate",
+      "de": "Thunfischsalat mit weißen Bohnen und Tomate",
+      "en": "Tuna salad with white beans and tomato",
+      "es": "Ensalada de atún, alubias blancas y tomate",
+      "pt": "Salada de atum, feijão branco e tomate"
+    },
+    "ingredienten": [
+      {
+        "code": "tonijn_blik",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "witte_bonen",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "tomaat",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "rode_ui",
+        "h": 20,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "citroen",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "peterselie",
+        "h": 3,
+        "e": "g"
+      },
+      {
+        "code": "brood",
+        "h": 60,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Snijd tomaat en rode ui in blokjes en spoel de witte bonen af.",
+          "fr": "Coupez tomate et oignon rouge en dés et rincez les haricots blancs.",
+          "de": "Tomate und rote Zwiebel würfeln, weiße Bohnen abspülen.",
+          "en": "Dice tomato and red onion and rinse the white beans.",
+          "es": "Corta el tomate y la cebolla morada en dados y enjuaga las alubias blancas.",
+          "pt": "Corte o tomate e a cebola roxa em cubos e enxágue o feijão branco."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Meng alles met de tonijn, olie, citroensap en peterselie. Breng op smaak met zout en peper.",
+          "fr": "Mélangez tout avec le thon, l'huile, le jus de citron et le persil. Assaisonnez de sel et de poivre.",
+          "de": "Alles mit dem Thunfisch, Öl, Zitronensaft und Petersilie mischen. Mit Salz und Pfeffer würzen.",
+          "en": "Mix everything with the tuna, oil, lemon juice and parsley. Season with salt and pepper.",
+          "es": "Mezcla todo con el atún, el aceite, el zumo de limón y el perejil. Sazona con sal y pimienta.",
+          "pt": "Misture tudo com o atum, o azeite, o sumo de limão e a salsa. Tempere com sal e pimenta."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Serveer met een snee brood.",
+          "fr": "Servez avec une tranche de pain.",
+          "de": "Mit einer Scheibe Brot servieren.",
+          "en": "Serve with a slice of bread.",
+          "es": "Sirve con una rebanada de pan.",
+          "pt": "Sirva com uma fatia de pão."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "mediterraan-hummus-wrap",
+    "stijl": "mediterraan",
+    "stijlen": [
+      "mediterraan"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "wrap",
+    "bereiding": "rauw",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 10,
+    "tags": [
+      "snel",
+      "wrap"
+    ],
+    "titel": {
+      "nl": "Wrap met kikkererwtenpasta en groente",
+      "fr": "Wrap au houmous et aux légumes",
+      "de": "Wrap mit Kichererbsenpaste und Gemüse",
+      "en": "Wrap with hummus and vegetables",
+      "es": "Wrap de hummus y verduras",
+      "pt": "Wrap com húmus e legumes"
+    },
+    "ingredienten": [
+      {
+        "code": "tortilla_wrap",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "kikkererwten",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "tahin",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "citroen",
+        "h": 5,
+        "e": "g"
+      },
+      {
+        "code": "knoflook",
+        "h": 1,
+        "e": "teentje"
+      },
+      {
+        "code": "komkommer",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "tomaat",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 5,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Pureer kikkererwten met tahin, citroensap, knoflook, olie en een scheutje water tot een gladde pasta.",
+          "fr": "Mixez les pois chiches avec le tahin, le jus de citron, l'ail, l'huile et un peu d'eau jusqu'à une pâte lisse.",
+          "de": "Kichererbsen mit Tahin, Zitronensaft, Knoblauch, Öl und etwas Wasser zu einer glatten Paste pürieren.",
+          "en": "Blend chickpeas with tahini, lemon juice, garlic, oil and a splash of water into a smooth paste.",
+          "es": "Tritura los garbanzos con tahini, zumo de limón, ajo, aceite y un chorro de agua hasta una pasta lisa.",
+          "pt": "Triture o grão-de-bico com tahini, sumo de limão, alho, azeite e um fio de água até uma pasta lisa."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Snijd komkommer en tomaat in reepjes.",
+          "fr": "Coupez le concombre et la tomate en bâtonnets.",
+          "de": "Gurke und Tomate in Streifen schneiden.",
+          "en": "Cut cucumber and tomato into strips.",
+          "es": "Corta el pepino y el tomate en tiras.",
+          "pt": "Corte o pepino e o tomate em tiras."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Smeer de wrap in met de pasta, beleg met groente, rol op en serveer.",
+          "fr": "Tartinez le wrap de pâte, garnissez de légumes, roulez et servez.",
+          "de": "Wrap mit der Paste bestreichen, mit Gemüse belegen, aufrollen und servieren.",
+          "en": "Spread the wrap with the paste, add vegetables, roll up and serve.",
+          "es": "Unta el wrap con la pasta, añade las verduras, enrolla y sirve.",
+          "pt": "Espalhe a pasta no wrap, junte os legumes, enrole e sirva."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "mediterraan-gegrilde-zalm-tomaat",
+    "stijl": "mediterraan",
+    "stijlen": [
+      "mediterraan"
+    ],
+    "moment": "avond",
+    "soort": "vis",
+    "basis": "aardappel",
+    "bereiding": "oven",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 25,
+    "tags": [
+      "vis",
+      "oven"
+    ],
+    "titel": {
+      "nl": "Zalm uit de oven met tomaat en olijven",
+      "fr": "Saumon au four, tomate et olives",
+      "de": "Lachs aus dem Ofen mit Tomate und Oliven",
+      "en": "Oven salmon with tomato and olives",
+      "es": "Salmón al horno con tomate y aceitunas",
+      "pt": "Salmão no forno com tomate e azeitonas"
+    },
+    "ingredienten": [
+      {
+        "code": "zalm",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "tomaat",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "olijven",
+        "h": 30,
+        "e": "g"
+      },
+      {
+        "code": "aardappel",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "oregano",
+        "h": 1,
+        "e": "g"
+      },
+      {
+        "code": "citroen",
+        "h": 10,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Verwarm de oven voor op 200 °C. Snijd aardappel in plakjes en leg in een ovenschaal met olie. Bak 15 minuten.",
+          "fr": "Préchauffez le four à 200 °C. Coupez la pomme de terre en rondelles, disposez-la dans un plat huilé et faites cuire 15 minutes.",
+          "de": "Den Ofen auf 200 °C vorheizen. Kartoffel in Scheiben in eine geölte Form legen und 15 Minuten backen.",
+          "en": "Preheat the oven to 200 °C. Slice potato into a greased dish and bake 15 minutes.",
+          "es": "Precalienta el horno a 200 °C. Corta la patata en rodajas, colócala en una fuente aceitada y hornea 15 minutos.",
+          "pt": "Pré-aqueça o forno a 200 °C. Corte a batata em rodelas, disponha num recipiente untado e asse 15 minutos."
+        },
+        "timer_sec": 900
+      },
+      {
+        "tekst": {
+          "nl": "Leg zalm, tomaat en olijven erbij, bestrooi met oregano en citroen en bak 12 minuten.",
+          "fr": "Ajoutez le saumon, la tomate et les olives, saupoudrez d'origan et de citron et faites cuire 12 minutes.",
+          "de": "Lachs, Tomate und Oliven dazugeben, mit Oregano und Zitrone bestreuen und 12 Minuten backen.",
+          "en": "Add salmon, tomato and olives, sprinkle with oregano and lemon and bake 12 minutes.",
+          "es": "Añade el salmón, el tomate y las aceitunas, espolvorea con orégano y limón y hornea 12 minutos.",
+          "pt": "Junte o salmão, o tomate e as azeitonas, polvilhe com orégãos e limão e asse 12 minutos."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Serveer direct uit de oven.",
+          "fr": "Servez directement du four.",
+          "de": "Direkt aus dem Ofen servieren.",
+          "en": "Serve straight from the oven.",
+          "es": "Sirve recién salido del horno.",
+          "pt": "Sirva logo que sair do forno."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "italiaans-pasta-pesto-kip",
+    "stijl": "italiaans",
+    "stijlen": [
+      "italiaans"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "pasta",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 20,
+    "tags": [
+      "pasta"
+    ],
+    "titel": {
+      "nl": "Pasta met pesto en kip",
+      "fr": "Pâtes au pesto et au poulet",
+      "de": "Nudeln mit Pesto und Hähnchen",
+      "en": "Pasta with pesto and chicken",
+      "es": "Pasta con pesto y pollo",
+      "pt": "Massa com pesto e frango"
+    },
+    "ingredienten": [
+      {
+        "code": "pasta_spaghetti",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "kipfilet",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "pesto",
+        "h": 30,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "kaas_parmezaan",
+        "h": 15,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de pasta al dente. Bewaar een scheutje kookwater en giet af.",
+          "fr": "Faites cuire les pâtes al dente. Gardez un peu d'eau de cuisson et égouttez.",
+          "de": "Nudeln al dente garen. Etwas Kochwasser aufheben und abgießen.",
+          "en": "Cook the pasta al dente. Save a splash of cooking water and drain.",
+          "es": "Cuece la pasta al dente. Guarda un poco del agua de cocción y escurre.",
+          "pt": "Cozinhe a massa al dente. Guarde um pouco da água e escorra."
+        },
+        "timer_sec": 600
+      },
+      {
+        "tekst": {
+          "nl": "Snijd de kip in reepjes en bak 6 minuten in de olie tot hij gaar is.",
+          "fr": "Coupez le poulet en lanières et faites cuire 6 minutes dans l'huile.",
+          "de": "Hähnchen in Streifen schneiden und 6 Minuten in Öl braten.",
+          "en": "Slice the chicken and fry 6 minutes in oil until cooked.",
+          "es": "Corta el pollo en tiras y fríe 6 minutos en aceite hasta que esté hecho.",
+          "pt": "Corte o frango em tiras e frite 6 minutos no azeite até cozinhar."
+        },
+        "timer_sec": 360
+      },
+      {
+        "tekst": {
+          "nl": "Meng pasta, kip en pesto met een scheutje kookwater. Bestrooi met parmezaan.",
+          "fr": "Mélangez les pâtes, le poulet et le pesto avec un peu d'eau de cuisson. Parsemez de parmesan.",
+          "de": "Nudeln, Hähnchen und Pesto mit etwas Kochwasser mischen. Mit Parmesan bestreuen.",
+          "en": "Toss pasta, chicken and pesto with a splash of cooking water. Top with parmesan.",
+          "es": "Mezcla la pasta, el pollo y el pesto con un poco de agua de cocción. Espolvorea con parmesano.",
+          "pt": "Misture a massa, o frango e o pesto com um pouco de água. Polvilhe com parmesão."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "italiaans-risotto-champignon",
+    "stijl": "italiaans",
+    "stijlen": [
+      "italiaans"
+    ],
+    "moment": "avond",
+    "soort": "vegetarisch",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 30,
+    "tags": [
+      "risotto"
+    ],
+    "titel": {
+      "nl": "Risotto met champignons en parmezaan",
+      "fr": "Risotto aux champignons et au parmesan",
+      "de": "Risotto mit Champignons und Parmesan",
+      "en": "Mushroom risotto with parmesan",
+      "es": "Risotto de champiñones y parmesano",
+      "pt": "Risoto de cogumelos com parmesão"
+    },
+    "ingredienten": [
+      {
+        "code": "risottorijst",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "champignons",
+        "h": 120,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 500,
+        "e": "ml"
+      },
+      {
+        "code": "kaas_parmezaan",
+        "h": 25,
+        "e": "g"
+      },
+      {
+        "code": "boter",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "witte_wijn",
+        "h": 50,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Houd de bouillon warm. Bak ui en champignons 5 minuten in de boter.",
+          "fr": "Gardez le bouillon chaud. Faites revenir l'oignon et les champignons 5 minutes dans le beurre.",
+          "de": "Brühe warm halten. Zwiebel und Champignons 5 Minuten in Butter braten.",
+          "en": "Keep the stock warm. Fry onion and mushrooms 5 minutes in butter.",
+          "es": "Mantén el caldo caliente. Fríe la cebolla y los champiñones 5 minutos en mantequilla.",
+          "pt": "Mantenha o caldo quente. Frite a cebola e os cogumelos 5 minutos na manteiga."
+        },
+        "timer_sec": 300
+      },
+      {
+        "tekst": {
+          "nl": "Voeg rijst toe en bak 1 minuut. Blus met wijn en roer tot ingekookt. Voeg bouillon per scheut toe en roer 18 minuten.",
+          "fr": "Ajoutez le riz et faites revenir 1 minute. Déglacez au vin et remuez jusqu'à réduction. Ajoutez le bouillon petit à petit et remuez 18 minutes.",
+          "de": "Reis 1 Minute anrösten. Mit Wein ablöschen und einkochen lassen. Brühe nach und nach zugeben und 18 Minuten rühren.",
+          "en": "Toast rice 1 minute. Deglaze with wine and stir until reduced. Add stock a ladle at a time and stir 18 minutes.",
+          "es": "Tuesta el arroz 1 minuto. Desglasa con vino y remueve hasta reducir. Añade el caldo poco a poco y remueve 18 minutos.",
+          "pt": "Torre o arroz 1 minuto. Desglace com vinho e mexa até reduzir. Junte o caldo aos poucos e mexa 18 minutos."
+        },
+        "timer_sec": 1080
+      },
+      {
+        "tekst": {
+          "nl": "Roer de parmezaan en boter erdoor. Laat 1 minuut rusten en serveer.",
+          "fr": "Incorporez le parmesan et le beurre. Laissez reposer 1 minute et servez.",
+          "de": "Parmesan und Butter unterrühren. 1 Minute ruhen lassen und servieren.",
+          "en": "Stir in parmesan and butter. Rest 1 minute and serve.",
+          "es": "Incorpora el parmesano y la mantequilla. Deja reposar 1 minuto y sirve.",
+          "pt": "Misture o parmesão e a manteiga. Deixe repousar 1 minuto e sirva."
+        },
+        "timer_sec": 60
+      }
+    ]
+  },
+  {
+    "slug": "italiaans-spaghetti-bolognese",
+    "stijl": "italiaans",
+    "stijlen": [
+      "italiaans"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "pasta",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 40,
+    "tags": [
+      "pasta",
+      "saus"
+    ],
+    "titel": {
+      "nl": "Spaghetti bolognese met gehakt",
+      "fr": "Spaghetti bolognaise",
+      "de": "Spaghetti Bolognese mit Hackfleisch",
+      "en": "Spaghetti bolognese with minced beef",
+      "es": "Espaguetis a la boloñesa",
+      "pt": "Esparguete à bolonhesa"
+    },
+    "ingredienten": [
+      {
+        "code": "gehakt",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "pasta_spaghetti",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "passata",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "wortel",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "knoflook",
+        "h": 1,
+        "e": "teentje"
+      },
+      {
+        "code": "olijfolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "kaas_parmezaan",
+        "h": 15,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Fruit ui, wortel en knoflook 4 minuten in de olie. Voeg gehakt toe en bak 5 minuten tot het bruin is.",
+          "fr": "Faites revenir l'oignon, la carotte et l'ail 4 minutes dans l'huile. Ajoutez la viande hachée et faites dorer 5 minutes.",
+          "de": "Zwiebel, Karotte und Knoblauch 4 Minuten in Öl dünsten. Hack zugeben und 5 Minuten braun braten.",
+          "en": "Soften onion, carrot and garlic 4 minutes in oil. Add mince and brown 5 minutes.",
+          "es": "Rehoga la cebolla, la zanahoria y el ajo 4 minutos en aceite. Añade la carne picada y dora 5 minutos.",
+          "pt": "Refogue a cebola, a cenoura e o alho 4 minutos no azeite. Junte a carne picada e doure 5 minutos."
+        },
+        "timer_sec": 540
+      },
+      {
+        "tekst": {
+          "nl": "Voeg passata toe en laat 20 minuten zachtjes pruttelen.",
+          "fr": "Ajoutez la passata et laissez mijoter doucement 20 minutes.",
+          "de": "Passata dazugeben und 20 Minuten sanft köcheln lassen.",
+          "en": "Add passata and simmer gently 20 minutes.",
+          "es": "Añade la passata y cuece suavemente 20 minutos.",
+          "pt": "Junte a passata e deixe ferver suavemente 20 minutos."
+        },
+        "timer_sec": 1200
+      },
+      {
+        "tekst": {
+          "nl": "Kook de spaghetti al dente, meng met de saus en bestrooi met parmezaan.",
+          "fr": "Faites cuire les spaghettis al dente, mélangez à la sauce et parsemez de parmesan.",
+          "de": "Spaghetti al dente garen, mit der Sauce mischen und mit Parmesan bestreuen.",
+          "en": "Cook spaghetti al dente, toss with the sauce and top with parmesan.",
+          "es": "Cuece los espaguetis al dente, mézclalos con la salsa y espolvorea con parmesano.",
+          "pt": "Cozinhe o esparguete al dente, misture com o molho e polvilhe com parmesão."
+        },
+        "timer_sec": 600
+      }
+    ]
+  },
+  {
+    "slug": "italiaans-caprese-salade",
+    "stijl": "italiaans",
+    "stijlen": [
+      "italiaans"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "brood",
+    "bereiding": "rauw",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 10,
+    "tags": [
+      "salade",
+      "snel"
+    ],
+    "titel": {
+      "nl": "Caprese-salade met mozzarella en tomaat",
+      "fr": "Salade caprese à la mozzarella et à la tomate",
+      "de": "Caprese-Salat mit Mozzarella und Tomate",
+      "en": "Caprese salad with mozzarella and tomato",
+      "es": "Ensalada caprese con mozzarella y tomate",
+      "pt": "Salada caprese com mozzarella e tomate"
+    },
+    "ingredienten": [
+      {
+        "code": "tomaat",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "mozzarella",
+        "h": 125,
+        "e": "g"
+      },
+      {
+        "code": "basilicum",
+        "h": 3,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "balsamicoazijn",
+        "h": 5,
+        "e": "ml"
+      },
+      {
+        "code": "brood",
+        "h": 40,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Snijd tomaat en mozzarella in plakken. Leg om en om op een bord.",
+          "fr": "Coupez tomate et mozzarella en tranches. Disposez-les en alternance dans une assiette.",
+          "de": "Tomate und Mozzarella in Scheiben schneiden und abwechselnd auf einen Teller legen.",
+          "en": "Slice tomato and mozzarella. Arrange alternately on a plate.",
+          "es": "Corta el tomate y la mozzarella en rodajas y colócalos alternando en un plato.",
+          "pt": "Corte o tomate e a mozzarella em fatias e disponha alternadamente num prato."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Besprenkel met olie en balsamico, leg basilicum erop en breng op smaak met zout.",
+          "fr": "Arrosez d'huile et de vinaigre balsamique, ajoutez le basilic et salez.",
+          "de": "Mit Öl und Balsamico beträufeln, Basilikum darauf geben und salzen.",
+          "en": "Drizzle with oil and balsamic, add basil and season with salt.",
+          "es": "Rocía con aceite y balsámico, añade la albahaca y sala.",
+          "pt": "Regue com azeite e balsâmico, junte o manjericão e tempere com sal."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Serveer met een snee brood.",
+          "fr": "Servez avec une tranche de pain.",
+          "de": "Mit einer Scheibe Brot servieren.",
+          "en": "Serve with a slice of bread.",
+          "es": "Sirve con una rebanada de pan.",
+          "pt": "Sirva com uma fatia de pão."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "thais-pad-thai-kip",
+    "stijl": "thais",
+    "stijlen": [
+      "thais"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "noedels",
+    "bereiding": "wok",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 25,
+    "tags": [
+      "noedels",
+      "wok"
+    ],
+    "titel": {
+      "nl": "Pad thai met kip en pinda",
+      "fr": "Pad thaï au poulet et aux cacahuètes",
+      "de": "Pad Thai mit Hähnchen und Erdnüssen",
+      "en": "Pad thai with chicken and peanuts",
+      "es": "Pad thai de pollo y cacahuete",
+      "pt": "Pad thai com frango e amendoim"
+    },
+    "ingredienten": [
+      {
+        "code": "noedels_rijst",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "kipfilet",
+        "h": 120,
+        "e": "g"
+      },
+      {
+        "code": "eieren",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "vissaus",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "suiker",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "limoen",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "pinda",
+        "h": 20,
+        "e": "g"
+      },
+      {
+        "code": "tauge",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "zonnebloemolie",
+        "h": 10,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Week de noedels 10 minuten in warm water en laat uitlekken. Meng vissaus, suiker en limoensap tot saus.",
+          "fr": "Faites tremper les nouilles 10 minutes dans l'eau tiède et égouttez. Mélangez la sauce de poisson, le sucre et le jus de citron vert.",
+          "de": "Nudeln 10 Minuten in warmem Wasser einweichen und abtropfen lassen. Fischsoße, Zucker und Limettensaft zu einer Soße mischen.",
+          "en": "Soak noodles 10 minutes in warm water and drain. Mix fish sauce, sugar and lime juice into a sauce.",
+          "es": "Remoja los fideos 10 minutos en agua tibia y escurre. Mezcla la salsa de pescado, el azúcar y el zumo de lima.",
+          "pt": "Demolhe os noodles 10 minutos em água morna e escorra. Misture o molho de peixe, o açúcar e o sumo de lima."
+        },
+        "timer_sec": 600
+      },
+      {
+        "tekst": {
+          "nl": "Bak kip 4 minuten in de olie. Schuif opzij, breek het ei erin en roer tot het gestold is.",
+          "fr": "Faites cuire le poulet 4 minutes dans l'huile. Poussez sur le côté, cassez l'œuf dedans et remuez jusqu'à ce qu'il soit pris.",
+          "de": "Hähnchen 4 Minuten in Öl braten. Zur Seite schieben, Ei hineinschlagen und stocken lassen.",
+          "en": "Cook chicken 4 minutes in oil. Push aside, crack in the egg and scramble until set.",
+          "es": "Cocina el pollo 4 minutos en aceite. Aparta, casca el huevo y revuelve hasta que cuaje.",
+          "pt": "Cozinhe o frango 4 minutos no óleo. Afaste, parta o ovo e mexa até firmar."
+        },
+        "timer_sec": 240
+      },
+      {
+        "tekst": {
+          "nl": "Voeg noedels en saus toe, roerbak 2 minuten. Serveer met taugé en pinda.",
+          "fr": "Ajoutez les nouilles et la sauce, sautez 2 minutes. Servez avec les pousses de soja et les cacahuètes.",
+          "de": "Nudeln und Soße dazugeben, 2 Minuten braten. Mit Sojasprossen und Erdnüssen servieren.",
+          "en": "Add noodles and sauce, stir-fry 2 minutes. Serve topped with bean sprouts and peanuts.",
+          "es": "Añade los fideos y la salsa, saltea 2 minutos. Sirve con brotes de soja y cacahuetes.",
+          "pt": "Junte os noodles e o molho, salteie 2 minutos. Sirva com rebentos de soja e amendoim."
+        },
+        "timer_sec": 120
+      }
+    ]
+  },
+  {
+    "slug": "thais-tom-kha-kip",
+    "stijl": "thais",
+    "stijlen": [
+      "thais"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 25,
+    "tags": [
+      "soep",
+      "kokos"
+    ],
+    "titel": {
+      "nl": "Thaise kokossoep met kip",
+      "fr": "Soupe thaïe au lait de coco et au poulet",
+      "de": "Thailändische Kokossuppe mit Hähnchen",
+      "en": "Thai coconut soup with chicken",
+      "es": "Sopa tailandesa de coco y pollo",
+      "pt": "Sopa tailandesa de coco com frango"
+    },
+    "ingredienten": [
+      {
+        "code": "kipfilet",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "kokosmelk",
+        "h": 300,
+        "e": "ml"
+      },
+      {
+        "code": "kippenbouillon",
+        "h": 200,
+        "e": "ml"
+      },
+      {
+        "code": "gember",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "citroengras",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "champignons",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "vissaus",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "limoen",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "koriander",
+        "h": 3,
+        "e": "g"
+      },
+      {
+        "code": "rijst_basmati",
+        "h": 70,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Breng bouillon, gember en citroengras aan de kook en laat 5 minuten trekken.",
+          "fr": "Faites cuire le riz. Portez le bouillon, le gingembre et la citronnelle à ébullition et laissez infuser 5 minutes.",
+          "de": "Reis garen. Brühe, Ingwer und Zitronengras aufkochen und 5 Minuten ziehen lassen.",
+          "en": "Cook the rice. Bring stock, ginger and lemongrass to a boil and infuse 5 minutes.",
+          "es": "Cuece el arroz. Lleva el caldo, el jengibre y la hierba limón a ebullición y deja infusionar 5 minutos.",
+          "pt": "Cozinhe o arroz. Leve o caldo, o gengibre e a erva-cidreira a ferver e deixe infundir 5 minutos."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Voeg kip, champignons en kokosmelk toe. Laat 10 minuten zachtjes koken tot de kip gaar is.",
+          "fr": "Ajoutez le poulet, les champignons et le lait de coco. Laissez cuire doucement 10 minutes.",
+          "de": "Hähnchen, Champignons und Kokosmilch dazugeben und 10 Minuten sanft kochen, bis das Hähnchen gar ist.",
+          "en": "Add chicken, mushrooms and coconut milk. Simmer gently 10 minutes until cooked.",
+          "es": "Añade el pollo, los champiñones y la leche de coco. Cuece suavemente 10 minutos hasta que el pollo esté hecho.",
+          "pt": "Junte o frango, os cogumelos e o leite de coco. Cozinhe suavemente 10 minutos até cozinhar."
+        },
+        "timer_sec": 600
+      },
+      {
+        "tekst": {
+          "nl": "Breng op smaak met vissaus en limoensap, garneer met koriander en serveer met rijst.",
+          "fr": "Assaisonnez de sauce de poisson et de jus de citron vert, garnissez de coriandre et servez avec le riz.",
+          "de": "Mit Fischsoße und Limettensaft abschmecken, mit Koriander garnieren und mit Reis servieren.",
+          "en": "Season with fish sauce and lime juice, garnish with coriander and serve with rice.",
+          "es": "Sazona con salsa de pescado y zumo de lima, adorna con cilantro y sirve con arroz.",
+          "pt": "Tempere com molho de peixe e sumo de lima, decore com coentro e sirva com arroz."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "thais-rode-curry-tofu",
+    "stijl": "thais",
+    "stijlen": [
+      "thais"
+    ],
+    "moment": "avond",
+    "soort": "vegetarisch",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 20,
+    "tags": [
+      "curry",
+      "vegetarisch"
+    ],
+    "titel": {
+      "nl": "Rode curry met tofu en paprika",
+      "fr": "Curry rouge au tofu et au poivron",
+      "de": "Rotes Curry mit Tofu und Paprika",
+      "en": "Red curry with tofu and pepper",
+      "es": "Curry rojo de tofu y pimiento",
+      "pt": "Caril vermelho com tofu e pimento"
+    },
+    "ingredienten": [
+      {
+        "code": "tofu",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "kokosmelk",
+        "h": 200,
+        "e": "ml"
+      },
+      {
+        "code": "currypasta",
+        "h": 15,
+        "e": "g"
+      },
+      {
+        "code": "paprika",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "bamboescheuten",
+        "h": 50,
+        "e": "g"
+      },
+      {
+        "code": "vissaus",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "suiker",
+        "h": 5,
+        "e": "g"
+      },
+      {
+        "code": "rijst_basmati",
+        "h": 70,
+        "e": "g"
+      },
+      {
+        "code": "basilicum",
+        "h": 3,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Snijd tofu in blokjes en bak 4 minuten tot ze bruin zijn.",
+          "fr": "Faites cuire le riz. Coupez le tofu en dés et faites dorer 4 minutes.",
+          "de": "Reis garen. Tofu würfeln und 4 Minuten braten, bis er Farbe nimmt.",
+          "en": "Cook the rice. Dice tofu and fry 4 minutes until browned.",
+          "es": "Cuece el arroz. Corta el tofu en dados y fríe 4 minutos hasta dorar.",
+          "pt": "Cozinhe o arroz. Corte o tofu em cubos e frite 4 minutos até dourar."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Bak currypasta 1 minuut in een scheutje kokosmelk. Voeg rest kokosmelk, paprika en bamboe toe en laat 8 minuten sudderen.",
+          "fr": "Faites revenir la pâte de curry 1 minute dans un peu de lait de coco. Ajoutez le reste du lait de coco, le poivron et les pousses de bambou et laissez mijoter 8 minutes.",
+          "de": "Currypaste 1 Minute in etwas Kokosmilch anrösten. Restliche Kokosmilch, Paprika und Bambus dazugeben und 8 Minuten köcheln lassen.",
+          "en": "Fry curry paste 1 minute in a little coconut milk. Add remaining coconut milk, pepper and bamboo and simmer 8 minutes.",
+          "es": "Fríe la pasta de curry 1 minuto en un poco de leche de coco. Añade el resto de la leche de coco, el pimiento y el bambú y cuece 8 minutos.",
+          "pt": "Frite a pasta de caril 1 minuto com um pouco de leite de coco. Junte o resto do leite de coco, o pimento e o bambu e cozinhe 8 minutos."
+        },
+        "timer_sec": 480
+      },
+      {
+        "tekst": {
+          "nl": "Voeg tofu, vissaus en suiker toe. Garneer met basilicum en serveer met rijst.",
+          "fr": "Ajoutez le tofu, la sauce de poisson et le sucre. Garnissez de basilic et servez avec le riz.",
+          "de": "Tofu, Fischsoße und Zucker dazugeben. Mit Basilikum garnieren und mit Reis servieren.",
+          "en": "Add tofu, fish sauce and sugar. Garnish with basil and serve with rice.",
+          "es": "Añade el tofu, la salsa de pescado y el azúcar. Adorna con albahaca y sirve con arroz.",
+          "pt": "Junte o tofu, o molho de peixe e o açúcar. Decore com manjericão e sirva com arroz."
+        },
+        "timer_sec": 120
+      }
+    ]
+  },
+  {
+    "slug": "thais-garnalen-citroengras",
+    "stijl": "thais",
+    "stijlen": [
+      "thais"
+    ],
+    "moment": "middag",
+    "soort": "vis",
+    "basis": "noedels",
+    "bereiding": "wok",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 20,
+    "tags": [
+      "garnalen",
+      "wok"
+    ],
+    "titel": {
+      "nl": "Garnalen met citroengras en noedels",
+      "fr": "Crevettes à la citronnelle et aux nouilles",
+      "de": "Garnelen mit Zitronengras und Nudeln",
+      "en": "Prawns with lemongrass and noodles",
+      "es": "Gambas con hierba limón y fideos",
+      "pt": "Camarões com erva-cidreira e noodles"
+    },
+    "ingredienten": [
+      {
+        "code": "garnalen",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "noedels_rijst",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "citroengras",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "knoflook",
+        "h": 1,
+        "e": "teentje"
+      },
+      {
+        "code": "rode_chili",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "vissaus",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "limoen",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "koriander",
+        "h": 3,
+        "e": "g"
+      },
+      {
+        "code": "zonnebloemolie",
+        "h": 10,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Week de noedels 5 minuten in heet water en laat uitlekken. Snijd citroengras en chili fijn.",
+          "fr": "Faites tremper les nouilles 5 minutes dans l'eau chaude et égouttez. Hachez finement la citronnelle et le piment.",
+          "de": "Nudeln 5 Minuten in heißem Wasser einweichen und abtropfen lassen. Zitronengras und Chili fein hacken.",
+          "en": "Soak noodles 5 minutes in hot water and drain. Finely chop lemongrass and chili.",
+          "es": "Remoja los fideos 5 minutos en agua caliente y escurre. Pica finamente la hierba limón y el chile.",
+          "pt": "Demolhe os noodles 5 minutos em água quente e escorra. Pique finamente a erva-cidreira e a pimenta."
+        },
+        "timer_sec": 300
+      },
+      {
+        "tekst": {
+          "nl": "Bak citroengras, chili en knoflook 1 minuut in de olie. Voeg garnalen toe en bak 3 minuten.",
+          "fr": "Faites revenir la citronnelle, le piment et l'ail 1 minute dans l'huile. Ajoutez les crevettes et faites cuire 3 minutes.",
+          "de": "Zitronengras, Chili und Knoblauch 1 Minute in Öl anbraten. Garnelen zugeben und 3 Minuten braten.",
+          "en": "Fry lemongrass, chili and garlic 1 minute in oil. Add prawns and cook 3 minutes.",
+          "es": "Fríe la hierba limón, el chile y el ajo 1 minuto en aceite. Añade las gambas y cocina 3 minutos.",
+          "pt": "Frite a erva-cidreira, a pimenta e o alho 1 minuto no óleo. Junte os camarões e cozinhe 3 minutos."
+        },
+        "timer_sec": 240
+      },
+      {
+        "tekst": {
+          "nl": "Voeg noedels en vissaus toe, roerbak 2 minuten. Werk af met limoensap en koriander.",
+          "fr": "Ajoutez les nouilles et la sauce de poisson, sautez 2 minutes. Terminez avec le jus de citron vert et la coriandre.",
+          "de": "Nudeln und Fischsoße dazugeben, 2 Minuten braten. Mit Limettensaft und Koriander abschließen.",
+          "en": "Add noodles and fish sauce, stir-fry 2 minutes. Finish with lime juice and coriander.",
+          "es": "Añade los fideos y la salsa de pescado, saltea 2 minutos. Termina con zumo de lima y cilantro.",
+          "pt": "Junte os noodles e o molho de peixe, salteie 2 minutos. Finalize com sumo de lima e coentro."
+        },
+        "timer_sec": 120
+      }
+    ]
+  },
+  {
+    "slug": "japans-teriyaki-kip-rijst",
+    "stijl": "japans",
+    "stijlen": [
+      "japans"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 25,
+    "tags": [
+      "teriyaki"
+    ],
+    "titel": {
+      "nl": "Teriyaki-kip met rijst en sesam",
+      "fr": "Poulet teriyaki, riz et sésame",
+      "de": "Teriyaki-Hähnchen mit Reis und Sesam",
+      "en": "Teriyaki chicken with rice and sesame",
+      "es": "Pollo teriyaki con arroz y sésamo",
+      "pt": "Frango teriyaki com arroz e sésamo"
+    },
+    "ingredienten": [
+      {
+        "code": "kipfilet",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "teriyakisaus",
+        "h": 30,
+        "e": "ml"
+      },
+      {
+        "code": "rijst_sushi",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "sesamzaad",
+        "h": 3,
+        "e": "g"
+      },
+      {
+        "code": "zonnebloemolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "komkommer",
+        "h": 40,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar en laat even afkoelen.",
+          "fr": "Faites cuire le riz et laissez-le tiédir.",
+          "de": "Reis garen und etwas abkühlen lassen.",
+          "en": "Cook the rice and let it cool slightly.",
+          "es": "Cuece el arroz y deja enfriar un poco.",
+          "pt": "Cozinhe o arroz e deixe arrefecer um pouco."
+        },
+        "timer_sec": 900
+      },
+      {
+        "tekst": {
+          "nl": "Bak de kip 6 minuten in de olie tot hij goudbruin is. Voeg teriyaki toe en laat 2 minuten indikken.",
+          "fr": "Faites dorer le poulet 6 minutes dans l'huile. Ajoutez la teriyaki et laissez réduire 2 minutes.",
+          "de": "Hähnchen 6 Minuten in Öl goldbraun braten. Teriyaki dazugeben und 2 Minuten einkochen lassen.",
+          "en": "Brown chicken 6 minutes in oil. Add teriyaki and reduce 2 minutes.",
+          "es": "Dora el pollo 6 minutos en aceite. Añade la teriyaki y reduce 2 minutos.",
+          "pt": "Doure o frango 6 minutos no óleo. Junte a teriyaki e reduza 2 minutos."
+        },
+        "timer_sec": 480
+      },
+      {
+        "tekst": {
+          "nl": "Serveer de kip op de rijst, met komkommer en sesamzaad.",
+          "fr": "Servez le poulet sur le riz, avec du concombre et des graines de sésame.",
+          "de": "Huhn auf dem Reis anrichten, mit Gurke und Sesam servieren.",
+          "en": "Serve the chicken on the rice with cucumber and sesame seeds.",
+          "es": "Sirve el pollo sobre el arroz con pepino y sésamo.",
+          "pt": "Sirva o frango sobre o arroz com pepino e sésamo."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "japans-miso-soep-tofu",
+    "stijl": "japans",
+    "stijlen": [
+      "japans"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": null,
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 15,
+    "tags": [
+      "soep"
+    ],
+    "titel": {
+      "nl": "Misosoep met tofu en lente-ui",
+      "fr": "Soupe miso au tofu et à l'oignon nouveau",
+      "de": "Miso-Suppe mit Tofu und Frühlingszwiebel",
+      "en": "Miso soup with tofu and spring onion",
+      "es": "Sopa de miso con tofu y cebolleta",
+      "pt": "Sopa de missô com tofu e cebolinha"
+    },
+    "ingredienten": [
+      {
+        "code": "miso",
+        "h": 20,
+        "e": "g"
+      },
+      {
+        "code": "tofu",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 500,
+        "e": "ml"
+      },
+      {
+        "code": "lente_ui",
+        "h": 20,
+        "e": "g"
+      },
+      {
+        "code": "wakame",
+        "h": 2,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Breng bouillon aan de kook. Voeg tofu en wakame toe en laat 3 minuten zachtjes trekken.",
+          "fr": "Portez le bouillon à ébullition. Ajoutez le tofu et le wakame et laissez infuser 3 minutes à feu doux.",
+          "de": "Brühe aufkochen. Tofu und Wakame zugeben und 3 Minuten sanft ziehen lassen.",
+          "en": "Bring stock to a boil. Add tofu and wakame and gently infuse 3 minutes.",
+          "es": "Lleva el caldo a ebullición. Añade el tofu y el wakame y deja infusionar 3 minutos a fuego lento.",
+          "pt": "Leve o caldo a ferver. Junte o tofu e o wakame e deixe infundir 3 minutos em lume brando."
+        },
+        "timer_sec": 180
+      },
+      {
+        "tekst": {
+          "nl": "Zet het vuur uit. Los de miso op in een kopje warm bouillon en roer door de soep.",
+          "fr": "Éteignez le feu. Délayez le miso dans une tasse de bouillon chaud et incorporez-le à la soupe.",
+          "de": "Herd ausschalten. Miso in etwas warmer Brühe auflösen und unter die Suppe rühren.",
+          "en": "Turn off the heat. Dissolve miso in a cup of warm stock and stir into the soup.",
+          "es": "Apaga el fuego. Disuelve el miso en una taza de caldo caliente y mézclalo con la sopa.",
+          "pt": "Desligue o lume. Dissolva o missô numa chávena de caldo quente e misture na sopa."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Garneer met lente-ui en serveer direct.",
+          "fr": "Garnissez d'oignon nouveau et servez aussitôt.",
+          "de": "Mit Frühlingszwiebel garnieren und sofort servieren.",
+          "en": "Garnish with spring onion and serve right away.",
+          "es": "Adorna con cebolleta y sirve enseguida.",
+          "pt": "Decore com cebolinha e sirva logo."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "japans-gyudon-rund",
+    "stijl": "japans",
+    "stijlen": [
+      "japans"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 20,
+    "tags": [
+      "rijstkom"
+    ],
+    "titel": {
+      "nl": "Gyudon: rundvlees met ui op rijst",
+      "fr": "Gyudon : bœuf et oignon sur riz",
+      "de": "Gyudon: Rindfleisch mit Zwiebel auf Reis",
+      "en": "Gyudon: beef and onion on rice",
+      "es": "Gyudon: ternera y cebolla sobre arroz",
+      "pt": "Gyudon: vaca e cebola sobre arroz"
+    },
+    "ingredienten": [
+      {
+        "code": "rundvlees",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "rijst_sushi",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "sojasaus",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "mirin",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "suiker",
+        "h": 5,
+        "e": "g"
+      },
+      {
+        "code": "gember",
+        "h": 5,
+        "e": "g"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 100,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Snijd ui en vlees in dunne reepjes.",
+          "fr": "Faites cuire le riz. Coupez l'oignon et la viande en fines lanières.",
+          "de": "Reis garen. Zwiebel und Fleisch in dünne Streifen schneiden.",
+          "en": "Cook the rice. Slice onion and beef thinly.",
+          "es": "Cuece el arroz. Corta la cebolla y la carne en tiras finas.",
+          "pt": "Cozinhe o arroz. Corte a cebola e a carne em tiras finas."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Kook ui, gember, sojasaus, mirin, suiker en bouillon 3 minuten. Voeg vlees toe en laat 4 minuten garen.",
+          "fr": "Faites cuire l'oignon, le gingembre, la sauce soja, le mirin, le sucre et le bouillon 3 minutes. Ajoutez la viande et laissez cuire 4 minutes.",
+          "de": "Zwiebel, Ingwer, Sojasoße, Mirin, Zucker und Brühe 3 Minuten kochen. Fleisch zugeben und 4 Minuten garen.",
+          "en": "Simmer onion, ginger, soy sauce, mirin, sugar and stock 3 minutes. Add beef and cook 4 minutes.",
+          "es": "Cuece la cebolla, el jengibre, la soja, el mirin, el azúcar y el caldo 3 minutos. Añade la carne y cocina 4 minutos.",
+          "pt": "Cozinhe a cebola, o gengibre, o molho de soja, o mirin, o açúcar e o caldo 3 minutos. Junte a carne e cozinhe 4 minutos."
+        },
+        "timer_sec": 420
+      },
+      {
+        "tekst": {
+          "nl": "Schep het vlees met de saus over de rijst en serveer.",
+          "fr": "Disposez la viande et la sauce sur le riz et servez.",
+          "de": "Fleisch mit der Sauce auf dem Reis anrichten und servieren.",
+          "en": "Spoon the beef and sauce over the rice and serve.",
+          "es": "Sirve la carne y la salsa sobre el arroz.",
+          "pt": "Disponha a carne e o molho sobre o arroz e sirva."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "japans-tempura-groente",
+    "stijl": "japans",
+    "stijlen": [
+      "japans"
+    ],
+    "moment": "avond",
+    "soort": "vegetarisch",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "uitdagend",
+    "kooktijd_min": 30,
+    "tags": [
+      "frituur"
+    ],
+    "titel": {
+      "nl": "Groentetempura met dipsaus",
+      "fr": "Tempura de légumes et sauce dashi",
+      "de": "Gemüse-Tempura mit Dipsoße",
+      "en": "Vegetable tempura with dipping sauce",
+      "es": "Tempura de verduras con salsa",
+      "pt": "Tempura de legumes com molho"
+    },
+    "ingredienten": [
+      {
+        "code": "zonnebloemolie",
+        "h": 200,
+        "e": "ml"
+      },
+      {
+        "code": "bloem",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "ijswater",
+        "h": 80,
+        "e": "ml"
+      },
+      {
+        "code": "eieren",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "aubergine",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "zoete_aardappel",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "sojasaus",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "mirin",
+        "h": 15,
+        "e": "ml"
+      },
+      {
+        "code": "rijst_sushi",
+        "h": 80,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Verwarm de olie tot 180 °C in een diepe pan.",
+          "fr": "Faites cuire le riz. Chauffez l'huile à 180 °C dans une casserole profonde.",
+          "de": "Reis garen. Öl in einem tiefen Topf auf 180 °C erhitzen.",
+          "en": "Cook the rice. Heat oil to 180 °C in a deep pan.",
+          "es": "Cuece el arroz. Calienta el aceite a 180 °C en una olla honda.",
+          "pt": "Cozinhe o arroz. Aqueça o óleo a 180 °C numa panela funda."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Klop ei en ijswater los, roer er bloem door tot een dun beslag. Haal groente erdoor.",
+          "fr": "Battez l'œuf avec l'eau glacée, incorporez la farine pour une pâte fine. Trempez les légumes.",
+          "de": "Ei mit Eiswasser verquirlen, Mehl unterrühren bis ein dünner Teig entsteht. Gemüse hindurchziehen.",
+          "en": "Whisk egg with ice water, stir in flour to a thin batter. Dip the vegetables.",
+          "es": "Bate el huevo con agua helada, incorpora la harina hasta una masa fina. Pasa las verduras.",
+          "pt": "Bata o ovo com água gelada, junte a farinha até uma massa fina. Passe os legumes."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Frituur groente 2 minuten tot ze krokant zijn. Mix sojasaus en mirin als dipsaus en serveer met rijst.",
+          "fr": "Faites frire les légumes 2 minutes jusqu'à ce qu'ils soient croustillants. Mélangez la sauce soja et le mirin en sauce et servez avec le riz.",
+          "de": "Gemüse 2 Minuten frittieren, bis es knusprig ist. Sojasoße und Mirin als Dip mischen und mit Reis servieren.",
+          "en": "Fry vegetables 2 minutes until crisp. Mix soy sauce and mirin as dip and serve with rice.",
+          "es": "Fríe las verduras 2 minutos hasta que estén crujientes. Mezcla la soja y el mirin como salsa y sirve con arroz.",
+          "pt": "Frite os legumes 2 minutos até ficarem estaladiços. Misture o molho de soja e o mirin como molho e sirva com arroz."
+        },
+        "timer_sec": 120
+      }
+    ]
+  },
+  {
+    "slug": "koreaans-bibimbap-groente",
+    "stijl": "koreaans",
+    "stijlen": [
+      "koreaans"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 30,
+    "tags": [
+      "rijstkom"
+    ],
+    "titel": {
+      "nl": "Bibimbap met groente en gochujang",
+      "fr": "Bibimbap aux légumes et gochujang",
+      "de": "Bibimbap mit Gemüse und Gochujang",
+      "en": "Bibimbap with vegetables and gochujang",
+      "es": "Bibimbap de verduras y gochujang",
+      "pt": "Bibimbap com legumes e gochujang"
+    },
+    "ingredienten": [
+      {
+        "code": "rijst_sushi",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "spinazie",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "wortel",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "courgette",
+        "h": 50,
+        "e": "g"
+      },
+      {
+        "code": "champignons",
+        "h": 50,
+        "e": "g"
+      },
+      {
+        "code": "eieren",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "gochujang",
+        "h": 15,
+        "e": "g"
+      },
+      {
+        "code": "sesamolie",
+        "h": 5,
+        "e": "ml"
+      },
+      {
+        "code": "zonnebloemolie",
+        "h": 10,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Snijd wortel en courgette in reepjes.",
+          "fr": "Faites cuire le riz. Coupez la carotte et la courgette en bâtonnets.",
+          "de": "Reis garen. Karotte und Zucchini in Streifen schneiden.",
+          "en": "Cook the rice. Cut carrot and courgette into strips.",
+          "es": "Cuece el arroz. Corta la zanahoria y el calabacín en tiras.",
+          "pt": "Cozinhe o arroz. Corte a cenoura e a courgette em tiras."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Bak elke groente apart 2 minuten in de olie met een snufje zout. Bak het ei als spiegelei.",
+          "fr": "Faites revenir chaque légume à part 2 minutes dans l'huile avec une pincée de sel. Faites cuire l'œuf au plat.",
+          "de": "Jedes Gemüse einzeln 2 Minuten in Öl mit etwas Salz braten. Ei als Spiegelei braten.",
+          "en": "Stir-fry each vegetable separately 2 minutes in oil with a pinch of salt. Fry the egg sunny-side up.",
+          "es": "Saltea cada verdura por separado 2 minutos en aceite con una pizca de sal. Fríe el huevo a la plancha.",
+          "pt": "Salteie cada legume à parte 2 minutos no óleo com uma pitada de sal. Frite o ovo estrelado."
+        },
+        "timer_sec": 480
+      },
+      {
+        "tekst": {
+          "nl": "Schep rijst in een kom, leg groente en ei erop en serveer met gochujang en sesamolie.",
+          "fr": "Mettez le riz dans un bol, disposez légumes et œuf dessus et servez avec le gochujang et l'huile de sésame.",
+          "de": "Reis in eine Schale geben, Gemüse und Ei darauflegen und mit Gochujang und Sesamöl servieren.",
+          "en": "Put rice in a bowl, top with vegetables and egg, and serve with gochujang and sesame oil.",
+          "es": "Pon el arroz en un cuenco, cubre con las verduras y el huevo, y sirve con gochujang y aceite de sésamo.",
+          "pt": "Coloque o arroz numa tigela, cubra com os legumes e o ovo e sirva com gochujang e óleo de sésamo."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "koreaans-bulgogi-rund",
+    "stijl": "koreaans",
+    "stijlen": [
+      "koreaans"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "rijst",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 25,
+    "tags": [
+      "marinade"
+    ],
+    "titel": {
+      "nl": "Bulgogi van rundvlees met rijst",
+      "fr": "Bulgogi de bœuf au riz",
+      "de": "Bulgogi vom Rind mit Reis",
+      "en": "Beef bulgogi with rice",
+      "es": "Bulgogi de ternera con arroz",
+      "pt": "Bulgogi de vaca com arroz"
+    },
+    "ingredienten": [
+      {
+        "code": "rundvlees",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "sojasaus",
+        "h": 20,
+        "e": "ml"
+      },
+      {
+        "code": "suiker",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "knoflook",
+        "h": 1,
+        "e": "teentje"
+      },
+      {
+        "code": "sesamolie",
+        "h": 5,
+        "e": "ml"
+      },
+      {
+        "code": "peer",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "ui",
+        "h": 30,
+        "e": "g"
+      },
+      {
+        "code": "rijst_sushi",
+        "h": 80,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Snijd vlees en ui in dunne reepjes. Meng soja, suiker, knoflook, sesamolie en geraspte peer. Laat 15 minuten marineren.",
+          "fr": "Coupez la viande et l'oignon en fines lanières. Mélangez soja, sucre, ail, huile de sésame et poire râpée. Laissez mariner 15 minutes.",
+          "de": "Fleisch und Zwiebel in dünne Streifen schneiden. Soja, Zucker, Knoblauch, Sesamöl und geriebene Birne mischen. 15 Minuten marinieren.",
+          "en": "Slice beef and onion thinly. Mix soy, sugar, garlic, sesame oil and grated pear. Marinate 15 minutes.",
+          "es": "Corta la carne y la cebolla en tiras finas. Mezcla soja, azúcar, ajo, aceite de sésamo y pera rallada. Marina 15 minutos.",
+          "pt": "Corte a carne e a cebola em tiras finas. Misture soja, açúcar, alho, óleo de sésamo e pera ralada. Marine 15 minutos."
+        },
+        "timer_sec": 900
+      },
+      {
+        "tekst": {
+          "nl": "Bak het vlees met ui 3 minuten op hoog vuur in een hete pan.",
+          "fr": "Faites sauter la viande et l'oignon 3 minutes à feu vif dans une poêle très chaude.",
+          "de": "Fleisch mit Zwiebel 3 Minuten bei starker Hitze in heißer Pfanne braten.",
+          "en": "Stir-fry beef and onion 3 minutes on high heat in a hot pan.",
+          "es": "Saltea la carne y la cebolla 3 minutos a fuego fuerte en una sartén caliente.",
+          "pt": "Salteie a carne e a cebola 3 minutos em lume alto numa frigideira quente."
+        },
+        "timer_sec": 180
+      },
+      {
+        "tekst": {
+          "nl": "Serveer het vlees op gekookte rijst.",
+          "fr": "Servez la viande sur du riz cuit.",
+          "de": "Das Fleisch auf gekochtem Reis servieren.",
+          "en": "Serve the beef on cooked rice.",
+          "es": "Sirve la carne sobre arroz cocido.",
+          "pt": "Sirva a carne sobre arroz cozido."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "koreaans-kimchi-roerbak-tofu",
+    "stijl": "koreaans",
+    "stijlen": [
+      "koreaans"
+    ],
+    "moment": "avond",
+    "soort": "vegetarisch",
+    "basis": "rijst",
+    "bereiding": "wok",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 20,
+    "tags": [
+      "wok",
+      "kimchi"
+    ],
+    "titel": {
+      "nl": "Kimchi-roerbak met tofu",
+      "fr": "Sauté de kimchi au tofu",
+      "de": "Kimchi-Pfannengericht mit Tofu",
+      "en": "Kimchi stir-fry with tofu",
+      "es": "Salteado de kimchi con tofu",
+      "pt": "Salteado de kimchi com tofu"
+    },
+    "ingredienten": [
+      {
+        "code": "tofu",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "kimchi",
+        "h": 120,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "sojasaus",
+        "h": 5,
+        "e": "ml"
+      },
+      {
+        "code": "sesamolie",
+        "h": 5,
+        "e": "ml"
+      },
+      {
+        "code": "zonnebloemolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "rijst_sushi",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "lente_ui",
+        "h": 15,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de rijst gaar. Snijd tofu in blokjes en bak 5 minuten in de olie tot ze krokant zijn.",
+          "fr": "Faites cuire le riz. Coupez le tofu en dés et faites dorer 5 minutes dans l'huile jusqu'à le rendre croustillant.",
+          "de": "Reis garen. Tofu würfeln und 5 Minuten in Öl knusprig braten.",
+          "en": "Cook the rice. Dice tofu and fry 5 minutes in oil until crisp.",
+          "es": "Cuece el arroz. Corta el tofu en dados y fríe 5 minutos en aceite hasta que estén crujientes.",
+          "pt": "Cozinhe o arroz. Corte o tofu em cubos e frite 5 minutos no óleo até ficarem estaladiços."
+        },
+        "timer_sec": 720
+      },
+      {
+        "tekst": {
+          "nl": "Voeg ui en kimchi toe en roerbak 4 minuten. Breng op smaak met sojasaus.",
+          "fr": "Ajoutez l'oignon et le kimchi et sautez 4 minutes. Assaisonnez de sauce soja.",
+          "de": "Zwiebel und Kimchi dazugeben und 4 Minuten braten. Mit Sojasoße abschmecken.",
+          "en": "Add onion and kimchi and stir-fry 4 minutes. Season with soy sauce.",
+          "es": "Añade la cebolla y el kimchi y saltea 4 minutos. Sazona con soja.",
+          "pt": "Junte a cebola e o kimchi e salteie 4 minutos. Tempere com molho de soja."
+        },
+        "timer_sec": 240
+      },
+      {
+        "tekst": {
+          "nl": "Meng met sesamolie, garneer met lente-ui en serveer met rijst.",
+          "fr": "Mélangez à l'huile de sésame, garnissez d'oignon nouveau et servez avec le riz.",
+          "de": "Mit Sesamöl verfeinern, mit Frühlingszwiebel garnieren und mit Reis servieren.",
+          "en": "Toss with sesame oil, garnish with spring onion and serve with rice.",
+          "es": "Mezcla con aceite de sésamo, adorna con cebolleta y sirve con arroz.",
+          "pt": "Misture com óleo de sésamo, decore com cebolinha e sirva com arroz."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "koreaans-japchae-noedels",
+    "stijl": "koreaans",
+    "stijlen": [
+      "koreaans"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "noedels",
+    "bereiding": "wok",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 25,
+    "tags": [
+      "noedels",
+      "wok"
+    ],
+    "titel": {
+      "nl": "Japchae: glasnoedels met groente",
+      "fr": "Japchae : nouilles de patate douce aux légumes",
+      "de": "Japchae: Glasnudeln mit Gemüse",
+      "en": "Japchae: glass noodles with vegetables",
+      "es": "Japchae: fideos de cristal con verduras",
+      "pt": "Japchae: noodles de vidro com legumes"
+    },
+    "ingredienten": [
+      {
+        "code": "glasnoedels",
+        "h": 80,
+        "e": "g"
+      },
+      {
+        "code": "spinazie",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "wortel",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "paprika",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "champignons",
+        "h": 50,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 30,
+        "e": "g"
+      },
+      {
+        "code": "sojasaus",
+        "h": 20,
+        "e": "ml"
+      },
+      {
+        "code": "suiker",
+        "h": 5,
+        "e": "g"
+      },
+      {
+        "code": "sesamolie",
+        "h": 5,
+        "e": "ml"
+      },
+      {
+        "code": "sesamzaad",
+        "h": 3,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de glasnoedels 6 minuten en spoel koud. Snijd groente in reepjes.",
+          "fr": "Faites cuire les nouilles de verre 6 minutes et rincez à froid. Coupez les légumes en lanières.",
+          "de": "Glasnudeln 6 Minuten kochen und kalt abspülen. Gemüse in Streifen schneiden.",
+          "en": "Cook glass noodles 6 minutes and rinse cold. Cut vegetables into strips.",
+          "es": "Cuece los fideos de cristal 6 minutos y enjuaga con agua fría. Corta las verduras en tiras.",
+          "pt": "Cozinhe os noodles de vidro 6 minutos e passe por água fria. Corte os legumes em tiras."
+        },
+        "timer_sec": 360
+      },
+      {
+        "tekst": {
+          "nl": "Roerbak groente 3 minuten in de olie. Voeg noedels, soja en suiker toe en roerbak 2 minuten.",
+          "fr": "Sautez les légumes 3 minutes dans l'huile. Ajoutez les nouilles, la sauce soja et le sucre et sautez 2 minutes.",
+          "de": "Gemüse 3 Minuten in Öl braten. Nudeln, Soja und Zucker dazugeben und 2 Minuten braten.",
+          "en": "Stir-fry vegetables 3 minutes in oil. Add noodles, soy and sugar and stir-fry 2 minutes.",
+          "es": "Saltea las verduras 3 minutos en aceite. Añade los fideos, la soja y el azúcar y saltea 2 minutos.",
+          "pt": "Salteie os legumes 3 minutos no óleo. Junte os noodles, a soja e o açúcar e salteie 2 minutos."
+        },
+        "timer_sec": 300
+      },
+      {
+        "tekst": {
+          "nl": "Besprenkel met sesamolie, bestrooi met sesamzaad en serveer warm.",
+          "fr": "Arrosez d'huile de sésame, parsemez de graines de sésame et servez chaud.",
+          "de": "Mit Sesamöl beträufeln, mit Sesam bestreuen und warm servieren.",
+          "en": "Drizzle with sesame oil, sprinkle with sesame seeds and serve warm.",
+          "es": "Rocía con aceite de sésamo, espolvorea con sésamo y sirve caliente.",
+          "pt": "Regue com óleo de sésamo, polvilhe com sésamo e sirva quente."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "klassiek-erwtensoep",
+    "stijl": "klassiek",
+    "stijlen": [
+      "klassiek"
+    ],
+    "moment": "middag",
+    "soort": "vegetarisch",
+    "basis": "brood",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 60,
+    "tags": [
+      "soep",
+      "winter"
+    ],
+    "titel": {
+      "nl": "Erwtensoep met groente",
+      "fr": "Soupe aux pois aux légumes",
+      "de": "Erbsensuppe mit Gemüse",
+      "en": "Split pea soup with vegetables",
+      "es": "Sopa de guisantes con verduras",
+      "pt": "Sopa de ervilhas com legumes"
+    },
+    "ingredienten": [
+      {
+        "code": "gedroogde_split_erwten",
+        "h": 120,
+        "e": "g"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 1000,
+        "e": "ml"
+      },
+      {
+        "code": "prei",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "wortel",
+        "h": 60,
+        "e": "g"
+      },
+      {
+        "code": "selderij",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "brood",
+        "h": 60,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Breng erwten en bouillon aan de kook en laat 30 minuten zachtjes koken.",
+          "fr": "Portez les pois et le bouillon à ébullition et laissez cuire doucement 30 minutes.",
+          "de": "Erbsen und Brühe aufkochen und 30 Minuten sanft kochen.",
+          "en": "Bring peas and stock to a boil and simmer gently 30 minutes.",
+          "es": "Lleva los guisantes y el caldo a ebullición y cuece suavemente 30 minutos.",
+          "pt": "Leve as ervilhas e o caldo a ferver e cozinhe suavemente 30 minutos."
+        },
+        "timer_sec": 1800
+      },
+      {
+        "tekst": {
+          "nl": "Snijd prei, wortel, selderij en ui in blokjes. Voeg toe en laat nog 20 minuten koken.",
+          "fr": "Coupez poireau, carotte, céleri et oignon en dés. Ajoutez-les et laissez cuire encore 20 minutes.",
+          "de": "Lauch, Karotte, Sellerie und Zwiebel würfeln. Dazugeben und weitere 20 Minuten kochen.",
+          "en": "Dice leek, carrot, celery and onion. Add and cook another 20 minutes.",
+          "es": "Corta el puerro, la zanahoria, el apio y la cebolla en dados. Añade y cuece 20 minutos más.",
+          "pt": "Corte o alho-francês, a cenoura, o aipo e a cebola em cubos. Junte e cozinhe mais 20 minutos."
+        },
+        "timer_sec": 1200
+      },
+      {
+        "tekst": {
+          "nl": "Breng op smaak met zout en peper en serveer met een snee brood.",
+          "fr": "Assaisonnez de sel et de poivre et servez avec une tranche de pain.",
+          "de": "Mit Salz und Pfeffer abschmecken und mit einer Scheibe Brot servieren.",
+          "en": "Season with salt and pepper and serve with a slice of bread.",
+          "es": "Sazona con sal y pimienta y sirve con una rebanada de pan.",
+          "pt": "Tempere com sal e pimenta e sirva com uma fatia de pão."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "klassiek-stamppot-andijvie",
+    "stijl": "klassiek",
+    "stijlen": [
+      "klassiek"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "aardappel",
+    "bereiding": "pan",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 35,
+    "tags": [
+      "stamppot"
+    ],
+    "titel": {
+      "nl": "Stamppot andijvie met rookworst",
+      "fr": "Stamppot à l'endive et saucisse fumée",
+      "de": "Stamppot mit Endivie und Rauchwurst",
+      "en": "Stamppot with endive and smoked sausage",
+      "es": "Stamppot de endibia con embutido ahumado",
+      "pt": "Stamppot de endívia com salsicha fumada"
+    },
+    "ingredienten": [
+      {
+        "code": "aardappel",
+        "h": 400,
+        "e": "g"
+      },
+      {
+        "code": "andijvie",
+        "h": 300,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "rookworst",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "melk",
+        "h": 50,
+        "e": "ml"
+      },
+      {
+        "code": "boter",
+        "h": 15,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Kook de aardappel en de rookworst 20 minuten. Snijd de andijvie fijn en voeg de laatste 5 minuten toe.",
+          "fr": "Faites cuire les pommes de terre et la saucisse fumée 20 minutes. Hachez finement l'endive et ajoutez-la les 5 dernières minutes.",
+          "de": "Kartoffeln und Rauchwurst 20 Minuten kochen. Endivie fein schneiden und in den letzten 5 Minuten dazugeben.",
+          "en": "Cook potatoes and smoked sausage 20 minutes. Finely chop endive and add the last 5 minutes.",
+          "es": "Cuece las patatas y el embutido ahumado 20 minutos. Pica la endibia y añádela los últimos 5 minutos.",
+          "pt": "Cozinhe as batatas e a salsicha fumada 20 minutos. Pique a endívia e junte nos últimos 5 minutos."
+        },
+        "timer_sec": 1200
+      },
+      {
+        "tekst": {
+          "nl": "Giet af en stamp aardappel met andijvie, melk en boter tot een grove puree.",
+          "fr": "Égouttez et écrasez les pommes de terre avec l'endive, le lait et le beurre en purée grossière.",
+          "de": "Abgießen und Kartoffeln mit Endivie, Milch und Butter zu grobem Püree stampfen.",
+          "en": "Drain and mash potatoes with endive, milk and butter into a coarse mash.",
+          "es": "Escurre y machaca las patatas con la endibia, la leche y la mantequilla hasta una puré rústico.",
+          "pt": "Escorra e esmague as batatas com a endívia, o leite e a manteiga até um puré rústico."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Snijd de rookworst in plakken en serveer op de stamppot.",
+          "fr": "Coupez la saucisse en rondelles et servez sur la purée.",
+          "de": "Rauchwurst in Scheiben schneiden und auf dem Stampf servieren.",
+          "en": "Slice the sausage and serve on top of the mash.",
+          "es": "Corta el embutido en rodajas y sírvelo sobre el puré.",
+          "pt": "Corte a salsicha em rodelas e sirva sobre o puré."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "klassiek-hutspot-rund",
+    "stijl": "klassiek",
+    "stijlen": [
+      "klassiek"
+    ],
+    "moment": "avond",
+    "soort": "vlees",
+    "basis": "aardappel",
+    "bereiding": "pan",
+    "moeilijkheid": "gemiddeld",
+    "kooktijd_min": 90,
+    "tags": [
+      "stamppot"
+    ],
+    "titel": {
+      "nl": "Hutspot met rundvlees en wortel",
+      "fr": "Hutspot au bœuf et à la carotte",
+      "de": "Hutspot mit Rindfleisch und Karotte",
+      "en": "Hutspot with beef and carrot",
+      "es": "Hutspot de ternera y zanahoria",
+      "pt": "Hutspot de vaca e cenoura"
+    },
+    "ingredienten": [
+      {
+        "code": "rundvlees",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "aardappel",
+        "h": 400,
+        "e": "g"
+      },
+      {
+        "code": "wortel",
+        "h": 250,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "laurier",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 500,
+        "e": "ml"
+      },
+      {
+        "code": "boter",
+        "h": 15,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Stoof het vlees met laurier en bouillon 60 minuten tot het mals is.",
+          "fr": "Faites mijoter la viande avec le laurier et le bouillon 60 minutes jusqu'à ce qu'elle soit tendre.",
+          "de": "Fleisch mit Lorbeer und Brühe 60 Minuten schmoren, bis es zart ist.",
+          "en": "Braise the beef with bay leaf and stock 60 minutes until tender.",
+          "es": "Cuece la carne con laurel y caldo 60 minutos hasta que esté tierna.",
+          "pt": "Cozinhe a carne com louro e caldo 60 minutos até ficar tenra."
+        },
+        "timer_sec": 3600
+      },
+      {
+        "tekst": {
+          "nl": "Kook aardappel, wortel en ui 20 minuten gaar. Stamp samen met boter tot een grove puree.",
+          "fr": "Faites cuire pommes de terre, carottes et oignon 20 minutes. Écrasez ensemble avec le beurre en purée grossière.",
+          "de": "Kartoffeln, Karotten und Zwiebel 20 Minuten garen. Zusammen mit Butter zu grobem Püree stampfen.",
+          "en": "Cook potatoes, carrots and onion 20 minutes. Mash together with butter into a coarse mash.",
+          "es": "Cuece las patatas, las zanahorias y la cebolla 20 minutos. Machácalo todo con mantequilla en un puré rústico.",
+          "pt": "Cozinhe as batatas, as cenouras e a cebola 20 minutos. Esmague tudo com manteiga num puré rústico."
+        },
+        "timer_sec": 1200
+      },
+      {
+        "tekst": {
+          "nl": "Serveer de stamppot met het vlees en wat van het kookvocht.",
+          "fr": "Servez la purée avec la viande et un peu du jus de cuisson.",
+          "de": "Den Stampf mit dem Fleisch und etwas Kochflüssigkeit servieren.",
+          "en": "Serve the mash with the meat and a little of the cooking liquid.",
+          "es": "Sirve el puré con la carne y un poco del caldo de cocción.",
+          "pt": "Sirva o puré com a carne e um pouco do líquido de cozedura."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug":"klassiek-gehaktballen-tomaat",
+    "stijl": "klassiek",
+    "stijlen": [
+      "klassiek"
+    ],
+    "moment": "middag",
+    "soort": "vlees",
+    "basis": "brood",
+    "bereiding": "pan",
+    "moeilijkheid": "uitdagend",
+    "kooktijd_min": 40,
+    "tags": [
+      "kroket"
+    ],
+    "titel": {
+      "nl": "Gehaktballen in tomatensaus met brood",
+      "fr": "Boulettes de viande à la sauce tomate et pain",
+      "de": "Hackbällchen in Tomatensoße mit Brot",
+      "en": "Meatballs in tomato sauce with bread",
+      "es": "Albóndigas en salsa de tomate con pan",
+      "pt": "Almôndegas em molho de tomate com pão"
+    },
+    "ingredienten": [
+      {
+        "code": "gehakt",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "brood",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "melk",
+        "h": 30,
+        "e": "ml"
+      },
+      {
+        "code": "eieren",
+        "h": 1,
+        "e": "stuk"
+      },
+      {
+        "code": "ui",
+        "h": 30,
+        "e": "g"
+      },
+      {
+        "code": "passata",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "olijfolie",
+        "h": 10,
+        "e": "ml"
+      },
+      {
+        "code": "peterselie",
+        "h": 3,
+        "e": "g"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Week het brood in melk. Meng met gehakt, ei, fijngehakte ui en peterselie. Draai balletjes.",
+          "fr": "Trempez le pain dans le lait. Mélangez avec la viande hachée, l'œuf, l'oignon haché et le persil. Formez des boulettes.",
+          "de": "Brot in Milch einweichen. Mit Hack, Ei, fein gehackter Zwiebel und Petersilie mischen. Bällchen formen.",
+          "en": "Soak bread in milk. Mix with mince, egg, chopped onion and parsley. Shape into balls.",
+          "es": "Remoja el pan en leche. Mezcla con la carne picada, el huevo, la cebolla picada y el perejil. Forma bolitas.",
+          "pt": "Demolhe o pão no leite. Misture com a carne picada, o ovo, a cebola picada e a salsa. Forme bolinhas."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Bak de balletjes 6 minuten in de olie rondom bruin. Voeg passata toe en laat 15 minuten pruttelen.",
+          "fr": "Faites dorer les boulettes 6 minutes dans l'huile. Ajoutez la passata et laissez mijoter 15 minutes.",
+          "de": "Bällchen 6 Minuten rundum in Öl anbraten. Passata dazugeben und 15 Minuten köcheln lassen.",
+          "en": "Brown the meatballs 6 minutes in oil on all sides. Add passata and simmer 15 minutes.",
+          "es": "Dora las albóndigas 6 minutos en aceite por todos lados. Añade la passata y cuece 15 minutos.",
+          "pt": "Doure as almôndegas 6 minutos no óleo por todos os lados. Junte a passata e cozinhe 15 minutos."
+        },
+        "timer_sec": 1080
+      },
+      {
+        "tekst": {
+          "nl": "Serveer met een snee brood.",
+          "fr": "Servez avec une tranche de pain.",
+          "de": "Mit einer Scheibe Brot servieren.",
+          "en": "Serve with a slice of bread.",
+          "es": "Sirve con una rebanada de pan.",
+          "pt": "Sirva com uma fatia de pão."
+        },
+        "timer_sec": null
+      }
+    ]
+  },
+  {
+    "slug": "klassiek-kip-pompoen-oven",
+    "stijl": "klassiek",
+    "stijlen": [
+      "klassiek"
+    ],
+    "moment": "middag",
+    "soort": "vlees",
+    "basis": "aardappel",
+    "bereiding": "oven",
+    "moeilijkheid": "makkelijk",
+    "kooktijd_min": 45,
+    "tags": [
+      "ovengerecht"
+    ],
+    "titel": {
+      "nl": "Ovenschotel met kip, aardappel en wortel",
+      "fr": "Plat au four au poulet, pommes de terre et carotte",
+      "de": "Ofengericht mit Hähnchen, Kartoffeln und Karotte",
+      "en": "Oven dish with chicken, potato and carrot",
+      "es": "Plato al horno con pollo, patata y zanahoria",
+      "pt": "Travessa no forno com frango, batata e cenoura"
+    },
+    "ingredienten": [
+      {
+        "code": "kipfilet",
+        "h": 150,
+        "e": "g"
+      },
+      {
+        "code": "aardappel",
+        "h": 200,
+        "e": "g"
+      },
+      {
+        "code": "wortel",
+        "h": 100,
+        "e": "g"
+      },
+      {
+        "code": "ui",
+        "h": 40,
+        "e": "g"
+      },
+      {
+        "code": "boter",
+        "h": 10,
+        "e": "g"
+      },
+      {
+        "code": "tijm",
+        "h": 1,
+        "e": "g"
+      },
+      {
+        "code": "groentebouillon",
+        "h": 100,
+        "e": "ml"
+      }
+    ],
+    "stappen": [
+      {
+        "tekst": {
+          "nl": "Verwarm de oven voor op 200 °C. Snijd aardappel, wortel en ui in stukken en leg in een ovenschaal.",
+          "fr": "Préchauffez le four à 200 °C. Coupez pommes de terre, carottes et oignon en morceaux et disposez-les dans un plat.",
+          "de": "Den Ofen auf 200 °C vorheizen. Kartoffel, Karotte und Zwiebel in Stücke schneiden und in eine Form legen.",
+          "en": "Preheat the oven to 200 °C. Cut potato, carrot and onion into pieces and place in an ovenproof dish.",
+          "es": "Precalienta el horno a 200 °C. Corta la patata, la zanahoria y la cebolla en trozos y colócalos en una fuente.",
+          "pt": "Pré-aqueça o forno a 200 °C. Corte a batata, a cenoura e a cebola em pedaços e disponha num recipiente de forno."
+        },
+        "timer_sec": null
+      },
+      {
+        "tekst": {
+          "nl": "Leg de kip erbij, bestrooi met tijm, giet bouillon erover en dek af met folie. Bak 35 minuten.",
+          "fr": "Ajoutez le poulet, saupoudrez de thym, versez le bouillon et couvrez de papier aluminium. Faites cuire 35 minutes.",
+          "de": "Hähnchen dazulegen, mit Thymian bestreuen, Brühe angießen und mit Alufolie abdecken. 35 Minuten backen.",
+          "en": "Add chicken, sprinkle with thyme, pour over stock and cover with foil. Bake 35 minutes.",
+          "es": "Añade el pollo, espolvorea con tomillo, vierte el caldo y cubre con papel de aluminio. Hornea 35 minutos.",
+          "pt": "Junte o frango, polvilhe com tomilho, deite o caldo e cubra com papel de alumínio. Asse 35 minutos."
+        },
+        "timer_sec": 2100
+      },
+      {
+        "tekst": {
+          "nl": "Haal de folie eraf, bak nog 10 minuten en serveer met de pan-jus.",
+          "fr": "Retirez le papier, faites cuire encore 10 minutes et servez avec le jus de cuisson.",
+          "de": "Folie entfernen, weitere 10 Minuten backen und mit dem Bratensaft servieren.",
+          "en": "Remove the foil, bake 10 minutes more and serve with the pan juices.",
+          "es": "Retira el papel, hornea 10 minutos más y sirve con el jugo de la fuente.",
+          "pt": "Retire o papel, asse mais 10 minutos e sirva com o molho da travessa."
+        },
+        "timer_sec": 600
+      }
+    ]
+  }
+]
