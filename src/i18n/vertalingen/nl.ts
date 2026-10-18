@@ -390,6 +390,13 @@ export const nl = {
   'stijlOptie.hartig': 'Hartig',
   'stijlOptie.zoet': 'Zoet',
   'planning.geenRecepten': 'Er zijn met deze keuzes nu niet genoeg recepten. Kies bijvoorbeeld een stijl erbij of een andere kooktijd.',
+  'frigo.sheetPlanner': 'Planner-frigo',
+  'frigo.sheetLos': 'Losse producten',
+  'frigo.plannerUitleg': 'Ingrediënten uit de lijst van de app. Deze tellen mee bij het weekmenu: bij “Gekookt” gaan ze uit de frigo.',
+  'frigo.losUitleg': 'Losse producten tellen niet mee bij het weekmenu. Je beheert ze zelf en verwijdert ze zelf; de app ruimt niets automatisch op.',
+  'frigo.zoekIngredient': 'Zoek een ingrediënt…',
+  'frigo.geenIngredient': 'Geen ingrediënt gevonden.',
+  'frigo.alIngevoegd': 'Al in de frigo',
 } as const;
 
 export type Sleutel = keyof typeof nl;

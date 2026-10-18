@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, voegZelfToe, zetHoudbaarheid, ZELF_EENHEDEN } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, zetHoudbaarheid, ZELF_EENHEDEN } from '@/lib/frigo';
 import { houdbaarStatus, leesDatum } from '@/lib/houdbaarheid';
 import { beoordeel, Oordeel, Product } from '@/lib/openfoodfacts';
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
-import { laadFrigo, wijzigFrigo } from '@/opslag/frigo';
+import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
+import { CatalogusItem, inCatalogus, koppelBronnen, sheets, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
@@ -56,6 +57,9 @@ function ProductDetails({ product: p }: { product: Product }) {
 export default function Frigo() {
   const { t, tn, taal } = useTaal();
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
+  // De twee sheets (WEEK-71 deel 2): planner-frigo en losse producten.
+  const [sheet, setSheet] = useState<'planner' | 'los'>('planner');
+  const [zoek, setZoek] = useState('');
   const [nieuw, setNieuw] = useState('');
   const [details, setDetails] = useState(false);
   const [hoeveelheid, setHoeveelheid] = useState('');
@@ -78,13 +82,27 @@ export default function Frigo() {
   // Live: een ander gezinslid kocht iets of haalde iets uit de frigo (WEEK-8).
   useEffect(() => bijWijziging('frigo', () => laadFrigo().then(setFrigo)), []);
 
-  const voegToe = async () => {
+  // Eenmalig: bestaande items koppelen aan de planner-frigo of los zetten (WEEK-71 deel 2). Verwijdert niets.
+  useEffect(() => {
+    koppelingGedaan().then(async (klaar) => {
+      if (klaar) return;
+      setFrigo(await wijzigFrigo(koppelBronnen));
+      await zetKoppelingGedaan();
+    });
+  }, []);
+
+  const voegLosToeKnop = async () => {
     const naam = nieuw.trim();
     if (!naam) return;
     setNieuw('');
     const extra = details ? { hoeveelheid: leesHoeveelheid(hoeveelheid), eenheid, afdeling } : {};
     setHoeveelheid('');
-    setFrigo(await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), extra)));
+    setFrigo(await wijzigFrigo((f) => voegLosToe(f, naam, new Date(), extra)));
+  };
+
+  // Uit de catalogus: telt mee bij het weekmenu. Staat het er al in, dan gebeurt er niets.
+  const voegCatalogusToe = async (item: CatalogusItem) => {
+    setFrigo(await wijzigFrigo((f) => voegPlannerToe(f, item, new Date())));
   };
 
   // Op of weggegooid (WEEK-19). Geplande recepten die het product nodig hebben, krijgen "ingrediënt ontbreekt" (WEEK-13).
@@ -118,63 +136,104 @@ export default function Frigo() {
     setFrigo(await wijzigFrigo((f) => zetHoudbaarheid(f, id, undefined)));
   };
 
+  const zichtbaar = sheet === 'planner' ? sheets(frigo).planner : sheets(frigo).los;
   const secties = useMemo(
-    () => frigoSecties(frigo).map((s) => ({ ...s, title: t(`afdeling.${s.afdeling}` as Sleutel), data: s.regels })),
-    [frigo, taal]
+    () => frigoSecties(zichtbaar).map((s) => ({ ...s, title: t(`afdeling.${s.afdeling}` as Sleutel), data: s.regels })),
+    [frigo, sheet, taal]
   );
-  const aantal = aantalProducten(frigo);
+  const aantal = aantalProducten(zichtbaar);
+  const resultaten = useMemo(() => (sheet === 'planner' ? zoekCatalogus(zoek, taal) : []), [zoek, sheet, taal]);
+  const alInPlanner = (naam: string) => inCatalogus(naam) !== undefined && sheets(frigo).planner.some((f) => f.naam.toLowerCase() === naam.toLowerCase());
+
+  const kop = (
+    <View>
+      <View style={s.tabs} accessibilityRole="tablist">
+        {(['planner', 'los'] as const).map((k) => {
+          const aan = sheet === k;
+          return (
+            <Pressable key={k} style={[s.tab, aan && s.tabAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
+              <Text style={[s.tabTekst, aan && s.tabTekstAan]}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      {sheet === 'planner' ? (
+        <>
+          <Text style={s.uitleg}>{t('frigo.plannerUitleg')}</Text>
+          <TextInput style={s.zoekVeld} placeholder={t('frigo.zoekIngredient')} value={zoek} onChangeText={setZoek} accessibilityLabel={t('frigo.zoekIngredient')} />
+          <View style={s.resultaten}>
+            {resultaten.length === 0 && <Text style={s.leegTekst}>{t('frigo.geenIngredient')}</Text>}
+            {resultaten.map((item) => {
+              const erin = alInPlanner(item.naam);
+              return (
+                <Pressable key={item.code} style={[s.chip, erin && s.chipAan]} onPress={() => voegCatalogusToe(item)} disabled={erin} accessibilityRole="button" accessibilityState={{ disabled: erin }}>
+                  <Text style={[s.chipTekst, erin && s.chipTekstAan]}>{erin ? `✓ ${item.naam}` : item.naam}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </>
+      ) : (
+        <>
+          <Text style={s.uitleg}>{t('frigo.losUitleg')}</Text>
+          <View style={s.invoer}>
+            <TextInput
+              style={s.veld}
+              placeholder={t('frigo.toevoegen')}
+              value={nieuw}
+              onChangeText={setNieuw}
+              onSubmitEditing={voegLosToeKnop}
+              returnKeyType="done"
+            />
+            <Pressable style={s.plus} onPress={voegLosToeKnop} accessibilityRole="button" accessibilityLabel={t('frigo.toevoegen')}>
+              <Text style={s.plusTekst}>+</Text>
+            </Pressable>
+            {/* Scannen vanaf de frigo (WEEK-47): aangekochte producten direct als los product in de frigo zetten. */}
+            <Pressable style={s.scan} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button">
+              <Text style={s.scanTekst}>{t('frigo.scan')}</Text>
+            </Pressable>
+          </View>
+          <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
+            <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
+          </Pressable>
+          {details && (
+            <View style={s.details}>
+              <View style={s.rij}>
+                <TextInput
+                  style={[s.veld, s.getal]}
+                  placeholder={t('frigo.hoeveelheid')}
+                  value={hoeveelheid}
+                  onChangeText={setHoeveelheid}
+                  keyboardType="decimal-pad"
+                />
+                {ZELF_EENHEDEN.map((e) => (
+                  <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityState={{ selected: eenheid === e }}>
+                    <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rij}>
+                {[...AFDELINGEN, 'overig' as const].map((a) => (
+                  <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityState={{ selected: afdeling === a }}>
+                    <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+        </>
+      )}
+      <Text style={s.teller}>{aantal ? tn('frigo.teller', aantal) : t('frigo.leeg')}</Text>
+    </View>
+  );
 
   return (
     <View style={s.scherm}>
-      <Text style={s.uitleg}>{t('frigo.uitleg')}</Text>
-      <View style={s.invoer}>
-        <TextInput
-          style={s.veld}
-          placeholder={t('frigo.toevoegen')}
-          value={nieuw}
-          onChangeText={setNieuw}
-          onSubmitEditing={voegToe}
-          returnKeyType="done"
-        />
-        <Pressable style={s.plus} onPress={voegToe} accessibilityRole="button" accessibilityLabel={t('frigo.toevoegen')}>
-          <Text style={s.plusTekst}>+</Text>
-        </Pressable>
-        {/* Scannen vanaf de frigo (WEEK-47): aangekochte producten direct in de frigo zetten. */}
-        <Pressable style={s.scan} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button">
-          <Text style={s.scanTekst}>{t('frigo.scan')}</Text>
-        </Pressable>
-      </View>
-      <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
-        <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
-      </Pressable>
-      {details && (
-        <View style={s.details}>
-          <View style={s.rij}>
-            <TextInput
-              style={[s.veld, s.getal]}
-              placeholder={t('frigo.hoeveelheid')}
-              value={hoeveelheid}
-              onChangeText={setHoeveelheid}
-              keyboardType="decimal-pad"
-            />
-            {ZELF_EENHEDEN.map((e) => (
-              <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityState={{ selected: eenheid === e }}>
-                <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
-              </Pressable>
-            ))}
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rij}>
-            {[...AFDELINGEN, 'overig' as const].map((a) => (
-              <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityState={{ selected: afdeling === a }}>
-                <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-      )}
-      <Text style={s.teller}>{aantal ? tn('frigo.teller', aantal) : t('frigo.leeg')}</Text>
+      {/* De kop (sheets, zoeken, invoer) scrolt mee met de lijst. */}
       <SectionList
         sections={secties}
+        ListHeaderComponent={kop}
         keyExtractor={(r) => r.sleutel}
         renderSectionHeader={({ section }) => <Text style={s.kop}>{section.title}</Text>}
         renderItem={({ item }) => {
@@ -311,4 +370,12 @@ const s = StyleSheet.create({
   tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   tekst: { color: '#444' },
+  tabs: { flexDirection: 'row', gap: 8, marginTop: 12 },
+  tab: { flex: 1, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  tabAan: { backgroundColor: KLEUR },
+  tabTekst: { color: KLEUR, fontWeight: '700' },
+  tabTekstAan: { color: '#fff' },
+  zoekVeld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', marginTop: 10 },
+  resultaten: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
+  leegTekst: { color: '#777' },
 });

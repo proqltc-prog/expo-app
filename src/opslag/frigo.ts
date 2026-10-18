@@ -25,3 +25,22 @@ export function wijzigFrigo(wijziging: (frigo: FrigoItem[]) => FrigoItem[]): Pro
     return nieuw;
   });
 }
+
+const SLEUTEL_KOPPELING = 'famenu.frigoBronKoppeling';
+
+/** Is de eenmalige koppeling van de bestaande frigo al gedaan (WEEK-71 deel 2)? */
+export async function koppelingGedaan(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(SLEUTEL_KOPPELING)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function zetKoppelingGedaan(): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SLEUTEL_KOPPELING, '1');
+  } catch {
+    // Zonder opslag komt de koppeling bij het volgende bezoek opnieuw; dat is onschadelijk.
+  }
+}

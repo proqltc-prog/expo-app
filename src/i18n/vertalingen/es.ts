@@ -389,4 +389,11 @@ export const es: Vertalingen = {
   'stijlOptie.hartig': 'Salada',
   'stijlOptie.zoet': 'Dulce',
   'planning.geenRecepten': 'Ahora mismo no hay suficientes recetas con estas opciones. Añade otra cocina o elige otro tiempo de cocina.',
+  'frigo.sheetPlanner': 'Nevera del plan',
+  'frigo.sheetLos': 'Productos sueltos',
+  'frigo.plannerUitleg': 'Ingredientes de la lista de la app. Cuentan para el menú semanal: al pulsar “Cocinado” salen de la nevera.',
+  'frigo.losUitleg': 'Los productos sueltos no cuentan para el menú semanal. Tú los gestionas y los quitas; la app no borra nada automáticamente.',
+  'frigo.zoekIngredient': 'Busca un ingrediente…',
+  'frigo.geenIngredient': 'No se encontró ningún ingrediente.',
+  'frigo.alIngevoegd': 'Ya está en la nevera',
 };

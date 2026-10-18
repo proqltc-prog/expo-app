@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.58.0] – 2026-10-18
+
+**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 2) · **Confluence:** [WEEK-71 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503897)
+
+- De frigo heeft twee sheets: planner-frigo en losse producten.
+- Planner-frigo: zoekbaar op ingrediënten uit de app. Alleen deze tellen mee bij het weekmenu; bij "Gekookt" gaan ze uit de frigo.
+- Losse producten: vrij in te vullen, met scanner. Ze tellen niet mee bij het weekmenu, en de app ruimt ze nooit automatisch op.
+- Bestaande frigo-items worden eenmalig gekoppeld: wat overeenkomt met een ingrediënt uit de app wordt planner-frigo, de rest wordt een los product. Niets wordt verwijderd.
+- Zelfde ingrediënt twee keer kiezen in de planner-frigo geeft geen dubbele regel.
+- Unit tests voor zoeken, de twee sheets, koppelen en het niet-verdwijnen van items.
+
 ## [0.57.0] – 2026-10-18
 
 **Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4b) · **Confluence:** [WEEK-68 deel 4b](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700481)
