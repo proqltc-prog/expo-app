@@ -39,6 +39,7 @@ describe('pasFrigoAan (WEEK-18)', () => {
       afdeling: 'droge-voeding',
       toegevoegdOp: nu.toISOString(),
       lijstId: pastaZo.id,
+      bron: 'planner',
     });
   });
 
@@ -161,7 +162,7 @@ describe('normaliseerFrigo', () => {
 
 describe('verbruik (WEEK-19)', () => {
   const f = (id: string, naam: string, hoeveelheid: number | undefined, eenheid: string | undefined, op: string): FrigoItem => ({
-    id, naam, afdeling: 'droge-voeding', toegevoegdOp: op,
+    id, naam, afdeling: 'droge-voeding', toegevoegdOp: op, bron: 'planner',
     ...(hoeveelheid !== undefined ? { hoeveelheid } : {}), ...(eenheid ? { eenheid } : {}),
   });
   const OUD = '2026-10-01T10:00:00.000Z';

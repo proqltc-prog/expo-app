@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.56.0] – 2026-10-18
+
+**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 1) · **Confluence:** [WEEK-71 deel 1](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
+
+- De frigo kent twee soorten producten: planner-frigo (uit de catalogus, telt mee bij het koken) en losse producten (vrij ingegeven, de gebruiker beheert ze zelf).
+- Bij "Gekookt" gaan enkel planner-producten uit de frigo; losse producten blijven staan.
+- Oude frigo-items blijven werken: items uit de boodschappenlijst tellen mee, de rest is los.
+- Nog niet in het scherm; de twee sheets volgen met het frigo-scherm.
+- 12 nieuwe unit tests; bestaande testdata is expliciet als planner-product gemarkeerd.
+
 ## [0.55.0] – 2026-10-18
 
 **Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4a) · **Confluence:** [WEEK-68 deel 4](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
