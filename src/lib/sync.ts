@@ -1,6 +1,6 @@
 // Synchronisatie binnen de gezinsruimte (WEEK-8). Pure logica, zonder netwerk of opslag.
 //
-// Lijsten (boodschappenlijst, frigo, favorieten) worden per item gesynchroniseerd:
+// Lijsten (boodschappenlijst, frigo) worden per item gesynchroniseerd:
 // wie tegelijk verschillende items aanpast, verliest niets. Per item wint de laatste wijziging.
 // Documenten (weekplan, gezinsprofiel) worden als geheel gesynchroniseerd; ook daar wint de laatste.
 //
@@ -8,7 +8,7 @@
 // - de laatst gekende versie van de lijst (om te zien wat dit toestel zelf veranderde)
 // - per item het tijdstip van de laatst gekende wijziging ("meta")
 
-export type ItemSoort = 'lijst' | 'frigo' | 'favoriet';
+export type ItemSoort = 'lijst' | 'frigo';
 export type DocumentSleutel = 'plan' | 'profiel';
 
 /** Een rij zoals ze in de tabel gezin_items staat. */
@@ -114,7 +114,7 @@ export function pasExternToe<T extends MetId>(
  * worden overgenomen, en wat dit toestel al had en het gezin nog niet kent, wordt toegevoegd.
  * - Dubbele ids op het toestel worden maar één keer meegenomen (anders weigert de database de hele batch).
  * - Verwijderde het gezin ooit een item met dezelfde id, dan wint die verwijdering, tenzij het lokale item
- *   aantoonbaar nieuwer is (`tijdVan`, bv. wanneer een favoriet bewaard werd).
+ *   aantoonbaar nieuwer is (`tijdVan`, bv. wanneer een frigo-item toegevoegd werd).
  * Geeft de samengevoegde lijst en de rijen die dit toestel moet versturen.
  */
 export function eersteSamenvoeging<T extends MetId>(

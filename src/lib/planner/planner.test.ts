@@ -268,3 +268,14 @@ describe('kooktijd en stijl (WEEK-10)', () => {
     assert.deepEqual(normaliseerKeuzes(null), { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: 6, momenten: ['avond'] });
   });
 });
+
+describe('oude plannen na het verwijderen van favorieten (WEEK-72)', () => {
+  test('een opgeslagen plan met bron favorieten blijft leesbaar en valt terug op lokaal', () => {
+    const plan = planLokaal({ opdracht: '2 dagen', kooktijden: [], stijlen: [], profiel: standaardProfiel(), taal: 'nl', seed: 3 });
+    const oud = { ...JSON.parse(JSON.stringify(plan)), bron: 'favorieten' };
+    const gelezen = normaliseerWeekplan(oud);
+    assert.ok(gelezen, 'het plan wordt niet weggegooid');
+    assert.equal(gelezen.bron, 'lokaal');
+    assert.equal(gelezen.dagen.length, plan.dagen.length);
+  });
+});

@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.70.0] – 2026-10-18
+
+**Jira:** [WEEK-72](https://proqltc-1791495894841.atlassian.net/browse/WEEK-72) (verbetering) · **Confluence:** [WEEK-72](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192058)
+
+- Het kookboek (favorieten) en de pagina Mijn recepten zijn verwijderd. Bestaande favorieten in de database worden gewist.
+- Eigen recepten die al op het toestel staan, blijven bruikbaar voor de bereidingsstappen in het weekmenu.
+- Opgeslagen plannen met de bron favorieten worden als lokaal plan ingelezen.
+- Regressietests: de lokale, AI- en databaseplanner, en het inlezen van oude plannen, zijn groen.
+
 ## [0.69.3] – 2026-10-18
 
 **Jira:** [WEEK-85](https://proqltc-1791495894841.atlassian.net/browse/WEEK-85) (opruiming, testfout) · **Confluence:** [WEEK-85](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8323073)

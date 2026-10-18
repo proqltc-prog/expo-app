@@ -3,11 +3,9 @@ import assert from 'node:assert/strict';
 import { AiFout, bouwAiVerzoek, leesAiAntwoord } from '@/lib/planner/ai';
 import { planLokaal } from '@/lib/planner/lokaal';
 import { resetDagLokaal } from '@/lib/planner/reset';
-import { passendeFavorieten } from '@/lib/planner/favorietenplan';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanVerzoek, Weekplan } from '@/lib/planner/types';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
-import type { Favoriet } from '@/lib/favorieten';
 import type { DagCode } from '@/lib/planner/types';
 
 const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
@@ -60,20 +58,6 @@ describe('vermijden bij de AI (WEEK-41)', () => {
     const ruw = { dagen: [{ dag: 'zondag', recept: recept('Pasta pesto', 'Pasta') }, { dag: 'maandag', recept: recept('Pasta crème', 'Room') }] };
     assert.throws(() => leesAiAntwoord(ruw, verzoek({ vermijd: ['zuivel'] }), dagen), AiFout);
     assert.equal(leesAiAntwoord(ruw, verzoek(), dagen).length, 2);
-  });
-});
-
-describe('vermijden bij favorieten (WEEK-41)', () => {
-  const fav = (naam: string, ingredienten: string[]): Favoriet => ({
-    id: naam, naam, soort: 'vegetarisch', stijlen: [], minuten: 20, personen: 4, porties: 3,
-    ingredienten: ingredienten.map((n) => ({ naam: n, hoeveelheid: 100, eenheid: 'g', afdeling: 'groenten-fruit' as const })),
-    bewaardOp: '2026-10-01', bewaardDoor: undefined,
-  } as unknown as Favoriet);
-
-  test('een favoriet met room valt weg bij zuivel', () => {
-    const boek = [fav('Met room', ['Room', 'ui']), fav('Zonder', ['ui', 'tomaten'])];
-    const { favorieten } = passendeFavorieten(boek, verzoek({ vermijd: ['zuivel'] }), 2);
-    assert.deepEqual(favorieten.map((f) => f.naam), ['Zonder']);
   });
 });
 
