@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.3] – 2026-10-18
+
+**Jira:** [WEEK-88](https://proqltc-1791495894841.atlassian.net/browse/WEEK-88) (verbetering) · **Confluence:** [WEEK-88](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192077)
+
+- 19 ongebruikte vertaalsleutels van kookboek, recepten en favoriet zijn verwijderd uit de zes taalbestanden.
+
 ## [0.72.2] – 2026-10-18
 
 **Jira:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/browse/WEEK-86) (herstel) · **Confluence:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8060931)
