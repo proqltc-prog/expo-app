@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.64.0] – 2026-10-18
+
+**Jira:** [WEEK-78](https://proqltc-1791495894841.atlassian.net/browse/WEEK-78) (verbetering) · **Confluence:** [WEEK-78](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7766072)
+
+- De stijlen 'licht' en 'comfort' zijn verwijderd uit de lokale receptenbank. De vijf recepten die alleen zo waren, krijgen nu een andere stijl.
+- De voorkeur 'gezond' geeft geen extra gewicht meer aan recepten in de lokale planner.
+
 ## [0.63.0] – 2026-10-18
 
 **Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (verbetering, deel 4) · **Confluence:** [WEEK-71 deel 4](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7995401)

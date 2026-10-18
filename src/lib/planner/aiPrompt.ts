@@ -42,7 +42,7 @@ export const AFDELINGEN_AI = [
   'groenten-fruit', 'vlees-vis', 'zuivel-eieren', 'brood', 'droge-voeding', 'conserven-sauzen', 'diepvries', 'dranken',
 ] as const;
 
-export const STIJLEN_AI = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'comfort', 'licht'] as const;
+export const STIJLEN_AI = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan'] as const;
 
 /** JSON-schema van het antwoord; gebruikt als tool-definitie zodat het model geldige JSON teruggeeft. */
 export const WEEKPLAN_SCHEMA = {

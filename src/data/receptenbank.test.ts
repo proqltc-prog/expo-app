@@ -63,3 +63,18 @@ describe('ingrediënten', () => {
     assert.equal(ingredientNaam('kipfilet', 'en'), 'chicken breast');
   });
 });
+
+describe('stijlen zonder licht en comfort (WEEK-78)', () => {
+  test('geen recept gebruikt de verwijderde stijlen licht of comfort', () => {
+    for (const r of RECEPTENBANK) {
+      assert.ok(!r.stijlen.includes('licht' as never) && !r.stijlen.includes('comfort' as never), r.id);
+    }
+  });
+
+  test('de vijf recepten die enkel licht of comfort hadden, hebben nu een stijl', () => {
+    for (const id of ['mac-kaas', 'havermout-fruit', 'yoghurt-muesli', 'avocado-ei', 'tonijnsalade']) {
+      const r = RECEPTENBANK.find((x) => x.id === id);
+      assert.ok(r && r.stijlen.length >= 1, id);
+    }
+  });
+});

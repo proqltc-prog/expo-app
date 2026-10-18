@@ -257,9 +257,10 @@ describe('kooktijd en stijl (WEEK-10)', () => {
 
   test('bewaarde keuzes worden veilig ingelezen', async () => {
     const { normaliseerKeuzes } = await import('@/lib/planner/normaliseer');
+    // 'licht' is verwijderd (WEEK-78): een bewaarde keuze 'licht' valt weg, net als de onbekende 'thai'.
     assert.deepEqual(normaliseerKeuzes({ kooktijden: ['uitgebreid', 'x', 'snel'], stijlen: ['licht', 'thai'] }), {
       kooktijden: ['snel', 'uitgebreid'],
-      stijlen: ['licht'],
+      stijlen: [],
       vermijd: [],
       aantalDagen: 6,
       momenten: ['avond'],

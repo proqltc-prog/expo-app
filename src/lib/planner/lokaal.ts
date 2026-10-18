@@ -54,7 +54,6 @@ export function passendeRecepten(w: Wensen, bank: readonly BankRecept[] = RECEPT
 function voorkeurScore(r: BankRecept, w: Wensen): number {
   let score = 0;
   if (w.snel) score += r.minuten <= 20 ? 3 : r.minuten <= 30 ? 1 : -3;
-  if (w.gezond) score += (r.stijlen.includes('licht') ? 2 : 0) - (r.stijlen.includes('comfort') ? 2 : 0);
   if (w.goedkoop) score -= r.ingredienten.some(([code]) => DUUR.has(code)) ? 3 : 0;
   // Standaard: liefst geen uren in de keuken op een weekdag.
   if (!w.snel && r.minuten > 60) score -= 1;
