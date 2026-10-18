@@ -45,6 +45,9 @@ const BEELD_VOOR_DB_STIJL: Record<string, string> = {
   mexicaans: 'mexicaans',
   aziatisch: 'chinees',
   klassiek: 'belgisch',
+  thais: 'thais',
+  japans: 'japans',
+  koreaans: 'koreaans',
 };
 
 /** Het stijlbeeld voor een recept met deze eerste databasestijl, of undefined als er geen is. */

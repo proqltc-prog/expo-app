@@ -3,7 +3,7 @@
 import type { IngredientCode } from './ingredienten';
 
 export type Soort = 'vegetarisch' | 'vis' | 'vlees';
-export type StijlCode = 'klassiek' | 'italiaans' | 'aziatisch' | 'mexicaans' | 'mediterraan';
+export type StijlCode = 'klassiek' | 'italiaans' | 'aziatisch' | 'mexicaans' | 'mediterraan' | 'thais' | 'japans' | 'koreaans';
 export type Basis = 'pasta' | 'rijst' | 'aardappel' | 'brood' | 'wrap' | 'noedels' | 'granen';
 export type Eenheid = 'g' | 'ml' | 'stuk' | 'teentje';
 /** Wanneer het recept gegeten wordt (WEEK-43). Zonder moment geldt avond. */
@@ -11,7 +11,7 @@ export type Moment = 'ontbijt' | 'middag' | 'avond';
 export const MOMENTEN: readonly Moment[] = ['ontbijt', 'middag', 'avond'];
 
 // Stijlen van de receptenbank. 'licht' en 'comfort' zijn verwijderd (WEEK-78), ook in de database.
-export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan'];
+export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'thais', 'japans', 'koreaans'];
 
 export type BankRecept = {
   id: string;
@@ -215,5 +215,53 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     id: 'eiersalade-brood', soort: 'vegetarisch', minuten: 15, stijlen: ['klassiek'], basis: 'brood', moment: 'middag',
     namen: ['Eiersalade op brood', 'Salade d’œufs sur pain', 'Eiersalat auf Brot', 'Egg salad on bread', 'Ensalada de huevo sobre pan', 'Salada de ovo em pão'],
     ingredienten: [['eieren', 2, 'stuk'], ['sla', 40, 'g'], ['brood', 100, 'g'], ['komkommer', 0.5, 'stuk']],
+  },
+  // ── thais (WEEK-86) ──
+  {
+    id: 'thais-kip-curry', soort: 'vlees', minuten: 25, stijlen: ['thais'], basis: 'rijst',
+    namen: ['Thaise kipcurry met rijst', 'Curry thaï au poulet et riz', 'Thailändisches Hühner-Curry mit Reis', 'Thai chicken curry with rice', 'Curry tailandés de pollo con arroz', 'Caril tailandês de frango com arroz'],
+    ingredienten: [['kipfilet', 150, 'g'], ['kokosmelk', 200, 'ml'], ['currypasta', 20, 'g'], ['rijst', 75, 'g'], ['paprika', 0.5, 'stuk']],
+  },
+  {
+    id: 'thais-wok-noedels', soort: 'vegetarisch', minuten: 20, stijlen: ['thais'], basis: 'noedels',
+    namen: ['Thaise woknoedels met groenten', 'Nouilles sautées thaïes aux légumes', 'Thailändische Wok-Nudeln mit Gemüse', 'Thai stir-fried noodles with vegetables', 'Fideos salteados tailandeses con verduras', 'Noodles salteados tailandeses com legumes'],
+    ingredienten: [['noedels', 100, 'g'], ['wokgroenten', 200, 'g'], ['sojasaus', 15, 'ml'], ['limoen', 0.5, 'stuk']],
+  },
+  {
+    id: 'thais-zalm-curry', soort: 'vis', minuten: 30, stijlen: ['thais'], basis: 'rijst',
+    namen: ['Thaise zalmcurry met spinazie', 'Curry thaï de saumon aux épinards', 'Thailändisches Lachs-Curry mit Spinat', 'Thai salmon curry with spinach', 'Curry tailandés de salmón con espinacas', 'Caril tailandês de salmão com espinafres'],
+    ingredienten: [['witvis', 150, 'g'], ['kokosmelk', 200, 'ml'], ['currypasta', 20, 'g'], ['rijst', 75, 'g'], ['spinazie', 60, 'g']],
+  },
+  // ── japans (WEEK-86) ──
+  {
+    id: 'japans-teriyaki-kip', soort: 'vlees', minuten: 25, stijlen: ['japans'], basis: 'rijst',
+    namen: ['Teriyaki-kip met rijst en wok', 'Poulet teriyaki au riz et wok', 'Teriyaki-Hähnchen mit Reis und Wok', 'Teriyaki chicken with rice and wok vegetables', 'Pollo teriyaki con arroz y verduras', 'Frango teriyaki com arroz e legumes'],
+    ingredienten: [['kipfilet', 150, 'g'], ['teriyakisaus', 30, 'ml'], ['rijst', 75, 'g'], ['wokgroenten', 150, 'g']],
+  },
+  {
+    id: 'japans-zalm-teriyaki', soort: 'vis', minuten: 20, stijlen: ['japans'], basis: 'rijst',
+    namen: ['Teriyaki-zalm met rijst en komkommer', 'Saumon teriyaki au riz et concombre', 'Teriyaki-Lachs mit Reis und Gurke', 'Teriyaki salmon with rice and cucumber', 'Salmón teriyaki con arroz y pepino', 'Salmão teriyaki com arroz e pepino'],
+    ingredienten: [['witvis', 150, 'g'], ['teriyakisaus', 30, 'ml'], ['rijst', 75, 'g'], ['komkommer', 0.5, 'stuk']],
+  },
+  {
+    id: 'japans-yakisoba', soort: 'vegetarisch', minuten: 20, stijlen: ['japans'], basis: 'noedels',
+    namen: ['Yakisoba met wokgroenten', 'Yakisoba aux légumes sautés', 'Yakisoba mit Wokgemüse', 'Yakisoba with stir-fried vegetables', 'Yakisoba con verduras salteadas', 'Yakisoba com legumes salteados'],
+    ingredienten: [['noedels', 120, 'g'], ['wokgroenten', 200, 'g'], ['sojasaus', 20, 'ml'], ['ui', 0.5, 'stuk']],
+  },
+  // ── koreaans (WEEK-86) ──
+  {
+    id: 'koreaans-bulgogi-kip', soort: 'vlees', minuten: 25, stijlen: ['koreaans'], basis: 'rijst',
+    namen: ['Bulgogi-kip met rijst', 'Bulgogi de poulet au riz', 'Bulgogi-Hähnchen mit Reis', 'Bulgogi chicken with rice', 'Bulgogi de pollo con arroz', 'Bulgogi de frango com arroz'],
+    ingredienten: [['kipfilet', 150, 'g'], ['sojasaus', 30, 'ml'], ['look', 1, 'teentje'], ['rijst', 75, 'g'], ['wokgroenten', 150, 'g']],
+  },
+  {
+    id: 'koreaans-bibimbap', soort: 'vegetarisch', minuten: 25, stijlen: ['koreaans'], basis: 'rijst',
+    namen: ['Bibimbap met groenten en ei', 'Bibimbap aux légumes et œuf', 'Bibimbap mit Gemüse und Ei', 'Bibimbap with vegetables and egg', 'Bibimbap con verduras y huevo', 'Bibimbap com legumes e ovo'],
+    ingredienten: [['rijst', 75, 'g'], ['eieren', 1, 'stuk'], ['wokgroenten', 150, 'g'], ['komkommer', 0.5, 'stuk']],
+  },
+  {
+    id: 'koreaans-zalm-rijst', soort: 'vis', minuten: 20, stijlen: ['koreaans'], basis: 'rijst',
+    namen: ['Koreaanse zalm met rijst en komkommer', 'Saumon coréen au riz et concombre', 'Koreanischer Lachs mit Reis und Gurke', 'Korean salmon with rice and cucumber', 'Salmón coreano con arroz y pepino', 'Salmão coreano com arroz e pepino'],
+    ingredienten: [['witvis', 150, 'g'], ['sojasaus', 20, 'ml'], ['look', 1, 'teentje'], ['rijst', 75, 'g'], ['komkommer', 0.5, 'stuk']],
   },
 ];

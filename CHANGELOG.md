@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.0] – 2026-10-18
+
+**Jira:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/browse/WEEK-86) (verbetering) · **Confluence:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159262)
+
+- De stijlen Thais, Japans en Koreaans hebben elk een eigen databasestijl. Eerder vielen ze onder aziatisch.
+- Dagkaarten van het weekplan tonen het eigen stijlbeeld van deze drie keukens.
+- Negen nieuwe recepten (drie per keuken) in de lokale receptenbank, met bereidingsstappen in zes talen.
+- Database: de check-constraint op de stijl van een recept accepteert de drie nieuwe codes (migratie 20261018200000).
+- Regressietests: de bestaande stijlen blijven ongewijzigd, en het goedkoop-filter vermijdt zalm.
+
 ## [0.71.0] – 2026-10-18
 
 **Jira:** [WEEK-73](https://proqltc-1791495894841.atlassian.net/browse/WEEK-73) (verbetering) · **Confluence:** [WEEK-73](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159262)
