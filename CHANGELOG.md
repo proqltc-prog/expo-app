@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.67.0] – 2026-10-18
+
+**Jira:** [WEEK-82](https://proqltc-1791495894841.atlassian.net/browse/WEEK-82) (verbetering) · **Confluence:** [WEEK-82](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7995418)
+
+- Het welkomstscherm krijgt de goedgekeurde visual: het app-logo, de slogan, en een taalkeuze met de zes talen in het thema.
+- Nieuwe vertalingen in alle zes talen voor het welkomstscherm.
+
 ## [0.66.0] – 2026-10-18
 
 **Jira:** [WEEK-80](https://proqltc-1791495894841.atlassian.net/browse/WEEK-80) (verbetering) · **Confluence:** [WEEK-80](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7471141)
