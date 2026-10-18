@@ -379,7 +379,11 @@ export default function Weekplanning() {
           <View key={f} style={[s.stap, i <= huidigeStap && s.stapAan]} />
         ))}
       </View>
-      <Text style={s.stapTekst}>{t('planning.stap', { n: huidigeStap + 1, m: FASEN.length })}</Text>
+      <View style={s.stapNamen}>
+        {FASEN.map((f, i) => (
+          <Text key={f} style={[s.stapNaam, i === huidigeStap && s.stapNaamAan]}>{t(`stap.${f}`)}</Text>
+        ))}
+      </View>
 
       {fase === 'periode' && (
         <View style={s.blok}>
@@ -596,7 +600,9 @@ const s = StyleSheet.create({
   stappen: { flexDirection: 'row', gap: 6 },
   stap: { flex: 1, height: 6, borderRadius: 3, backgroundColor: LIJN },
   stapAan: { backgroundColor: PETROL },
-  stapTekst: { color: MUTED, fontSize: 13, fontWeight: '600' },
+  stapNamen: { flexDirection: 'row', gap: 6 },
+  stapNaam: { flex: 1, textAlign: 'center', color: MUTED, fontSize: 11, fontWeight: '600' },
+  stapNaamAan: { color: PETROL, fontWeight: '800' },
   blok: { gap: 12, backgroundColor: '#fff', borderRadius: 18, padding: 16, borderWidth: 1, borderColor: LIJN },
   kopRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   kop: { fontSize: 18, fontWeight: '800', color: INKT, flexShrink: 1 },
