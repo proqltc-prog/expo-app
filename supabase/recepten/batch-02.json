@@ -1,0 +1,365 @@
+[
+  {
+    "slug": "frans-zalm-dille-roomsaus",
+    "stijl": "frans", "stijlen": ["frans"], "moment": "avond", "soort": "vis", "basis": "aardappel",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 25, "tags": ["vis"],
+    "titel": {"nl": "Zalm met dille en roomsaus", "fr": "Saumon à l'aneth et à la crème", "de": "Lachs mit Dill und Sahnesoße", "en": "Salmon with dill cream sauce", "es": "Salmón con eneldo y salsa de nata", "pt": "Salmão com endro e molho de natas"},
+    "ingredienten": [
+      {"code": "zalm", "h": 150, "e": "g"}, {"code": "room", "h": 60, "e": "ml"}, {"code": "dille", "h": 2, "e": "g"},
+      {"code": "citroen", "h": 10, "e": "g"}, {"code": "boter", "h": 5, "e": "g"}, {"code": "aardappel", "h": 150, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de aardappel 15 minuten gaar in gezouten water.", "fr": "Faites cuire la pomme de terre 15 minutes dans de l'eau salée.", "de": "Kartoffel 15 Minuten in Salzwasser garen.", "en": "Boil the potato 15 minutes in salted water.", "es": "Cuece la patata 15 minutos en agua con sal.", "pt": "Cozinhe a batata 15 minutos em água salgada."}, "timer_sec": 900},
+      {"tekst": {"nl": "Bak de zalm 3 minuten per kant in de boter.", "fr": "Faites dorer le saumon 3 minutes de chaque côté dans le beurre.", "de": "Lachs 3 Minuten pro Seite in der Butter braten.", "en": "Pan-fry the salmon 3 minutes per side in the butter.", "es": "Dora el salmón 3 minutos por cada lado en la mantequilla.", "pt": "Doure o salmão 3 minutos de cada lado na manteiga."}, "timer_sec": 360},
+      {"tekst": {"nl": "Voeg room, dille en citroensap toe en laat 2 minuten sudderen.", "fr": "Ajoutez la crème, l'aneth et le jus de citron et laissez mijoter 2 minutes.", "de": "Sahne, Dill und Zitronensaft dazugeben und 2 Minuten köcheln lassen.", "en": "Add cream, dill and lemon juice and simmer 2 minutes.", "es": "Añade la nata, el eneldo y el zumo de limón y cuece 2 minutos.", "pt": "Junte a nata, o endro e o sumo de limão e deixe ferver 2 minutos."}, "timer_sec": 120}
+    ]
+  },
+  {
+    "slug": "frans-quiche-spinazie",
+    "stijl": "frans", "stijlen": ["frans"], "moment": "middag", "soort": "vegetarisch", "basis": null,
+    "bereiding": "oven", "moeilijkheid": "gemiddeld", "kooktijd_min": 50, "tags": ["ovengerecht"],
+    "titel": {"nl": "Quiche met spinazie en kaas", "fr": "Quiche aux épinards et au fromage", "de": "Quiche mit Spinat und Käse", "en": "Spinach and cheese quiche", "es": "Quiche de espinacas y queso", "pt": "Quiche de espinafres e queijo"},
+    "ingredienten": [
+      {"code": "bloem", "h": 100, "e": "g"}, {"code": "boter", "h": 50, "e": "g"}, {"code": "spinazie", "h": 120, "e": "g"},
+      {"code": "eieren", "h": 2, "e": "stuk"}, {"code": "room", "h": 100, "e": "ml"}, {"code": "kaas_gruyere", "h": 40, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kneed bloem, boter en een snufje zout tot een deeg. Druk in een vorm en prik gaatjes. Bak 10 minuten blind op 200 °C.", "fr": "Pétrissez farine, beurre et sel en pâte. Foncez un moule, piquez et précuisez 10 minutes à blanc à 200 °C.", "de": "Mehl, Butter und Salz zu Teig kneten. In die Form drücken, einstechen und 10 Minuten bei 200 °C blind backen.", "en": "Knead flour, butter and salt into dough. Press into a tin, prick and blind bake 10 minutes at 200 °C.", "es": "Amasa harina, mantequilla y sal. Forra un molde, pincha y hornea en blanco 10 minutos a 200 °C.", "pt": "Amasse farinha, manteiga e sal. Forre uma forma, fure e pré-cozinhe 10 minutos a 200 °C."}, "timer_sec": 600},
+      {"tekst": {"nl": "Wilt de spinazie in een pan. Klop eieren met room en kaas en voeg de spinazie toe.", "fr": "Faites tomber les épinards à la poêle. Battez les œufs avec la crème et le fromage, puis ajoutez les épinards.", "de": "Spinat in der Pfanne zusammenfallen lassen. Eier mit Sahne und Käse verquirlen und den Spinat unterheben.", "en": "Wilt the spinach in a pan. Whisk eggs with cream and cheese and add the spinach.", "es": "Marchita las espinacas en una sartén. Bate los huevos con la nata y el queso y añade las espinacas.", "pt": "Murche os espinafres numa frigideira. Bata os ovos com a nata e o queijo e junte os espinafres."}, "timer_sec": 180},
+      {"tekst": {"nl": "Giet de vulling in de bodem en bak 25 minuten op 180 °C tot hij gestold is.", "fr": "Versez la garniture sur le fond et enfournez 25 minutes à 180 °C jusqu'à ce qu'elle soit prise.", "de": "Füllung auf den Boden gießen und 25 Minuten bei 180 °C backen, bis sie gestockt ist.", "en": "Pour the filling into the base and bake 25 minutes at 180 °C until set.", "es": "Vierte el relleno sobre la base y hornea 25 minutos a 180 °C hasta que cuaje.", "pt": "Deite o recheio na base e leve ao forno 25 minutos a 180 °C até solidificar."}, "timer_sec": 1500}
+    ]
+  },
+  {
+    "slug": "frans-uiensoep-gegratineerd",
+    "stijl": "frans", "stijlen": ["frans"], "moment": "middag", "soort": "vegetarisch", "basis": "brood",
+    "bereiding": "oven", "moeilijkheid": "makkelijk", "kooktijd_min": 45, "tags": ["soep"],
+    "titel": {"nl": "Franse uiensoep met kaas", "fr": "Soupe à l'oignon gratinée", "de": "Französische Zwiebelsuppe mit Käse", "en": "French onion soup with cheese", "es": "Sopa de cebolla francesa gratinada", "pt": "Sopa francesa de cebola gratinada"},
+    "ingredienten": [
+      {"code": "ui", "h": 200, "e": "g"}, {"code": "boter", "h": 15, "e": "g"}, {"code": "groentebouillon", "h": 500, "e": "ml"},
+      {"code": "brood", "h": 40, "e": "g"}, {"code": "kaas_gruyere", "h": 30, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Snijd de ui in dunne ringen en smoor ze 20 minuten zacht en goudbruin in de boter.", "fr": "Coupez l'oignon en fines rondelles et faites-le fondre 20 minutes dans le beurre jusqu'à ce qu'il soit doré.", "de": "Zwiebel in dünne Ringe schneiden und 20 Minuten in der Butter weich und goldbraun schmoren.", "en": "Slice the onion thinly and cook 20 minutes in the butter until soft and golden.", "es": "Corta la cebolla en aros finos y rehógala 20 minutos en la mantequilla hasta que esté dorada.", "pt": "Corte a cebola em rodelas finas e cozinhe 20 minutos na manteiga até ficar dourada."}, "timer_sec": 1200},
+      {"tekst": {"nl": "Voeg de bouillon toe en laat 15 minuten sudderen.", "fr": "Ajoutez le bouillon et laissez mijoter 15 minutes.", "de": "Brühe dazugeben und 15 Minuten köcheln lassen.", "en": "Add the stock and simmer 15 minutes.", "es": "Añade el caldo y cuece 15 minutos.", "pt": "Junte o caldo e deixe ferver 15 minutos."}, "timer_sec": 900},
+      {"tekst": {"nl": "Schep in ovenvaste kommen, leg een sneetje brood erop, bestrooi met kaas en gratineer 5 minuten op 200 °C.", "fr": "Versez dans des bols allant au four, posez une tranche de pain et du fromage, puis gratinez 5 minutes à 200 °C.", "de": "In ofenfeste Schalen füllen, eine Scheibe Brot und Käse darauf geben und 5 Minuten bei 200 °C gratinieren.", "en": "Pour into oven-proof bowls, top with bread and cheese and grill 5 minutes at 200 °C.", "es": "Reparte en cuencos aptos para horno, pon pan y queso encima y gratina 5 minutos a 200 °C.", "pt": "Distribua por taças refratárias, cubra com pão e queijo e gratine 5 minutos a 200 °C."}, "timer_sec": 300}
+    ]
+  },
+  {
+    "slug": "frans-varkensfilet-mosterdsaus",
+    "stijl": "frans", "stijlen": ["frans"], "moment": "avond", "soort": "vlees", "basis": "aardappel",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 25, "tags": ["snel"],
+    "titel": {"nl": "Varkensfilet met mosterdroomsaus", "fr": "Filet de porc à la crème moutardée", "de": "Schweinefilet mit Senfsahne", "en": "Pork fillet in mustard cream sauce", "es": "Lomo de cerdo con salsa de mostaza y nata", "pt": "Lombo de porco com molho de mostarda e natas"},
+    "ingredienten": [
+      {"code": "varkensfilet", "h": 150, "e": "g"}, {"code": "room", "h": 60, "e": "ml"}, {"code": "mosterd", "h": 5, "e": "g"},
+      {"code": "champignons", "h": 60, "e": "g"}, {"code": "olijfolie", "h": 5, "e": "ml"}, {"code": "aardappel", "h": 150, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de aardappel 15 minuten gaar. Snijd het vlees in medaillons.", "fr": "Faites cuire la pomme de terre 15 minutes. Coupez le filet en médaillons.", "de": "Kartoffel 15 Minuten garen. Fleisch in Medaillons schneiden.", "en": "Boil the potato 15 minutes. Cut the fillet into medallions.", "es": "Cuece la patata 15 minutos. Corta el lomo en medallones.", "pt": "Cozinhe a batata 15 minutos. Corte o lombo em medalhões."}, "timer_sec": 900},
+      {"tekst": {"nl": "Bak het vlees en de champignons 4 minuten per kant in de olie.", "fr": "Faites revenir la viande et les champignons 4 minutes de chaque côté dans l'huile.", "de": "Fleisch und Champignons 4 Minuten pro Seite in Öl braten.", "en": "Fry the meat and mushrooms 4 minutes per side in the oil.", "es": "Fríe la carne y los champiñones 4 minutos por cada lado en el aceite.", "pt": "Frite a carne e os cogumelos 4 minutos de cada lado no óleo."}, "timer_sec": 480},
+      {"tekst": {"nl": "Voeg room en mosterd toe, laat 2 minuten pruttelen en serveer met de aardappel.", "fr": "Ajoutez la crème et la moutarde, laissez frémir 2 minutes et servez avec la pomme de terre.", "de": "Sahne und Senf dazugeben, 2 Minuten köcheln lassen und mit der Kartoffel servieren.", "en": "Add cream and mustard, simmer 2 minutes and serve with the potato.", "es": "Añade la nata y la mostaza, cuece 2 minutos y sirve con la patata.", "pt": "Junte a nata e a mostarda, deixe ferver 2 minutos e sirva com a batata."}, "timer_sec": 120}
+    ]
+  },
+  {
+    "slug": "belgisch-vol-au-vent-kip",
+    "stijl": "belgisch", "stijlen": ["belgisch"], "moment": "avond", "soort": "vlees", "basis": "rijst",
+    "bereiding": "pan", "moeilijkheid": "gemiddeld", "kooktijd_min": 30, "tags": ["roomsaus"],
+    "titel": {"nl": "Kip in roomsaus met champignons", "fr": "Bouchées à la reine au poulet", "de": "Hähnchen in Sahnesoße mit Champignons", "en": "Chicken in cream sauce with mushrooms", "es": "Pollo en salsa de nata con champiñones", "pt": "Frango em molho de natas com cogumelos"},
+    "ingredienten": [
+      {"code": "kipfilet", "h": 150, "e": "g"}, {"code": "champignons", "h": 60, "e": "g"}, {"code": "room", "h": 80, "e": "ml"},
+      {"code": "boter", "h": 10, "e": "g"}, {"code": "rijst_basmati", "h": 70, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de rijst gaar volgens de verpakking.", "fr": "Faites cuire le riz selon l'emballage.", "de": "Reis nach Packungsanweisung garen.", "en": "Cook the rice per the package.", "es": "Cuece el arroz según el envase.", "pt": "Cozinhe o arroz segundo a embalagem."}, "timer_sec": 720},
+      {"tekst": {"nl": "Bak kip en champignons 5 minuten in de boter.", "fr": "Faites revenir le poulet et les champignons 5 minutes dans le beurre.", "de": "Hähnchen und Champignons 5 Minuten in der Butter braten.", "en": "Fry the chicken and mushrooms 5 minutes in the butter.", "es": "Fríe el pollo y los champiñones 5 minutos en la mantequilla.", "pt": "Frite o frango e os cogumelos 5 minutos na manteiga."}, "timer_sec": 300},
+      {"tekst": {"nl": "Voeg de room toe en laat 5 minuten sudderen. Serveer met de rijst.", "fr": "Ajoutez la crème et laissez mijoter 5 minutes. Servez avec le riz.", "de": "Sahne dazugeben und 5 Minuten köcheln lassen. Mit dem Reis servieren.", "en": "Add the cream and simmer 5 minutes. Serve with the rice.", "es": "Añade la nata y cuece 5 minutos. Sirve con el arroz.", "pt": "Junte a nata e deixe ferver 5 minutos. Sirva com o arroz."}, "timer_sec": 300}
+    ]
+  },
+  {
+    "slug": "belgisch-aardappelsoep-prei",
+    "stijl": "belgisch", "stijlen": ["belgisch"], "moment": "middag", "soort": "vegetarisch", "basis": "aardappel",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 30, "tags": ["soep"],
+    "titel": {"nl": "Aardappelsoep met prei", "fr": "Soupe de pommes de terre et poireaux", "de": "Kartoffelsuppe mit Lauch", "en": "Potato and leek soup", "es": "Sopa de patata y puerro", "pt": "Sopa de batata e alho-francês"},
+    "ingredienten": [
+      {"code": "aardappel", "h": 200, "e": "g"}, {"code": "prei", "h": 80, "e": "g"}, {"code": "groentebouillon", "h": 400, "e": "ml"},
+      {"code": "room", "h": 50, "e": "ml"}, {"code": "boter", "h": 10, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Snijd prei en aardappel in blokjes. Smoor de prei 5 minuten in de boter.", "fr": "Coupez le poireau et la pomme de terre en dés. Faites revenir le poireau 5 minutes dans le beurre.", "de": "Lauch und Kartoffel würfeln. Lauch 5 Minuten in der Butter dünsten.", "en": "Dice the leek and potato. Sweat the leek 5 minutes in the butter.", "es": "Corta el puerro y la patata en dados. Rehoga el puerro 5 minutos en la mantequilla.", "pt": "Corte o alho-francês e a batata em cubos. Refogue o alho-francês 5 minutos na manteiga."}, "timer_sec": 300},
+      {"tekst": {"nl": "Voeg aardappel en bouillon toe en kook 20 minuten.", "fr": "Ajoutez la pomme de terre et le bouillon et faites cuire 20 minutes.", "de": "Kartoffel und Brühe dazugeben und 20 Minuten kochen.", "en": "Add the potato and stock and cook 20 minutes.", "es": "Añade la patata y el caldo y cuece 20 minutos.", "pt": "Junte a batata e o caldo e cozinhe 20 minutos."}, "timer_sec": 1200},
+      {"tekst": {"nl": "Mix glad, roer de room erdoor en breng op smaak met peper.", "fr": "Mixez, incorporez la crème et poivrez.", "de": "Pürieren, Sahne unterrühren und mit Pfeffer abschmecken.", "en": "Blend smooth, stir in the cream and season with pepper.", "es": "Tritura, incorpora la nata y sazona con pimienta.", "pt": "Triture, misture a nata e tempere com pimenta."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "belgisch-garnalen-tomaat",
+    "stijl": "belgisch", "stijlen": ["belgisch"], "moment": "avond", "soort": "vis", "basis": "brood",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 15, "tags": ["schaaldieren"],
+    "titel": {"nl": "Garnalen-tomatensalade op brood", "fr": "Tomates aux crevettes sur pain", "de": "Garnelen-Tomatensalat auf Brot", "en": "Shrimp and tomato salad on bread", "es": "Ensalada de gambas y tomate sobre pan", "pt": "Salada de camarão e tomate sobre pão"},
+    "ingredienten": [
+      {"code": "tomaat", "h": 200, "e": "g"}, {"code": "garnalen", "h": 150, "e": "g"}, {"code": "knoflook", "h": 1, "e": "teentje"},
+      {"code": "peterselie", "h": 2, "e": "g"}, {"code": "olijfolie", "h": 10, "e": "ml"}, {"code": "brood", "h": 80, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Snijd de tomaat in blokjes en meng met olie, fijngehakte knoflook en peterselie.", "fr": "Coupez la tomate en dés et mélangez avec l'huile, l'ail haché et le persil.", "de": "Tomate würfeln und mit Öl, feingehacktem Knoblauch und Petersilie mischen.", "en": "Dice the tomato and mix with the oil, chopped garlic and parsley.", "es": "Corta el tomate en dados y mézclalo con el aceite, el ajo picado y el perejil.", "pt": "Corte o tomate em cubos e misture com o azeite, o alho picado e a salsa."}, "timer_sec": null},
+      {"tekst": {"nl": "Bak de garnalen 2 minuten in een droge pan tot ze roze zijn.", "fr": "Faites sauter les crevettes 2 minutes à sec jusqu'à ce qu'elles rosissent.", "de": "Garnelen 2 Minuten in einer trockenen Pfanne braten, bis sie rosa sind.", "en": "Dry-fry the shrimp 2 minutes until pink.", "es": "Saltea las gambas 2 minutos en seco hasta que se pongan rosadas.", "pt": "Salteie os camarões 2 minutos a seco até ficarem rosados."}, "timer_sec": 120},
+      {"tekst": {"nl": "Leg de tomaat op het brood en schik de garnalen erbovenop.", "fr": "Disposez la tomate sur le pain et ajoutez les crevettes par-dessus.", "de": "Tomate auf das Brot geben und die Garnelen darauf verteilen.", "en": "Spoon the tomato onto the bread and top with the shrimp.", "es": "Pon el tomate sobre el pan y coloca las gambas encima.", "pt": "Coloque o tomate sobre o pão e cubra com os camarões."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "belgisch-erwtensoep",
+    "stijl": "belgisch", "stijlen": ["belgisch"], "moment": "middag", "soort": "vlees", "basis": "aardappel",
+    "bereiding": "pan", "moeilijkheid": "gemiddeld", "kooktijd_min": 60, "tags": ["soep"],
+    "titel": {"nl": "Erwtensoep met worst", "fr": "Soupe aux pois et saucisse", "de": "Erbsensuppe mit Wurst", "en": "Split pea soup with sausage", "es": "Sopa de guisantes con salchicha", "pt": "Sopa de ervilhas com salsicha"},
+    "ingredienten": [
+      {"code": "doperwten", "h": 150, "e": "g"}, {"code": "worst", "h": 1, "e": "stuk"}, {"code": "wortel", "h": 80, "e": "g"},
+      {"code": "prei", "h": 60, "e": "g"}, {"code": "aardappel", "h": 100, "e": "g"}, {"code": "groentebouillon", "h": 400, "e": "ml"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Snijd wortel, prei en aardappel in blokjes. Doe alles met de bouillon en de erwten in een pan.", "fr": "Coupez la carotte, le poireau et la pomme de terre en dés. Mettez tout avec le bouillon et les pois dans une casserole.", "de": "Karotte, Lauch und Kartoffel würfeln. Mit Brühe und Erbsen in einen Topf geben.", "en": "Dice the carrot, leek and potato. Put everything with the stock and peas in a pan.", "es": "Corta la zanahoria, el puerro y la patata en dados. Pon todo con el caldo y los guisantes en una cazuela.", "pt": "Corte a cenoura, o alho-francês e a batata em cubos. Junte tudo com o caldo e as ervilhas numa panela."}, "timer_sec": null},
+      {"tekst": {"nl": "Laat 45 minuten zachtjes koken tot de erwten zacht zijn.", "fr": "Laissez cuire doucement 45 minutes jusqu'à ce que les pois soient tendres.", "de": "45 Minuten sanft kochen, bis die Erbsen weich sind.", "en": "Simmer gently 45 minutes until the peas are soft.", "es": "Cuece a fuego suave 45 minutos hasta que los guisantes estén tiernos.", "pt": "Cozinhe em lume brando 45 minutos até as ervilhas ficarem macias."}, "timer_sec": 2700},
+      {"tekst": {"nl": "Voeg de worst toe en laat nog 10 minuten meekoken. Serveer warm.", "fr": "Ajoutez la saucisse et laissez encore 10 minutes. Servez chaud.", "de": "Wurst dazugeben und weitere 10 Minuten mitkochen. Heiß servieren.", "en": "Add the sausage and cook 10 more minutes. Serve hot.", "es": "Añade la salchicha y cuece 10 minutos más. Sirve caliente.", "pt": "Junte a salsicha e cozinhe mais 10 minutos. Sirva quente."}, "timer_sec": 600}
+    ]
+  },
+  {
+    "slug": "indiaas-spinazie-kip",
+    "stijl": "indiaas", "stijlen": ["indiaas"], "moment": "avond", "soort": "vlees", "basis": null,
+    "bereiding": "pan", "moeilijkheid": "gemiddeld", "kooktijd_min": 35, "tags": ["curry"],
+    "titel": {"nl": "Kip in spinaziecurry", "fr": "Poulet au curry d'épinards", "de": "Hähnchen in Spinat-Curry", "en": "Chicken in spinach curry", "es": "Pollo al curry de espinacas", "pt": "Frango em caril de espinafres"},
+    "ingredienten": [
+      {"code": "spinazie", "h": 200, "e": "g"}, {"code": "kipfilet", "h": 150, "e": "g"}, {"code": "ui", "h": 40, "e": "g"},
+      {"code": "gember", "h": 5, "e": "g"}, {"code": "knoflook", "h": 1, "e": "teentje"}, {"code": "garam_masala", "h": 2, "e": "g"},
+      {"code": "room", "h": 40, "e": "ml"}, {"code": "boter", "h": 10, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Bak de ui, gember en knoflook 3 minuten in de boter. Voeg de kip en garam masala toe en bak 5 minuten.", "fr": "Faites revenir l'oignon, le gingembre et l'ail 3 minutes dans le beurre. Ajoutez le poulet et le garam masala et faites cuire 5 minutes.", "de": "Zwiebel, Ingwer und Knoblauch 3 Minuten in der Butter anbraten. Hähnchen und Garam Masala dazugeben und 5 Minuten braten.", "en": "Fry the onion, ginger and garlic 3 minutes in the butter. Add the chicken and garam masala and cook 5 minutes.", "es": "Fríe la cebolla, el jengibre y el ajo 3 minutos en la mantequilla. Añade el pollo y el garam masala y cocina 5 minutos.", "pt": "Frite a cebola, o gengibre e o alho 3 minutos na manteiga. Junte o frango e o garam masala e cozinhe 5 minutos."}, "timer_sec": 480},
+      {"tekst": {"nl": "Voeg de spinazie toe en laat 8 minuten zachtjes garen.", "fr": "Ajoutez les épinards et laissez mijoter doucement 8 minutes.", "de": "Spinat dazugeben und 8 Minuten sanft garen.", "en": "Add the spinach and simmer gently 8 minutes.", "es": "Añade las espinacas y cuece suavemente 8 minutos.", "pt": "Junte os espinafres e cozinhe suavemente 8 minutos."}, "timer_sec": 480},
+      {"tekst": {"nl": "Roer de room erdoor en breng op smaak met zout.", "fr": "Incorporez la crème et salez.", "de": "Sahne unterrühren und mit Salz abschmecken.", "en": "Stir in the cream and season with salt.", "es": "Incorpora la nata y sala.", "pt": "Misture a nata e tempere com sal."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "indiaas-aloo-gobi",
+    "stijl": "indiaas", "stijlen": ["indiaas"], "moment": "avond", "soort": "vegetarisch", "basis": "aardappel",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 30, "tags": ["groente"],
+    "titel": {"nl": "Aloo gobi: aardappel met bloemkool", "fr": "Aloo gobi : pommes de terre et chou-fleur", "de": "Aloo Gobi: Kartoffeln mit Blumenkohl", "en": "Aloo gobi: potato and cauliflower", "es": "Aloo gobi: patata y coliflor", "pt": "Aloo gobi: batata e couve-flor"},
+    "ingredienten": [
+      {"code": "aardappel", "h": 200, "e": "g"}, {"code": "bloemkool", "h": 150, "e": "g"}, {"code": "tomaat_blokjes", "h": 80, "e": "g"},
+      {"code": "ui", "h": 40, "e": "g"}, {"code": "kurkuma", "h": 2, "e": "g"}, {"code": "komijn", "h": 2, "e": "g"},
+      {"code": "gember", "h": 5, "e": "g"}, {"code": "olijfolie", "h": 10, "e": "ml"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Snijd aardappel en bloemkool in stukjes. Bak ui en gember 3 minuten in de olie.", "fr": "Coupez la pomme de terre et le chou-fleur en morceaux. Faites revenir l'oignon et le gingembre 3 minutes dans l'huile.", "de": "Kartoffel und Blumenkohl in Stücke schneiden. Zwiebel und Ingwer 3 Minuten in Öl anbraten.", "en": "Cut the potato and cauliflower into pieces. Fry the onion and ginger 3 minutes in the oil.", "es": "Corta la patata y la coliflor en trozos. Fríe la cebolla y el jengibre 3 minutos en el aceite.", "pt": "Corte a batata e a couve-flor em pedaços. Frite a cebola e o gengibre 3 minutos no óleo."}, "timer_sec": 180},
+      {"tekst": {"nl": "Voeg kruiden, aardappel en bloemkool toe en roer 2 minuten.", "fr": "Ajoutez les épices, la pomme de terre et le chou-fleur et remuez 2 minutes.", "de": "Gewürze, Kartoffel und Blumenkohl dazugeben und 2 Minuten rühren.", "en": "Add spices, potato and cauliflower and stir 2 minutes.", "es": "Añade las especias, la patata y la coliflor y remueve 2 minutos.", "pt": "Junte as especiarias, a batata e a couve-flor e mexa 2 minutos."}, "timer_sec": 120},
+      {"tekst": {"nl": "Voeg de tomaat en 100 ml water toe, dek af en laat 20 minuten garen.", "fr": "Ajoutez la tomate et 100 ml d'eau, couvrez et laissez cuire 20 minutes.", "de": "Tomate und 100 ml Wasser dazugeben, zudecken und 20 Minuten garen.", "en": "Add the tomato and 100 ml water, cover and cook 20 minutes.", "es": "Añade el tomate y 100 ml de agua, tapa y cuece 20 minutos.", "pt": "Junte o tomate e 100 ml de água, tape e cozinhe 20 minutos."}, "timer_sec": 1200}
+    ]
+  },
+  {
+    "slug": "indiaas-kip-komkommer-wrap",
+    "stijl": "indiaas", "stijlen": ["indiaas"], "moment": "middag", "soort": "vlees", "basis": "wrap",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 20, "tags": ["snel"],
+    "titel": {"nl": "Kip-komkommerwrap met currysaus", "fr": "Wrap au poulet, concombre et curry", "de": "Hähnchen-Gurken-Wrap mit Currysoße", "en": "Chicken, cucumber and curry wrap", "es": "Wrap de pollo, pepino y curry", "pt": "Wrap de frango, pepino e caril"},
+    "ingredienten": [
+      {"code": "kipfilet", "h": 150, "e": "g"}, {"code": "yoghurt", "h": 60, "e": "g"}, {"code": "komkommer", "h": 60, "e": "g"},
+      {"code": "koriander", "h": 3, "e": "g"}, {"code": "citroen", "h": 10, "e": "g"}, {"code": "tortilla_wrap", "h": 1, "e": "stuk"},
+      {"code": "currypoeder", "h": 2, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Bestrooi de kip met curry en bak 6 minuten in een droge pan. Snijd in reepjes.", "fr": "Saupoudrez le poulet de curry et faites-le cuire 6 minutes à sec. Coupez en lamelles.", "de": "Hähnchen mit Curry bestreuen und 6 Minuten trocken braten. In Streifen schneiden.", "en": "Dust the chicken with curry and dry-fry 6 minutes. Cut into strips.", "es": "Espolvorea el pollo con curry y cocínalo 6 minutos en seco. Corta en tiras.", "pt": "Polvilhe o frango com caril e cozinhe 6 minutos a seco. Corte em tiras."}, "timer_sec": 360},
+      {"tekst": {"nl": "Meng yoghurt, citroensap en fijngesneden komkommer en koriander tot een saus.", "fr": "Mélangez le yaourt, le jus de citron, le concombre et la coriandre finement hachés.", "de": "Joghurt, Zitronensaft, fein geschnittene Gurke und Koriander zu einer Soße mischen.", "en": "Mix yogurt, lemon juice, finely diced cucumber and coriander into a sauce.", "es": "Mezcla el yogur, el zumo de limón, el pepino y el cilantro picados hasta obtener una salsa.", "pt": "Misture o iogurte, o sumo de limão, o pepino e o coentro picados até formar um molho."}, "timer_sec": null},
+      {"tekst": {"nl": "Verwarm de wrap kort, vul met kip en saus en rol op.", "fr": "Réchauffez brièvement le wrap, garnissez de poulet et de sauce et roulez.", "de": "Wrap kurz erwärmen, mit Hähnchen und Soße füllen und aufrollen.", "en": "Warm the wrap briefly, fill with chicken and sauce and roll up.", "es": "Calienta brevemente el wrap, rellénalo con el pollo y la salsa y enróllalo.", "pt": "Aqueça ligeiramente o wrap, recheie com o frango e o molho e enrole."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "indiaas-kokos-garnalen",
+    "stijl": "indiaas", "stijlen": ["indiaas"], "moment": "avond", "soort": "vis", "basis": "rijst",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 20, "tags": ["schaaldieren"],
+    "titel": {"nl": "Garnalen in kokos-tomatencurry", "fr": "Crevettes au curry de coco et tomate", "de": "Garnelen in Kokos-Tomaten-Curry", "en": "Shrimp in coconut tomato curry", "es": "Gambas al curry de coco y tomate", "pt": "Camarões em caril de coco e tomate"},
+    "ingredienten": [
+      {"code": "garnalen", "h": 150, "e": "g"}, {"code": "kokosmelk", "h": 80, "e": "ml"}, {"code": "currypasta", "h": 8, "e": "g"},
+      {"code": "tomaat_blokjes", "h": 80, "e": "g"}, {"code": "koriander", "h": 3, "e": "g"}, {"code": "rijst_basmati", "h": 70, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de rijst gaar volgens de verpakking.", "fr": "Faites cuire le riz selon l'emballage.", "de": "Reis nach Packungsanweisung garen.", "en": "Cook the rice per the package.", "es": "Cuece el arroz según el envase.", "pt": "Cozinhe o arroz segundo a embalagem."}, "timer_sec": 720},
+      {"tekst": {"nl": "Roer de currypasta 1 minuut door de kokosmelk en voeg de tomaat toe. Laat 5 minuten sudderen.", "fr": "Délayez la pâte de curry dans le lait de coco 1 minute, ajoutez la tomate et laissez mijoter 5 minutes.", "de": "Currypaste 1 Minute in der Kokosmilch verrühren, Tomate dazugeben und 5 Minuten köcheln lassen.", "en": "Stir the curry paste into the coconut milk 1 minute, add the tomato and simmer 5 minutes.", "es": "Disuelve la pasta de curry en la leche de coco 1 minuto, añade el tomate y cuece 5 minutos.", "pt": "Dissolva a pasta de caril no leite de coco 1 minuto, junte o tomate e deixe ferver 5 minutos."}, "timer_sec": 360},
+      {"tekst": {"nl": "Voeg de garnalen toe en laat 3 minuten garen. Garneer met koriander en serveer met de rijst.", "fr": "Ajoutez les crevettes et laissez cuire 3 minutes. Garnissez de coriandre et servez avec le riz.", "de": "Garnelen dazugeben und 3 Minuten garen. Mit Koriander garnieren und mit dem Reis servieren.", "en": "Add the shrimp and cook 3 minutes. Garnish with coriander and serve with the rice.", "es": "Añade las gambas y cuece 3 minutos. Adorna con cilantro y sirve con el arroz.", "pt": "Junte os camarões e cozinhe 3 minutos. Decore com coentro e sirva com o arroz."}, "timer_sec": 180}
+    ]
+  },
+  {
+    "slug": "chinees-zoetzure-varkensvlees",
+    "stijl": "chinees", "stijlen": ["chinees"], "moment": "avond", "soort": "vlees", "basis": "rijst",
+    "bereiding": "wok", "moeilijkheid": "makkelijk", "kooktijd_min": 25, "tags": ["wok"],
+    "titel": {"nl": "Varkensvlees in zoetzure saus", "fr": "Porc sauce aigre-douce", "de": "Schweinefleisch süßsauer", "en": "Sweet and sour pork", "es": "Cerdo agridulce", "pt": "Porco agridoce"},
+    "ingredienten": [
+      {"code": "varkensfilet", "h": 150, "e": "g"}, {"code": "paprika", "h": 60, "e": "g"}, {"code": "ui", "h": 40, "e": "g"},
+      {"code": "appelazijn", "h": 10, "e": "ml"}, {"code": "honing", "h": 10, "e": "g"}, {"code": "tomatenpuree", "h": 10, "e": "g"},
+      {"code": "sojasaus", "h": 10, "e": "ml"}, {"code": "rijst_basmati", "h": 70, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de rijst gaar. Snijd het vlees en de paprika in stukjes en bak het vlees 5 minuten in de wok.", "fr": "Faites cuire le riz. Coupez la viande et le poivron en morceaux et faites revenir la viande 5 minutes dans le wok.", "de": "Reis garen. Fleisch und Paprika in Stücke schneiden und das Fleisch 5 Minuten im Wok braten.", "en": "Cook the rice. Cut the meat and pepper into pieces and stir-fry the meat 5 minutes in the wok.", "es": "Cuece el arroz. Corta la carne y el pimiento en trozos y saltea la carne 5 minutos en el wok.", "pt": "Cozinhe o arroz. Corte a carne e o pimento em pedaços e salteie a carne 5 minutos no wok."}, "timer_sec": 300},
+      {"tekst": {"nl": "Voeg ui en paprika toe en bak 2 minuten. Roer appelazijn, honing, tomatenpuree en sojasaus erdoor.", "fr": "Ajoutez l'oignon et le poivron et faites sauter 2 minutes. Incorporez le vinaigre, le miel, la purée de tomate et la sauce soja.", "de": "Zwiebel und Paprika 2 Minuten braten. Apfelessig, Honig, Tomatenmark und Sojasoße unterrühren.", "en": "Add onion and pepper and stir-fry 2 minutes. Stir in vinegar, honey, tomato purée and soy sauce.", "es": "Añade la cebolla y el pimiento y saltea 2 minutos. Incorpora el vinagre, la miel, el puré de tomate y la salsa de soja.", "pt": "Junte a cebola e o pimento e salteie 2 minutos. Misture o vinagre, o mel, o puré de tomate e o molho de soja."}, "timer_sec": 120},
+      {"tekst": {"nl": "Laat 2 minuten indikken en serveer met de rijst.", "fr": "Laissez réduire 2 minutes et servez avec le riz.", "de": "2 Minuten einköcheln lassen und mit dem Reis servieren.", "en": "Let it reduce 2 minutes and serve with the rice.", "es": "Deja reducir 2 minutos y sirve con el arroz.", "pt": "Deixe reduzir 2 minutos e sirva com o arroz."}, "timer_sec": 120}
+    ]
+  },
+  {
+    "slug": "chinees-eiersoep",
+    "stijl": "chinees", "stijlen": ["chinees"], "moment": "middag", "soort": "vegetarisch", "basis": null,
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 10, "tags": ["soep", "snel"],
+    "titel": {"nl": "Chinese eiersoep", "fr": "Soupe chinoise aux œufs", "de": "Chinesische Eiersuppe", "en": "Chinese egg drop soup", "es": "Sopa china de huevo", "pt": "Sopa chinesa de ovo"},
+    "ingredienten": [
+      {"code": "groentebouillon", "h": 400, "e": "ml"}, {"code": "eieren", "h": 1, "e": "stuk"}, {"code": "prei", "h": 40, "e": "g"},
+      {"code": "sojasaus", "h": 5, "e": "ml"}, {"code": "sesamolie", "h": 3, "e": "ml"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Breng de bouillon aan de kook met de sojasaus. Snijd de prei in ringen.", "fr": "Portez le bouillon à ébullition avec la sauce soja. Coupez le poireau en rondelles.", "de": "Brühe mit Sojasoße aufkochen. Lauch in Ringe schneiden.", "en": "Bring the stock to a boil with the soy sauce. Slice the leek into rings.", "es": "Lleva el caldo a ebullición con la salsa de soja. Corta el puerro en aros.", "pt": "Leve o caldo a ferver com o molho de soja. Corte o alho-francês em rodelas."}, "timer_sec": 180},
+      {"tekst": {"nl": "Klop het ei en giet het in een dun straaltje in de kokende bouillon, terwijl je roert.", "fr": "Battez l'œuf et versez-le en un mince filet dans le bouillon bouillant en remuant.", "de": "Ei verquirlen und unter Rühren in dünnem Strahl in die kochende Brühe gießen.", "en": "Beat the egg and pour it in a thin stream into the boiling stock while stirring.", "es": "Bate el huevo y viértelo en un hilo fino en el caldo hirviendo, removiendo.", "pt": "Bata o ovo e deite num fio fino no caldo a ferver, mexendo."}, "timer_sec": 60},
+      {"tekst": {"nl": "Voeg de prei en sesamolie toe en serveer direct.", "fr": "Ajoutez le poireau et l'huile de sésame et servez aussitôt.", "de": "Lauch und Sesamöl dazugeben und sofort servieren.", "en": "Add the leek and sesame oil and serve right away.", "es": "Añade el puerro y el aceite de sésamo y sirve enseguida.", "pt": "Junte o alho-francês e o óleo de sésamo e sirva logo."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "chinees-bami-noedels",
+    "stijl": "chinees", "stijlen": ["chinees"], "moment": "middag", "soort": "vegetarisch", "basis": "noedels",
+    "bereiding": "wok", "moeilijkheid": "makkelijk", "kooktijd_min": 15, "tags": ["wok", "snel"],
+    "titel": {"nl": "Wok-eiernoedels met groente", "fr": "Nouilles aux œufs sautées aux légumes", "de": "Eiernudeln mit Gemüse aus dem Wok", "en": "Stir-fried egg noodles with vegetables", "es": "Fideos de huevo salteados con verduras", "pt": "Noodles de ovo salteados com legumes"},
+    "ingredienten": [
+      {"code": "noedels_eier", "h": 100, "e": "g"}, {"code": "paprika", "h": 50, "e": "g"}, {"code": "wortel", "h": 40, "e": "g"},
+      {"code": "eieren", "h": 1, "e": "stuk"}, {"code": "sojasaus", "h": 15, "e": "ml"}, {"code": "sesamolie", "h": 5, "e": "ml"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de noedels 3 minuten en laat uitlekken. Snijd paprika en wortel in dunne reepjes.", "fr": "Faites cuire les nouilles 3 minutes et égouttez. Coupez le poivron et la carotte en fines lamelles.", "de": "Nudeln 3 Minuten kochen und abtropfen lassen. Paprika und Karotte in dünne Streifen schneiden.", "en": "Cook the noodles 3 minutes and drain. Cut the pepper and carrot into thin strips.", "es": "Cuece los fideos 3 minutos y escúrrelos. Corta el pimiento y la zanahoria en tiras finas.", "pt": "Cozinhe os noodles 3 minutos e escorra. Corte o pimento e a cenoura em tiras finas."}, "timer_sec": 180},
+      {"tekst": {"nl": "Bak de groente 3 minuten in de sesamolie. Klop het ei los in de wok en roer tot het gestold is.", "fr": "Faites sauter les légumes 3 minutes dans l'huile de sésame. Battez l'œuf dans le wok et remuez jusqu'à prise.", "de": "Gemüse 3 Minuten in Sesamöl braten. Ei im Wok verquirlen und rühren, bis es gestockt ist.", "en": "Stir-fry the vegetables 3 minutes in the sesame oil. Scramble the egg in the wok until set.", "es": "Saltea las verduras 3 minutos en el aceite de sésamo. Revuelve el huevo en el wok hasta cuajar.", "pt": "Salteie os legumes 3 minutos no óleo de sésamo. Mexa o ovo no wok até solidificar."}, "timer_sec": 180},
+      {"tekst": {"nl": "Voeg de noedels en de sojasaus toe en wok 2 minuten.", "fr": "Ajoutez les nouilles et la sauce soja et faites sauter 2 minutes.", "de": "Nudeln und Sojasoße dazugeben und 2 Minuten im Wok schwenken.", "en": "Add the noodles and soy sauce and stir-fry 2 minutes.", "es": "Añade los fideos y la salsa de soja y saltea 2 minutos.", "pt": "Junte os noodles e o molho de soja e salteie 2 minutos."}, "timer_sec": 120}
+    ]
+  },
+  {
+    "slug": "chinees-kip-champignon-wok",
+    "stijl": "chinees", "stijlen": ["chinees"], "moment": "avond", "soort": "vlees", "basis": "rijst",
+    "bereiding": "wok", "moeilijkheid": "makkelijk", "kooktijd_min": 15, "tags": ["wok", "snel"],
+    "titel": {"nl": "Kip met champignons uit de wok", "fr": "Poulet aux champignons sauté au wok", "de": "Hähnchen mit Champignons aus dem Wok", "en": "Wok chicken with mushrooms", "es": "Pollo con champiñones salteado al wok", "pt": "Frango com cogumelos salteado no wok"},
+    "ingredienten": [
+      {"code": "kipfilet", "h": 150, "e": "g"}, {"code": "champignons", "h": 80, "e": "g"}, {"code": "prei", "h": 40, "e": "g"},
+      {"code": "sojasaus", "h": 15, "e": "ml"}, {"code": "gember", "h": 5, "e": "g"}, {"code": "knoflook", "h": 1, "e": "teentje"},
+      {"code": "rijst_basmati", "h": 70, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de rijst gaar. Snijd de kip in reepjes en de prei in ringen.", "fr": "Faites cuire le riz. Coupez le poulet en lamelles et le poireau en rondelles.", "de": "Reis garen. Hähnchen in Streifen und Lauch in Ringe schneiden.", "en": "Cook the rice. Cut the chicken into strips and the leek into rings.", "es": "Cuece el arroz. Corta el pollo en tiras y el puerro en aros.", "pt": "Cozinhe o arroz. Corte o frango em tiras e o alho-francês em rodelas."}, "timer_sec": 720},
+      {"tekst": {"nl": "Bak kip, champignons, prei, gember en knoflook 6 minuten op hoog vuur in de wok.", "fr": "Faites sauter le poulet, les champignons, le poireau, le gingembre et l'ail 6 minutes à feu vif dans le wok.", "de": "Hähnchen, Champignons, Lauch, Ingwer und Knoblauch 6 Minuten bei starker Hitze im Wok braten.", "en": "Stir-fry the chicken, mushrooms, leek, ginger and garlic 6 minutes on high heat in the wok.", "es": "Saltea el pollo, los champiñones, el puerro, el jengibre y el ajo 6 minutos a fuego fuerte en el wok.", "pt": "Salteie o frango, os cogumelos, o alho-francês, o gengibre e o alho 6 minutos em lume alto no wok."}, "timer_sec": 360},
+      {"tekst": {"nl": "Roer de sojasaus erdoor en serveer met de rijst.", "fr": "Incorporez la sauce soja et servez avec le riz.", "de": "Sojasoße unterrühren und mit dem Reis servieren.", "en": "Stir in the soy sauce and serve with the rice.", "es": "Incorpora la salsa de soja y sirve con el arroz.", "pt": "Misture o molho de soja e sirva com o arroz."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "hartig-croque-spinazie",
+    "stijl": "hartig", "stijlen": ["hartig"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "brood",
+    "bereiding": "oven", "moeilijkheid": "makkelijk", "kooktijd_min": 10, "tags": ["ontbijt", "snel"],
+    "titel": {"nl": "Croque met spinazie en kaas", "fr": "Croque aux épinards et au fromage", "de": "Croque mit Spinat und Käse", "en": "Croque with spinach and cheese", "es": "Croque de espinacas y queso", "pt": "Croque de espinafres e queijo"},
+    "ingredienten": [
+      {"code": "brood", "h": 80, "e": "g"}, {"code": "kaas_gruyere", "h": 30, "e": "g"}, {"code": "spinazie", "h": 30, "e": "g"}, {"code": "boter", "h": 5, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Verwarm de oven voor op 200 °C. Wilt de spinazie kort in een pan.", "fr": "Préchauffez le four à 200 °C. Faites tomber les épinards brièvement à la poêle.", "de": "Den Ofen auf 200 °C vorheizen. Spinat kurz in der Pfanne zusammenfallen lassen.", "en": "Preheat the oven to 200 °C. Wilt the spinach briefly in a pan.", "es": "Precalienta el horno a 200 °C. Marchita las espinacas un momento en una sartén.", "pt": "Pré-aqueça o forno a 200 °C. Murche os espinafres brevemente numa frigideira."}, "timer_sec": 120},
+      {"tekst": {"nl": "Beleg het brood met spinazie en kaas en bak 6 minuten tot de kaas gesmolten is.", "fr": "Garnissez le pain d'épinards et de fromage et faites cuire 6 minutes jusqu'à ce que le fromage fonde.", "de": "Brot mit Spinat und Käse belegen und 6 Minuten backen, bis der Käse geschmolzen ist.", "en": "Top the bread with spinach and cheese and bake 6 minutes until the cheese melts.", "es": "Cubre el pan con espinacas y queso y hornea 6 minutos hasta que el queso se derrita.", "pt": "Cubra o pão com espinafres e queijo e asse 6 minutos até o queijo derreter."}, "timer_sec": 360},
+      {"tekst": {"nl": "Bestrijk met een beetje boter en serveer warm.", "fr": "Badigeonnez d'un peu de beurre et servez chaud.", "de": "Mit etwas Butter bestreichen und warm servieren.", "en": "Brush with a little butter and serve warm.", "es": "Unta con un poco de mantequilla y sirve caliente.", "pt": "Pincele com um pouco de manteiga e sirva quente."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "hartig-ricotta-tomaat-toast",
+    "stijl": "hartig", "stijlen": ["hartig"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "brood",
+    "bereiding": "geen", "moeilijkheid": "makkelijk", "kooktijd_min": 5, "tags": ["ontbijt", "snel"],
+    "titel": {"nl": "Ricotta-toast met tomaat en basilicum", "fr": "Tartine de ricotta, tomate et basilic", "de": "Ricotta-Toast mit Tomate und Basilikum", "en": "Ricotta toast with tomato and basil", "es": "Tostada de ricotta, tomate y albahaca", "pt": "Torrada de ricota, tomate e manjericão"},
+    "ingredienten": [
+      {"code": "brood", "h": 80, "e": "g"}, {"code": "ricotta", "h": 50, "e": "g"}, {"code": "tomaat", "h": 80, "e": "g"},
+      {"code": "basilicum", "h": 2, "e": "g"}, {"code": "olijfolie", "h": 5, "e": "ml"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Rooster het brood goudbruin.", "fr": "Faites griller le pain.", "de": "Brot goldbraun toasten.", "en": "Toast the bread golden.", "es": "Tuesta el pan.", "pt": "Torre o pão."}, "timer_sec": 120},
+      {"tekst": {"nl": "Smeer de ricotta op het brood en leg de tomaat erop.", "fr": "Tartinez la ricotta sur le pain et disposez la tomate dessus.", "de": "Ricotta auf das Brot streichen und Tomate darauf legen.", "en": "Spread the ricotta on the bread and top with tomato.", "es": "Unta la ricotta en el pan y pon el tomate encima.", "pt": "Espalhe a ricota no pão e cubra com o tomate."}, "timer_sec": null},
+      {"tekst": {"nl": "Besprenkel met olie, zout en basilicum.", "fr": "Arrosez d'huile, salez et garnissez de basilic.", "de": "Mit Öl, Salz und Basilikum garnieren.", "en": "Drizzle with oil, add salt and basil.", "es": "Rocía con aceite, sala y añade albahaca.", "pt": "Regue com azeite, tempere com sal e junte manjericão."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "hartig-roerei-kruiden",
+    "stijl": "hartig", "stijlen": ["hartig"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "brood",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 8, "tags": ["ontbijt", "ei"],
+    "titel": {"nl": "Roerei met kruiden op toast", "fr": "Œufs brouillés aux herbes sur toast", "de": "Rührei mit Kräutern auf Toast", "en": "Scrambled eggs with herbs on toast", "es": "Huevos revueltos con hierbas sobre tostada", "pt": "Ovos mexidos com ervas sobre torrada"},
+    "ingredienten": [
+      {"code": "eieren", "h": 2, "e": "stuk"}, {"code": "boter", "h": 5, "e": "g"}, {"code": "peterselie", "h": 2, "e": "g"},
+      {"code": "dille", "h": 1, "e": "g"}, {"code": "brood", "h": 60, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Klop de eieren met zout en de fijngehakte kruiden.", "fr": "Battez les œufs avec du sel et les herbes finement hachées.", "de": "Eier mit Salz und fein gehackten Kräutern verquirlen.", "en": "Whisk the eggs with salt and the finely chopped herbs.", "es": "Bate los huevos con sal y las hierbas picadas.", "pt": "Bata os ovos com sal e as ervas picadas."}, "timer_sec": null},
+      {"tekst": {"nl": "Smelt de boter op laag vuur en roer de eieren 3 minuten zacht.", "fr": "Faites fondre le beurre à feu doux et remuez les œufs 3 minutes.", "de": "Butter bei niedriger Hitze schmelzen und die Eier 3 Minuten sanft rühren.", "en": "Melt the butter on low heat and stir the eggs gently 3 minutes.", "es": "Derrite la mantequilla a fuego lento y remueve los huevos 3 minutos.", "pt": "Derreta a manteiga em lume brando e mexa os ovos 3 minutos."}, "timer_sec": 180},
+      {"tekst": {"nl": "Rooster het brood en serveer het roerei erop.", "fr": "Faites griller le pain et servez les œufs dessus.", "de": "Brot toasten und das Rührei darauf servieren.", "en": "Toast the bread and serve the eggs on top.", "es": "Tuesta el pan y sirve los huevos encima.", "pt": "Torre o pão e sirva os ovos por cima."}, "timer_sec": 120}
+    ]
+  },
+  {
+    "slug": "hartig-tzatziki-brood",
+    "stijl": "hartig", "stijlen": ["hartig"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "brood",
+    "bereiding": "rauw", "moeilijkheid": "makkelijk", "kooktijd_min": 10, "tags": ["ontbijt", "snel"],
+    "titel": {"nl": "Tzatziki-toast met komkommer", "fr": "Tartine au tzatziki et au concombre", "de": "Tzatziki-Toast mit Gurke", "en": "Tzatziki toast with cucumber", "es": "Tostada de tzatziki y pepino", "pt": "Torrada de tzatziki e pepino"},
+    "ingredienten": [
+      {"code": "yoghurt", "h": 150, "e": "g"}, {"code": "komkommer", "h": 80, "e": "g"}, {"code": "knoflook", "h": 1, "e": "teentje"},
+      {"code": "dille", "h": 2, "e": "g"}, {"code": "brood", "h": 60, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Rasp de komkommer, laat uitlekken en meng met yoghurt, geperste knoflook en dille.", "fr": "Râpez le concombre, égouttez-le et mélangez avec le yaourt, l'ail pressé et l'aneth.", "de": "Gurke reiben, ausdrücken und mit Joghurt, gepresstem Knoblauch und Dill mischen.", "en": "Grate the cucumber, squeeze out the water and mix with yogurt, pressed garlic and dill.", "es": "Ralla el pepino, escúrrelo y mézclalo con el yogur, el ajo prensado y el eneldo.", "pt": "Rale o pepino, esprema e misture com o iogurte, o alho esmagado e o endro."}, "timer_sec": null},
+      {"tekst": {"nl": "Rooster het brood en smeer de tzatziki erop. Breng op smaak met zout.", "fr": "Faites griller le pain, tartinez-le de tzatziki et salez.", "de": "Brot toasten, mit Tzatziki bestreichen und mit Salz würzen.", "en": "Toast the bread, spread the tzatziki and season with salt.", "es": "Tuesta el pan, unta el tzatziki y sala.", "pt": "Torre o pão, espalhe o tzatziki e tempere com sal."}, "timer_sec": 120}
+    ]
+  },
+  {
+    "slug": "zoet-wafels",
+    "stijl": "zoet", "stijlen": ["zoet"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "granen",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 25, "tags": ["ontbijt", "bakken"],
+    "titel": {"nl": "Wafels met suiker", "fr": "Gaufres au sucre", "de": "Waffeln mit Zucker", "en": "Waffles with sugar", "es": "Gofres con azúcar", "pt": "Waffles com açúcar"},
+    "ingredienten": [
+      {"code": "bloem", "h": 150, "e": "g"}, {"code": "melk", "h": 250, "e": "ml"}, {"code": "eieren", "h": 2, "e": "stuk"},
+      {"code": "boter", "h": 20, "e": "g"}, {"code": "bakpoeder", "h": 4, "e": "g"}, {"code": "suiker", "h": 10, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Meng bloem, bakpoeder en suiker. Roer er eieren, melk en gesmolten boter door.", "fr": "Mélangez farine, levure et sucre. Incorporez les œufs, le lait et le beurre fondu.", "de": "Mehl, Backpulver und Zucker mischen. Eier, Milch und geschmolzene Butter unterrühren.", "en": "Mix flour, baking powder and sugar. Stir in eggs, milk and melted butter.", "es": "Mezcla la harina, la levadura y el azúcar. Incorpora los huevos, la leche y la mantequilla derretida.", "pt": "Misture a farinha, o fermento e o açúcar. Junte os ovos, o leite e a manteiga derretida."}, "timer_sec": null},
+      {"tekst": {"nl": "Bak het beslag in een wafelijzer 4 minuten per wafel tot ze goudbruin zijn.", "fr": "Faites cuire la pâte dans un gaufrier 4 minutes par gaufre jusqu'à ce qu'elles soient dorées.", "de": "Den Teig im Waffeleisen 4 Minuten pro Waffel backen, bis sie goldbraun sind.", "en": "Bake the batter in a waffle iron 4 minutes per waffle until golden.", "es": "Hornea la masa en la gofrera 4 minutos por gofre hasta que estén doradas.", "pt": "Asse a massa na máquina de waffles 4 minutos por waffle até ficarem douradas."}, "timer_sec": 240},
+      {"tekst": {"nl": "Bestrooi met suiker en serveer warm.", "fr": "Saupoudrez de sucre et servez chaud.", "de": "Mit Zucker bestreuen und warm servieren.", "en": "Sprinkle with sugar and serve warm.", "es": "Espolvorea con azúcar y sirve caliente.", "pt": "Polvilhe com açúcar e sirva quente."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "zoet-kwark-aardbei",
+    "stijl": "zoet", "stijlen": ["zoet"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "granen",
+    "bereiding": "rauw", "moeilijkheid": "makkelijk", "kooktijd_min": 5, "tags": ["ontbijt", "snel"],
+    "titel": {"nl": "Yoghurt met aardbei en havermout", "fr": "Yaourt aux fraises et flocons d'avoine", "de": "Joghurt mit Erdbeeren und Haferflocken", "en": "Yogurt with strawberries and oats", "es": "Yogur con fresas y avena", "pt": "Iogurte com morangos e aveia"},
+    "ingredienten": [
+      {"code": "yoghurt", "h": 200, "e": "g"}, {"code": "aardbei", "h": 100, "e": "g"}, {"code": "honing", "h": 10, "e": "g"},
+      {"code": "havermout", "h": 30, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Snijd de aardbeien in vieren.", "fr": "Coupez les fraises en quatre.", "de": "Erdbeeren vierteln.", "en": "Quarter the strawberries.", "es": "Corta las fresas en cuartos.", "pt": "Corte os morangos em quatro."}, "timer_sec": null},
+      {"tekst": {"nl": "Schep de yoghurt in een kom en leg de aardbeien erop.", "fr": "Versez le yaourt dans un bol et disposez les fraises dessus.", "de": "Joghurt in eine Schale geben und die Erdbeeren darauf verteilen.", "en": "Spoon the yogurt into a bowl and top with the strawberries.", "es": "Pon el yogur en un bol y coloca las fresas encima.", "pt": "Coloque o iogurte numa taça e cubra com os morangos."}, "timer_sec": null},
+      {"tekst": {"nl": "Besprenkel met honing en strooi de havermout erover.", "fr": "Arrosez de miel et parsemez de flocons d'avoine.", "de": "Mit Honig beträufeln und Haferflocken darüberstreuen.", "en": "Drizzle with honey and sprinkle with oats.", "es": "Rocía con miel y espolvorea con avena.", "pt": "Regue com mel e polvilhe com aveia."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "zoet-chocolade-havermout",
+    "stijl": "zoet", "stijlen": ["zoet"], "moment": "ontbijt", "soort": "vegetarisch", "basis": "granen",
+    "bereiding": "pan", "moeilijkheid": "makkelijk", "kooktijd_min": 10, "tags": ["ontbijt"],
+    "titel": {"nl": "Chocolade-bananenhavermout", "fr": "Porridge chocolat et banane", "de": "Schoko-Bananen-Haferbrei", "en": "Chocolate banana oats", "es": "Avena de chocolate y plátano", "pt": "Aveia de chocolate e banana"},
+    "ingredienten": [
+      {"code": "havermout", "h": 60, "e": "g"}, {"code": "melk", "h": 200, "e": "ml"}, {"code": "cacao", "h": 5, "e": "g"},
+      {"code": "banaan", "h": 1, "e": "stuk"}, {"code": "honing", "h": 5, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Kook de havermout met de melk en de cacao 5 minuten op laag vuur.", "fr": "Faites cuire les flocons d'avoine avec le lait et le cacao 5 minutes à feu doux.", "de": "Haferflocken mit Milch und Kakao 5 Minuten bei niedriger Hitze kochen.", "en": "Cook the oats with the milk and cocoa 5 minutes over low heat.", "es": "Cuece la avena con la leche y el cacao 5 minutos a fuego lento.", "pt": "Cozinhe a aveia com o leite e o cacau 5 minutos em lume brando."}, "timer_sec": 300},
+      {"tekst": {"nl": "Schep in een kom, leg de banaan in plakjes erop en besprenkel met honing.", "fr": "Versez dans un bol, disposez la banane en rondelles et arrosez de miel.", "de": "In eine Schale geben, Banane in Scheiben darauf legen und mit Honig beträufeln.", "en": "Spoon into a bowl, top with banana slices and drizzle with honey.", "es": "Sirve en un bol, añade el plátano en rodajas y rocía con miel.", "pt": "Sirva numa taça, junte rodelas de banana e regue com mel."}, "timer_sec": null}
+    ]
+  },
+  {
+    "slug": "zoet-appelcake-amandel",
+    "stijl": "zoet", "stijlen": ["zoet"], "moment": "ontbijt", "soort": "vegetarisch", "basis": null,
+    "bereiding": "oven", "moeilijkheid": "gemiddeld", "kooktijd_min": 50, "tags": ["bakken", "ontbijt"],
+    "titel": {"nl": "Appelcake met amandelen", "fr": "Gâteau aux pommes et amandes", "de": "Apfelkuchen mit Mandeln", "en": "Apple cake with almonds", "es": "Bizcocho de manzana y almendras", "pt": "Bolo de maçã e amêndoas"},
+    "ingredienten": [
+      {"code": "bloem", "h": 120, "e": "g"}, {"code": "suiker", "h": 60, "e": "g"}, {"code": "eieren", "h": 2, "e": "stuk"},
+      {"code": "boter", "h": 60, "e": "g"}, {"code": "appel", "h": 1, "e": "stuk"}, {"code": "amandelen", "h": 20, "e": "g"},
+      {"code": "bakpoeder", "h": 4, "e": "g"}
+    ],
+    "stappen": [
+      {"tekst": {"nl": "Verwarm de oven voor op 180 °C en vet een cakevorm in. Klop boter, suiker en eieren tot een romig beslag.", "fr": "Préchauffez le four à 180 °C et beurrez un moule. Battez beurre, sucre et œufs en une crème.", "de": "Den Ofen auf 180 °C vorheizen und eine Form einfetten. Butter, Zucker und Eier cremig rühren.", "en": "Preheat the oven to 180 °C and grease a tin. Beat butter, sugar and eggs into a creamy batter.", "es": "Precalienta el horno a 180 °C y engrasa un molde. Bate la mantequilla, el azúcar y los huevos hasta obtener una crema.", "pt": "Pré-aqueça o forno a 180 °C e unte uma forma. Bata a manteiga, o açúcar e os ovos até obter um creme."}, "timer_sec": null},
+      {"tekst": {"nl": "Roer bloem en bakpoeder erdoor. Schil de appel, snijd in plakjes en vouw erdoor met de amandelen.", "fr": "Incorporez la farine et la levure. Pelez la pomme, coupez-la en lamelles et ajoutez-la avec les amandes.", "de": "Mehl und Backpulver unterrühren. Apfel schälen, in Scheiben schneiden und mit den Mandeln unterheben.", "en": "Stir in flour and baking powder. Peel the apple, slice and fold in with the almonds.", "es": "Incorpora la harina y la levadura. Pela la manzana, córtala en láminas e incorpórala con las almendras.", "pt": "Envolva a farinha e o fermento. Descasque a maçã, corte em lâminas e envolva com as amêndoas."}, "timer_sec": null},
+      {"tekst": {"nl": "Bak 45 minuten tot een stokje er droog uitkomt.", "fr": "Faites cuire 45 minutes jusqu'à ce qu'un pic en ressorte sec.", "de": "45 Minuten backen, bis ein Holzstäbchen trocken herauskommt.", "en": "Bake 45 minutes until a skewer comes out dry.", "es": "Hornea 45 minutos hasta que un palillo salga seco.", "pt": "Asse 45 minutos até um palito sair seco."}, "timer_sec": 2700}
+    ]
+  }
+]
