@@ -22,6 +22,11 @@ export type Winkel = {
   nabij: Nabij;
   lat?: number;
   lon?: number;
+  /** Straat en huisnummer uit OpenStreetMap, als ze ingevuld zijn (WEEK-70). */
+  straat?: string;
+  huisnummer?: string;
+  /** Openingsuren zoals OpenStreetMap ze bewaart, bv. "Mo-Sa 08:00-20:00; Su 09:00-12:00" (WEEK-70). */
+  openingsuren?: string;
 };
 
 export const MAX_WINKELS = 20;
@@ -86,7 +91,21 @@ export function leesWinkels(ruw: unknown, postcode: string): Winkel[] {
     const punt = (e.center && typeof e.center === 'object' ? e.center : e) as Record<string, unknown>;
     const lat = typeof punt.lat === 'number' ? punt.lat : undefined;
     const lon = typeof punt.lon === 'number' ? punt.lon : undefined;
-    uit.push({ naam, soort, postcode: postcodeTag, gemeente: stad, nabij: postcodeTag === pc ? 'postcode' : 'gemeente', lat, lon });
+    const straat = typeof tags['addr:street'] === 'string' ? tags['addr:street'].trim() : '';
+    const huisnummer = typeof tags['addr:housenumber'] === 'string' ? tags['addr:housenumber'].trim() : '';
+    const openingsuren = typeof tags.opening_hours === 'string' ? tags.opening_hours.trim() : '';
+    uit.push({
+      naam,
+      soort,
+      postcode: postcodeTag,
+      gemeente: stad,
+      nabij: postcodeTag === pc ? 'postcode' : 'gemeente',
+      lat,
+      lon,
+      straat: straat || undefined,
+      huisnummer: huisnummer || undefined,
+      openingsuren: openingsuren || undefined,
+    });
   }
   return rangschik(uit);
 }

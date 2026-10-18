@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { eigenItem, LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
+import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
 import { FrigoItem } from '@/lib/frigo';
 import type { DagCode } from '@/lib/planner/types';
 import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
@@ -43,7 +43,6 @@ export default function Lijst() {
   const { t, taal } = useTaal();
   const [items, setItems] = useState<LijstItem[]>([]);
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
-  const [nieuw, setNieuw] = useState('');
   const [weergave, setWeergave] = useState<Weergave>('recept');
   const [gezin, setGezin] = useState<Gezin | null>(null);
   const [status, setStatus] = useState<SyncStatus>(syncStatus());
@@ -101,13 +100,6 @@ export default function Lijst() {
     if (afgevinkt) await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
   };
 
-  const voegToe = () => {
-    const item = eigenItem(nieuw, new Date(), ikNaam);
-    if (!item) return;
-    wijzig((huidig) => [...huidig, item]);
-    setNieuw('');
-  };
-
   const titel = (sectie: LijstSectie) => {
     if (sectie.soort === 'recept') return t('lijst.receptTitel', { dag: t(dagSleutel(sectie.dag)), recept: sectie.recept });
     if (sectie.soort === 'afdeling') return t(`afdeling.${sectie.afdeling}` as Sleutel);
@@ -126,24 +118,6 @@ export default function Lijst() {
 
   return (
     <View style={s.scherm}>
-      <View style={s.invoer}>
-        <TextInput
-          style={s.veld}
-          placeholder={t('lijst.toevoegen')}
-          value={nieuw}
-          onChangeText={setNieuw}
-          onSubmitEditing={voegToe}
-          returnKeyType="done"
-        />
-        <Pressable style={s.plus} onPress={voegToe}>
-          <Text style={s.plusTekst}>+</Text>
-        </Pressable>
-        {/* Scannen vanaf de lijst (WEEK-46): een gescand product wordt hier afgevinkt. */}
-        <Pressable style={s.scan} onPress={() => router.navigate('/scan?van=lijst')} accessibilityRole="button">
-          <Text style={s.scanTekst}>{t('lijst.scan')}</Text>
-        </Pressable>
-      </View>
-
       <View style={s.schakelaar} accessibilityRole="tablist">
         {(['recept', 'categorie'] as Weergave[]).map((w) => {
           const aan = weergave === w;
@@ -201,6 +175,20 @@ export default function Lijst() {
                 {hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}
               </Text>
             ) : null}
+            {/* Per product scannen (WEEK-70): het gescande product gaat enkel naar deze regel. */}
+            {!item.afgevinkt && (
+              <Pressable
+                style={s.scanKnop}
+                onPress={(e) => {
+                  e.stopPropagation?.();
+                  router.navigate(`/scan?van=lijst&lijstItem=${encodeURIComponent(item.ids.join(','))}`);
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t('lijst.scanProduct')}
+              >
+                <Text style={s.scanKnopTekst}>📷</Text>
+              </Pressable>
+            )}
           </Pressable>
         )}
         stickySectionHeadersEnabled={false}
@@ -217,12 +205,8 @@ export default function Lijst() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16 },
-  invoer: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  veld: { flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
-  plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
-  plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
-  scan: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
-  scanTekst: { color: KLEUR, fontWeight: '700' },
+  scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
+  scanKnopTekst: { fontSize: 17 },
   schakelaar: { flexDirection: 'row', marginTop: 12, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, overflow: 'hidden' },
   optie: { flex: 1, paddingVertical: 8, alignItems: 'center' },
   optieAan: { backgroundColor: KLEUR },
