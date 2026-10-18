@@ -5,7 +5,6 @@ import { PERIODE_STANDAARD } from './periode';
 import { momentVan, normaliseerMomenten } from './moment';
 import { BankRecept, Moment, RECEPTENBANK, Soort } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
-import { leesOpdracht, Wensen } from './opdracht';
 import { porties as berekenPorties, rondAf } from './hoeveelheid';
 import { DagCode, KooktijdCode, kooktijdVan, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 import type { StijlCode } from '@/data/receptenbank';
@@ -26,34 +25,25 @@ export function toeval(seed: number): () => number {
   };
 }
 
-export function toegestaneSoorten(w: Wensen): Soort[] {
-  const soorten: Soort[] = [];
-  if (!w.zonderVlees) soorten.push('vlees');
-  soorten.push('vegetarisch');
-  if (!w.zonderVis) soorten.push('vis');
-  return soorten;
+export function toegestaneSoorten(): Soort[] {
+  return ['vlees', 'vegetarisch', 'vis'];
 }
 
-/** Volgorde van soorten over de week: afwisselend, met extra vis als dat gevraagd is. */
-export function soortenSchema(w: Wensen, aantal: number): Soort[] {
-  const basis = toegestaneSoorten(w);
-  const cyclus = w.meerVis && basis.includes('vis') ? [...basis, 'vis' as Soort] : basis;
+/** Volgorde van soorten over de week: afwisselend. */
+export function soortenSchema(aantal: number): Soort[] {
+  const cyclus = toegestaneSoorten();
   return Array.from({ length: aantal }, (_, i) => cyclus[i % cyclus.length]);
 }
 
-/** Recepten die passen bij de harde wensen (nooit vlees of vis als dat niet mag). */
-export function passendeRecepten(w: Wensen, bank: readonly BankRecept[] = RECEPTENBANK): BankRecept[] {
-  const soorten = toegestaneSoorten(w);
+/** Recepten van alle soorten uit de bank. */
+export function passendeRecepten(bank: readonly BankRecept[] = RECEPTENBANK): BankRecept[] {
+  const soorten = toegestaneSoorten();
   return bank.filter((r) => soorten.includes(r.soort));
 }
 
-/** Score voor zachte wensen: hoger = beter. */
-function voorkeurScore(r: BankRecept, w: Wensen): number {
-  let score = 0;
-  if (w.snel) score += r.minuten <= 20 ? 3 : r.minuten <= 30 ? 1 : -3;
-  // Standaard: liefst geen uren in de keuken op een weekdag.
-  if (!w.snel && r.minuten > 60) score -= 1;
-  return score;
+/** Score: hoger = beter. Liefst geen uren in de keuken op een weekdag. */
+function voorkeurScore(r: BankRecept): number {
+  return r.minuten > 60 ? -1 : 0;
 }
 
 /** Zet een recept uit de bank om naar een planrecept in de juiste taal en voor het juiste aantal porties. */
@@ -86,7 +76,6 @@ export function kiesRecept(
   kandidaten: BankRecept[],
   gewensteSoort: Soort | undefined,
   rond: Keuze,
-  w: Wensen,
   random: () => number
 ): BankRecept | undefined {
   const { gekozen, dag } = rond;
@@ -104,14 +93,14 @@ export function kiesRecept(
   for (let aantalRegels = regels.length; aantalRegels >= 1; aantalRegels--) {
     const actief = regels.slice(0, aantalRegels);
     const pool = kandidaten.filter((r) => actief.every((regel) => regel(r)));
-    if (pool.length) return kiesBeste(pool, w, random);
+    if (pool.length) return kiesBeste(pool, random);
   }
   // Alles is al gebruikt: dan mag een recept toch terugkomen.
-  return kandidaten.length ? kiesBeste(kandidaten, w, random) : undefined;
+  return kandidaten.length ? kiesBeste(kandidaten, random) : undefined;
 }
 
-function kiesBeste(pool: BankRecept[], w: Wensen, random: () => number): BankRecept {
-  const scores = pool.map((r) => voorkeurScore(r, w));
+function kiesBeste(pool: BankRecept[], random: () => number): BankRecept {
+  const scores = pool.map((r) => voorkeurScore(r));
   const max = Math.max(...scores);
   const besten = pool.filter((_, i) => scores[i] >= max - 1);
   return besten[Math.floor(random() * besten.length)];
@@ -147,8 +136,7 @@ export function dagenVoorPlan(aantal: number): DagCode[] {
 }
 
 export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = RECEPTENBANK): Weekplan {
-  const w = leesOpdracht(verzoek.opdracht);
-  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   const momenten = normaliseerMomenten(verzoek.momenten);
   // Elke dag krijgt één plek per gekozen moment, dag voor dag (WEEK-43).
   const sloten = dagen.flatMap((dag) => momenten.map((moment) => ({ dag, moment })));
@@ -158,7 +146,7 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
   const kandidatenPerMoment = new Map<Moment, BankRecept[]>();
   for (const moment of momenten) {
     const keuze = filterOpKeuzes(
-      passendeRecepten(w, beschikbaar.filter((r) => momentVan(r) === moment)),
+      passendeRecepten(beschikbaar.filter((r) => momentVan(r) === moment)),
       verzoek.kooktijden,
       verzoek.stijlen,
       dagen.length
@@ -166,7 +154,7 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
     versoepeld ||= keuze.versoepeld;
     kandidatenPerMoment.set(moment, keuze.recepten);
   }
-  const schema = soortenSchema(w, sloten.length);
+  const schema = soortenSchema(sloten.length);
   const porties = berekenPorties(verzoek.profiel);
 
   const gekozen: BankRecept[] = [];
@@ -177,7 +165,7 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
     : undefined;
   sloten.forEach(({ dag, moment }, i) => {
     const kandidaten = kandidatenPerMoment.get(moment) ?? [];
-    const recept = i === 0 && eerste ? eerste : kiesRecept(kandidaten, schema[i], { gekozen, dag: i }, w, random);
+    const recept = i === 0 && eerste ? eerste : kiesRecept(kandidaten, schema[i], { gekozen, dag: i }, random);
     if (!recept) return;
     gekozen.push(recept);
     // Het moment staat er enkel bij als het niet het gewone avondplan is.
@@ -187,7 +175,6 @@ export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = R
 
   return {
     dagen: verzoek.frigo?.length ? markeerUitFrigo(planDagen, verzoek.frigo) : planDagen,
-    opdracht: verzoek.opdracht,
     kooktijden: verzoek.kooktijden,
     stijlen: verzoek.stijlen,
     ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),

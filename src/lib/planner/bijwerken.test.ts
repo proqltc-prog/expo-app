@@ -9,7 +9,7 @@ const dag = (d: PlanDag['dag'], naam: string, ing = 'pasta'): PlanDag => ({
 });
 const plan: Weekplan = {
   dagen: [dag('zondag', 'Pasta'), dag('maandag', 'Curry', 'rijst')],
-  opdracht: '', kooktijden: [], stijlen: [], taal: 'nl', porties: 3, bron: 'lokaal', gemaaktOp: '2026-10-10T10:00:00.000Z',
+  kooktijden: [], stijlen: [], taal: 'nl', porties: 3, bron: 'lokaal', gemaaktOp: '2026-10-10T10:00:00.000Z',
 };
 const frigo: FrigoItem[] = [{ id: 'p', naam: 'pasta', hoeveelheid: 500, eenheid: 'g', afdeling: 'droge-voeding', toegevoegdOp: '2026-10-09T10:00:00.000Z', bron: 'planner' }];
 const verwacht = (i: number) => ({ gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[i].recept.naam });

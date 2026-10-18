@@ -57,12 +57,11 @@ export type PlanDag = {
 
 /** Wat de gebruiker vraagt; het profiel gaat er automatisch bij. */
 export type PlanVerzoek = {
-  opdracht: string;
   kooktijden: KooktijdCode[];
   stijlen: StijlCode[];
   /** Ingrediënten die vermeden worden (WEEK-41). */
   vermijd?: Vermijd[];
-  /** Gekozen periode in dagen (WEEK-42); gaat voor een getal in de opdracht. */
+  /** Gekozen periode in dagen (WEEK-42). */
   aantalDagen?: number;
   /** Gekozen maaltijdmomenten (WEEK-43); leeg of ontbrekend is avond. */
   momenten?: Moment[];
@@ -75,7 +74,6 @@ export type PlanVerzoek = {
 
 export type Weekplan = {
   dagen: PlanDag[];
-  opdracht: string;
   kooktijden: KooktijdCode[];
   stijlen: StijlCode[];
   /** Ingrediënten die bij het maken van dit plan vermeden werden; ook bij het vervangen van een dag (WEEK-41). */

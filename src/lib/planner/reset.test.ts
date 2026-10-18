@@ -7,8 +7,8 @@ import { Profiel, standaardProfiel } from '@/lib/profiel';
 import { RECEPTENBANK } from '@/data/receptenbank';
 
 const gezin: Profiel = { ...standaardProfiel(), kinderen: 2 };
-const plan = (opdracht = '7 dagen', extra: Partial<PlanVerzoek> = {}): Weekplan =>
-  planLokaal({ opdracht, kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 5, ...extra });
+const plan = (extra: Partial<PlanVerzoek> = {}): Weekplan =>
+  planLokaal({ aantalDagen: 7, kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 5, ...extra });
 
 const ids = (p: Weekplan) => p.dagen.map((d) => d.recept.id);
 
@@ -36,7 +36,7 @@ describe('resetDagLokaal', () => {
     let zelfde = 0;
     let totaal = 0;
     for (let seed = 0; seed < 30; seed++) {
-      const voor = plan('7 dagen', { seed });
+      const voor = plan({ seed });
       for (let i = 0; i < 7; i++) {
         totaal++;
         if (resetDagLokaal(voor, i, seed + i).dagen[i].recept.soort === voor.dagen[i].recept.soort) zelfde++;
@@ -47,7 +47,7 @@ describe('resetDagLokaal', () => {
 
   test('niet dezelfde basis als de dag ervoor of erna', () => {
     for (let seed = 0; seed < 40; seed++) {
-      const voor = plan('7 dagen', { seed });
+      const voor = plan({ seed });
       const index = 1 + (seed % 5);
       const na = resetDagLokaal(voor, index, seed);
       const basis = na.dagen[index].recept.basis;
@@ -56,22 +56,15 @@ describe('resetDagLokaal', () => {
     }
   });
 
-  test('respecteert de oorspronkelijke wensen: geen vlees blijft geen vlees', () => {
-    const voor = plan('7 dagen geen vlees');
-    for (let seed = 0; seed < 20; seed++) {
-      assert.notEqual(resetDagLokaal(voor, seed % 7, seed).dagen[seed % 7].recept.soort, 'vlees');
-    }
-  });
-
   test('respecteert de gekozen kooktijd', () => {
-    const voor = plan('4 dagen', { kooktijden: ['snel'] });
+    const voor = plan({ kooktijden: ['snel'] });
     for (let seed = 0; seed < 20; seed++) {
       assert.ok(resetDagLokaal(voor, seed % 4, seed).dagen[seed % 4].recept.minuten <= 20);
     }
   });
 
   test('recept in de taal van het plan en voor hetzelfde aantal porties', () => {
-    const voor = plan('3 dagen', { taal: 'es' });
+    const voor = plan({ taal: 'es' });
     const na = resetDagLokaal(voor, 1, 8);
     const bank = RECEPTENBANK.find((r) => r.id === na.dagen[1].recept.id)!;
     assert.equal(na.dagen[1].recept.naam, bank.namen[4]);
@@ -85,7 +78,7 @@ describe('resetDagLokaal', () => {
   });
 
   test('vermijdt ook recepten met dezelfde naam (bv. van de AI)', () => {
-    const voor = plan('2 dagen');
+    const voor = plan();
     const bolo = RECEPTENBANK.find((r) => r.id === 'bolognaise')!;
     const metAi: Weekplan = {
       ...voor,
@@ -112,7 +105,7 @@ describe('resetDag met AI', () => {
   };
 
   test('vraagt enkel die ene dag en stuurt de andere recepten mee als "vermijden"', async () => {
-    const voor = plan('3 dagen');
+    const voor = plan();
     const { f, oproepen } = nep({ dagen: [{ dag: voor.dagen[1].dag, recept: aiRecept('Zalm met venkel') }] });
     const na = await resetDag(voor, 1, gezin, { url: 'https://x.test', fetch: f });
     assert.equal(na.dagen[1].recept.naam, 'Zalm met venkel');
@@ -125,7 +118,7 @@ describe('resetDag met AI', () => {
   });
 
   test('AI geeft een recept dat al in de week staat: lokale terugval', async () => {
-    const voor = plan('3 dagen');
+    const voor = plan();
     const { f } = nep({ dagen: [{ dag: voor.dagen[1].dag, recept: aiRecept(voor.dagen[0].recept.naam) }] });
     const na = await resetDag(voor, 1, gezin, { url: 'https://x.test', fetch: f });
     assert.equal(na.terugval, true);
@@ -133,7 +126,7 @@ describe('resetDag met AI', () => {
   });
 
   test('AI faalt: lokale terugval met melding', async () => {
-    const voor = plan('3 dagen');
+    const voor = plan();
     const { f } = nep({}, 503);
     const na = await resetDag(voor, 2, gezin, { url: 'https://x.test', fetch: f });
     assert.equal(na.terugval, true);
@@ -142,7 +135,7 @@ describe('resetDag met AI', () => {
   });
 
   test('daglimiet bereikt (429): lokale terugval met limietmelding', async () => {
-    const voor = plan('3 dagen');
+    const voor = plan();
     const { f } = nep({ fout: 'Limiet' }, 429);
     const na = await resetDag(voor, 1, gezin, { url: 'https://x.test', fetch: f });
     assert.equal(na.terugval, true);
@@ -150,7 +143,7 @@ describe('resetDag met AI', () => {
   });
 
   test('zonder AI: meteen lokaal', async () => {
-    const voor = plan('3 dagen');
+    const voor = plan();
     const na = await resetDag(voor, 0, gezin, {}, 4);
     assert.notEqual(na.dagen[0].recept.id, voor.dagen[0].recept.id);
     assert.equal(na.terugval, undefined);

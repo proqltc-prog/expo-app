@@ -85,7 +85,6 @@ export function planUitDatabase(verzoek: PlanVerzoek, pool: DbPoolRecept[]): Wee
   }
   return {
     dagen: planDagen,
-    opdracht: verzoek.opdracht,
     kooktijden: [...verzoek.kooktijden],
     stijlen: [...verzoek.stijlen],
     vermijd: verzoek.vermijd,

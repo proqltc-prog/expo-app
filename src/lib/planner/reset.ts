@@ -3,7 +3,6 @@
 import { BankRecept, RECEPTENBANK } from '@/data/receptenbank';
 import type { Profiel } from '@/lib/profiel';
 import { AiInstelling, terugvalVelden, vraagAi } from './ai';
-import { leesOpdracht } from './opdracht';
 import { filterOpKeuzes, naarPlanRecept, passendeRecepten, toeval } from './lokaal';
 import { bankReceptVermijdt } from './vermijden';
 import { momentVan } from './moment';
@@ -13,7 +12,7 @@ const naamSleutel = (naam: string) => naam.trim().toLocaleLowerCase();
 
 /** Het oorspronkelijke verzoek van een plan, met het huidige profiel. */
 export function verzoekUitPlan(plan: Weekplan, profiel: Profiel, seed?: number): PlanVerzoek {
-  return { opdracht: plan.opdracht, kooktijden: plan.kooktijden, stijlen: plan.stijlen, vermijd: plan.vermijd, profiel, taal: plan.taal, seed };
+  return { kooktijden: plan.kooktijden, stijlen: plan.stijlen, vermijd: plan.vermijd, profiel, taal: plan.taal, seed };
 }
 
 /**
@@ -33,11 +32,10 @@ export function kiesVervanging(
 ): BankRecept | undefined {
   const huidig = plan.dagen[index];
   if (!huidig) return undefined;
-  const w = leesOpdracht(plan.opdracht);
   // Een ontbijt wordt weer een ontbijt, een avondrecept weer een avondrecept (WEEK-43).
   const moment = huidig.moment ?? 'avond';
   const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []) && momentVan(r) === moment);
-  const { recepten } = filterOpKeuzes(passendeRecepten(w, toegestaan), plan.kooktijden, plan.stijlen, 1);
+  const { recepten } = filterOpKeuzes(passendeRecepten(toegestaan), plan.kooktijden, plan.stijlen, 1);
 
   const andereDagen = plan.dagen.filter((_, i) => i !== index);
   const gebruikteIds = new Set(plan.dagen.map((d) => d.recept.id));

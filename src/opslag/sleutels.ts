@@ -8,7 +8,6 @@ export const SLEUTEL = {
   /** Eigen recepten (WEEK-45): enkel op dit toestel, niet in de gezinssynchronisatie. */
   eigenRecepten: 'eigenrecepten:v1',
   plan: 'weekplan:v1',
-  opdrachten: 'opdrachten:v1',
   keuzes: 'planningkeuzes:v1',
   profiel: 'gezinsprofiel:v1',
   /** Welkomstscherm gezien op dit toestel (WEEK-79): enkel lokaal, niet in de gezinssynchronisatie. */

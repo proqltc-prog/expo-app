@@ -41,7 +41,7 @@ describe('beheerderNaam', () => {
 
 describe('beheerder op het weekplan (regressie)', () => {
   const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
-  const plan = planLokaal({ opdracht: '3 dagen', kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42 });
+  const plan = planLokaal({ kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42 });
 
   it('bewaart de beheerder bij het inlezen', () => {
     const ingelezen = normaliseerWeekplan(JSON.parse(JSON.stringify({ ...plan, beheerder: 'ik' })));

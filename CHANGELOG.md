@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.4] – 2026-10-18
+
+**Jira:** [WEEK-89](https://proqltc-1791495894841.atlassian.net/browse/WEEK-89) (verbetering) · **Confluence:** [WEEK-89](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8060953)
+
+- De tekstparser voor vrije opdrachten is verwijderd. De planner heeft geen tekstveld, dus de woorden hadden geen effect.
+- Het aantal dagen komt enkel uit de gekozen periode. Soortkeuze, snelheidsvoorkeur en de goedkoop-regel zijn uit de planner gehaald.
+- De lijst met opgeslagen vrije opdrachten is verwijderd. Oude plannen blijven leesbaar.
+- De tekst van de lege planner vraagt niet meer om een opdracht te typen (zes talen).
+
 ## [0.72.3] – 2026-10-18
 
 **Jira:** [WEEK-88](https://proqltc-1791495894841.atlassian.net/browse/WEEK-88) (verbetering) · **Confluence:** [WEEK-88](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192077)
