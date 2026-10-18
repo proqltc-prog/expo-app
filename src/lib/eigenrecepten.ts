@@ -1,11 +1,9 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
 // Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
-import { BankRecept, Eenheid, Soort, StijlCode } from '@/data/receptenbank';
+import { Eenheid, Soort, StijlCode } from '@/data/receptenbank';
 import { INGREDIENT_CODES, IngredientCode, ingredientNaam } from '@/data/ingredienten';
-import { TALEN, type Taal } from '@/i18n';
-import { isFavoriet, type Favoriet } from '@/lib/favorieten';
+import type { Taal } from '@/i18n';
 import { zoeksleutel } from '@/lib/planner/kies';
-import { kooktijdVan, type KooktijdCode } from '@/lib/planner/types';
 
 export const EENHEDEN: readonly Eenheid[] = ['g', 'ml', 'stuk', 'teentje'];
 export const SOORTEN: readonly Soort[] = ['vegetarisch', 'vis', 'vlees'];
@@ -104,46 +102,3 @@ export function isExactBekend(zoek: string, keuzes: readonly IngredientKeuze[]):
 }
 
 export type Bron = 'alle' | 'mijn' | 'favoriet';
-
-export type LijstRegel = {
-  id: string;
-  naam: string;
-  soort: Soort;
-  minuten: number;
-  stijlen: StijlCode[];
-  eigen: boolean;
-};
-
-export type LijstFilter = {
-  bron: Bron;
-  soorten: readonly Soort[];
-  kooktijden: readonly KooktijdCode[];
-  stijlen: readonly StijlCode[];
-  zoek: string;
-  taal: Taal;
-  favorieten: readonly Favoriet[];
-};
-
-/** Alle recepten (receptenbank en eigen) gefilterd op bron, soort, kooktijd, stijl en zoekterm. */
-export function lijstRegels(eigen: readonly EigenRecept[], bank: readonly BankRecept[], f: LijstFilter): LijstRegel[] {
-  const idx = Math.max(0, TALEN.indexOf(f.taal));
-  const zoek = zoeksleutel(f.zoek);
-  const alles: LijstRegel[] = [
-    ...eigen.map((r) => ({ id: r.id, naam: r.naam, soort: r.soort, minuten: r.minuten, stijlen: r.stijlen, eigen: true })),
-    ...bank.map((r) => ({
-      id: r.id,
-      naam: r.namen[idx] ?? r.namen[0],
-      soort: r.soort,
-      minuten: r.minuten,
-      stijlen: [...r.stijlen],
-      eigen: false,
-    })),
-  ];
-  return alles
-    .filter((r) => f.bron === 'alle' || (f.bron === 'mijn' ? r.eigen : isFavoriet(f.favorieten, r.naam)))
-    .filter((r) => !f.soorten.length || f.soorten.includes(r.soort))
-    .filter((r) => !f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten)))
-    .filter((r) => !f.stijlen.length || r.stijlen.some((s) => f.stijlen.includes(s)))
-    .filter((r) => !zoek || zoeksleutel(r.naam).includes(zoek))
-    .sort((a, b) => a.naam.localeCompare(b.naam, f.taal));
-}

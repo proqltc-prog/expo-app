@@ -85,8 +85,8 @@ export type Weekplan = {
   taal: Taal;
   /** Aantal volwassen porties waarvoor de hoeveelheden berekend zijn. */
   porties: number;
-  /** lokaal = receptenbank van de app, ai = AI-planner, favorieten = willekeurig uit het kookboek (WEEK-14). */
-  bron: 'lokaal' | 'ai' | 'favorieten' | 'db';
+  /** lokaal = receptenbank van de app, ai = AI-planner, db = recepten uit de database. */
+  bron: 'lokaal' | 'ai' | 'db';
   gemaaktOp: string;
   /** true als er niet genoeg recepten waren voor de gekozen kooktijd/stijl en de planner moest versoepelen. */
   versoepeld?: boolean;

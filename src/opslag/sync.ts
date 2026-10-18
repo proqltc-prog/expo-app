@@ -9,7 +9,6 @@
 // - Alle wijzigingen aan de opslag lopen via naElkaar(), zodat niets elkaar overschrijft.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RealtimeChannel } from '@supabase/supabase-js';
-import { leesFavoriet, normaliseerFavorieten } from '@/lib/favorieten';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
@@ -62,12 +61,6 @@ const ITEMBRONNEN: Partial<Record<ItemSoort, ItemBron>> = {
     lees: (d) => normaliseerFrigo([d])[0] ?? null,
     normaliseer: normaliseerFrigo,
     tijdVan: (i) => (i as { toegevoegdOp?: string }).toegevoegdOp,
-  },
-  favoriet: {
-    sleutel: SLEUTEL.favorieten,
-    lees: leesFavoriet,
-    normaliseer: normaliseerFavorieten,
-    tijdVan: (i) => (i as { opgeslagenOp?: string }).opgeslagenOp,
   },
 };
 
@@ -243,7 +236,10 @@ export async function verstuur(): Promise<void> {
       if (!gezin || !sb) return;
       const t = await naElkaar(laadToestand);
       // Per item maar één rij (de nieuwste): twee keer dezelfde id in één batch weigert de database (WEEK-27).
-      const itemRijen = (Object.entries(t.wachtrij.items) as [ItemSoort, SyncRij[]][]).flatMap(([soort, rijen]) =>
+      // Alleen soorten die dit toestel nog kent (WEEK-72: favorieten zijn verwijderd).
+      const itemRijen = (Object.entries(t.wachtrij.items) as [ItemSoort, SyncRij[]][])
+        .filter(([soort]) => soort in ITEMBRONNEN)
+        .flatMap(([soort, rijen]) =>
         voegWachtrijSamen([], rijen).map((r) => ({ gezin_id: gezin.id, soort, id: r.id, data: r.data, verwijderd: r.verwijderd, bijgewerkt_op: r.bijgewerkt_op }))
       );
       const docRijen = (Object.entries(t.wachtrij.documenten) as [DocumentSleutel, { data: unknown; bijgewerkt_op: string }][]).map(
