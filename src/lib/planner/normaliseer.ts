@@ -7,6 +7,7 @@ import { isTaal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { normaliseerVermijd } from './vermijden';
 import { normaliseerPeriode, PERIODE_STANDAARD } from './periode';
+import { KOOKTIJD_IDS, STIJL_IDS } from './opties';
 import { DagCode, KooktijdCode, KOOKTIJDEN, PlanDag, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 
 const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
@@ -58,6 +59,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
       if (ontbreekt.length) dag.ontbreekt = ontbreekt;
       const uitFrigo = Array.isArray(d.uitFrigo) ? d.uitFrigo.filter((n): n is string => typeof n === 'string' && !!n.trim()) : [];
       if (uitFrigo.length) dag.uitFrigo = uitFrigo;
+      if (d.bevestigd === true) dag.bevestigd = true;
       if (d.gedaan === true) {
         dag.gedaan = true;
         const verbruikt = normaliseerFrigo(d.verbruikt);
@@ -88,16 +90,19 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
 
 /** Leest bewaarde keuzes voor kooktijd en stijl veilig in. */
 export function normaliseerKeuzes(ruw: unknown): {
-  kooktijden: KooktijdCode[];
-  stijlen: StijlCode[];
+  kooktijden: string[];
+  stijlen: string[];
   vermijd: Vermijd[];
   aantalDagen: number;
   momenten: Moment[];
 } {
   if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'] };
+  // Oude codes (snel/gemiddeld/uitgebreid, klassiek…) en de keuzes van het weekmenu blijven geldig.
+  const kooktijdToegestaan = [...new Set<string>([...KOOKTIJDEN, ...KOOKTIJD_IDS])];
+  const stijlToegestaan = [...new Set<string>([...STIJLEN, ...STIJL_IDS])];
   return {
-    kooktijden: Array.isArray(ruw.kooktijden) ? KOOKTIJDEN.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
-    stijlen: Array.isArray(ruw.stijlen) ? STIJLEN.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
+    kooktijden: Array.isArray(ruw.kooktijden) ? kooktijdToegestaan.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
+    stijlen: Array.isArray(ruw.stijlen) ? stijlToegestaan.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
     vermijd: normaliseerVermijd(ruw.vermijd),
     aantalDagen: normaliseerPeriode(ruw.aantalDagen) ?? PERIODE_STANDAARD,
     momenten: normaliseerMomenten(ruw.momenten),

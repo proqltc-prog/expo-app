@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.57.0] – 2026-10-18
+
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4b) · **Confluence:** [WEEK-68 deel 4b](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700481)
+
+- Het weekmenu heeft vijf stappen: periode (met kalender-icoon), moment en kooktijd, stijl (met landenkleuren), vermijden (optioneel) en het plan.
+- Met een bestaand plan opent het scherm direct op het plan.
+- De keuze "favorieten of nieuwe recepten" en het blok met voorkeuren zijn weggehaald; het plan komt altijd uit de database.
+- Per dag bevestigen: een bevestigde dag ligt vast en zet zijn ingrediënten op de boodschappenlijst. Enkel bevestigde dagen komen op de lijst; de knop "Naar boodschappenlijst" opent de lijst.
+- Een nieuw weekmenu vraagt eerst bevestiging als er al bevestigde dagen zijn; dan vervalt ook de boodschappenlijst.
+- Tijdelijke vertaallaag tussen de nieuwe keuzes en de databasecodes, tot de database in WEEK-68 deel 4c is aangepast.
+- Nieuwe pure logica en landenkleuren, met unit tests (regressietests op de bestaande planner en keuzes).
+
 ## [0.56.0] – 2026-10-18
 
 **Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 1) · **Confluence:** [WEEK-71 deel 1](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
