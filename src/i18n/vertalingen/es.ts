@@ -385,6 +385,8 @@ export const es: Vertalingen = {
   'planning.kies.plan': 'Tu menú semanal',
   'planning.kalender': 'Elegir periodo',
   'planning.bevestig': 'Confirmar',
+  'planning.nogTeBevestigen': 'Por confirmar',
+  'planning.bevestigDeze': 'Confirmar este día',
   'planning.bevestigd': '✓ Confirmado',
   'planning.bevestigdMelding': 'Esta receta queda fijada. Los ingredientes están en tu lista de la compra.',
   'planning.resetVraag': 'Ya hay días confirmados. Un nuevo menú semanal sustituye el menú actual y la lista de la compra. ¿Continuar?',

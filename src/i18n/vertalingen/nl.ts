@@ -386,6 +386,8 @@ export const nl = {
   'planning.kies.plan': 'Je weekmenu',
   'planning.kalender': 'Periode kiezen',
   'planning.bevestig': 'Bevestigen',
+  'planning.nogTeBevestigen': 'Nog te bevestigen',
+  'planning.bevestigDeze': 'Bevestig deze dag',
   'planning.bevestigd': '✓ Bevestigd',
   'planning.bevestigdMelding': 'Dit recept ligt vast. De ingrediënten staan op je boodschappenlijst.',
   'planning.resetVraag': 'Er zijn al bevestigde dagen. Een nieuw weekmenu vervangt het huidige menu en de boodschappenlijst. Doorgaan?',

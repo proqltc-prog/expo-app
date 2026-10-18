@@ -472,6 +472,9 @@ export default function Weekplanning() {
                     <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
                       <Text style={s.dag}>{t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
+                      {!gedaan && (
+                        <Text style={bevestigd ? s.statusAan : s.statusWacht}>{t(bevestigd ? 'planning.bevestigd' : 'planning.nogTeBevestigen')}</Text>
+                      )}
                       {wijzigbaar && (
                         <Pressable
                           style={s.reset}
@@ -499,7 +502,6 @@ export default function Weekplanning() {
                         </Pressable>
                       )}
                     </View>
-                    {bevestigd && !gedaan && <Text style={s.bevestigdTekst}>{t('planning.bevestigd')}</Text>}
                     {!gedaan && uitFrigo && uitFrigo.length > 0 && (
                       <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
                     )}
@@ -518,12 +520,12 @@ export default function Weekplanning() {
                         </View>
                       </View>
                     ) : (
-                      !gedaan && !bevestigd && <Text style={s.gepland}>{t('status.gepland')}</Text>
+                      null
                     )}
                     {wijzigbaar && (
                       <View style={s.acties}>
                         <Pressable style={s.bevestigKnop} onPress={() => bevestigDagKnop(index)} accessibilityRole="button" disabled={!mag}>
-                          <Text style={s.bevestigKnopTekst}>{t('planning.bevestig')}</Text>
+                          <Text style={s.bevestigKnopTekst}>{t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}</Text>
                         </Pressable>
                         <Pressable style={s.kiesKnop} onPress={() => kiesZelf(index)} accessibilityRole="button" disabled={!mag}>
                           <Text style={s.kiesKnopTekst}>{t('planning.zelfKiezen')}</Text>
@@ -618,6 +620,8 @@ const s = StyleSheet.create({
   tegoed: { color: MUTED, fontSize: 12, textAlign: 'center' },
   kaart: { backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: LIJN },
   kaartBevestigd: { borderColor: PETROL, borderWidth: 1.5 },
+  statusAan: { color: PETROL, fontSize: 12, fontWeight: '700' },
+  statusWacht: { color: '#B4500A', fontSize: 12, fontWeight: '700' },
   kaartRij: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
   kaartInhoud: { flex: 1, minWidth: 0, gap: 6 },
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
