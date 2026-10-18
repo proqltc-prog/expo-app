@@ -46,6 +46,21 @@ export function inCatalogus(naam: string): IngredientCode | undefined {
   return INGREDIENT_CODES.find((code) => alleNamen(code).includes(n));
 }
 
+export type Sheet = 'planner' | 'los';
+
+/**
+ * Accentkleuren per sheet (WEEK-75): planner-frigo petrol, losse producten oranje.
+ * Het goedgekeurde thema van het weekmenu; zo zijn de twee sheets in één oogopslag te onderscheiden.
+ */
+export const SHEET_THEMA: Record<Sheet, { accent: string; accentZacht: string }> = {
+  planner: { accent: '#0F6B66', accentZacht: '#D5EDEA' },
+  los: { accent: '#E8680F', accentZacht: '#FDE8D6' },
+};
+
+export function sheetThema(sheet: Sheet): { accent: string; accentZacht: string } {
+  return SHEET_THEMA[sheet];
+}
+
 /** De twee sheets. Elk frigo-item zit in precies één sheet. */
 export function sheets(frigo: readonly FrigoItem[]): { planner: FrigoItem[]; los: FrigoItem[] } {
   return {
