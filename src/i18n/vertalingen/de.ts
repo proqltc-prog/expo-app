@@ -8,6 +8,13 @@ export const de: Vertalingen = {
   'welkom.knop': 'Sprache wählen',
   'welkom.doorgaan': 'Weiter',
   'welkom.stap': 'Schritt 1 von 3: Sprache · Familie · Menü',
+  'bereiding.titel': 'Zubereitung',
+  'bereiding.icoon': 'Zubereitungsschritte anzeigen',
+  'bereiding.stap': 'Schritt {n} von {m}',
+  'bereiding.vorige': 'Zurück',
+  'bereiding.volgende': 'Weiter',
+  'bereiding.klaar': 'Fertig',
+  'bereiding.geen': 'Für dieses Rezept sind keine Schritte bekannt.',
 
   'tab.menu': 'Menü',
   'tab.menu.titel': 'Wochenmenü',

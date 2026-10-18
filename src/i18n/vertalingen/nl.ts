@@ -9,6 +9,13 @@ export const nl = {
   'welkom.knop': 'Kies je taal',
   'welkom.doorgaan': 'Doorgaan',
   'welkom.stap': 'Stap 1 van 3: taal · gezin · menu',
+  'bereiding.titel': 'Bereiding',
+  'bereiding.icoon': 'Bereidingsstappen tonen',
+  'bereiding.stap': 'Stap {n} van {m}',
+  'bereiding.vorige': 'Vorige',
+  'bereiding.volgende': 'Volgende',
+  'bereiding.klaar': 'Klaar',
+  'bereiding.geen': 'Voor dit recept zijn geen stappen bekend.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
