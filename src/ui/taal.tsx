@@ -30,7 +30,7 @@ export function TaalProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // De keuze geldt enkel op dit toestel (WEEK-80).
-  const kiesTaal = useCallback((nieuw: Taal | undefined) => {
+  const wijzigVoorkeur = useCallback((nieuw: Taal | undefined) => {
     setVoorkeur(nieuw);
     zetTaal(nieuw);
   }, []);
@@ -42,7 +42,7 @@ export function TaalProvider({ children }: { children: ReactNode }) {
     [taal]
   );
 
-  const waarde = useMemo(() => ({ taal, voorkeur, zetVoorkeur: kiesTaal, t, tn }), [taal, voorkeur, kiesTaal, t, tn]);
+  const waarde = useMemo(() => ({ taal, voorkeur, zetVoorkeur: wijzigVoorkeur, t, tn }), [taal, voorkeur, wijzigVoorkeur, t, tn]);
   return <Context.Provider value={waarde}>{children}</Context.Provider>;
 }
 
