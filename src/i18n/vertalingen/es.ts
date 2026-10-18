@@ -2,6 +2,8 @@ import type { Vertalingen } from './nl';
 
 export const es: Vertalingen = {
   'taal.naam': 'Español',
+  'welkom.titel': 'Bienvenido a Gezond Boodschappen',
+  'welkom.tekst': 'Elige tu idioma. Después configura tu espacio familiar.',
 
   'tab.menu': 'Menú',
   'tab.menu.titel': 'Menú semanal',
