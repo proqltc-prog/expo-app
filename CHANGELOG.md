@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.63.0] – 2026-10-18
+
+**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (verbetering, deel 4) · **Confluence:** [WEEK-71 deel 4](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7995401)
+
+- Het scan-scherm gebruikt het thema van frigo en lijst: petrol voor de hoofdacties, oranje voor afwijzen, lichte achtergrond.
+
 ## [0.62.0] – 2026-10-18
 
 **Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (verbetering, deel 3) · **Confluence:** [WEEK-71 deel 3](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700533)

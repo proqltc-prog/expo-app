@@ -19,8 +19,14 @@ import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
-const KLEUR = '#2e7d4f';
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#2e7d4f', matig: '#f9a825', slecht: '#c62828' };
+// Thema (WEEK-71): dezelfde kleuren als frigo en lijst. Petrol voor de hoofdacties, oranje voor afwijzen.
+const KLEUR = '#0F6B66';
+const PAPIER = '#F8F8F4';
+const ORANJE = '#E8680F';
+const INKT = '#17201A';
+const MUTED = '#5E6B63';
+const LIJN = '#E4E8E1';
+const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#0F6B66', matig: '#E8680F', slecht: '#B23A05' };
 
 type Status =
   | { soort: 'scannen' }
@@ -244,7 +250,7 @@ export default function Scan() {
             <Pressable style={[s.knop, { flex: 1 }]} onPress={() => vinkOpLijstAf(naam, doel, p)} accessibilityRole="button">
               <Text style={s.knopTekst}>{t('scan.productToevoegen')}</Text>
             </Pressable>
-            <Pressable style={[s.knop, { flex: 1, backgroundColor: '#777' }]} onPress={opnieuw} accessibilityRole="button">
+            <Pressable style={[s.knop, { flex: 1, backgroundColor: MUTED }]} onPress={opnieuw} accessibilityRole="button">
               <Text style={s.knopTekst}>{t('scan.productWeigeren')}</Text>
             </Pressable>
           </View>
@@ -262,7 +268,7 @@ export default function Scan() {
               <Text style={s.knopTekst}>{t('scan.afvinkenOpLijst')}</Text>
             </Pressable>
             {inFrigo && (
-              <Pressable style={[s.knop, { backgroundColor: '#c62828' }]} onPress={() => verwijderVanLijst(naam, matches)}>
+              <Pressable style={[s.knop, { backgroundColor: ORANJE }]} onPress={() => verwijderVanLijst(naam, matches)}>
                 <Text style={s.knopTekst}>{t('scan.verwijderVanLijst')}</Text>
               </Pressable>
             )}
@@ -272,7 +278,7 @@ export default function Scan() {
       {/* Details van een frigo-item (WEEK-49): enkel de gegevens koppelen, het item zelf blijft zoals het is. */}
       {item ? (
         <View style={s.knoppen}>
-          <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
+          <Pressable style={[s.knop, { flex: 1, backgroundColor: ORANJE }]} onPress={opnieuw}>
             <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
           </Pressable>
           <Pressable style={[s.knop, { flex: 1 }]} onPress={() => bewaarDetails(item, p)}>
@@ -282,7 +288,7 @@ export default function Scan() {
       ) : van === 'frigo' ? (
         /* Scannen vanaf de frigo (WEEK-47): het product gaat direct in de frigo. */
         <View style={s.knoppen}>
-          <Pressable style={[s.knop, { flex: 1, backgroundColor: '#c62828' }]} onPress={opnieuw}>
+          <Pressable style={[s.knop, { flex: 1, backgroundColor: ORANJE }]} onPress={opnieuw}>
             <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
           </Pressable>
           <Pressable style={[s.knop, { flex: 1 }]} onPress={() => naarFrigo(p)}>
@@ -301,26 +307,26 @@ export default function Scan() {
 }
 
 const s = StyleSheet.create({
-  midden: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
-  tekst: { fontSize: 16, textAlign: 'center', color: '#444' },
-  tekstLinks: { fontSize: 15, color: '#444' },
-  knop: { backgroundColor: KLEUR, borderRadius: 12, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
+  midden: { flex: 1, backgroundColor: PAPIER, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
+  tekst: { fontSize: 16, textAlign: 'center', color: INKT },
+  tekstLinks: { fontSize: 15, color: INKT },
+  knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   kader: { width: 260, height: 150, borderWidth: 3, borderColor: '#fff', borderRadius: 16 },
   hint: { color: '#fff', marginTop: 16, fontWeight: '600', textShadowColor: '#000', textShadowRadius: 4 },
-  resultaat: { padding: 16, gap: 8 },
+  resultaat: { padding: 16, gap: 8, backgroundColor: PAPIER },
   productNaam: { fontSize: 22, fontWeight: '700' },
-  merk: { color: '#777' },
+  merk: { color: MUTED },
   oordeel: { borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginVertical: 8 },
   score: { color: '#fff', fontSize: 36, fontWeight: '800' },
   label: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  reden: { color: '#444' },
+  reden: { color: INKT },
   kop: { fontWeight: '700', marginTop: 12 },
-  tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
-  tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
+  tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: LIJN },
+  tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: LIJN },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
-  bron: { color: '#999', fontSize: 12, marginTop: 12, textAlign: 'center' },
+  bron: { color: MUTED, fontSize: 12, marginTop: 12, textAlign: 'center' },
   additief: { flexDirection: 'row', gap: 10, alignItems: 'baseline', paddingVertical: 2 },
   additiefCode: { fontWeight: '700', color: KLEUR, minWidth: 64 },
 });
