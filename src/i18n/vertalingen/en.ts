@@ -389,4 +389,11 @@ export const en: Vertalingen = {
   'stijlOptie.hartig': 'Savoury',
   'stijlOptie.zoet': 'Sweet',
   'planning.geenRecepten': 'There are not enough recipes for these choices. Try adding another cuisine or a different cooking time.',
+  'frigo.sheetPlanner': 'Planner fridge',
+  'frigo.sheetLos': 'Loose products',
+  'frigo.plannerUitleg': 'Ingredients from the app’s list. They count for the weekly menu: when you tap “Cooked”, they leave the fridge.',
+  'frigo.losUitleg': 'Loose products do not count for the weekly menu. You manage and remove them yourself; the app never clears anything automatically.',
+  'frigo.zoekIngredient': 'Search for an ingredient…',
+  'frigo.geenIngredient': 'No ingredient found.',
+  'frigo.alIngevoegd': 'Already in the fridge',
 };

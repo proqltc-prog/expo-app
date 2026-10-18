@@ -389,4 +389,11 @@ export const pt: Vertalingen = {
   'stijlOptie.hartig': 'Salgado',
   'stijlOptie.zoet': 'Doce',
   'planning.geenRecepten': 'Não há receitas suficientes para estas escolhas. Acrescenta outra cozinha ou escolhe outro tempo de preparação.',
+  'frigo.sheetPlanner': 'Frigorífico do plano',
+  'frigo.sheetLos': 'Produtos avulsos',
+  'frigo.plannerUitleg': 'Ingredientes da lista da app. Contam para a ementa semanal: ao marcar “Cozinhado” saem do frigorífico.',
+  'frigo.losUitleg': 'Os produtos avulsos não contam para a ementa semanal. Geres e removes-os tu; a app nunca limpa nada automaticamente.',
+  'frigo.zoekIngredient': 'Procura um ingrediente…',
+  'frigo.geenIngredient': 'Nenhum ingrediente encontrado.',
+  'frigo.alIngevoegd': 'Já está no frigorífico',
 };

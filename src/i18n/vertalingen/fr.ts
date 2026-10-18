@@ -389,4 +389,11 @@ export const fr: Vertalingen = {
   'stijlOptie.hartig': 'Salé',
   'stijlOptie.zoet': 'Sucré',
   'planning.geenRecepten': 'Il n’y a pas assez de recettes pour ces choix. Ajoute par exemple une cuisine ou choisis un autre temps de cuisson.',
+  'frigo.sheetPlanner': 'Frigo du planning',
+  'frigo.sheetLos': 'Produits libres',
+  'frigo.plannerUitleg': 'Ingrédients de la liste de l’application. Ils comptent pour le menu de la semaine : avec « Cuisiné », ils sortent du frigo.',
+  'frigo.losUitleg': 'Les produits libres ne comptent pas pour le menu de la semaine. Tu les gères et les supprimes toi-même ; l’application ne supprime rien automatiquement.',
+  'frigo.zoekIngredient': 'Cherche un ingrédient…',
+  'frigo.geenIngredient': 'Aucun ingrédient trouvé.',
+  'frigo.alIngevoegd': 'Déjà dans le frigo',
 };

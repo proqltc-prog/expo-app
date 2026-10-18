@@ -389,4 +389,11 @@ export const de: Vertalingen = {
   'stijlOptie.hartig': 'Herzhaft',
   'stijlOptie.zoet': 'Süß',
   'planning.geenRecepten': 'Mit dieser Auswahl gibt es gerade nicht genug Rezepte. Wähle zum Beispiel eine weitere Küche oder eine andere Kochzeit.',
+  'frigo.sheetPlanner': 'Planer-Kühlschrank',
+  'frigo.sheetLos': 'Einzelne Produkte',
+  'frigo.plannerUitleg': 'Zutaten aus der Liste der App. Sie zählen für den Wochenplan: bei „Gekocht“ verschwinden sie aus dem Kühlschrank.',
+  'frigo.losUitleg': 'Einzelne Produkte zählen nicht für den Wochenplan. Du verwaltest und entfernst sie selbst; die App räumt nichts automatisch auf.',
+  'frigo.zoekIngredient': 'Zutat suchen…',
+  'frigo.geenIngredient': 'Keine Zutat gefunden.',
+  'frigo.alIngevoegd': 'Schon im Kühlschrank',
 };
