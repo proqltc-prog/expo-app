@@ -99,7 +99,7 @@ describe('resetDagLokaal', () => {
 
 describe('resetDag met AI', () => {
   const aiRecept = (naam: string) => ({
-    naam, soort: 'vis', minuten: 20, stijlen: ['licht'],
+    naam, soort: 'vis', minuten: 20, stijlen: ['klassiek'],
     ingredienten: [{ naam: 'zalm', hoeveelheid: 400, eenheid: 'g', afdeling: 'vlees-vis' }],
   });
   const nep = (body: unknown, status = 200) => {

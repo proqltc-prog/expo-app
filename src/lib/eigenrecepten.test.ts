@@ -19,7 +19,7 @@ const geldig = {
   naam: '  Mijn stoofpot ',
   soort: 'vlees' as const,
   minuten: '45',
-  stijlen: ['comfort' as const],
+  stijlen: ['klassiek' as const],
   ingredienten: [ing('rundsvlees', 150)],
   stappen: ['Bak het vlees.', '  ', 'Laat sudderen.'],
 };
@@ -29,7 +29,7 @@ const recept = (id: string, naam: string, ingredienten: EigenIngredient[] = [ing
   naam,
   soort: 'vegetarisch',
   minuten: 15,
-  stijlen: ['licht'],
+  stijlen: ['italiaans'],
   ingredienten,
   stappen: ['Snijd.'],
   bijgewerkt: '2026-10-17T10:00:00.000Z',

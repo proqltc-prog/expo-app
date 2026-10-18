@@ -3,14 +3,14 @@
 import type { IngredientCode } from './ingredienten';
 
 export type Soort = 'vegetarisch' | 'vis' | 'vlees';
-export type StijlCode = 'klassiek' | 'italiaans' | 'aziatisch' | 'mexicaans' | 'mediterraan' | 'comfort' | 'licht';
+export type StijlCode = 'klassiek' | 'italiaans' | 'aziatisch' | 'mexicaans' | 'mediterraan';
 export type Basis = 'pasta' | 'rijst' | 'aardappel' | 'brood' | 'wrap' | 'noedels' | 'granen';
 export type Eenheid = 'g' | 'ml' | 'stuk' | 'teentje';
 /** Wanneer het recept gegeten wordt (WEEK-43). Zonder moment geldt avond. */
 export type Moment = 'ontbijt' | 'middag' | 'avond';
 export const MOMENTEN: readonly Moment[] = ['ontbijt', 'middag', 'avond'];
 
-// Stijlen van de lokale receptenbank. 'licht' en 'comfort' zijn verwijderd (WEEK-78).
+// Stijlen van de receptenbank. 'licht' en 'comfort' zijn verwijderd (WEEK-78), ook in de database.
 export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan'];
 
 export type BankRecept = {

@@ -44,4 +44,12 @@ describe('stijl naar databasestijlen', () => {
       }
     }
   });
+  test('belgisch en hartig vallen onder klassiek; licht en comfort bestaan niet meer (WEEK-78 deel 2)', () => {
+    assert.deepEqual(stijlNaarDb(['belgisch']), ['klassiek']);
+    assert.deepEqual(stijlNaarDb(['hartig']), ['klassiek']);
+    const alles = ['ontbijt', 'middag', 'avond'].flatMap((m) => stijlOpties(m as 'ontbijt').map((o) => o.id));
+    for (const code of stijlNaarDb(alles)) {
+      assert.ok(['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan'].includes(code), code);
+    }
+  });
 });

@@ -34,10 +34,10 @@ const plan = (p: DbPoolRecept[], wijziging: Partial<PlanVerzoek> = {}) =>
 
 describe('maakDbPool (WEEK-68)', () => {
   test('zet recepten om met moment, kooktijdklasse en stijl', () => {
-    const [k] = pool(dbRecept(1, { kooktijdMin: 30, moment: 'middag', stijl: 'comfort' }));
+    const [k] = pool(dbRecept(1, { kooktijdMin: 30, moment: 'middag', stijl: 'klassiek' }));
     assert.equal(k.moment, 'middag');
     assert.equal(k.kooktijd, 'gemiddeld');
-    assert.deepEqual(k.stijlen, ['comfort']);
+    assert.deepEqual(k.stijlen, ['klassiek']);
     assert.equal(k.recept.id, 'db-1');
   });
   test('recepten zonder titel in de taal vallen weg', () => {
