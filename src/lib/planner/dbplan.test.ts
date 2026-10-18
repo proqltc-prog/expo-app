@@ -6,7 +6,6 @@ import { standaardProfiel } from '@/lib/profiel';
 import type { PlanVerzoek } from '@/lib/planner/types';
 
 const standaardProfielVerzoek = (): PlanVerzoek => ({
-  opdracht: '',
   kooktijden: [],
   stijlen: [],
   profiel: standaardProfiel(),

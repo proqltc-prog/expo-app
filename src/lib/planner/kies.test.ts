@@ -27,7 +27,6 @@ const dag = (d: PlanDag['dag'], r: BankRecept, moment?: PlanDag['moment']): Plan
 
 const plan = (dagen: PlanDag[]): Weekplan => ({
   dagen,
-  opdracht: '',
   kooktijden: [],
   stijlen: [],
   taal: 'nl',

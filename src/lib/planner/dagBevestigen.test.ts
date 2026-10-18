@@ -15,7 +15,6 @@ const recept = {
 const dag = (d: Partial<PlanDag> & { dag: PlanDag['dag'] }): PlanDag => ({ recept, ...d });
 const plan = (dagen: PlanDag[]): Weekplan => ({
   dagen,
-  opdracht: '',
   kooktijden: [],
   stijlen: [],
   taal: 'nl',
@@ -70,7 +69,6 @@ describe('bevestiging blijft bewaard', () => {
   test('normaliseer houdt de bevestiging van een dag vast', () => {
     const ruw = {
       dagen: [{ dag: 'maandag', recept, bevestigd: true }, { dag: 'dinsdag', recept }],
-      opdracht: '',
       kooktijden: [],
       stijlen: [],
       taal: 'nl',

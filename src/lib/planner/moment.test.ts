@@ -8,7 +8,7 @@ import { standaardProfiel } from '@/lib/profiel';
 import { normaliseerWeekplan } from './normaliseer';
 import type { PlanVerzoek, Weekplan } from './types';
 
-const basis: PlanVerzoek = { opdracht: '', kooktijden: [], stijlen: [], profiel: standaardProfiel(), taal: 'nl', seed: 11 };
+const basis: PlanVerzoek = { kooktijden: [], stijlen: [], profiel: standaardProfiel(), taal: 'nl', seed: 11 };
 const momentVanId = (id: string) => momentVan(RECEPTENBANK.find((r) => r.id === id) as BankRecept);
 
 describe('momenten', () => {

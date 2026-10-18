@@ -19,7 +19,7 @@ const f = (naam: string, hoeveelheid: number | undefined, eenheid: string | unde
 });
 const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
-  opdracht: '', kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42, ...extra,
+  kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42, ...extra,
 });
 const bank = (id: string) => RECEPTENBANK.find((r) => r.id === id)!;
 
@@ -95,11 +95,6 @@ describe('planLokaal met frigo-voorrang', () => {
     assert.equal(plan.dagen[0].recept.id, 'linzencurry');
     assert.deepEqual(plan.dagen[0].uitFrigo, ['rode linzen', 'kokosmelk', 'spinazie']);
     assert.equal(new Set(plan.dagen.map((d) => d.recept.id)).size, plan.dagen.length, 'geen dubbel recept');
-  });
-  test('harde wensen blijven gelden: geen vlees betekent nooit een vleesrecept op dag 1', () => {
-    const plan = planLokaal(verzoek({ opdracht: 'geen vlees', frigo: [f('kipfilet', 500, 'g', 9)] }));
-    assert.notEqual(plan.dagen[0].recept.soort, 'vlees');
-    assert.ok(plan.dagen.every((d) => d.recept.soort !== 'vlees'));
   });
   test('zonder frigo verandert er niets', () => {
     assert.deepEqual(planLokaal(verzoek({ frigo: [] })).dagen.map((d) => d.recept.id), planLokaal(verzoek()).dagen.map((d) => d.recept.id));

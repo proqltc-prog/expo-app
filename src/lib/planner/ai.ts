@@ -1,7 +1,6 @@
 // AI-planner (WEEK-23): vraagt een weekplan aan de server-functie en controleert het antwoord.
 // Faalt er iets (geen internet, time-out, ongeldig antwoord), dan valt de app terug op de lokale planner.
 import { profielContext } from '@/lib/profiel';
-import { leesOpdracht } from './opdracht';
 import { isAlleenAvond } from './moment';
 import { porties as berekenPorties } from './hoeveelheid';
 import { dagenVoorPlan, planLokaal, STANDAARD_AANTAL_DAGEN } from './lokaal';
@@ -52,16 +51,16 @@ export function frigoVoorAi(frigo: readonly FrigoItem[], nu: Date): string[] {
 }
 
 export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?: string[]): AiVerzoek {
-  const w = leesOpdracht(verzoek.opdracht);
   const frigo = verzoek.frigo?.length ? frigoVoorAi(verzoek.frigo, new Date()) : [];
   return {
     taal: verzoek.taal,
     profiel: profielContext(verzoek.profiel),
     porties: berekenPorties(verzoek.profiel),
-    opdracht: verzoek.opdracht,
+    // De server-functie controleert dat dit veld er is; de app vult het niet meer in.
+    opdracht: '',
     kooktijden: [...verzoek.kooktijden],
     stijlen: [...verzoek.stijlen],
-    dagen: dagen ?? dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
+    dagen: dagen ?? dagenVoorPlan(verzoek.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
     ...(vermijd?.length ? { vermijd } : {}),
     ...(verzoek.vermijd?.length ? { uitsluiten: verzoek.vermijd.map((v) => VERMIJD_AI[v]) } : {}),
     ...(frigo.length ? { frigo } : {}),
@@ -76,7 +75,6 @@ export function leesAiAntwoord(ruw: unknown, verzoek: PlanVerzoek, gevraagdeDage
   if (!ruw || typeof ruw !== 'object' || !Array.isArray((ruw as { dagen?: unknown }).dagen)) {
     throw new AiFout('Antwoord zonder dagen');
   }
-  const w = leesOpdracht(verzoek.opdracht);
   const resultaat: PlanDag[] = [];
   for (const d of (ruw as { dagen: unknown[] }).dagen) {
     if (!d || typeof d !== 'object') continue;
@@ -86,8 +84,6 @@ export function leesAiAntwoord(ruw: unknown, verzoek: PlanVerzoek, gevraagdeDage
     const recept = normaliseerRecept(ruwRecept);
     if (!recept) continue;
     if (heeftVermijdNaam([...recept.ingredienten, { naam: recept.naam }], verzoek.vermijd ?? [])) continue;
-    if (w.zonderVlees && recept.soort === 'vlees') continue;
-    if (w.zonderVis && recept.soort === 'vis') continue;
     if (verzoek.kooktijden.length && !verzoek.kooktijden.includes(kooktijdVan(recept.minuten))) continue;
     resultaat.push({ dag: dag as DagCode, recept: { ...recept, id: `ai-${dag}-${recept.id}` } });
   }
@@ -136,13 +132,11 @@ export async function vraagAi(
 export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = {}): Promise<Weekplan> {
   // De AI kent enkel avondrecepten: ontbijt of middag gaat lokaal, tot de AI-prompt het moment kent (WEEK-43).
   if (!instelling.url || !isAlleenAvond(verzoek.momenten)) return planLokaal(verzoek);
-  const w = leesOpdracht(verzoek.opdracht);
-  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? w.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
   try {
     const planDagen = await vraagAi(verzoek, instelling, dagen);
     return {
       dagen: verzoek.frigo?.length ? markeerUitFrigo(planDagen, verzoek.frigo) : planDagen,
-      opdracht: verzoek.opdracht,
       kooktijden: verzoek.kooktijden,
       stijlen: verzoek.stijlen,
       ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),

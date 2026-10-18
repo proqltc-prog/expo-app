@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { normaliseerOpdrachten } from '@/lib/opdrachten';
 import { normaliseerKeuzes, normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import type { KooktijdCode, Weekplan } from '@/lib/planner/types';
@@ -13,7 +12,6 @@ import type { FrigoItem } from '@/lib/frigo';
 import { naElkaar } from './wachtrij';
 
 const PLAN = SLEUTEL.plan;
-const OPDRACHTEN = SLEUTEL.opdrachten;
 const KEUZES = SLEUTEL.keuzes;
 
 export type Keuzes = { kooktijden: string[]; stijlen: string[]; vermijd: string[]; aantalDagen: number; momenten: Moment[] };
@@ -90,19 +88,6 @@ export function bewaarPlan(plan: Weekplan): Promise<boolean> {
     await registreerDocument('plan', nieuw);
     return true;
   });
-}
-
-export async function laadOpdrachten(): Promise<string[]> {
-  try {
-    const ruw = await AsyncStorage.getItem(OPDRACHTEN);
-    return normaliseerOpdrachten(ruw ? JSON.parse(ruw) : null);
-  } catch {
-    return [];
-  }
-}
-
-export async function bewaarOpdrachten(opdrachten: string[]): Promise<void> {
-  await AsyncStorage.setItem(OPDRACHTEN, JSON.stringify(opdrachten));
 }
 
 export async function laadKeuzes(): Promise<Keuzes> {

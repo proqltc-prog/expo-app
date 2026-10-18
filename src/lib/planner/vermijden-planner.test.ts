@@ -10,7 +10,7 @@ import type { DagCode } from '@/lib/planner/types';
 
 const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
-  opdracht: '', kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 7, ...extra,
+  kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 7, ...extra,
 });
 
 /** Namen van alle ingrediënten in het plan, in kleine letters. */

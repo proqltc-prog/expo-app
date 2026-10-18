@@ -14,7 +14,7 @@ const gezin: Profiel = {
   adres: { postcode: '1000', gemeente: 'Brussel', land: 'België' },
 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
-  opdracht: '', kooktijden: [], stijlen: [], profiel: gezin, taal: 'fr', seed: 1, ...extra,
+  kooktijden: [], stijlen: [], profiel: gezin, taal: 'fr', seed: 1, ...extra,
 });
 
 const recept = (naam: string, soort = 'vegetarisch', minuten = 20) => ({
@@ -57,7 +57,7 @@ describe('gedeelde AI-afspraken', () => {
 
 describe('bouwAiVerzoek', () => {
   test('stuurt taal, profiel (zonder straat of postcode), porties en dagen mee', () => {
-    const v = bouwAiVerzoek(verzoek({ opdracht: '4 jours', kooktijden: ['snel'], stijlen: ['italiaans'] }));
+    const v = bouwAiVerzoek(verzoek({ kooktijden: ['snel'], stijlen: ['italiaans'], aantalDagen: 4 }));
     assert.equal(v.taal, 'fr');
     assert.equal(v.porties, 3);
     assert.deepEqual(v.dagen, ['zondag', 'maandag', 'dinsdag', 'woensdag']);
@@ -95,10 +95,6 @@ describe('leesAiAntwoord', () => {
 
   test('weigert een onvolledig antwoord', () => {
     assert.throws(() => leesAiAntwoord(antwoordVoor(['zondag']), verzoek(), dagen), AiFout);
-  });
-
-  test('dwingt "geen vlees" af, ook als de AI zich vergist', () => {
-    assert.throws(() => leesAiAntwoord(antwoordVoor(dagen, 'vlees'), verzoek({ opdracht: 'sans viande' }), dagen), AiFout);
   });
 
   test('dwingt de gekozen kooktijd af', () => {

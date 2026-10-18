@@ -71,7 +71,6 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
   if (!dagen.length) return null;
   return {
     dagen,
-    opdracht: tekst(ruw.opdracht),
     kooktijden: Array.isArray(ruw.kooktijden) ? ruw.kooktijden.filter((k): k is KooktijdCode => KOOKTIJDEN.includes(k as KooktijdCode)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [],
     ...(normaliseerVermijd(ruw.vermijd).length ? { vermijd: normaliseerVermijd(ruw.vermijd) } : {}),
