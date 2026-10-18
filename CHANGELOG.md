@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.58.1] – 2026-10-18
+
+**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 2, kleine aanpassing) · **Confluence:** [WEEK-71 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503897)
+
+- De twee sheets van de frigo zijn tabbladen bovenaan, met een icoontje per tab. Ze blijven zichtbaar als de lijst scrolt.
+
 ## [0.58.0] – 2026-10-18
 
 **Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 2) · **Confluence:** [WEEK-71 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503897)

@@ -147,17 +147,6 @@ export default function Frigo() {
 
   const kop = (
     <View>
-      <View style={s.tabs} accessibilityRole="tablist">
-        {(['planner', 'los'] as const).map((k) => {
-          const aan = sheet === k;
-          return (
-            <Pressable key={k} style={[s.tab, aan && s.tabAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
-              <Text style={[s.tabTekst, aan && s.tabTekstAan]}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
       {sheet === 'planner' ? (
         <>
           <Text style={s.uitleg}>{t('frigo.plannerUitleg')}</Text>
@@ -230,6 +219,18 @@ export default function Frigo() {
 
   return (
     <View style={s.scherm}>
+      {/* Tabbladen bovenaan: altijd zichtbaar, ook als de lijst scrolt. */}
+      <View style={s.tabs} accessibilityRole="tablist">
+        {(['planner', 'los'] as const).map((k) => {
+          const aan = sheet === k;
+          return (
+            <Pressable key={k} style={[s.tab, aan && s.tabAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
+              <Text style={s.tabIcoon} accessibilityElementsHidden importantForAccessibility="no">{k === 'planner' ? '🛒' : '📦'}</Text>
+              <Text style={[s.tabTekst, aan && s.tabTekstAan]}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
       {/* De kop (sheets, zoeken, invoer) scrolt mee met de lijst. */}
       <SectionList
         sections={secties}
@@ -371,7 +372,8 @@ const s = StyleSheet.create({
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   tekst: { color: '#444' },
   tabs: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  tab: { flex: 1, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  tab: { flex: 1, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, paddingVertical: 8, alignItems: 'center', gap: 2 },
+  tabIcoon: { fontSize: 20 },
   tabAan: { backgroundColor: KLEUR },
   tabTekst: { color: KLEUR, fontWeight: '700' },
   tabTekstAan: { color: '#fff' },
