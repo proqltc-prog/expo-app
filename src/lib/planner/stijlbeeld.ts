@@ -34,3 +34,20 @@ export function stijlbeeld(id: string): Stijlbeeld | undefined {
 
 /** Alle stijl-id's met een beeld. */
 export const STIJLBEELD_IDS: string[] = Object.keys(BEELDEN);
+
+/**
+ * Welk beeld bij een recept van de planner hoort. De planner kent de vijf databasestijlen,
+ * de keuzes in het weekmenu zijn fijner. Daarom krijgt elke databasestijl één vertegenwoordiger.
+ */
+const BEELD_VOOR_DB_STIJL: Record<string, string> = {
+  mediterraan: 'mediterraan',
+  italiaans: 'italiaans',
+  mexicaans: 'mexicaans',
+  aziatisch: 'chinees',
+  klassiek: 'belgisch',
+};
+
+/** Het stijlbeeld voor een recept met deze eerste databasestijl, of undefined als er geen is. */
+export function beeldVoorReceptStijl(stijl: string | undefined): string | undefined {
+  return stijl ? BEELD_VOOR_DB_STIJL[stijl] : undefined;
+}

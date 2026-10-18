@@ -27,3 +27,20 @@ describe('stijlbeeld (WEEK-73)', () => {
     assert.notEqual(stijlbeeld('mediterraan')!.vorm, stijlbeeld('italiaans')!.vorm);
   });
 });
+
+import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
+import { STIJLEN } from '@/data/receptenbank';
+
+describe('beeldVoorReceptStijl (WEEK-73)', () => {
+  test('elke databasestijl heeft een beeld dat bestaat', () => {
+    for (const code of STIJLEN) {
+      const id = beeldVoorReceptStijl(code);
+      assert.ok(id, `geen beeld voor ${code}`);
+      assert.ok(stijlbeeld(id!), `beeld ${id} bestaat niet`);
+    }
+  });
+  test('zonder stijl is er geen beeld', () => {
+    assert.equal(beeldVoorReceptStijl(undefined), undefined);
+    assert.equal(beeldVoorReceptStijl('onbekend'), undefined);
+  });
+});

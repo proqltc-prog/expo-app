@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, MOMENTEN, Soort } from '@/data/receptenbank';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
+import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
 import { planWeek } from '@/lib/planner/ai';
@@ -466,6 +467,9 @@ export default function Weekplanning() {
                 const heeftBereiding = bevestigd && bereidingVoor(recept, eigen, taal) !== null;
                 return (
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>
+                    <View style={s.kaartRij}>
+                    <Stijlbeeld id={beeldVoorReceptStijl(recept.stijlen[0]) ?? 'belgisch'} />
+                    <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
                       <Text style={s.dag}>{t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
                       {wijzigbaar && (
@@ -545,6 +549,7 @@ export default function Weekplanning() {
                         <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t(gedaan ? 'planning.gedaan' : 'planning.gekookt')}</Text>
                       </Pressable>
                     </View>
+                    </View>
                   </View>
                 );
               })}
@@ -613,6 +618,8 @@ const s = StyleSheet.create({
   tegoed: { color: MUTED, fontSize: 12, textAlign: 'center' },
   kaart: { backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: LIJN },
   kaartBevestigd: { borderColor: PETROL, borderWidth: 1.5 },
+  kaartRij: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+  kaartInhoud: { flex: 1, minWidth: 0, gap: 6 },
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
   dag: { fontSize: 13, color: MUTED, fontWeight: '600' },
   kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
