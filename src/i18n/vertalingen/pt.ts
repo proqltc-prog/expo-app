@@ -4,6 +4,10 @@ export const pt: Vertalingen = {
   'taal.naam': 'Português',
   'welkom.titel': 'Bem-vindo ao Gezond Boodschappen',
   'welkom.tekst': 'Escolha o seu idioma. Depois configure o seu espaço familiar.',
+  'welkom.slogan': 'Planeie a sua semana, as compras e as refeições da família. Uma app para toda a família.',
+  'welkom.knop': 'Escolha o seu idioma',
+  'welkom.doorgaan': 'Continuar',
+  'welkom.stap': 'Passo 1 de 3: idioma · família · menu',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Menu semanal',

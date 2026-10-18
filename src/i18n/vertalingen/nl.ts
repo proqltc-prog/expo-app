@@ -5,6 +5,10 @@ export const nl = {
   'taal.naam': 'Nederlands',
   'welkom.titel': 'Welkom bij Gezond Boodschappen',
   'welkom.tekst': 'Kies je taal. Daarna stel je je gezinsruimte in.',
+  'welkom.slogan': 'Plan je week, boodschappen en gezinsmaaltijden. Eén app voor het hele gezin.',
+  'welkom.knop': 'Kies je taal',
+  'welkom.doorgaan': 'Doorgaan',
+  'welkom.stap': 'Stap 1 van 3: taal · gezin · menu',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
