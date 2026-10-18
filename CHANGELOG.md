@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.52.0] – 2026-10-18
+
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 1) · **Confluence:** [WEEK-68 deel 1](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7536650)
+
+- Recepten uit de database omzetten naar het weekplan-formaat: titels en ingrediënten in de taal van de gebruiker, hoeveelheden geschaald naar het gezin.
+- Ophalen van de goedgekeurde recepten uit Supabase (één keer per app-start).
+- Het weekmenu gebruikt deze bron nog niet; het scherm volgt in de volgende delen van WEEK-68.
+- 22 nieuwe unit tests.
+
 ## [0.51.0] – 2026-10-18
 
 **Jira:** [WEEK-70](https://proqltc-1791495894841.atlassian.net/browse/WEEK-70) · **Confluence:** [WEEK-70 Boodschappenlijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7471122)
