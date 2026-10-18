@@ -177,6 +177,8 @@ export const es: Vertalingen = {
   'lijst.wissen': 'Borrar los artículos marcados',
   'lijst.perRecept': 'Por receta',
   'lijst.perCategorie': 'Por categoría',
+  'lijst.tabWinkels': 'Tiendas',
+  'lijst.tabBoodschappen': 'Lista de compra',
   'lijst.receptTitel': '{dag} · {recept}',
   'lijst.door': 'añadido por {naam}',
   'lijst.gekochtDoor': 'comprado por {naam}',

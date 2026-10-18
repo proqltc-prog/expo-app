@@ -178,6 +178,8 @@ export const nl = {
   'lijst.wissen': 'Afgevinkte items wissen',
   'lijst.perRecept': 'Per recept',
   'lijst.perCategorie': 'Per categorie',
+  'lijst.tabWinkels': 'Winkels',
+  'lijst.tabBoodschappen': 'Boodschappen',
   'lijst.receptTitel': '{dag} · {recept}',
   'lijst.door': 'toegevoegd door {naam}',
   'lijst.gekochtDoor': 'gekocht door {naam}',

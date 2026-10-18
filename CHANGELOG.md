@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.60.0] – 2026-10-18
+
+**Jira:** [WEEK-76](https://proqltc-1791495894841.atlassian.net/browse/WEEK-76) (verbetering) · **Confluence:** [WEEK-76](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503935)
+
+- De boodschappenpagina heeft twee hoofdtabbladen: Winkels (petrol, met het winkelvoorstel) en Boodschappen (oranje, met de lijst).
+- In de lijst groepeer je per categorie of per recept, met pillen in plaats van een schakelaar.
+- De lijst gebruikt de kleuren van de frigo: oranje voor het afvinken en het wissen van afgevinkte items.
+- Gedrag en gegevens zijn ongewijzigd; de tekst van de tabbladen staat in alle zes talen.
+
 ## [0.59.0] – 2026-10-18
 
 **Jira:** [WEEK-75](https://proqltc-1791495894841.atlassian.net/browse/WEEK-75) (verbetering) · **Confluence:** [WEEK-75](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7766025)
