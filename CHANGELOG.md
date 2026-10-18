@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.1] – 2026-10-18
+
+**Jira:** [WEEK-87](https://proqltc-1791495894841.atlassian.net/browse/WEEK-87) (verbetering) · **Confluence:** [WEEK-87](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8421386)
+
+- De scoreregel "goedkoop" is verwijderd uit de lokale planner. De planner heeft geen tekstveld, dus de wens kon nooit gekozen worden.
+- Regressietest voor "goedkoop" is verwijderd.
+
 ## [0.72.0] – 2026-10-18
 
 **Jira:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/browse/WEEK-86) (verbetering) · **Confluence:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159262)
