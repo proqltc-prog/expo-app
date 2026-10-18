@@ -8,7 +8,7 @@ import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
-import { CatalogusItem, inCatalogus, koppelBronnen, sheets, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
+import { CatalogusItem, inCatalogus, koppelBronnen, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
@@ -148,6 +148,8 @@ export default function Frigo() {
     [frigo, sheet, taal]
   );
   const aantal = aantalProducten(zichtbaar);
+  // Accentkleur van de actieve sheet: petrol voor planner-frigo, oranje voor losse producten (WEEK-75).
+  const thema = sheetThema(sheet);
   const resultaten = useMemo(() => (sheet === 'planner' ? zoekCatalogus(zoek, taal) : []), [zoek, sheet, taal]);
   const alInPlanner = (naam: string) => inCatalogus(naam) !== undefined && sheets(frigo).planner.some((f) => f.naam.toLowerCase() === naam.toLowerCase());
 
@@ -181,16 +183,16 @@ export default function Frigo() {
               onSubmitEditing={voegLosToeKnop}
               returnKeyType="done"
             />
-            <Pressable style={s.plus} onPress={voegLosToeKnop} accessibilityRole="button" accessibilityLabel={t('frigo.toevoegen')}>
+            <Pressable style={[s.plus, { backgroundColor: thema.accent }]} onPress={voegLosToeKnop} accessibilityRole="button" accessibilityLabel={t('frigo.toevoegen')}>
               <Text style={s.plusTekst}>+</Text>
             </Pressable>
             {/* Scannen vanaf de frigo (WEEK-47): aangekochte producten direct als los product in de frigo zetten. */}
-            <Pressable style={s.scan} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button">
-              <Text style={s.scanTekst}>{t('frigo.scan')}</Text>
+            <Pressable style={[s.scan, { borderColor: thema.accent }]} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button">
+              <Text style={[s.scanTekst, { color: thema.accent }]}>{t('frigo.scan')}</Text>
             </Pressable>
           </View>
           <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
-            <Text style={s.detailsLink}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
+            <Text style={[s.detailsLink, { color: thema.accent }]}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
           </Pressable>
           {details && (
             <View style={s.details}>
@@ -226,17 +228,26 @@ export default function Frigo() {
   return (
     <View style={s.scherm}>
       {/* Tabbladen bovenaan: altijd zichtbaar, ook als de lijst scrolt. */}
-      <View style={s.tabs} accessibilityRole="tablist">
+      {/* Schakelaar met een verhoogd actief vlak; de kleurstreep eronder hoort bij de actieve sheet (WEEK-75). */}
+      <View style={s.schakelaar} accessibilityRole="tablist">
         {(['planner', 'los'] as const).map((k) => {
           const aan = sheet === k;
+          const kleur = sheetThema(k);
+          const n = sheets(frigo)[k].length;
           return (
-            <Pressable key={k} style={[s.tab, aan && s.tabAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
-              <Text style={s.tabIcoon} accessibilityElementsHidden importantForAccessibility="no">{k === 'planner' ? '🛒' : '📦'}</Text>
-              <Text style={[s.tabTekst, aan && s.tabTekstAan]}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
+            <Pressable key={k} style={[s.keuze, aan && s.keuzeAan]} onPress={() => setSheet(k)} accessibilityRole="tab" accessibilityState={{ selected: aan }}>
+              <View style={[s.ico, aan && { backgroundColor: kleur.accentZacht }]}>
+                <Text style={s.icoTekst} accessibilityElementsHidden importantForAccessibility="no">{k === 'planner' ? '🛒' : '📦'}</Text>
+              </View>
+              <Text style={[s.keuzeTekst, aan && s.keuzeTekstAan]} numberOfLines={1}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
+              <View style={[s.tellerBlok, aan && { backgroundColor: kleur.accent, borderColor: kleur.accent }]}>
+                <Text style={[s.tellerTekst, aan && s.tellerTekstAan]}>{n}</Text>
+              </View>
             </Pressable>
           );
         })}
       </View>
+      <View style={[s.streep, { backgroundColor: thema.accent }]} />
       {/* De kop (sheets, zoeken, invoer) scrolt mee met de lijst. */}
       <SectionList
         sections={secties}
@@ -377,12 +388,17 @@ const s = StyleSheet.create({
   tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   tekst: { color: '#444' },
-  tabs: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  tab: { flex: 1, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 16, paddingVertical: 8, alignItems: 'center', gap: 2 },
-  tabIcoon: { fontSize: 20 },
-  tabAan: { backgroundColor: KLEUR },
-  tabTekst: { color: KLEUR, fontWeight: '700' },
-  tabTekstAan: { color: '#fff' },
+  schakelaar: { flexDirection: 'row', backgroundColor: '#EEF1EC', borderRadius: 18, padding: 5, marginTop: 12 },
+  keuze: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 14 },
+  keuzeAan: { backgroundColor: '#fff', shadowColor: INKT, shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
+  ico: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  icoTekst: { fontSize: 16 },
+  keuzeTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
+  keuzeTekstAan: { color: INKT },
+  tellerBlok: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
+  tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
+  tellerTekstAan: { color: '#fff' },
+  streep: { height: 4, borderRadius: 2, marginTop: 10 },
   zoekVeld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', marginTop: 10 },
   resultaten: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
   leegTekst: { color: '#777' },

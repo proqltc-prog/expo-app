@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { catalogus, inCatalogus, koppelBronnen, normaliseer, sheets, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
+import { catalogus, inCatalogus, koppelBronnen, normaliseer, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
 import { FrigoItem, voegZelfToe } from '@/lib/frigo';
 
 const nu = new Date('2026-10-18T10:00:00.000Z');
@@ -92,5 +92,28 @@ describe('niets verdwijnt automatisch (regressie)', () => {
     f = voegLosToe(f, 'nog een los product', nu);
     const s = sheets(f);
     assert.equal(s.planner.length + s.los.length, f.length);
+  });
+});
+
+describe('sheetkleuren (WEEK-75)', () => {
+  test('planner-frigo is petrol en losse producten oranje', () => {
+    assert.equal(sheetThema('planner').accent, '#0F6B66');
+    assert.equal(sheetThema('los').accent, '#E8680F');
+  });
+  test('de twee sheets hebben verschillende accentkleuren', () => {
+    assert.notEqual(sheetThema('planner').accent, sheetThema('los').accent);
+  });
+  test('elke accentkleur heeft een zachte variant die anders is', () => {
+    for (const sheet of ['planner', 'los'] as const) {
+      const t = sheetThema(sheet);
+      assert.match(t.accent, /^#[0-9A-F]{6}$/);
+      assert.match(t.accentZacht, /^#[0-9A-F]{6}$/);
+      assert.notEqual(t.accent, t.accentZacht);
+    }
+  });
+  test('regressie: de sheet-indeling blijft gelijk na de kleurwijziging', () => {
+    const f = voegLosToe(voegPlannerToe([], catalogus('nl')[0], nu), 'los product', nu);
+    assert.equal(sheets(f).planner.length, 1);
+    assert.equal(sheets(f).los.length, 1);
   });
 });

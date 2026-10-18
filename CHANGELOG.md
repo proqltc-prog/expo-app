@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.59.0] – 2026-10-18
+
+**Jira:** [WEEK-75](https://proqltc-1791495894841.atlassian.net/browse/WEEK-75) (verbetering) · **Confluence:** [WEEK-75](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7766025)
+
+- De twee frigo-sheets zijn een schakelaar met een verhoogd actief vlak, icoon en teller, in plaats van losse tabbladen.
+- Elke sheet heeft een eigen kleur: planner-frigo in petrol, losse producten in oranje. De kleurstreep, de toevoegknop en de scanknop volgen de actieve sheet.
+- Gedrag en data zijn ongewijzigd; de kleurkeuze staat in een pure functie met unit tests.
+
 ## [0.58.1] – 2026-10-18
 
 **Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (deel 2, kleine aanpassing) · **Confluence:** [WEEK-71 deel 2](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503897)
