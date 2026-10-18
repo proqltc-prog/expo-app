@@ -89,11 +89,10 @@ describe('normaliseerProfiel', () => {
   });
 });
 
-describe('taalkeuze in het profiel', () => {
-  test('een geldige taal blijft behouden, een ongeldige wordt toesteltaal', () => {
-    assert.equal(normaliseerProfiel({ taal: 'fr' }).taal, 'fr');
-    assert.equal(normaliseerProfiel({ taal: 'it' }).taal, undefined);
-    assert.equal(standaardProfiel().taal, undefined);
+describe('taal hoort niet bij het gezinsprofiel (WEEK-80)', () => {
+  test('een profiel heeft geen taal, ook niet als een oud profiel er één bevat', () => {
+    assert.equal('taal' in normaliseerProfiel({ taal: 'fr' }), false);
+    assert.equal('taal' in standaardProfiel(), false);
   });
 });
 

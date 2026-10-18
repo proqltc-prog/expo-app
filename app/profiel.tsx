@@ -39,7 +39,7 @@ function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; m
 }
 
 export default function ProfielScherm() {
-  const { t, tn, zetVoorkeur } = useTaal();
+  const { t, tn, voorkeur, zetVoorkeur } = useTaal();
   const [profiel, setProfiel] = useState<Profiel>(standaardProfiel());
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
 
@@ -78,7 +78,6 @@ export default function ProfielScherm() {
     setFouten(gevonden);
     if (gevonden.length) return;
     await bewaarProfiel(profiel);
-    zetVoorkeur(profiel.taal);
     Alert.alert(t('profiel.bewaard.titel'), t('profiel.bewaard.tekst', { personen: tn('algemeen.personen', aantalPersonen(profiel)) }));
   };
 
@@ -92,6 +91,29 @@ export default function ProfielScherm() {
         {['menu', 'lijst', 'frigo', 'scan', 'gezin'].map((k) => (
           <Text key={k} style={s.hint}>• {t(`howto.${k}` as Sleutel)}</Text>
         ))}
+      </View>
+
+      {/* Taal op dit toestel (WEEK-80): niet in het gezin en niet op andere toestellen. */}
+      <Text style={s.kop}>{t('profiel.taal')}</Text>
+      <View style={s.kaart}>
+        <Text style={s.hint}>{t('profiel.taalHint')}</Text>
+        <View style={s.chips}>
+          {([undefined, ...TALEN] as (Taal | undefined)[]).map((code) => {
+            const actief = voorkeur === code;
+            return (
+              <Pressable
+                key={code ?? 'toestel'}
+                style={[s.chip, actief && s.chipActief]}
+                onPress={() => zetVoorkeur(code)}
+                accessibilityState={{ selected: actief }}
+              >
+                <Text style={[s.chipTekst, actief && s.chipTekstActief]}>
+                  {code ? vertaal(code, 'taal.naam') : t('profiel.taalToestel')}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
 
       <GezinsRuimte />
@@ -136,25 +158,6 @@ export default function ProfielScherm() {
           <TextInput style={[s.veld, { flex: 1 }]} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} placeholder={t('profiel.gemeente')} />
         </View>
         <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} placeholder={t('profiel.land')} />
-      </View>
-
-      <Text style={s.kop}>{t('profiel.taal')}</Text>
-      <View style={[s.kaart, s.chips]}>
-        {([undefined, ...TALEN] as (Taal | undefined)[]).map((code) => {
-          const actief = profiel.taal === code;
-          return (
-            <Pressable
-              key={code ?? 'toestel'}
-              style={[s.chip, actief && s.chipActief]}
-              onPress={() => wijzig({ taal: code })}
-              accessibilityState={{ selected: actief }}
-            >
-              <Text style={[s.chipTekst, actief && s.chipTekstActief]}>
-                {code ? vertaal(code, 'taal.naam') : t('profiel.taalToestel')}
-              </Text>
-            </Pressable>
-          );
-        })}
       </View>
 
       {fouten.map((f) => (

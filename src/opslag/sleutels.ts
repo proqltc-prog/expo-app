@@ -13,6 +13,8 @@ export const SLEUTEL = {
   profiel: 'gezinsprofiel:v1',
   /** Welkomstscherm gezien op dit toestel (WEEK-79): enkel lokaal, niet in de gezinssynchronisatie. */
   welkom: 'welkom:v1',
+  /** Taal van de app op dit toestel (WEEK-80): niet in het gezin en niet op andere toestellen. */
+  taal: 'taal:v1',
   gezin: 'gezin:v1',
   /** Aantal scans vandaag op dit toestel (WEEK-34). */
   scans: 'scans:v1',

@@ -318,6 +318,7 @@ export const nl = {
   'profiel.land': 'Land',
   'profiel.taal': 'Taal',
   'profiel.taalToestel': 'Taal van het toestel',
+  'profiel.taalHint': 'Alleen op dit toestel. Je gezinsleden en je andere toestellen zien dit niet.',
   'profiel.bewaar': 'Profiel bewaren',
   'profiel.bewaard.titel': 'Bewaard',
   'profiel.bewaard.tekst': 'Het profiel geldt nu voor elke weekplanning ({personen}).',

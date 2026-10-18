@@ -1,11 +1,11 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { getLocales } from 'expo-localization';
 import { kiesTaal, MeervoudSleutel, Parameters, Sleutel, Taal, vertaal, vertaalAantal } from '@/i18n';
-import { laadProfiel } from '@/opslag/profiel';
+import { laadTaal, zetTaal } from '@/opslag/taal';
 
 type TaalContext = {
   taal: Taal;
-  /** Uitdrukkelijke keuze uit het profiel; undefined = toesteltaal. */
+  /** Uitdrukkelijke keuze van dit toestel (WEEK-80); undefined = toesteltaal. */
   voorkeur: Taal | undefined;
   zetVoorkeur: (taal: Taal | undefined) => void;
   t: (sleutel: Sleutel, params?: Parameters) => string;
@@ -26,7 +26,13 @@ export function TaalProvider({ children }: { children: ReactNode }) {
   const [voorkeur, setVoorkeur] = useState<Taal | undefined>(undefined);
 
   useEffect(() => {
-    laadProfiel().then((p) => setVoorkeur(p.taal));
+    laadTaal().then(setVoorkeur);
+  }, []);
+
+  // De keuze geldt enkel op dit toestel (WEEK-80).
+  const wijzigVoorkeur = useCallback((nieuw: Taal | undefined) => {
+    setVoorkeur(nieuw);
+    zetTaal(nieuw);
   }, []);
 
   const taal = useMemo(() => kiesTaal(toesteltalen(), voorkeur), [voorkeur]);
@@ -36,7 +42,7 @@ export function TaalProvider({ children }: { children: ReactNode }) {
     [taal]
   );
 
-  const waarde = useMemo(() => ({ taal, voorkeur, zetVoorkeur: setVoorkeur, t, tn }), [taal, voorkeur, t, tn]);
+  const waarde = useMemo(() => ({ taal, voorkeur, zetVoorkeur: wijzigVoorkeur, t, tn }), [taal, voorkeur, wijzigVoorkeur, t, tn]);
   return <Context.Provider value={waarde}>{children}</Context.Provider>;
 }
 

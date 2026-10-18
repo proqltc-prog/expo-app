@@ -81,11 +81,11 @@ type DocumentBron = {
 
 const DOCUMENTBRONNEN: Record<DocumentSleutel, DocumentBron> = {
   plan: { sleutel: SLEUTEL.plan, naarGezin: (d) => d, vanGezin: (e) => normaliseerWeekplan(e) },
-  // De taal is een keuze per toestel en wordt niet gedeeld.
+  // De taal staat niet in het gezinsprofiel: ze blijft op het toestel (WEEK-80).
   profiel: {
     sleutel: SLEUTEL.profiel,
-    naarGezin: (d) => ({ ...normaliseerProfiel(d), taal: undefined }),
-    vanGezin: (e, l) => ({ ...normaliseerProfiel(e), taal: normaliseerProfiel(l).taal }),
+    naarGezin: (d) => normaliseerProfiel(d),
+    vanGezin: (e) => normaliseerProfiel(e),
   },
 };
 

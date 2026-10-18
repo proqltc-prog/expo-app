@@ -4,7 +4,7 @@ import { router, Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
-import { laadProfiel } from '@/opslag/profiel';
+import { laadTaal } from '@/opslag/taal';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { welkomNodig } from '@/lib/welkom';
 
@@ -70,8 +70,8 @@ export default function Layout() {
   const [start, setStart] = useState<'index' | 'welkom' | undefined>(undefined);
   useEffect(() => {
     let actief = true;
-    Promise.all([laadWelkomGezien(), laadProfiel()]).then(([gezien, profiel]) => {
-      if (actief) setStart(welkomNodig(gezien, profiel.taal) ? 'welkom' : 'index');
+    Promise.all([laadWelkomGezien(), laadTaal()]).then(([gezien, taal]) => {
+      if (actief) setStart(welkomNodig(gezien, taal) ? 'welkom' : 'index');
     });
     return () => {
       actief = false;

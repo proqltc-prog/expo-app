@@ -1,7 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { TALEN, Taal, vertaal } from '@/i18n';
-import { bewaarTaalOpToestel } from '@/opslag/profiel';
 import { zetWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_NA_WELKOM } from '@/lib/welkom';
 import { useTaal } from '@/ui/taal';
@@ -16,10 +15,9 @@ export default function Welkom() {
   const { t, zetVoorkeur } = useTaal();
 
   const kies = async (code: Taal) => {
-    // Enkel op dit toestel: de taal van één gebruiker gaat niet naar het hele gezin (zie WEEK-80).
-    await bewaarTaalOpToestel(code);
-    await zetWelkomGezien();
+    // Enkel op dit toestel (WEEK-80): de taal gaat niet naar het gezin of naar andere toestellen.
     zetVoorkeur(code);
+    await zetWelkomGezien();
     router.replace(ROUTE_NA_WELKOM);
   };
 
