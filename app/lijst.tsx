@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
 import { FrigoItem } from '@/lib/frigo';
@@ -17,6 +17,14 @@ import { useTaal } from '@/ui/taal';
 import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 
 const KLEUR = '#2e7d4f';
+// Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
+const PETROL = '#0F6B66';
+const ORANJE = '#E8680F';
+const ORANJE_ZACHT = '#FDE8D6';
+const MIST = '#EEF1EC';
+const MUTED = '#5E6B63';
+
+type Hoofd = 'winkels' | 'boodschappen';
 
 /** Totaal voeding en additieven van een gerecht, zodra alle producten gescand zijn (WEEK-50). */
 function GerechtRegel({ lijst, frigo, dag, recept }: { lijst: LijstItem[]; frigo: FrigoItem[]; dag: DagCode; recept: string }) {
@@ -44,6 +52,8 @@ export default function Lijst() {
   const [items, setItems] = useState<LijstItem[]>([]);
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [weergave, setWeergave] = useState<Weergave>('recept');
+  // Hoofdtabbladen: winkels (voorstel) of de boodschappen zelf. Standaard de boodschappen.
+  const [hoofd, setHoofd] = useState<Hoofd>('boodschappen');
   const [gezin, setGezin] = useState<Gezin | null>(null);
   const [status, setStatus] = useState<SyncStatus>(syncStatus());
 
@@ -116,88 +126,123 @@ export default function Lijst() {
   const alleRegels = useMemo(() => samenvoegen(items, { overCategorieen: true }), [items]);
   const open = alleRegels.filter((r) => !r.afgevinkt).length;
 
-  return (
-    <View style={s.scherm}>
-      <View style={s.schakelaar} accessibilityRole="tablist">
-        {(['recept', 'categorie'] as Weergave[]).map((w) => {
-          const aan = weergave === w;
-          return (
-            <Pressable
-              key={w}
-              style={[s.optie, aan && s.optieAan]}
-              onPress={() => kiesWeergave(w)}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: aan }}
-            >
-              <Text style={[s.optieTekst, aan && s.optieTekstAan]}>
-                {t(w === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie')}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      {gezin && (
-        <Text style={[s.gedeeld, status === 'offline' && s.offline]}>
-          {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
+  const hoofdTabs = (['winkels', 'boodschappen'] as const).map((h) => {
+    const aan = hoofd === h;
+    const kleur = h === 'winkels' ? PETROL : ORANJE;
+    return (
+      <Pressable
+        key={h}
+        style={[s.hoofdTab, aan && s.hoofdTabAan]}
+        onPress={() => setHoofd(h)}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: aan }}
+      >
+        <Text style={[s.hoofdTekst, aan && { color: kleur }]} numberOfLines={1}>
+          {t(h === 'winkels' ? 'lijst.tabWinkels' : 'lijst.tabBoodschappen')}
         </Text>
-      )}
-      <Text style={s.teller}>
-        {alleRegels.length ? t('lijst.teller', { open, totaal: alleRegels.length }) : t('lijst.leeg')}
-      </Text>
-      <SectionList
-        ListHeaderComponent={<WinkelVoorstel items={items} />}
-        sections={data}
-        keyExtractor={(r, i) => `${r.sleutel}-${i}`}
-        renderSectionHeader={({ section }) => (
-          <View>
-            <Text style={s.kop}>{section.title}</Text>
-            {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
+        {h === 'boodschappen' && (
+          <View style={[s.teller, aan && { backgroundColor: kleur, borderColor: kleur }]}>
+            <Text style={[s.tellerTekst, aan && { color: '#fff' }]}>{open}</Text>
           </View>
         )}
-        renderItem={({ item }) => (
-          <Pressable style={s.item} onPress={() => toggle(item)}>
-            <View style={[s.vinkje, item.afgevinkt && s.vinkjeAan]}>
-              {item.afgevinkt && <Text style={s.vinkjeTekst}>✓</Text>}
-            </View>
-            <View style={s.tekstBlok}>
-              <Text style={[s.naam, item.afgevinkt && s.doorgehaald]}>{item.naam}</Text>
-              {weergave === 'categorie' && item.recepten.length > 0 && (
-                <Text style={s.recepten} numberOfLines={1}>{item.recepten.join(' · ')}</Text>
-              )}
-              {gezin && item.door && !item.afgevinkt && <Text style={s.recepten}>{t('lijst.door', { naam: item.door })}</Text>}
-              {gezin && item.afgevinkt && item.afgevinktDoor.length > 0 && (
-                <Text style={s.gekocht}>{t('lijst.gekochtDoor', { naam: item.afgevinktDoor.join(', ') })}</Text>
-              )}
-            </View>
-            {item.hoeveelheid ? (
-              <Text style={[s.hoeveelheid, item.afgevinkt && s.doorgehaald]}>
-                {hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}
-              </Text>
-            ) : null}
-            {/* Per product scannen (WEEK-70): het gescande product gaat enkel naar deze regel. */}
-            {!item.afgevinkt && (
-              <Pressable
-                style={s.scanKnop}
-                onPress={(e) => {
-                  e.stopPropagation?.();
-                  router.navigate(`/scan?van=lijst&lijstItem=${encodeURIComponent(item.ids.join(','))}`);
-                }}
-                accessibilityRole="button"
-                accessibilityLabel={t('lijst.scanProduct')}
-              >
-                <Text style={s.scanKnopTekst}>📷</Text>
+      </Pressable>
+    );
+  });
+
+  return (
+    <View style={s.scherm}>
+      <View style={s.hoofdSchakelaar} accessibilityRole="tablist">
+        {hoofdTabs}
+      </View>
+
+      {hoofd === 'winkels' ? (
+        <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+          <WinkelVoorstel items={items} />
+        </ScrollView>
+      ) : (
+        <>
+          {/* Groeperen per recept of per categorie. */}
+          <View style={s.groepering} accessibilityRole="tablist">
+            {(['categorie', 'recept'] as Weergave[]).map((w) => {
+              const aan = weergave === w;
+              return (
+                <Pressable
+                  key={w}
+                  style={[s.pil, aan && s.pilAan]}
+                  onPress={() => kiesWeergave(w)}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: aan }}
+                >
+                  <Text style={[s.pilTekst, aan && s.pilTekstAan]}>
+                    {t(w === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie')}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {gezin && (
+            <Text style={[s.gedeeld, status === 'offline' && s.offline]}>
+              {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
+            </Text>
+          )}
+          <Text style={s.teller}>
+            {alleRegels.length ? t('lijst.teller', { open, totaal: alleRegels.length }) : t('lijst.leeg')}
+          </Text>
+          <SectionList
+            sections={data}
+            keyExtractor={(r, i) => `${r.sleutel}-${i}`}
+            renderSectionHeader={({ section }) => (
+              <View>
+                <Text style={s.kop}>{section.title}</Text>
+                {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
+              </View>
+            )}
+            renderItem={({ item }) => (
+              <Pressable style={s.item} onPress={() => toggle(item)}>
+                <View style={[s.vinkje, item.afgevinkt && s.vinkjeAan]}>
+                  {item.afgevinkt && <Text style={s.vinkjeTekst}>✓</Text>}
+                </View>
+                <View style={s.tekstBlok}>
+                  <Text style={[s.naam, item.afgevinkt && s.doorgehaald]}>{item.naam}</Text>
+                  {weergave === 'categorie' && item.recepten.length > 0 && (
+                    <Text style={s.recepten} numberOfLines={1}>{item.recepten.join(' · ')}</Text>
+                  )}
+                  {gezin && item.door && !item.afgevinkt && <Text style={s.recepten}>{t('lijst.door', { naam: item.door })}</Text>}
+                  {gezin && item.afgevinkt && item.afgevinktDoor.length > 0 && (
+                    <Text style={s.gekocht}>{t('lijst.gekochtDoor', { naam: item.afgevinktDoor.join(', ') })}</Text>
+                  )}
+                </View>
+                {item.hoeveelheid ? (
+                  <Text style={[s.hoeveelheid, item.afgevinkt && s.doorgehaald]}>
+                    {hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}
+                  </Text>
+                ) : null}
+                {/* Per product scannen (WEEK-70): het gescande product gaat enkel naar deze regel. */}
+                {!item.afgevinkt && (
+                  <Pressable
+                    style={s.scanKnop}
+                    onPress={(e) => {
+                      e.stopPropagation?.();
+                      router.navigate(`/scan?van=lijst&lijstItem=${encodeURIComponent(item.ids.join(','))}`);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('lijst.scanProduct')}
+                  >
+                    <Text style={s.scanKnopTekst}>📷</Text>
+                  </Pressable>
+                )}
               </Pressable>
             )}
-          </Pressable>
-        )}
-        stickySectionHeadersEnabled={false}
-        contentContainerStyle={{ paddingBottom: 32 }}
-      />
-      {items.some((i) => i.afgevinkt) && (
-        <Pressable style={s.wis} onPress={() => wijzig((huidig) => huidig.filter((i) => !i.afgevinkt))}>
-          <Text style={{ color: KLEUR, fontWeight: '600' }}>{t('lijst.wissen')}</Text>
-        </Pressable>
+            stickySectionHeadersEnabled={false}
+            contentContainerStyle={{ paddingBottom: 32 }}
+          />
+          {items.some((i) => i.afgevinkt) && (
+            <Pressable style={s.wis} onPress={() => wijzig((huidig) => huidig.filter((i) => !i.afgevinkt))}>
+              <Text style={{ color: ORANJE, fontWeight: '600' }}>{t('lijst.wissen')}</Text>
+            </Pressable>
+          )}
+        </>
       )}
     </View>
   );
@@ -205,21 +250,26 @@ export default function Lijst() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16 },
+  hoofdSchakelaar: { flexDirection: 'row', backgroundColor: MIST, borderRadius: 18, padding: 5, marginTop: 12 },
+  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 14 },
+  hoofdTabAan: { backgroundColor: '#fff', shadowColor: '#17201A', shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
+  hoofdTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
+  teller: { color: '#666', marginVertical: 10 },
+  tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
+  groepering: { flexDirection: 'row', gap: 8, marginTop: 12 },
+  pil: { borderRadius: 999, paddingVertical: 7, paddingHorizontal: 13, backgroundColor: '#fff', borderWidth: 1, borderColor: '#E4E8E1' },
+  pilAan: { backgroundColor: ORANJE_ZACHT, borderColor: 'transparent' },
+  pilTekst: { color: '#17201A', fontWeight: '600', fontSize: 14 },
+  pilTekstAan: { color: ORANJE },
   scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   scanKnopTekst: { fontSize: 17 },
-  schakelaar: { flexDirection: 'row', marginTop: 12, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, overflow: 'hidden' },
-  optie: { flex: 1, paddingVertical: 8, alignItems: 'center' },
-  optieAan: { backgroundColor: KLEUR },
-  optieTekst: { color: KLEUR, fontWeight: '600' },
-  optieTekstAan: { color: '#fff' },
-  teller: { color: '#666', marginVertical: 10 },
   gedeeld: { color: KLEUR, fontSize: 13, marginTop: 10 },
   offline: { color: '#7a5b00' },
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
-  vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
-  vinkjeAan: { backgroundColor: KLEUR },
+  vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: ORANJE, alignItems: 'center', justifyContent: 'center' },
+  vinkjeAan: { backgroundColor: ORANJE },
   vinkjeTekst: { color: '#fff', fontWeight: '700' },
   tekstBlok: { flex: 1 },
   naam: { fontSize: 16 },

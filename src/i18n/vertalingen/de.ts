@@ -177,6 +177,8 @@ export const de: Vertalingen = {
   'lijst.wissen': 'Abgehakte Artikel löschen',
   'lijst.perRecept': 'Nach Rezept',
   'lijst.perCategorie': 'Nach Kategorie',
+  'lijst.tabWinkels': 'Geschäfte',
+  'lijst.tabBoodschappen': 'Einkaufsliste',
   'lijst.receptTitel': '{dag} · {recept}',
   'lijst.door': 'hinzugefügt von {naam}',
   'lijst.gekochtDoor': 'gekauft von {naam}',

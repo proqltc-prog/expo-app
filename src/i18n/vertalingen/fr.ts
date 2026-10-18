@@ -177,6 +177,8 @@ export const fr: Vertalingen = {
   'lijst.wissen': 'Effacer les articles cochés',
   'lijst.perRecept': 'Par recette',
   'lijst.perCategorie': 'Par rayon',
+  'lijst.tabWinkels': 'Magasins',
+  'lijst.tabBoodschappen': 'Courses',
   'lijst.receptTitel': '{dag} · {recept}',
   'lijst.door': 'ajouté par {naam}',
   'lijst.gekochtDoor': 'acheté par {naam}',

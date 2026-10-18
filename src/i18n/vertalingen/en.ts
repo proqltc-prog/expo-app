@@ -177,6 +177,8 @@ export const en: Vertalingen = {
   'lijst.wissen': 'Clear checked items',
   'lijst.perRecept': 'By recipe',
   'lijst.perCategorie': 'By category',
+  'lijst.tabWinkels': 'Stores',
+  'lijst.tabBoodschappen': 'Shopping list',
   'lijst.receptTitel': '{dag} · {recept}',
   'lijst.door': 'added by {naam}',
   'lijst.gekochtDoor': 'bought by {naam}',
