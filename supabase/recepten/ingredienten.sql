@@ -160,7 +160,9 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('gedroogde_split_erwten', 'g', 'peulvrucht', 'vegetarisch'),
   ('andijvie', 'g', 'groente', 'vegetarisch'),
   ('rookworst', 'stuk', 'vlees', 'vlees'),
-  ('laurier', 'stuk', 'kruid', 'vegetarisch')
+  ('laurier', 'stuk', 'kruid', 'vegetarisch'),
+  ('boerenkool', 'g', 'groente', 'vegetarisch'),
+  ('lasagnebladen', 'stuk', 'graan', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1130,7 +1132,19 @@ select i.id, v.taal, v.naam from (values
   ('laurier', 'de', 'Lorbeerblatt'),
   ('laurier', 'en', 'bay leaf'),
   ('laurier', 'es', 'hoja de laurel'),
-  ('laurier', 'pt', 'folha de louro')
+  ('laurier', 'pt', 'folha de louro'),
+  ('boerenkool', 'nl', 'boerenkool'),
+  ('boerenkool', 'fr', 'chou frisé'),
+  ('boerenkool', 'de', 'Grünkohl'),
+  ('boerenkool', 'en', 'kale'),
+  ('boerenkool', 'es', 'col rizada'),
+  ('boerenkool', 'pt', 'couve'),
+  ('lasagnebladen', 'nl', 'lasagnebladen'),
+  ('lasagnebladen', 'fr', 'feuilles de lasagne'),
+  ('lasagnebladen', 'de', 'Lasagneblätter'),
+  ('lasagnebladen', 'en', 'lasagne sheets'),
+  ('lasagnebladen', 'es', 'pasta para lasaña'),
+  ('lasagnebladen', 'pt', 'folhas de lasanha')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
