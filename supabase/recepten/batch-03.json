@@ -1,0 +1,1740 @@
+[
+ {
+  "slug": "mexicaans-burrito-bowl-kip",
+  "stijl": "mexicaans",
+  "stijlen": [
+   "mexicaans"
+  ],
+  "moment": "avond",
+  "soort": "vlees",
+  "basis": "rijst",
+  "bereiding": "pan",
+  "moeilijkheid": "gemiddeld",
+  "kooktijd_min": 30,
+  "tags": [
+   "bowl"
+  ],
+  "titel": {
+   "nl": "Burrito bowl met kip en bonen",
+   "fr": "Burrito bowl au poulet et haricots",
+   "de": "Burrito-Bowl mit Hähnchen und Bohnen",
+   "en": "Chicken and bean burrito bowl",
+   "es": "Burrito bowl de pollo y frijoles",
+   "pt": "Burrito bowl de frango e feijão"
+  },
+  "ingredienten": [
+   {
+    "code": "rijst_basmati",
+    "h": 70,
+    "e": "g"
+   },
+   {
+    "code": "kipfilet",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "kidneybonen",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "maïs",
+    "h": 50,
+    "e": "g"
+   },
+   {
+    "code": "paprika",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "avocado",
+    "h": 0.5,
+    "e": "stuk"
+   },
+   {
+    "code": "yoghurt",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "komijn",
+    "h": 1,
+    "e": "g"
+   },
+   {
+    "code": "chilipoeder",
+    "h": 2,
+    "e": "g"
+   },
+   {
+    "code": "limoen",
+    "h": 0.5,
+    "e": "stuk"
+   },
+   {
+    "code": "koriander",
+    "h": 3,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Kook de rijst gaar. Kruid de kip met komijn en chilipoeder en bak 6 minuten.",
+     "fr": "Faites cuire le riz. Assaisonnez le poulet de cumin et de chili, puis faites-le cuire 6 minutes.",
+     "de": "Reis garen. Hähnchen mit Kreuzkümmel und Chilipulver würzen und 6 Minuten braten.",
+     "en": "Cook the rice. Season the chicken with cumin and chili and fry 6 minutes.",
+     "es": "Cuece el arroz. Sazona el pollo con comino y chile y fríelo 6 minutos.",
+     "pt": "Cozinhe o arroz. Tempere o frango com cominho e pimenta e frite 6 minutos."
+    },
+    "timer_sec": 720
+   },
+   {
+    "tekst": {
+     "nl": "Bak paprika en maïs 3 minuten. Warm de bonen op.",
+     "fr": "Faites revenir le poivron et le maïs 3 minutes. Réchauffez les haricots.",
+     "de": "Paprika und Mais 3 Minuten braten. Bohnen erwärmen.",
+     "en": "Fry the pepper and corn 3 minutes. Warm the beans.",
+     "es": "Fríe el pimiento y el maíz 3 minutos. Calienta los frijoles.",
+     "pt": "Frite o pimento e o milho 3 minutos. Aqueça o feijão."
+    },
+    "timer_sec": 180
+   },
+   {
+    "tekst": {
+     "nl": "Schik alles in een kom. Garneer met avocado, yoghurt, limoen en koriander.",
+     "fr": "Disposez tout dans un bol. Garnissez d'avocat, de yaourt, de citron vert et de coriandre.",
+     "de": "Alles in eine Schale geben. Mit Avocado, Joghurt, Limette und Koriander garnieren.",
+     "en": "Arrange everything in a bowl. Top with avocado, yogurt, lime and coriander.",
+     "es": "Coloca todo en un bol. Adorna con aguacate, yogur, lima y cilantro.",
+     "pt": "Disponha tudo numa taça. Decore com abacate, iogurte, lima e coentro."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mexicaans-bonen-tacos",
+  "stijl": "mexicaans",
+  "stijlen": [
+   "mexicaans"
+  ],
+  "moment": "avond",
+  "soort": "vegetarisch",
+  "basis": "wrap",
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 15,
+  "tags": [
+   "snel"
+  ],
+  "titel": {
+   "nl": "Bonen-tacos met avocado",
+   "fr": "Tacos aux haricots et à l'avocat",
+   "de": "Bohnen-Tacos mit Avocado",
+   "en": "Bean tacos with avocado",
+   "es": "Tacos de frijoles con aguacate",
+   "pt": "Tacos de feijão com abacate"
+  },
+  "ingredienten": [
+   {
+    "code": "tortilla_wrap",
+    "h": 2,
+    "e": "stuk"
+   },
+   {
+    "code": "kidneybonen",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "tomaat",
+    "h": 80,
+    "e": "g"
+   },
+   {
+    "code": "ui",
+    "h": 30,
+    "e": "g"
+   },
+   {
+    "code": "avocado",
+    "h": 0.5,
+    "e": "stuk"
+   },
+   {
+    "code": "limoen",
+    "h": 0.5,
+    "e": "stuk"
+   },
+   {
+    "code": "koriander",
+    "h": 3,
+    "e": "g"
+   },
+   {
+    "code": "komijn",
+    "h": 1,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Bak de ui 3 minuten. Voeg de bonen en komijn toe en stamp grof.",
+     "fr": "Faites revenir l'oignon 3 minutes. Ajoutez les haricots et le cumin et écrasez grossièrement.",
+     "de": "Zwiebel 3 Minuten braten. Bohnen und Kreuzkümmel dazugeben und grob zerdrücken.",
+     "en": "Fry the onion 3 minutes. Add beans and cumin and mash roughly.",
+     "es": "Fríe la cebolla 3 minutos. Añade los frijoles y el comino y aplasta a medias.",
+     "pt": "Frite a cebola 3 minutos. Junte o feijão e o cominho e amasse grosseiramente."
+    },
+    "timer_sec": 180
+   },
+   {
+    "tekst": {
+     "nl": "Snijd tomaat en avocado. Meng met limoensap en koriander.",
+     "fr": "Coupez la tomate et l'avocat. Mélangez avec le jus de citron vert et la coriandre.",
+     "de": "Tomate und Avocado schneiden. Mit Limettensaft und Koriander mischen.",
+     "en": "Dice the tomato and avocado. Mix with lime juice and coriander.",
+     "es": "Corta el tomate y el aguacate. Mezcla con zumo de lima y cilantro.",
+     "pt": "Corte o tomate e o abacate. Misture com sumo de lima e coentro."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Warm de wraps kort op en vul met bonen en salsa.",
+     "fr": "Réchauffez brièvement les wraps et garnissez de haricots et de salsa.",
+     "de": "Wraps kurz erwärmen und mit Bohnen und Salsa füllen.",
+     "en": "Warm the wraps briefly and fill with beans and salsa.",
+     "es": "Calienta brevemente las tortillas y rellénalas con frijoles y salsa.",
+     "pt": "Aqueça brevemente os wraps e recheie com feijão e salsa."
+    },
+    "timer_sec": 60
+   }
+  ]
+ },
+ {
+  "slug": "mexicaans-chili-con-carne",
+  "stijl": "mexicaans",
+  "stijlen": [
+   "mexicaans"
+  ],
+  "moment": "avond",
+  "soort": "vlees",
+  "basis": null,
+  "bereiding": "pan",
+  "moeilijkheid": "gemiddeld",
+  "kooktijd_min": 40,
+  "tags": [
+   "stoofpot"
+  ],
+  "titel": {
+   "nl": "Chili con carne met bonen",
+   "fr": "Chili con carne aux haricots",
+   "de": "Chili con Carne mit Bohnen",
+   "en": "Chili con carne with beans",
+   "es": "Chili con carne con frijoles",
+   "pt": "Chili con carne com feijão"
+  },
+  "ingredienten": [
+   {
+    "code": "gehakt",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "kidneybonen",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "tomaat_blokjes",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "ui",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "paprika",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "chilipoeder",
+    "h": 2,
+    "e": "g"
+   },
+   {
+    "code": "komijn",
+    "h": 2,
+    "e": "g"
+   },
+   {
+    "code": "tomatenpuree",
+    "h": 10,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 5,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Bak het gehakt met de ui en paprika in de olie tot ze bruin zijn.",
+     "fr": "Faites revenir la viande hachée avec l'oignon et le poivron dans l'huile jusqu'à coloration.",
+     "de": "Hackfleisch mit Zwiebel und Paprika in Öl braun braten.",
+     "en": "Brown the mince with the onion and pepper in the oil.",
+     "es": "Dora la carne picada con la cebolla y el pimiento en el aceite.",
+     "pt": "Doure a carne picada com a cebola e o pimento no azeite."
+    },
+    "timer_sec": 480
+   },
+   {
+    "tekst": {
+     "nl": "Voeg kruiden, tomatenpuree en tomaat toe. Laat 15 minuten pruttelen.",
+     "fr": "Ajoutez les épices, la purée de tomate et la tomate. Laissez mijoter 15 minutes.",
+     "de": "Gewürze, Tomatenmark und Tomate dazugeben. 15 Minuten köcheln lassen.",
+     "en": "Add spices, tomato purée and tomato. Simmer 15 minutes.",
+     "es": "Añade las especias, el puré de tomate y el tomate. Cuece 15 minutos.",
+     "pt": "Junte as especiarias, o puré de tomate e o tomate. Deixe ferver 15 minutos."
+    },
+    "timer_sec": 900
+   },
+   {
+    "tekst": {
+     "nl": "Voeg de bonen toe, laat 5 minuten meekoken en breng op smaak met zout.",
+     "fr": "Ajoutez les haricots, laissez cuire 5 minutes et salez.",
+     "de": "Bohnen dazugeben, 5 Minuten mitkochen und mit Salz würzen.",
+     "en": "Add the beans, cook 5 minutes more and season with salt.",
+     "es": "Añade los frijoles, cuece 5 minutos más y sala.",
+     "pt": "Junte o feijão, cozinhe mais 5 minutos e tempere com sal."
+    },
+    "timer_sec": 300
+   }
+  ]
+ },
+ {
+  "slug": "mexicaans-kipfajita",
+  "stijl": "mexicaans",
+  "stijlen": [
+   "mexicaans"
+  ],
+  "moment": "avond",
+  "soort": "vlees",
+  "basis": "wrap",
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 15,
+  "tags": [
+   "snel"
+  ],
+  "titel": {
+   "nl": "Kipfajita's met paprika",
+   "fr": "Fajitas au poulet et poivron",
+   "de": "Hähnchen-Fajitas mit Paprika",
+   "en": "Chicken fajitas with pepper",
+   "es": "Fajitas de pollo y pimiento",
+   "pt": "Fajitas de frango e pimento"
+  },
+  "ingredienten": [
+   {
+    "code": "kipfilet",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "paprika",
+    "h": 80,
+    "e": "g"
+   },
+   {
+    "code": "ui",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "tortilla_wrap",
+    "h": 1,
+    "e": "stuk"
+   },
+   {
+    "code": "limoen",
+    "h": 0.5,
+    "e": "stuk"
+   },
+   {
+    "code": "chilipoeder",
+    "h": 2,
+    "e": "g"
+   },
+   {
+    "code": "koriander",
+    "h": 3,
+    "e": "g"
+   },
+   {
+    "code": "yoghurt",
+    "h": 40,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Snijd kip, paprika en ui in reepjes. Bestrooi de kip met chilipoeder en limoensap.",
+     "fr": "Coupez le poulet, le poivron et l'oignon en lamelles. Saupoudrez le poulet de chili et de jus de citron vert.",
+     "de": "Hähnchen, Paprika und Zwiebel in Streifen schneiden. Hähnchen mit Chili und Limettensaft würzen.",
+     "en": "Slice the chicken, pepper and onion into strips. Season the chicken with chili and lime juice.",
+     "es": "Corta el pollo, el pimiento y la cebolla en tiras. Sazona el pollo con chile y zumo de lima.",
+     "pt": "Corte o frango, o pimento e a cebola em tiras. Tempere o frango com pimenta e sumo de lima."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Bak kip, paprika en ui 6 minuten op hoog vuur.",
+     "fr": "Faites sauter le poulet, le poivron et l'oignon 6 minutes à feu vif.",
+     "de": "Hähnchen, Paprika und Zwiebel 6 Minuten bei starker Hitze braten.",
+     "en": "Stir-fry the chicken, pepper and onion 6 minutes on high heat.",
+     "es": "Saltea el pollo, el pimiento y la cebolla 6 minutos a fuego fuerte.",
+     "pt": "Salteie o frango, o pimento e a cebola 6 minutos em lume alto."
+    },
+    "timer_sec": 360
+   },
+   {
+    "tekst": {
+     "nl": "Warm de wrap op, vul met kip en groente en serveer met yoghurt en koriander.",
+     "fr": "Réchauffez le wrap, garnissez de poulet et de légumes et servez avec le yaourt et la coriandre.",
+     "de": "Wrap erwärmen, mit Hähnchen und Gemüse füllen und mit Joghurt und Koriander servieren.",
+     "en": "Warm the wrap, fill with chicken and vegetables and serve with yogurt and coriander.",
+     "es": "Calienta el wrap, rellénalo con pollo y verduras y sirve con yogur y cilantro.",
+     "pt": "Aqueça o wrap, recheie com frango e legumes e sirva com iogurte e coentro."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mexicaans-huevos-rancheros",
+  "stijl": "mexicaans",
+  "stijlen": [
+   "mexicaans"
+  ],
+  "moment": "middag",
+  "soort": "vegetarisch",
+  "basis": "wrap",
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 15,
+  "tags": [
+   "ei"
+  ],
+  "titel": {
+   "nl": "Huevos rancheros met tomatensaus",
+   "fr": "Huevos rancheros à la sauce tomate",
+   "de": "Huevos Rancheros mit Tomatensoße",
+   "en": "Huevos rancheros with tomato sauce",
+   "es": "Huevos rancheros con salsa de tomate",
+   "pt": "Huevos rancheros com molho de tomate"
+  },
+  "ingredienten": [
+   {
+    "code": "eieren",
+    "h": 2,
+    "e": "stuk"
+   },
+   {
+    "code": "tomaat_blokjes",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "paprika",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "ui",
+    "h": 30,
+    "e": "g"
+   },
+   {
+    "code": "chilipoeder",
+    "h": 1,
+    "e": "g"
+   },
+   {
+    "code": "tortilla_wrap",
+    "h": 1,
+    "e": "stuk"
+   },
+   {
+    "code": "koriander",
+    "h": 2,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 5,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Bak ui en paprika 4 minuten in de olie. Voeg tomaat en chilipoeder toe en laat 8 minuten sudderen.",
+     "fr": "Faites revenir l'oignon et le poivron 4 minutes dans l'huile. Ajoutez la tomate et le chili et laissez mijoter 8 minutes.",
+     "de": "Zwiebel und Paprika 4 Minuten in Öl braten. Tomate und Chili dazugeben und 8 Minuten köcheln lassen.",
+     "en": "Fry onion and pepper 4 minutes in the oil. Add tomato and chili and simmer 8 minutes.",
+     "es": "Fríe la cebolla y el pimiento 4 minutos en el aceite. Añade el tomate y el chile y cuece 8 minutos.",
+     "pt": "Frite a cebola e o pimento 4 minutos no azeite. Junte o tomate e a pimenta e deixe ferver 8 minutos."
+    },
+    "timer_sec": 480
+   },
+   {
+    "tekst": {
+     "nl": "Maak twee kuiltjes en breek de eieren erin. Dek af en laat 5 minuten garen.",
+     "fr": "Faites deux creux et cassez-y les œufs. Couvrez et laissez cuire 5 minutes.",
+     "de": "Zwei Mulden formen und die Eier hineinschlagen. Zudecken und 5 Minuten garen.",
+     "en": "Make two wells and crack the eggs in. Cover and cook 5 minutes.",
+     "es": "Haz dos huecos y casca los huevos. Tapa y cuece 5 minutos.",
+     "pt": "Faça dois buracos e parta os ovos. Tape e cozinhe 5 minutos."
+    },
+    "timer_sec": 300
+   },
+   {
+    "tekst": {
+     "nl": "Warm de wrap op en serveer met de eieren, bestrooid met koriander.",
+     "fr": "Réchauffez le wrap et servez avec les œufs, parsemés de coriandre.",
+     "de": "Wrap erwärmen und mit den Eiern servieren, mit Koriander bestreut.",
+     "en": "Warm the wrap and serve with the eggs, sprinkled with coriander.",
+     "es": "Calienta el wrap y sirve con los huevos, espolvoreados con cilantro.",
+     "pt": "Aqueça o wrap e sirva com os ovos, polvilhados com coentro."
+    },
+    "timer_sec": 60
+   }
+  ]
+ },
+ {
+  "slug": "mexicaans-guacamole-chips",
+  "stijl": "mexicaans",
+  "stijlen": [
+   "mexicaans"
+  ],
+  "moment": "avond",
+  "soort": "vegetarisch",
+  "basis": "wrap",
+  "bereiding": "oven",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 20,
+  "tags": [
+   "snack"
+  ],
+  "titel": {
+   "nl": "Guacamole met tortillachips",
+   "fr": "Guacamole et chips de tortilla",
+   "de": "Guacamole mit Tortillachips",
+   "en": "Guacamole with tortilla chips",
+   "es": "Guacamole con totopos",
+   "pt": "Guacamole com tortilhas crocantes"
+  },
+  "ingredienten": [
+   {
+    "code": "avocado",
+    "h": 1,
+    "e": "stuk"
+   },
+   {
+    "code": "tomaat",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "ui",
+    "h": 20,
+    "e": "g"
+   },
+   {
+    "code": "limoen",
+    "h": 0.5,
+    "e": "stuk"
+   },
+   {
+    "code": "koriander",
+    "h": 3,
+    "e": "g"
+   },
+   {
+    "code": "tortilla_wrap",
+    "h": 1,
+    "e": "stuk"
+   },
+   {
+    "code": "olijfolie",
+    "h": 5,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Verwarm de oven voor op 200 °C. Snijd de tortilla in driehoeken, besprenkel met olie en bak 8 minuten knapperig.",
+     "fr": "Préchauffez le four à 200 °C. Coupez la tortilla en triangles, arrosez d'huile et faites cuire 8 minutes.",
+     "de": "Den Ofen auf 200 °C vorheizen. Tortilla in Dreiecke schneiden, mit Öl beträufeln und 8 Minuten knusprig backen.",
+     "en": "Preheat the oven to 200 °C. Cut the tortilla into triangles, drizzle with oil and bake 8 minutes until crisp.",
+     "es": "Precalienta el horno a 200 °C. Corta la tortilla en triángulos, rocía con aceite y hornea 8 minutos hasta que estén crujientes.",
+     "pt": "Pré-aqueça o forno a 200 °C. Corte a tortilha em triângulos, regue com azeite e asse 8 minutos até ficarem crocantes."
+    },
+    "timer_sec": 480
+   },
+   {
+    "tekst": {
+     "nl": "Prak de avocado grof. Hak tomaat, ui en koriander fijn en meng erdoor met het limoensap.",
+     "fr": "Écrasez grossièrement l'avocat. Hachez finement la tomate, l'oignon et la coriandre et mélangez avec le jus de citron vert.",
+     "de": "Avocado grob zerdrücken. Tomate, Zwiebel und Koriander fein hacken und mit Limettensaft unterrühren.",
+     "en": "Mash the avocado roughly. Finely chop tomato, onion and coriander and mix in with the lime juice.",
+     "es": "Aplasta el aguacate a medias. Pica finos el tomate, la cebolla y el cilantro y mézclalos con el zumo de lima.",
+     "pt": "Amasse o abacate grosseiramente. Pique o tomate, a cebola e o coentro e misture com o sumo de lima."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Serveer de guacamole met de chips.",
+     "fr": "Servez la guacamole avec les chips.",
+     "de": "Guacamole mit den Chips servieren.",
+     "en": "Serve the guacamole with the chips.",
+     "es": "Sirve el guacamole con los totopos.",
+     "pt": "Sirva o guacamole com as tortilhas."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "italiaans-carbonara",
+  "stijl": "italiaans",
+  "stijlen": [
+   "italiaans"
+  ],
+  "moment": "avond",
+  "soort": "vlees",
+  "basis": "pasta",
+  "bereiding": "pan",
+  "moeilijkheid": "gemiddeld",
+  "kooktijd_min": 20,
+  "tags": [
+   "pasta"
+  ],
+  "titel": {
+   "nl": "Spaghetti carbonara met spek",
+   "fr": "Spaghetti carbonara au lard",
+   "de": "Spaghetti Carbonara mit Speck",
+   "en": "Spaghetti carbonara with bacon",
+   "es": "Espaguetis carbonara con panceta",
+   "pt": "Espaguete carbonara com bacon"
+  },
+  "ingredienten": [
+   {
+    "code": "pasta_spaghetti",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "spek",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "eieren",
+    "h": 1,
+    "e": "stuk"
+   },
+   {
+    "code": "kaas_parmezaan",
+    "h": 20,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 5,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Kook de spaghetti al dente in gezouten water. Bewaar een half kopje kookvocht.",
+     "fr": "Faites cuire les spaghetti al dente dans de l'eau salée. Gardez une demi-tasse d'eau de cuisson.",
+     "de": "Spaghetti in Salzwasser al dente kochen. Eine halbe Tasse Kochwasser aufheben.",
+     "en": "Cook the spaghetti al dente in salted water. Save half a cup of cooking water.",
+     "es": "Cuece los espaguetis al dente en agua con sal. Guarda media taza del agua de cocción.",
+     "pt": "Cozinhe o esparguete al dente em água salgada. Reserve meia chávena da água da cozedura."
+    },
+    "timer_sec": 600
+   },
+   {
+    "tekst": {
+     "nl": "Bak het spek krokant in de olie. Klop het ei met de parmezaan.",
+     "fr": "Faites croustiller le lard dans l'huile. Battez l'œuf avec le parmesan.",
+     "de": "Speck in Öl knusprig braten. Ei mit Parmesan verquirlen.",
+     "en": "Crisp the bacon in the oil. Whisk the egg with the parmesan.",
+     "es": "Dora la panceta en el aceite. Bate el huevo con el parmesano.",
+     "pt": "Deixe o bacon estaladiço no azeite. Bata o ovo com o parmesão."
+    },
+    "timer_sec": 300
+   },
+   {
+    "tekst": {
+     "nl": "Meng de pasta met het spek, haal van het vuur en roer het eimengsel erdoor met een scheutje kookvocht.",
+     "fr": "Mélangez les pâtes avec le lard, retirez du feu et incorporez le mélange d'œuf avec un peu d'eau de cuisson.",
+     "de": "Pasta mit dem Speck mischen, vom Herd nehmen und die Eiermischung mit etwas Kochwasser unterrühren.",
+     "en": "Toss the pasta with the bacon, take off the heat and stir in the egg mix with a splash of cooking water.",
+     "es": "Mezcla la pasta con la panceta, retira del fuego e incorpora la mezcla de huevo con un poco de agua de cocción.",
+     "pt": "Envolva a massa com o bacon, retire do lume e misture a mistura de ovo com um pouco de água da cozedura."
+    },
+    "timer_sec": 60
+   }
+  ]
+ },
+ {
+  "slug": "italiaans-penne-arrabbiata",
+  "stijl": "italiaans",
+  "stijlen": [
+   "italiaans"
+  ],
+  "moment": "avond",
+  "soort": "vegetarisch",
+  "basis": "pasta",
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 20,
+  "tags": [
+   "pasta",
+   "snel"
+  ],
+  "titel": {
+   "nl": "Penne arrabbiata",
+   "fr": "Penne arrabbiata",
+   "de": "Penne Arrabbiata",
+   "en": "Penne arrabbiata",
+   "es": "Penne arrabbiata",
+   "pt": "Penne arrabbiata"
+  },
+  "ingredienten": [
+   {
+    "code": "pasta_penne",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "tomaat_blokjes",
+    "h": 200,
+    "e": "g"
+   },
+   {
+    "code": "knoflook",
+    "h": 1,
+    "e": "teentje"
+   },
+   {
+    "code": "chilivlokken",
+    "h": 1,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "basilicum",
+    "h": 3,
+    "e": "g"
+   },
+   {
+    "code": "kaas_parmezaan",
+    "h": 10,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Kook de penne al dente in gezouten water.",
+     "fr": "Faites cuire les penne al dente dans de l'eau salée.",
+     "de": "Penne in Salzwasser al dente kochen.",
+     "en": "Cook the penne al dente in salted water.",
+     "es": "Cuece la penne al dente en agua con sal.",
+     "pt": "Cozinhe a penne al dente em água salgada."
+    },
+    "timer_sec": 660
+   },
+   {
+    "tekst": {
+     "nl": "Bak knoflook en chilivlokken 1 minuut in de olie. Voeg de tomaat toe en laat 10 minuten sudderen.",
+     "fr": "Faites revenir l'ail et les flocons de piment 1 minute dans l'huile. Ajoutez la tomate et laissez mijoter 10 minutes.",
+     "de": "Knoblauch und Chiliflocken 1 Minute in Öl braten. Tomate dazugeben und 10 Minuten köcheln lassen.",
+     "en": "Fry garlic and chili flakes 1 minute in the oil. Add tomato and simmer 10 minutes.",
+     "es": "Fríe el ajo y los copos de chile 1 minuto en el aceite. Añade el tomate y cuece 10 minutos.",
+     "pt": "Frite o alho e os flocos de pimenta 1 minuto no azeite. Junte o tomate e deixe ferver 10 minutos."
+    },
+    "timer_sec": 600
+   },
+   {
+    "tekst": {
+     "nl": "Meng de penne door de saus, garneer met basilicum en parmezaan.",
+     "fr": "Mélangez les penne à la sauce et garnissez de basilic et de parmesan.",
+     "de": "Penne unter die Soße mischen und mit Basilikum und Parmesan garnieren.",
+     "en": "Toss the penne in the sauce and top with basil and parmesan.",
+     "es": "Mezcla la penne con la salsa y adorna con albahaca y parmesano.",
+     "pt": "Envolva a penne no molho e decore com manjericão e parmesão."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "italiaans-minestrone",
+  "stijl": "italiaans",
+  "stijlen": [
+   "italiaans"
+  ],
+  "moment": "middag",
+  "soort": "vegetarisch",
+  "basis": "pasta",
+  "bereiding": "pan",
+  "moeilijkheid": "gemiddeld",
+  "kooktijd_min": 35,
+  "tags": [
+   "soep"
+  ],
+  "titel": {
+   "nl": "Minestrone met witte bonen",
+   "fr": "Minestrone aux haricots blancs",
+   "de": "Minestrone mit weißen Bohnen",
+   "en": "Minestrone with white beans",
+   "es": "Minestrone con alubias blancas",
+   "pt": "Minestrone com feijão branco"
+  },
+  "ingredienten": [
+   {
+    "code": "wortel",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "courgette",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "witte_bonen",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "tomaat_blokjes",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "pasta_penne",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "groentebouillon",
+    "h": 400,
+    "e": "ml"
+   },
+   {
+    "code": "ui",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "kaas_parmezaan",
+    "h": 10,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Snijd ui, wortel en courgette in blokjes. Fruit ze 5 minuten in de olie.",
+     "fr": "Coupez l'oignon, la carotte et la courgette en dés. Faites-les revenir 5 minutes dans l'huile.",
+     "de": "Zwiebel, Karotte und Zucchini würfeln. 5 Minuten in Öl anbraten.",
+     "en": "Dice the onion, carrot and courgette. Sauté 5 minutes in the oil.",
+     "es": "Corta la cebolla, la zanahoria y el calabacín en dados. Rehoga 5 minutos en el aceite.",
+     "pt": "Corte a cebola, a cenoura e a courgette em cubos. Refogue 5 minutos no azeite."
+    },
+    "timer_sec": 300
+   },
+   {
+    "tekst": {
+     "nl": "Voeg bouillon, tomaat en bonen toe en laat 15 minuten sudderen. Voeg de pasta toe en kook nog 10 minuten.",
+     "fr": "Ajoutez le bouillon, la tomate et les haricots et laissez mijoter 15 minutes. Ajoutez les pâtes et cuisez 10 minutes de plus.",
+     "de": "Brühe, Tomate und Bohnen dazugeben und 15 Minuten köcheln lassen. Nudeln hinzufügen und weitere 10 Minuten kochen.",
+     "en": "Add stock, tomato and beans and simmer 15 minutes. Add the pasta and cook 10 minutes more.",
+     "es": "Añade el caldo, el tomate y las alubias y cuece 15 minutos. Añade la pasta y cuece 10 minutos más.",
+     "pt": "Junte o caldo, o tomate e o feijão e deixe ferver 15 minutos. Adicione a massa e cozinhe mais 10 minutos."
+    },
+    "timer_sec": 1500
+   },
+   {
+    "tekst": {
+     "nl": "Breng op smaak met zout en serveer met parmezaan.",
+     "fr": "Salez et servez avec du parmesan.",
+     "de": "Mit Salz abschmecken und mit Parmesan servieren.",
+     "en": "Season with salt and serve with parmesan.",
+     "es": "Sazona con sal y sirve con parmesano.",
+     "pt": "Tempere com sal e sirva com parmesão."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "italiaans-pasta-pesto-doperwten",
+  "stijl": "italiaans",
+  "stijlen": [
+   "italiaans"
+  ],
+  "moment": "avond",
+  "soort": "vegetarisch",
+  "basis": "pasta",
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 15,
+  "tags": [
+   "pasta",
+   "snel"
+  ],
+  "titel": {
+   "nl": "Pasta met pesto en doperwten",
+   "fr": "Pâtes au pesto et petits pois",
+   "de": "Pasta mit Pesto und Erbsen",
+   "en": "Pasta with pesto and peas",
+   "es": "Pasta con pesto y guisantes",
+   "pt": "Massa com pesto e ervilhas"
+  },
+  "ingredienten": [
+   {
+    "code": "pasta_penne",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "pesto",
+    "h": 30,
+    "e": "g"
+   },
+   {
+    "code": "doperwten",
+    "h": 50,
+    "e": "g"
+   },
+   {
+    "code": "kaas_parmezaan",
+    "h": 10,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Kook de penne al dente en voeg de doperwten de laatste 3 minuten toe.",
+     "fr": "Faites cuire les penne al dente et ajoutez les petits pois les 3 dernières minutes.",
+     "de": "Penne al dente kochen und die Erbsen in den letzten 3 Minuten dazugeben.",
+     "en": "Cook the penne al dente and add the peas for the last 3 minutes.",
+     "es": "Cuece la penne al dente y añade los guisantes los últimos 3 minutos.",
+     "pt": "Cozinhe a penne al dente e junte as ervilhas nos últimos 3 minutos."
+    },
+    "timer_sec": 660
+   },
+   {
+    "tekst": {
+     "nl": "Giet af en meng met de pesto.",
+     "fr": "Égouttez et mélangez avec le pesto.",
+     "de": "Abgießen und mit dem Pesto mischen.",
+     "en": "Drain and toss with the pesto.",
+     "es": "Escurre y mezcla con el pesto.",
+     "pt": "Escorra e envolva com o pesto."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Strooi de parmezaan erover en serveer direct.",
+     "fr": "Parsemez de parmesan et servez aussitôt.",
+     "de": "Mit Parmesan bestreuen und sofort servieren.",
+     "en": "Sprinkle with parmesan and serve right away.",
+     "es": "Espolvorea con parmesano y sirve enseguida.",
+     "pt": "Polvilhe com parmesão e sirva logo."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "italiaans-kip-caprese",
+  "stijl": "italiaans",
+  "stijlen": [
+   "italiaans"
+  ],
+  "moment": "avond",
+  "soort": "vlees",
+  "basis": null,
+  "bereiding": "oven",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 25,
+  "tags": [
+   "ovengerecht"
+  ],
+  "titel": {
+   "nl": "Kip caprese uit de oven",
+   "fr": "Poulet caprese au four",
+   "de": "Caprese-Hähnchen aus dem Ofen",
+   "en": "Oven-baked chicken caprese",
+   "es": "Pollo caprese al horno",
+   "pt": "Frango caprese no forno"
+  },
+  "ingredienten": [
+   {
+    "code": "kipfilet",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "mozzarella",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "tomaat",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "basilicum",
+    "h": 3,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "balsamicoazijn",
+    "h": 5,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Verwarm de oven voor op 200 °C. Leg de kip in een ovenschaal, besprenkel met olie en bak 12 minuten.",
+     "fr": "Préchauffez le four à 200 °C. Disposez le poulet dans un plat, arrosez d'huile et faites cuire 12 minutes.",
+     "de": "Den Ofen auf 200 °C vorheizen. Hähnchen in eine Form legen, mit Öl beträufeln und 12 Minuten backen.",
+     "en": "Preheat the oven to 200 °C. Put the chicken in a dish, drizzle with oil and bake 12 minutes.",
+     "es": "Precalienta el horno a 200 °C. Pon el pollo en una fuente, rocía con aceite y hornea 12 minutos.",
+     "pt": "Pré-aqueça o forno a 200 °C. Coloque o frango num recipiente, regue com azeite e asse 12 minutos."
+    },
+    "timer_sec": 720
+   },
+   {
+    "tekst": {
+     "nl": "Leg de tomaat en mozzarella op de kip en bak nog 8 minuten tot de kaas gesmolten is.",
+     "fr": "Posez la tomate et la mozzarella sur le poulet et faites cuire encore 8 minutes jusqu'à ce que le fromage fonde.",
+     "de": "Tomate und Mozzarella auf das Hähnchen legen und weitere 8 Minuten backen, bis der Käse geschmolzen ist.",
+     "en": "Top the chicken with tomato and mozzarella and bake 8 more minutes until the cheese melts.",
+     "es": "Pon el tomate y la mozzarella sobre el pollo y hornea 8 minutos más hasta que el queso se derrita.",
+     "pt": "Cubra o frango com tomate e mozzarella e asse mais 8 minutos até o queijo derreter."
+    },
+    "timer_sec": 480
+   },
+   {
+    "tekst": {
+     "nl": "Besprenkel met balsamico en garneer met basilicum.",
+     "fr": "Arrosez de vinaigre balsamique et garnissez de basilic.",
+     "de": "Mit Balsamico beträufeln und mit Basilikum garnieren.",
+     "en": "Drizzle with balsamic and garnish with basil.",
+     "es": "Rocía con vinagre balsámico y adorna con albahaca.",
+     "pt": "Regue com vinagre balsâmico e decore com manjericão."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "italiaans-pasta-courgette-citroen",
+  "stijl": "italiaans",
+  "stijlen": [
+   "italiaans"
+  ],
+  "moment": "middag",
+  "soort": "vegetarisch",
+  "basis": "pasta",
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 20,
+  "tags": [
+   "pasta",
+   "snel"
+  ],
+  "titel": {
+   "nl": "Spaghetti met courgette en citroen",
+   "fr": "Spaghetti aux courgettes et citron",
+   "de": "Spaghetti mit Zucchini und Zitrone",
+   "en": "Spaghetti with courgette and lemon",
+   "es": "Espaguetis con calabacín y limón",
+   "pt": "Espaguete com courgette e limão"
+  },
+  "ingredienten": [
+   {
+    "code": "pasta_spaghetti",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "courgette",
+    "h": 120,
+    "e": "g"
+   },
+   {
+    "code": "citroen",
+    "h": 10,
+    "e": "g"
+   },
+   {
+    "code": "kaas_parmezaan",
+    "h": 10,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "knoflook",
+    "h": 1,
+    "e": "teentje"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Kook de spaghetti al dente. Snijd de courgette in dunne plakjes.",
+     "fr": "Faites cuire les spaghetti al dente. Coupez la courgette en fines tranches.",
+     "de": "Spaghetti al dente kochen. Zucchini in dünne Scheiben schneiden.",
+     "en": "Cook the spaghetti al dente. Slice the courgette thinly.",
+     "es": "Cuece los espaguetis al dente. Corta el calabacín en láminas finas.",
+     "pt": "Cozinhe o esparguete al dente. Corte a courgette em lâminas finas."
+    },
+    "timer_sec": 600
+   },
+   {
+    "tekst": {
+     "nl": "Bak knoflook 1 minuut in de olie, voeg courgette toe en bak 4 minuten.",
+     "fr": "Faites revenir l'ail 1 minute dans l'huile, ajoutez la courgette et faites-la sauter 4 minutes.",
+     "de": "Knoblauch 1 Minute in Öl braten, Zucchini dazugeben und 4 Minuten braten.",
+     "en": "Fry the garlic 1 minute in the oil, add the courgette and fry 4 minutes.",
+     "es": "Fríe el ajo 1 minuto en el aceite, añade el calabacín y fríe 4 minutos.",
+     "pt": "Frite o alho 1 minuto no azeite, junte a courgette e frite 4 minutos."
+    },
+    "timer_sec": 300
+   },
+   {
+    "tekst": {
+     "nl": "Meng de pasta door de courgette met citroenrasp, citroensap en parmezaan.",
+     "fr": "Mélangez les pâtes à la courgette avec le zeste et le jus de citron et le parmesan.",
+     "de": "Die Pasta mit Zucchini, Zitronenschale, Zitronensaft und Parmesan mischen.",
+     "en": "Toss the pasta with the courgette, lemon zest, lemon juice and parmesan.",
+     "es": "Mezcla la pasta con el calabacín, la ralladura y el zumo de limón y el parmesano.",
+     "pt": "Envolva a massa com a courgette, a raspa e o sumo de limão e o parmesão."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mediterraan-griekse-salade",
+  "stijl": "mediterraan",
+  "stijlen": [
+   "mediterraan"
+  ],
+  "moment": "middag",
+  "soort": "vegetarisch",
+  "basis": null,
+  "bereiding": "rauw",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 10,
+  "tags": [
+   "salade",
+   "snel"
+  ],
+  "titel": {
+   "nl": "Griekse salade met feta",
+   "fr": "Salade grecque à la feta",
+   "de": "Griechischer Salat mit Feta",
+   "en": "Greek salad with feta",
+   "es": "Ensalada griega con feta",
+   "pt": "Salada grega com feta"
+  },
+  "ingredienten": [
+   {
+    "code": "komkommer",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "tomaat",
+    "h": 120,
+    "e": "g"
+   },
+   {
+    "code": "feta",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "rode_ui",
+    "h": 20,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "oregano",
+    "h": 1,
+    "e": "g"
+   },
+   {
+    "code": "citroen",
+    "h": 10,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Snijd komkommer en tomaat in grove stukken. Snijd de rode ui in dunne ringen.",
+     "fr": "Coupez le concombre et la tomate en gros morceaux. Coupez l'oignon rouge en fins anneaux.",
+     "de": "Gurke und Tomate grob schneiden. Rote Zwiebel in dünne Ringe schneiden.",
+     "en": "Cut cucumber and tomato into chunks. Slice the red onion thinly.",
+     "es": "Corta el pepino y el tomate en trozos gruesos. Corta la cebolla morada en aros finos.",
+     "pt": "Corte o pepino e o tomate em pedaços grandes. Corte a cebola roxa em aros finos."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Meng alles met olie, citroensap en oregano.",
+     "fr": "Mélangez le tout avec l'huile, le jus de citron et l'origan.",
+     "de": "Alles mit Öl, Zitronensaft und Oregano mischen.",
+     "en": "Mix everything with the oil, lemon juice and oregano.",
+     "es": "Mezcla todo con el aceite, el zumo de limón y el orégano.",
+     "pt": "Misture tudo com o azeite, o sumo de limão e o orégão."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Leg de feta erop en serveer.",
+     "fr": "Posez la feta dessus et servez.",
+     "de": "Feta darauf legen und servieren.",
+     "en": "Top with the feta and serve.",
+     "es": "Coloca el feta encima y sirve.",
+     "pt": "Coloque o feta por cima e sirva."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mediterraan-hummus-kikkererwten",
+  "stijl": "mediterraan",
+  "stijlen": [
+   "mediterraan"
+  ],
+  "moment": "middag",
+  "soort": "vegetarisch",
+  "basis": null,
+  "bereiding": "rauw",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 10,
+  "tags": [
+   "dip"
+  ],
+  "titel": {
+   "nl": "Hummus met kikkererwten",
+   "fr": "Houmous aux pois chiches",
+   "de": "Hummus mit Kichererbsen",
+   "en": "Hummus with chickpeas",
+   "es": "Hummus de garbanzos",
+   "pt": "Húmus de grão-de-bico"
+  },
+  "ingredienten": [
+   {
+    "code": "kikkererwten",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "tahin",
+    "h": 20,
+    "e": "g"
+   },
+   {
+    "code": "citroen",
+    "h": 15,
+    "e": "g"
+   },
+   {
+    "code": "knoflook",
+    "h": 1,
+    "e": "teentje"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "komijn",
+    "h": 1,
+    "e": "g"
+   },
+   {
+    "code": "paprikapoeder",
+    "h": 1,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Doe kikkererwten, tahin, citroensap, knoflook, komijn en olie in een blender.",
+     "fr": "Mettez les pois chiches, le tahini, le jus de citron, l'ail, le cumin et l'huile dans un mixeur.",
+     "de": "Kichererbsen, Tahini, Zitronensaft, Knoblauch, Kreuzkümmel und Öl in einen Mixer geben.",
+     "en": "Put the chickpeas, tahini, lemon juice, garlic, cumin and oil in a blender.",
+     "es": "Pon los garbanzos, la tahini, el zumo de limón, el ajo, el comino y el aceite en una batidora.",
+     "pt": "Coloque o grão-de-bico, a tahine, o sumo de limão, o alho, o cominho e o azeite no liquidificador."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Mix tot een gladde crème, voeg wat water toe als hij te dik is en breng op smaak met zout.",
+     "fr": "Mixez jusqu'à obtenir une crème lisse, ajoutez un peu d'eau si besoin et salez.",
+     "de": "Zu einer glatten Creme mixen, bei Bedarf etwas Wasser zugeben und salzen.",
+     "en": "Blend until smooth, add a little water if too thick and season with salt.",
+     "es": "Tritura hasta obtener una crema lisa, añade un poco de agua si está espesa y sala.",
+     "pt": "Triture até ficar cremoso, junte um pouco de água se estiver espesso e tempere com sal."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Serveer met een schep olie en paprikapoeder erover.",
+     "fr": "Servez avec un filet d'huile et une pincée de paprika.",
+     "de": "Mit einem Schuss Öl und Paprikapulver servieren.",
+     "en": "Serve with a drizzle of oil and a sprinkle of paprika.",
+     "es": "Sirve con un hilo de aceite y un poco de pimentón.",
+     "pt": "Sirva com um fio de azeite e um pouco de colorau."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mediterraan-halloumi-groenten",
+  "stijl": "mediterraan",
+  "stijlen": [
+   "mediterraan"
+  ],
+  "moment": "avond",
+  "soort": "vegetarisch",
+  "basis": null,
+  "bereiding": "pan",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 20,
+  "tags": [
+   "grill"
+  ],
+  "titel": {
+   "nl": "Gegrilde halloumi met groenten en munt",
+   "fr": "Halloumi grillé aux légumes et menthe",
+   "de": "Gegrillter Halloumi mit Gemüse und Minze",
+   "en": "Grilled halloumi with vegetables and mint",
+   "es": "Halloumi a la plancha con verduras y menta",
+   "pt": "Halloumi grelhado com legumes e hortelã"
+  },
+  "ingredienten": [
+   {
+    "code": "halloumi",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "courgette",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "paprika",
+    "h": 80,
+    "e": "g"
+   },
+   {
+    "code": "aubergine",
+    "h": 80,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   },
+   {
+    "code": "munt",
+    "h": 2,
+    "e": "g"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Snijd de groenten in plakken en de halloumi in dikke schijven.",
+     "fr": "Coupez les légumes en tranches et le halloumi en épaisses tranches.",
+     "de": "Gemüse in Scheiben und Halloumi in dicke Scheiben schneiden.",
+     "en": "Slice the vegetables and the halloumi into thick slices.",
+     "es": "Corta las verduras en láminas y el halloumi en lonchas gruesas.",
+     "pt": "Corte os legumes em fatias e o halloumi em fatias grossas."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Grill de groenten en halloumi 3 minuten per kant in de olie.",
+     "fr": "Grillez les légumes et le halloumi 3 minutes de chaque côté dans l'huile.",
+     "de": "Gemüse und Halloumi 3 Minuten pro Seite in Öl grillen.",
+     "en": "Grill the vegetables and halloumi 3 minutes per side in the oil.",
+     "es": "Asa las verduras y el halloumi 3 minutos por cada lado en el aceite.",
+     "pt": "Grelhe os legumes e o halloumi 3 minutos de cada lado no azeite."
+    },
+    "timer_sec": 360
+   },
+   {
+    "tekst": {
+     "nl": "Garneer met gehakte munt en serveer warm.",
+     "fr": "Garnissez de menthe hachée et servez chaud.",
+     "de": "Mit gehackter Minze garnieren und warm servieren.",
+     "en": "Garnish with chopped mint and serve warm.",
+     "es": "Adorna con menta picada y sirve caliente.",
+     "pt": "Decore com hortelã picada e sirva quente."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mediterraan-kip-tzatziki-spiesjes",
+  "stijl": "mediterraan",
+  "stijlen": [
+   "mediterraan"
+  ],
+  "moment": "avond",
+  "soort": "vlees",
+  "basis": null,
+  "bereiding": "oven",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 25,
+  "tags": [
+   "spiesjes"
+  ],
+  "titel": {
+   "nl": "Kipspiesjes met tzatziki",
+   "fr": "Brochettes de poulet au tzatziki",
+   "de": "Hähnchenspieße mit Tzatziki",
+   "en": "Chicken skewers with tzatziki",
+   "es": "Pinchos de pollo con tzatziki",
+   "pt": "Espetadas de frango com tzatziki"
+  },
+  "ingredienten": [
+   {
+    "code": "kipfilet",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "yoghurt",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "komkommer",
+    "h": 50,
+    "e": "g"
+   },
+   {
+    "code": "knoflook",
+    "h": 1,
+    "e": "teentje"
+   },
+   {
+    "code": "citroen",
+    "h": 10,
+    "e": "g"
+   },
+   {
+    "code": "oregano",
+    "h": 1,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 5,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Snijd de kip in blokjes en marineer met olie, citroensap en oregano 15 minuten.",
+     "fr": "Coupez le poulet en dés et faites mariner 15 minutes avec l'huile, le jus de citron et l'origan.",
+     "de": "Hähnchen in Würfel schneiden und 15 Minuten mit Öl, Zitronensaft und Oregano marinieren.",
+     "en": "Cut the chicken into cubes and marinate 15 minutes with oil, lemon juice and oregano.",
+     "es": "Corta el pollo en cubos y marina 15 minutos con aceite, zumo de limón y orégano.",
+     "pt": "Corte o frango em cubos e marine 15 minutos com azeite, sumo de limão e orégão."
+    },
+    "timer_sec": 900
+   },
+   {
+    "tekst": {
+     "nl": "Rijg op spiesjes en bak 15 minuten op 200 °C, of grill ze in een pan.",
+     "fr": "Enfilez sur des brochettes et faites cuire 15 minutes à 200 °C, ou grillez-les à la poêle.",
+     "de": "Auf Spieße stecken und 15 Minuten bei 200 °C backen oder in der Pfanne grillen.",
+     "en": "Thread on skewers and bake 15 minutes at 200 °C, or grill in a pan.",
+     "es": "Ensarta en pinchos y hornea 15 minutos a 200 °C, o asa en una sartén.",
+     "pt": "Enfie nos espetos e asse 15 minutos a 200 °C, ou grelhe numa frigideira."
+    },
+    "timer_sec": 900
+   },
+   {
+    "tekst": {
+     "nl": "Meng yoghurt met geraspte komkommer en knoflook en serveer als tzatziki bij de spiesjes.",
+     "fr": "Mélangez le yaourt avec le concombre râpé et l'ail et servez comme tzatziki avec les brochettes.",
+     "de": "Joghurt mit geriebener Gurke und Knoblauch mischen und als Tzatziki zu den Spießen servieren.",
+     "en": "Mix yogurt with grated cucumber and garlic and serve as tzatziki with the skewers.",
+     "es": "Mezcla el yogur con el pepino rallado y el ajo y sirve como tzatziki con los pinchos.",
+     "pt": "Misture o iogurte com o pepino ralado e o alho e sirva como tzatziki com as espetadas."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mediterraan-tonijnsalade-bonen",
+  "stijl": "mediterraan",
+  "stijlen": [
+   "mediterraan"
+  ],
+  "moment": "middag",
+  "soort": "vis",
+  "basis": null,
+  "bereiding": "rauw",
+  "moeilijkheid": "makkelijk",
+  "kooktijd_min": 10,
+  "tags": [
+   "salade",
+   "snel"
+  ],
+  "titel": {
+   "nl": "Tonijnsalade met witte bonen",
+   "fr": "Salade de thon aux haricots blancs",
+   "de": "Thunfischsalat mit weißen Bohnen",
+   "en": "Tuna salad with white beans",
+   "es": "Ensalada de atún con alubias blancas",
+   "pt": "Salada de atum com feijão branco"
+  },
+  "ingredienten": [
+   {
+    "code": "tonijn_blik",
+    "h": 100,
+    "e": "g"
+   },
+   {
+    "code": "witte_bonen",
+    "h": 120,
+    "e": "g"
+   },
+   {
+    "code": "rode_ui",
+    "h": 20,
+    "e": "g"
+   },
+   {
+    "code": "peterselie",
+    "h": 3,
+    "e": "g"
+   },
+   {
+    "code": "citroen",
+    "h": 10,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Laat de tonijn en de bonen uitlekken. Snijd de rode ui fijn.",
+     "fr": "Égouttez le thon et les haricots. Hachez finement l'oignon rouge.",
+     "de": "Thunfisch und Bohnen abtropfen lassen. Rote Zwiebel fein schneiden.",
+     "en": "Drain the tuna and beans. Chop the red onion finely.",
+     "es": "Escurre el atún y las alubias. Pica finamente la cebolla morada.",
+     "pt": "Escorra o atum e o feijão. Pique finamente a cebola roxa."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Meng alles met olie, citroensap en fijngehakte peterselie.",
+     "fr": "Mélangez le tout avec l'huile, le jus de citron et le persil haché.",
+     "de": "Alles mit Öl, Zitronensaft und gehackter Petersilie mischen.",
+     "en": "Mix everything with the oil, lemon juice and chopped parsley.",
+     "es": "Mezcla todo con el aceite, el zumo de limón y el perejil picado.",
+     "pt": "Misture tudo com o azeite, o sumo de limão e a salsa picada."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Breng op smaak met zout en peper en serveer koud.",
+     "fr": "Assaisonnez de sel et de poivre et servez froid.",
+     "de": "Mit Salz und Pfeffer abschmecken und kalt servieren.",
+     "en": "Season with salt and pepper and serve cold.",
+     "es": "Sazona con sal y pimienta y sirve frío.",
+     "pt": "Tempere com sal e pimenta e sirva frio."
+    },
+    "timer_sec": null
+   }
+  ]
+ },
+ {
+  "slug": "mediterraan-gevulde-paprika",
+  "stijl": "mediterraan",
+  "stijlen": [
+   "mediterraan"
+  ],
+  "moment": "avond",
+  "soort": "vegetarisch",
+  "basis": "granen",
+  "bereiding": "oven",
+  "moeilijkheid": "gemiddeld",
+  "kooktijd_min": 40,
+  "tags": [
+   "ovengerecht"
+  ],
+  "titel": {
+   "nl": "Gevulde paprika met bulgur en feta",
+   "fr": "Poivrons farcis au boulgour et à la feta",
+   "de": "Gefüllte Paprika mit Bulgur und Feta",
+   "en": "Stuffed peppers with bulgur and feta",
+   "es": "Pimientos rellenos de bulgur y feta",
+   "pt": "Pimentos recheados com bulgur e feta"
+  },
+  "ingredienten": [
+   {
+    "code": "paprika",
+    "h": 150,
+    "e": "g"
+   },
+   {
+    "code": "bulgur",
+    "h": 60,
+    "e": "g"
+   },
+   {
+    "code": "tomaat_blokjes",
+    "h": 80,
+    "e": "g"
+   },
+   {
+    "code": "feta",
+    "h": 40,
+    "e": "g"
+   },
+   {
+    "code": "munt",
+    "h": 2,
+    "e": "g"
+   },
+   {
+    "code": "olijfolie",
+    "h": 10,
+    "e": "ml"
+   }
+  ],
+  "stappen": [
+   {
+    "tekst": {
+     "nl": "Kook de bulgur 10 minuten in water. Snijd de bovenkant van de paprika af en ontpit.",
+     "fr": "Faites cuire le boulgour 10 minutes dans l'eau. Coupez le haut des poivrons et épépinez-les.",
+     "de": "Bulgur 10 Minuten in Wasser kochen. Paprika oben abschneiden und entkernen.",
+     "en": "Cook the bulgur 10 minutes in water. Cut the tops off the peppers and remove the seeds.",
+     "es": "Cuece el bulgur 10 minutos en agua. Corta la parte superior de los pimientos y quita las semillas.",
+     "pt": "Cozinhe o bulgur 10 minutos em água. Corte a parte de cima dos pimentos e retire as sementes."
+    },
+    "timer_sec": 600
+   },
+   {
+    "tekst": {
+     "nl": "Meng bulgur met tomaat, feta en munt. Vul de paprika's ermee.",
+     "fr": "Mélangez le boulgour avec la tomate, la feta et la menthe. Garnissez-en les poivrons.",
+     "de": "Bulgur mit Tomate, Feta und Minze mischen. Die Paprika damit füllen.",
+     "en": "Mix the bulgur with tomato, feta and mint. Fill the peppers with it.",
+     "es": "Mezcla el bulgur con el tomate, la feta y la menta. Rellena los pimientos.",
+     "pt": "Misture o bulgur com o tomate, o feta e a hortelã. Recheie os pimentos."
+    },
+    "timer_sec": null
+   },
+   {
+    "tekst": {
+     "nl": "Besprenkel met olie en bak 30 minuten op 180 °C tot de paprika zacht is.",
+     "fr": "Arrosez d'huile et faites cuire 30 minutes à 180 °C jusqu'à ce que les poivrons soient tendres.",
+     "de": "Mit Öl beträufeln und 30 Minuten bei 180 °C backen, bis die Paprika weich ist.",
+     "en": "Drizzle with oil and bake 30 minutes at 180 °C until the peppers are soft.",
+     "es": "Rocía con aceite y hornea 30 minutos a 180 °C hasta que los pimientos estén tiernos.",
+     "pt": "Regue com azeite e asse 30 minutos a 180 °C até os pimentos ficarem macios."
+    },
+    "timer_sec": 1800
+   }
+  ]
+ }
+]
