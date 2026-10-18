@@ -5,6 +5,13 @@ import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum } from '@/lib/houdbaarheid';
 
+/**
+ * Soort frigo-item (WEEK-71).
+ * - planner: uit de catalogus van de database of uit de boodschappenlijst; telt mee bij het koken.
+ * - los: vrij ingegeven of gescand; telt niet mee, de gebruiker beheert en verwijdert deze zelf.
+ */
+export type FrigoBron = 'planner' | 'los';
+
 export type FrigoItem = {
   id: string;
   naam: string;
@@ -20,7 +27,14 @@ export type FrigoItem = {
   product?: Product;
   /** Houdbaar tot, yyyy-mm-dd, zoals ingevuld of van de verpakking; ontbreekt = niet gekend (WEEK-20). */
   houdbaarTot?: string;
+  /** Soort item (WEEK-71). Ontbreekt in oude data: afgeleid via frigoBron(). */
+  bron?: FrigoBron;
 };
+
+/** Het soort van een item. Oude items zonder soort: uit de boodschappenlijst = planner, de rest = los. */
+export function frigoBron(f: FrigoItem): FrigoBron {
+  return f.bron ?? (f.lijstId ? 'planner' : 'los');
+}
 
 /** Een regel op het frigo-scherm: hetzelfde product samengeteld. */
 export type FrigoRegel = {
@@ -64,6 +78,7 @@ export function frigoItemUitLijst(item: LijstItem, nu: Date): FrigoItem {
     afdeling: isAfdeling(afdeling) ? afdeling : 'overig',
     toegevoegdOp: nu.toISOString(),
     lijstId: item.id,
+    bron: 'planner',
   };
 }
 
@@ -85,7 +100,7 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
 }
 
 /** Extra gegevens bij zelf toevoegen (WEEK-35). */
-export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string };
+export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string; bron?: FrigoBron };
 
 /** Eenheden die je kan kiezen bij zelf toevoegen. */
 export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
@@ -110,6 +125,7 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
       ...(eenheid ? { eenheid } : {}),
       afdeling,
       toegevoegdOp: nu.toISOString(),
+      bron: extra.bron ?? 'los',
       ...(extra.product ? { product: extra.product } : {}),
       ...(isoDatum(extra.houdbaarTot) ? { houdbaarTot: extra.houdbaarTot } : {}),
     },
@@ -205,6 +221,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
       afdeling: typeof r.afdeling === 'string' && isAfdeling(r.afdeling) ? r.afdeling : 'overig',
       toegevoegdOp,
       ...(typeof r.lijstId === 'string' ? { lijstId: r.lijstId } : {}),
+      ...(r.bron === 'planner' || r.bron === 'los' ? { bron: r.bron } : {}),
       ...(product ? { product } : {}),
       ...(houdbaarTot ? { houdbaarTot } : {}),
     }];
@@ -234,7 +251,8 @@ export function verbruik(frigo: readonly FrigoItem[], ingredienten: readonly Ben
   const verbruikt: FrigoItem[] = [];
   for (const ing of ingredienten) {
     let nodig = ing.hoeveelheid !== undefined && ing.hoeveelheid > 0 ? ing.hoeveelheid : undefined;
-    const kandidaten = rest.filter((f) => pastBij(f, ing)).sort((a, b) => a.toegevoegdOp.localeCompare(b.toegevoegdOp));
+    // Losse producten (WEEK-71) tellen niet mee: die beheert de gebruiker zelf.
+    const kandidaten = rest.filter((f) => frigoBron(f) === 'planner' && pastBij(f, ing)).sort((a, b) => a.toegevoegdOp.localeCompare(b.toegevoegdOp));
     for (const f of kandidaten) {
       if (nodig === undefined || f.hoeveelheid === undefined) {
         rest = rest.filter((r) => r !== f);

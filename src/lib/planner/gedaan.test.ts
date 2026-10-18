@@ -18,8 +18,8 @@ const plan: Weekplan = {
   opdracht: '', kooktijden: [], stijlen: [], taal: 'nl', porties: 3, bron: 'lokaal', gemaaktOp: '2026-10-10T10:00:00.000Z',
 };
 const frigo: FrigoItem[] = [
-  { id: 'a', naam: 'pasta', hoeveelheid: 500, eenheid: 'g', afdeling: 'droge-voeding', toegevoegdOp: '2026-10-09T10:00:00.000Z' },
-  { id: 'b', naam: 'eieren', hoeveelheid: 6, eenheid: 'stuk', afdeling: 'zuivel-eieren', toegevoegdOp: '2026-10-09T10:00:00.000Z' },
+  { id: 'a', naam: 'pasta', hoeveelheid: 500, eenheid: 'g', afdeling: 'droge-voeding', toegevoegdOp: '2026-10-09T10:00:00.000Z', bron: 'planner' },
+  { id: 'b', naam: 'eieren', hoeveelheid: 6, eenheid: 'stuk', afdeling: 'zuivel-eieren', toegevoegdOp: '2026-10-09T10:00:00.000Z', bron: 'planner' },
 ];
 
 describe('zetGedaan (WEEK-19)', () => {
