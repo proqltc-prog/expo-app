@@ -1,0 +1,145 @@
+code	eenheid	categorie	soort	nl	fr	de	en	es	pt
+aardappel	g	groente	vegetarisch	aardappelen	pommes de terre	Kartoffeln	potatoes	patatas	batatas
+zoete_aardappel	g	groente	vegetarisch	zoete aardappel	patate douce	Süßkartoffel	sweet potato	boniato	batata-doce
+wortel	g	groente	vegetarisch	wortel	carotte	Karotte	carrot	zanahoria	cenoura
+prei	g	groente	vegetarisch	prei	poireau	Lauch	leek	puerro	alho-francês
+ui	g	groente	vegetarisch	ui	oignon	Zwiebel	onion	cebolla	cebola
+rode_ui	g	groente	vegetarisch	rode ui	oignon rouge	rote Zwiebel	red onion	cebolla roja	cebola roxa
+knoflook	teentje	groente	vegetarisch	knoflook	ail	Knoblauch	garlic	ajo	alho
+sjalot	g	groente	vegetarisch	sjalot	échalote	Schalotte	shallot	chalota	chalota
+bloemkool	g	groente	vegetarisch	bloemkool	chou-fleur	Blumenkohl	cauliflower	coliflor	couve-flor
+broccoli	g	groente	vegetarisch	broccoli	brocoli	Brokkoli	broccoli	brócoli	brócolos
+spinazie	g	groente	vegetarisch	spinazie	épinards	Spinat	spinach	espinacas	espinafres
+sla	g	groente	vegetarisch	sla	laitue	Salat	lettuce	lechuga	alface
+komkommer	g	groente	vegetarisch	komkommer	concombre	Gurke	cucumber	pepino	pepino
+tomaat	g	groente	vegetarisch	tomaat	tomate	Tomate	tomato	tomate	tomate
+tomaat_blokjes	g	groente	vegetarisch	tomatenblokjes	dés de tomates	Tomatenwürfel	diced tomatoes	tomate en dados	tomate em cubos
+paprika	g	groente	vegetarisch	paprika	poivron	Paprika	bell pepper	pimiento	pimento
+courgette	g	groente	vegetarisch	courgette	courgette	Zucchini	zucchini	calabacín	courgette
+aubergine	g	groente	vegetarisch	aubergine	aubergine	Aubergine	eggplant	berenjena	berinjela
+champignons	g	groente	vegetarisch	champignons	champignons	Champignons	mushrooms	champiñones	cogumelos
+selderij	g	groente	vegetarisch	selderij	céleri	Sellerie	celery	apio	aipo
+venkel	g	groente	vegetarisch	venkel	fenouil	Fenchel	fennel	hinojo	funcho
+rodekool	g	groente	vegetarisch	rode kool	chou rouge	Rotkohl	red cabbage	col lombarda	couve-roxa
+witte_kool	g	groente	vegetarisch	witte kool	chou blanc	Weißkohl	white cabbage	repollo	repolho
+sperziebonen	g	groente	vegetarisch	sperziebonen	haricots verts	grüne Bohnen	green beans	judías verdes	vagens
+maïs	g	groente	vegetarisch	maïs	maïs	Mais	sweetcorn	maíz	milho
+pompoen	g	groente	vegetarisch	pompoen	potiron	Kürbis	pumpkin	calabaza	abóbora
+rucola	g	groente	vegetarisch	rucola	roquette	Rucola	rocket	rúcula	rúcula
+gember	g	groente	vegetarisch	gember	gingembre	Ingwer	ginger	jengibre	gengibre
+asperges	g	groente	vegetarisch	asperges	asperges	Spargel	asparagus	espárragos	espargos
+avocado	stuk	fruit	vegetarisch	avocado	avocat	Avocado	avocado	aguacate	abacate
+citroen	g	groente	vegetarisch	citroen	citron	Zitrone	lemon	limón	limão
+limoen	stuk	fruit	vegetarisch	limoen	citron vert	Limette	lime	lima	lima
+appel	stuk	fruit	vegetarisch	appel	pomme	Apfel	apple	manzana	maçã
+peer	stuk	fruit	vegetarisch	peer	poire	Birne	pear	pera	pera
+aardbei	g	fruit	vegetarisch	aardbeien	fraises	Erdbeeren	strawberries	fresas	morangos
+bosbessen	g	fruit	vegetarisch	bosbessen	myrtilles	Heidelbeeren	blueberries	arándanos	mirtilos
+banaan	stuk	fruit	vegetarisch	banaan	banane	Banane	banana	plátano	banana
+kipfilet	g	vlees	vlees	kipfilet	filet de poulet	Hähnchenbrust	chicken breast	pechuga de pollo	peito de frango
+gehakt	g	vlees	vlees	gehakt	viande hachée	Hackfleisch	minced meat	carne picada	carne picada
+rundvlees	g	vlees	vlees	runderstoofvlees	bœuf à braiser	Rindfleisch	beef	ternera	carne de vaca
+varkensfilet	g	vlees	vlees	varkensfilet	filet de porc	Schweinefilet	pork fillet	lomo de cerdo	lombo de porco
+spek	g	vlees	vlees	spekblokjes	lardons	Speckwürfel	bacon cubes	tocino en dados	bacon em cubos
+kalkoen	g	vlees	vlees	kalkoenfilet	filet de dinde	Putenbrust	turkey breast	pechuga de pavo	peito de peru
+lamsvlees	g	vlees	vlees	lamsvlees	agneau	Lammfleisch	lamb	cordero	cordeiro
+worst	stuk	vlees	vlees	worst	saucisse	Wurst	sausage	salchicha	salsicha
+zalm	g	vis	vis	zalmfilet	filet de saumon	Lachsfilet	salmon fillet	filete de salmón	filete de salmão
+witvis	g	vis	vis	witvis	poisson blanc	weißer Fisch	white fish	pescado blanco	peixe branco
+tonijn_blik	g	vis	vis	tonijn uit blik	thon en conserve	Thunfisch aus der Dose	canned tuna	atún en lata	atum em lata
+garnalen	g	vis	vis	garnalen	crevettes	Garnelen	shrimp	gambas	camarões
+mosselen	g	vis	vis	mosselen	moules	Miesmuscheln	mussels	mejillones	mexilhões
+tofu	g	eiwit	vegetarisch	tofu	tofu	Tofu	tofu	tofu	tofu
+tempeh	g	eiwit	vegetarisch	tempeh	tempeh	Tempeh	tempeh	tempeh	tempeh
+halloumi	g	zuivel	vegetarisch	halloumi	halloumi	Halloumi	halloumi	halloumi	halloumi
+feta	g	zuivel	vegetarisch	feta	feta	Feta	feta	feta	feta
+mozzarella	g	zuivel	vegetarisch	mozzarella	mozzarella	Mozzarella	mozzarella	mozzarella	mozzarella
+ricotta	g	zuivel	vegetarisch	ricotta	ricotta	Ricotta	ricotta	ricotta	ricota
+kaas_parmezaan	g	zuivel	vegetarisch	parmezaan	parmesan	Parmesan	parmesan	parmesano	parmesão
+kaas_geraspt	g	zuivel	vegetarisch	geraspte oude kaas	fromage râpé	geriebener Käse	grated cheese	queso rallado	queijo ralado
+kaas_gruyere	g	zuivel	vegetarisch	gruyère	gruyère	Gruyère	gruyère	gruyère	gruyère
+mascarpone	g	zuivel	vegetarisch	mascarpone	mascarpone	Mascarpone	mascarpone	mascarpone	mascarpone
+melk	ml	zuivel	vegetarisch	melk	lait	Milch	milk	leche	leite
+room	ml	zuivel	vegetarisch	room	crème	Sahne	cream	nata	natas
+creme_fraiche	g	zuivel	vegetarisch	crème fraîche	crème fraîche	Crème fraîche	crème fraîche	crème fraîche	crème fraîche
+yoghurt	g	zuivel	vegetarisch	yoghurt	yaourt	Joghurt	yogurt	yogur	iogurte
+boter	g	zuivel	vegetarisch	boter	beurre	Butter	butter	mantequilla	manteiga
+eieren	stuk	ei	vegetarisch	eieren	œufs	Eier	eggs	huevos	ovos
+linzen	g	peulvrucht	vegetarisch	rode linzen	lentilles	rote Linsen	red lentils	lentejas rojas	lentilhas vermelhas
+kikkererwten	g	peulvrucht	vegetarisch	kikkererwten	pois chiches	Kichererbsen	chickpeas	garbanzos	grão-de-bico
+kidneybonen	g	peulvrucht	vegetarisch	kidneybonen	haricots rouges	Kidneybohnen	kidney beans	alubias rojas	feijão vermelho
+witte_bonen	g	peulvrucht	vegetarisch	witte bonen	haricots blancs	weiße Bohnen	white beans	alubias blancas	feijão branco
+doperwten	g	peulvrucht	vegetarisch	doperwten	petits pois	Erbsen	peas	guisantes	ervilhas
+pasta_spaghetti	g	graan	vegetarisch	spaghetti	spaghetti	Spaghetti	spaghetti	espagueti	esparguete
+pasta_penne	g	graan	vegetarisch	penne	penne	Penne	penne	penne	penne
+rijst_basmati	g	graan	vegetarisch	basmatirijst	riz basmati	Basmatireis	basmati rice	arroz basmati	arroz basmati
+rijst_sushi	g	graan	vegetarisch	sushirijst	riz à sushi	Sushireis	sushi rice	arroz para sushi	arroz para sushi
+noedels_rijst	g	graan	vegetarisch	rijstnoedels	nouilles de riz	Reisnudeln	rice noodles	fideos de arroz	noodles de arroz
+noedels_eier	g	graan	vegetarisch	eiernoedels	nouilles aux œufs	Eiernudeln	egg noodles	fideos de huevo	noodles de ovo
+couscous	g	graan	vegetarisch	couscous	couscous	Couscous	couscous	cuscús	cuscuz
+bulgur	g	graan	vegetarisch	bulgur	boulgour	Bulgur	bulgur	bulgur	bulgur
+quinoa	g	graan	vegetarisch	quinoa	quinoa	Quinoa	quinoa	quinoa	quinoa
+havermout	g	graan	vegetarisch	havermout	flocons d'avoine	Haferflocken	oats	copos de avena	aveia
+polenta	g	graan	vegetarisch	polenta	polenta	Polenta	polenta	polenta	polenta
+brood	g	graan	vegetarisch	brood	pain	Brot	bread	pan	pão
+tortilla_wrap	stuk	graan	vegetarisch	tortillawrap	wrap	Tortillawrap	tortilla wrap	tortilla	wrap de tortilha
+bloem	g	zoet	vegetarisch	bloem	farine	Mehl	flour	harina	farinha
+basilicum	g	kruid	vegetarisch	basilicum	basilic	Basilikum	basil	albahaca	manjericão
+peterselie	g	kruid	vegetarisch	peterselie	persil	Petersilie	parsley	perejil	salsa
+koriander	g	kruid	vegetarisch	koriander	coriandre	Koriander	coriander	cilantro	coentro
+munt	g	kruid	vegetarisch	munt	menthe	Minze	mint	menta	hortelã
+dille	g	kruid	vegetarisch	dille	aneth	Dill	dill	eneldo	endro
+tijm	g	kruid	vegetarisch	tijm	thym	Thymian	thyme	tomillo	tomilho
+rozemarijn	g	kruid	vegetarisch	rozemarijn	romarin	Rosmarin	rosemary	romero	alecrim
+oregano	g	kruid	vegetarisch	oregano	origan	Oregano	oregano	orégano	orégão
+komijn	g	specerij	vegetarisch	komijn	cumin	Kreuzkümmel	cumin	comino	cominho
+kaneel	g	specerij	vegetarisch	kaneel	cannelle	Zimt	cinnamon	canela	canela
+kurkuma	g	specerij	vegetarisch	kurkuma	curcuma	Kurkuma	turmeric	cúrcuma	açafrão-da-terra
+currypoeder	g	specerij	vegetarisch	kerriepoeder	curry en poudre	Currypulver	curry powder	curry en polvo	caril em pó
+currypasta	g	specerij	vegetarisch	currypasta	pâte de curry	Currypaste	curry paste	pasta de curry	pasta de caril
+garam_masala	g	specerij	vegetarisch	garam masala	garam masala	Garam Masala	garam masala	garam masala	garam masala
+chilipoeder	g	specerij	vegetarisch	chilipoeder	piment en poudre	Chilipulver	chili powder	chile en polvo	pimenta em pó
+paprikapoeder	g	specerij	vegetarisch	paprikapoeder	paprika en poudre	Paprikapulver	paprika	pimentón	colorau
+chilivlokken	g	specerij	vegetarisch	chilivlokken	flocons de piment	Chiliflocken	chili flakes	copos de chile	flocos de pimenta
+kardemom	g	specerij	vegetarisch	kardemom	cardamome	Kardamom	cardamom	cardamomo	cardamomo
+nootmuskaat	g	specerij	vegetarisch	nootmuskaat	noix de muscade	Muskatnuss	nutmeg	nuez moscada	noz-moscada
+vanille	ml	zoet	vegetarisch	vanille-extract	extrait de vanille	Vanilleextrakt	vanilla extract	extracto de vainilla	extrato de baunilha
+sesamzaad	g	specerij	vegetarisch	sesamzaad	graines de sésame	Sesam	sesame seeds	semillas de sésamo	sementes de sésamo
+olijfolie	ml	vet	vegetarisch	olijfolie	huile d'olive	Olivenöl	olive oil	aceite de oliva	azeite
+zonnebloemolie	ml	vet	vegetarisch	zonnebloemolie	huile de tournesol	Sonnenblumenöl	sunflower oil	aceite de girasol	óleo de girassol
+sesamolie	ml	vet	vegetarisch	sesamolie	huile de sésame	Sesamöl	sesame oil	aceite de sésamo	óleo de sésamo
+sojasaus	ml	condiment	vegetarisch	sojasaus	sauce soja	Sojasauce	soy sauce	salsa de soja	molho de soja
+teriyakisaus	ml	condiment	vegetarisch	teriyakisaus	sauce teriyaki	Teriyakisauce	teriyaki sauce	salsa teriyaki	molho teriyaki
+oestersaus	ml	condiment	vis	oestersaus	sauce huître	Austernsauce	oyster sauce	salsa de ostras	molho de ostras
+vissaus	ml	condiment	vis	vissaus	sauce de poisson	Fischsauce	fish sauce	salsa de pescado	molho de peixe
+rijstazijn	ml	condiment	vegetarisch	rijstazijn	vinaigre de riz	Reisessig	rice vinegar	vinagre de arroz	vinagre de arroz
+appelazijn	ml	condiment	vegetarisch	appelazijn	vinaigre de cidre	Apfelessig	apple cider vinegar	vinagre de manzana	vinagre de maçã
+balsamicoazijn	ml	condiment	vegetarisch	balsamicoazijn	vinaigre balsamique	Balsamico	balsamic vinegar	vinagre balsámico	vinagre balsâmico
+tomatenpuree	g	condiment	vegetarisch	tomatenpuree	purée de tomate	Tomatenmark	tomato purée	puré de tomate	puré de tomate
+passata	g	condiment	vegetarisch	passata	passata	Passata	passata	passata	passata
+pesto	g	condiment	vegetarisch	pesto	pesto	Pesto	pesto	pesto	pesto
+mosterd	g	condiment	vegetarisch	mosterd	moutarde	Senf	mustard	mostaza	mostarda
+honing	g	zoet	vegetarisch	honing	miel	Honig	honey	miel	mel
+ahornsiroop	ml	zoet	vegetarisch	ahornsiroop	sirop d'érable	Ahornsirup	maple syrup	sirope de arce	xarope de bordo
+kokosmelk	ml	condiment	vegetarisch	kokosmelk	lait de coco	Kokosmilch	coconut milk	leche de coco	leite de coco
+tahin	g	condiment	vegetarisch	tahin	tahini	Tahini	tahini	tahini	tahine
+miso	g	condiment	vegetarisch	miso	miso	Miso	miso	miso	missô
+harissa	g	condiment	vegetarisch	harissa	harissa	Harissa	harissa	harissa	harissa
+sambal	g	condiment	vegetarisch	sambal	sambal	Sambal	sambal	sambal	sambal
+ketjap	ml	condiment	vegetarisch	ketjap manis	ketjap manis	Ketjap Manis	ketjap manis	ketjap manis	ketjap manis
+gochujang	g	condiment	vegetarisch	gochujang	gochujang	Gochujang	gochujang	gochujang	gochujang
+bouillonblokje	stuk	condiment	vegetarisch	bouillonblokje	bouillon cube	Brühwürfel	stock cube	cubito de caldo	cubo de caldo
+kippenbouillon	ml	condiment	vlees	kippenbouillon	bouillon de poulet	Hühnerbrühe	chicken stock	caldo de pollo	caldo de galinha
+groentebouillon	ml	condiment	vegetarisch	groentebouillon	bouillon de légumes	Gemüsebrühe	vegetable stock	caldo de verduras	caldo de legumes
+walnoten	g	zoet	vegetarisch	walnoten	noix	Walnüsse	walnuts	nueces	nozes
+amandelen	g	zoet	vegetarisch	amandelen	amandes	Mandeln	almonds	almendras	amêndoas
+cashewnoten	g	zoet	vegetarisch	cashewnoten	noix de cajou	Cashewnüsse	cashews	anacardos	cajus
+pinda	g	zoet	vegetarisch	pinda's	cacahuètes	Erdnüsse	peanuts	cacahuetes	amendoins
+pijnboompitten	g	zoet	vegetarisch	pijnboompitten	pignons	Pinienkerne	pine nuts	piñones	pinhões
+suiker	g	zoet	vegetarisch	suiker	sucre	Zucker	sugar	azúcar	açúcar
+bruine_suiker	g	zoet	vegetarisch	bruine suiker	cassonade	brauner Zucker	brown sugar	azúcar moreno	açúcar mascavado
+bakpoeder	g	zoet	vegetarisch	bakpoeder	levure chimique	Backpulver	baking powder	levadura en polvo	fermento em pó
+cacao	g	zoet	vegetarisch	cacaopoeder	cacao en poudre	Kakaopulver	cacao powder	cacao en polvo	cacau em pó
+chocolade_pure	g	zoet	vegetarisch	pure chocolade	chocolat noir	dunkle Schokolade	dark chocolate	chocolate negro	chocolate negro
+rozijnen	g	zoet	vegetarisch	rozijnen	raisins secs	Rosinen	raisins	pasas	passas
+kokos_rasp	g	zoet	vegetarisch	kokosrasp	noix de coco râpée	Kokosraspeln	desiccated coconut	coco rallado	coco ralado
