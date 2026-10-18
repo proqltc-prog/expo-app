@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { AppState, Pressable, Text } from 'react-native';
 import { router, Tabs } from 'expo-router';
@@ -38,10 +39,10 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
     >
       {/* Welkomstscherm (WEEK-79): alleen bij de eerste opening, zonder tabbalk en koptekst. */}
       <Tabs.Screen name="welkom" options={{ headerShown: false, tabBarStyle: { display: 'none' }, href: null }} />
-      <Tabs.Screen name="index" options={{ title: t('tab.menu.titel'), tabBarLabel: t('tab.menu'), headerRight: () => <InstellingenKnop /> }} />
-      <Tabs.Screen name="lijst" options={{ title: t('tab.lijst.titel'), tabBarLabel: t('tab.lijst') }} />
-      <Tabs.Screen name="frigo" options={{ title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
-      <Tabs.Screen name="scan" options={{ title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
+      <Tabs.Screen name="index" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} />, title: t('tab.menu.titel'), tabBarLabel: t('tab.menu'), headerRight: () => <InstellingenKnop /> }} />
+      <Tabs.Screen name="lijst" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart-outline" size={size} color={color} />, title: t('tab.lijst.titel'), tabBarLabel: t('tab.lijst') }} />
+      <Tabs.Screen name="frigo" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="snow-outline" size={size} color={color} />, title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
+      <Tabs.Screen name="scan" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="scan-outline" size={size} color={color} />, title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
       {/* Gezinsprofiel (WEEK-39): geen eigen tabblad meer, bereikbaar via het instellingen-icoon. */}
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null }} />
       {/* Zelf kiezen (WEEK-44): een gerecht uit de receptenbank, vanuit het weekmenu. */}

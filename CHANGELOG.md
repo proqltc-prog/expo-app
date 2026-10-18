@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.71.0] – 2026-10-18
+
+**Jira:** [WEEK-73](https://proqltc-1791495894841.atlassian.net/browse/WEEK-73) (verbetering) · **Confluence:** [WEEK-73](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159262)
+
+- Nieuwe lay-out op basis van het goedgekeurde thema, met petrol als accent en oranje voor de aandacht.
+- Het weekmenu toont per keuken een eigen stijlbeeld, met een subtiele vlag van het land onderaan.
+- Dagkaarten tonen het stijlbeeld van het gerecht, de bevestigingsstatus in de kop en de juiste knoptekst.
+- De stappenbalk toont de namen van de stappen: Periode, Moment, Stijl, Vermijden, Plan.
+- De onderste navigatie heeft iconen voor menu, lijst, frigo en scan.
+- Regressietests voor de stappen, de statussen en de vertalingen van het weekmenu (nl, fr, de, en, es, pt).
+
 ## [0.70.0] – 2026-10-18
 
 **Jira:** [WEEK-72](https://proqltc-1791495894841.atlassian.net/browse/WEEK-72) (verbetering) · **Confluence:** [WEEK-72](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8192058)

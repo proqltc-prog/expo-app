@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, MOMENTEN, Soort } from '@/data/receptenbank';
-import { landenkleuren } from '@/data/landen';
+import { Stijlbeeld } from '@/ui/stijlbeeld';
+import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
 import { planWeek } from '@/lib/planner/ai';
@@ -378,7 +379,11 @@ export default function Weekplanning() {
           <View key={f} style={[s.stap, i <= huidigeStap && s.stapAan]} />
         ))}
       </View>
-      <Text style={s.stapTekst}>{t('planning.stap', { n: huidigeStap + 1, m: FASEN.length })}</Text>
+      <View style={s.stapNamen}>
+        {FASEN.map((f, i) => (
+          <Text key={f} style={[s.stapNaam, i === huidigeStap && s.stapNaamAan]}>{t(`stap.${f}`)}</Text>
+        ))}
+      </View>
 
       {fase === 'periode' && (
         <View style={s.blok}>
@@ -412,7 +417,6 @@ export default function Weekplanning() {
           <View style={s.tegels}>
             {stijlOpties.map((o) => {
               const aan = keuzes.stijlen.includes(o.id);
-              const [a, b, c] = landenkleuren(o.id);
               return (
                 <Pressable
                   key={o.id}
@@ -421,11 +425,7 @@ export default function Weekplanning() {
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: aan }}
                 >
-                  <View style={s.streepRij}>
-                    <View style={[s.streep, { backgroundColor: a }]} />
-                    <View style={[s.streep, { backgroundColor: b }]} />
-                    <View style={[s.streep, { backgroundColor: c }]} />
-                  </View>
+                  <Stijlbeeld id={o.id} />
                   <Text style={[s.tegelTekst, aan && s.tegelTekstAan]}>{t(STIJL_SLEUTEL[o.id as keyof typeof STIJL_SLEUTEL] ?? 'stijlOptie.hartig')}</Text>
                 </Pressable>
               );
@@ -471,8 +471,14 @@ export default function Weekplanning() {
                 const heeftBereiding = bevestigd && bereidingVoor(recept, eigen, taal) !== null;
                 return (
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>
+                    <View style={s.kaartRij}>
+                    <Stijlbeeld id={beeldVoorReceptStijl(recept.stijlen[0]) ?? 'belgisch'} />
+                    <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
                       <Text style={s.dag}>{t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
+                      {!gedaan && (
+                        <Text style={bevestigd ? s.statusAan : s.statusWacht}>{t(bevestigd ? 'planning.bevestigd' : 'planning.nogTeBevestigen')}</Text>
+                      )}
                       {wijzigbaar && (
                         <Pressable
                           style={s.reset}
@@ -500,7 +506,6 @@ export default function Weekplanning() {
                         </Pressable>
                       )}
                     </View>
-                    {bevestigd && !gedaan && <Text style={s.bevestigdTekst}>{t('planning.bevestigd')}</Text>}
                     {!gedaan && uitFrigo && uitFrigo.length > 0 && (
                       <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
                     )}
@@ -519,12 +524,12 @@ export default function Weekplanning() {
                         </View>
                       </View>
                     ) : (
-                      !gedaan && !bevestigd && <Text style={s.gepland}>{t('status.gepland')}</Text>
+                      null
                     )}
                     {wijzigbaar && (
                       <View style={s.acties}>
                         <Pressable style={s.bevestigKnop} onPress={() => bevestigDagKnop(index)} accessibilityRole="button" disabled={!mag}>
-                          <Text style={s.bevestigKnopTekst}>{t('planning.bevestig')}</Text>
+                          <Text style={s.bevestigKnopTekst}>{t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}</Text>
                         </Pressable>
                         <Pressable style={s.kiesKnop} onPress={() => kiesZelf(index)} accessibilityRole="button" disabled={!mag}>
                           <Text style={s.kiesKnopTekst}>{t('planning.zelfKiezen')}</Text>
@@ -549,6 +554,8 @@ export default function Weekplanning() {
                       >
                         <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t(gedaan ? 'planning.gedaan' : 'planning.gekookt')}</Text>
                       </Pressable>
+                    </View>
+                    </View>
                     </View>
                   </View>
                 );
@@ -594,7 +601,9 @@ const s = StyleSheet.create({
   stappen: { flexDirection: 'row', gap: 6 },
   stap: { flex: 1, height: 6, borderRadius: 3, backgroundColor: LIJN },
   stapAan: { backgroundColor: PETROL },
-  stapTekst: { color: MUTED, fontSize: 13, fontWeight: '600' },
+  stapNamen: { flexDirection: 'row', gap: 6 },
+  stapNaam: { flex: 1, textAlign: 'center', color: MUTED, fontSize: 11, fontWeight: '600' },
+  stapNaamAan: { color: PETROL, fontWeight: '800' },
   blok: { gap: 12, backgroundColor: '#fff', borderRadius: 18, padding: 16, borderWidth: 1, borderColor: LIJN },
   kopRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   kop: { fontSize: 18, fontWeight: '800', color: INKT, flexShrink: 1 },
@@ -610,8 +619,6 @@ const s = StyleSheet.create({
   tegels: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   tegel: { width: '48%', borderWidth: 1.5, borderColor: LIJN, borderRadius: 14, overflow: 'hidden', backgroundColor: '#fff' },
   tegelAan: { borderColor: PETROL, borderWidth: 2.5 },
-  streepRij: { flexDirection: 'row', height: 14 },
-  streep: { flex: 1 },
   tegelTekst: { padding: 10, fontWeight: '700', color: INKT },
   tegelTekstAan: { color: PETROL },
   melding: { backgroundColor: ORANJE_ZACHT, color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
@@ -620,6 +627,10 @@ const s = StyleSheet.create({
   tegoed: { color: MUTED, fontSize: 12, textAlign: 'center' },
   kaart: { backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: LIJN },
   kaartBevestigd: { borderColor: PETROL, borderWidth: 1.5 },
+  statusAan: { color: PETROL, fontSize: 12, fontWeight: '700' },
+  statusWacht: { color: '#B4500A', fontSize: 12, fontWeight: '700' },
+  kaartRij: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+  kaartInhoud: { flex: 1, minWidth: 0, gap: 6 },
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
   dag: { fontSize: 13, color: MUTED, fontWeight: '600' },
   kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
