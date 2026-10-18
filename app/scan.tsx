@@ -40,7 +40,7 @@ export default function Scan() {
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
-  // Scanlimiet (WEEK-34): 3 per dag.
+  // Scanlimiet (WEEK-34, WEEK-38): 10 gratis per dag (GRATIS_SCANS_PER_DAG), plus bonusscans van het reclamefilmpje.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
   // Reclamefilmpje voor extra scans (WEEK-38): knop uitgeschakeld tijdens het laden.
   const [filmpjeBezig, setFilmpjeBezig] = useState(false);
