@@ -8,6 +8,13 @@ export const fr: Vertalingen = {
   'welkom.knop': 'Choisir votre langue',
   'welkom.doorgaan': 'Continuer',
   'welkom.stap': 'Étape 1 sur 3 : langue · famille · menu',
+  'bereiding.titel': 'Préparation',
+  'bereiding.icoon': 'Afficher les étapes',
+  'bereiding.stap': 'Étape {n} sur {m}',
+  'bereiding.vorige': 'Précédent',
+  'bereiding.volgende': 'Suivant',
+  'bereiding.klaar': 'Terminé',
+  'bereiding.geen': 'Aucune étape n’est disponible pour cette recette.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Menu de la semaine',

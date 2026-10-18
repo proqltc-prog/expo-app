@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.68.0] – 2026-10-18
+
+**Jira:** [WEEK-81](https://proqltc-1791495894841.atlassian.net/browse/WEEK-81) (verbetering) · **Confluence:** [WEEK-81](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7766089)
+
+- Een bevestigd gerecht op het weekmenu krijgt een icoon. Met dat icoon open je de bereidingsstappen om tijdens het koken te volgen.
+- De stappen van de 37 ingebouwde recepten staan in alle zes talen. Eigen recepten tonen de stappen uit de editor.
+- Recepten zonder bekende stappen krijgen geen icoon.
+
 ## [0.67.0] – 2026-10-18
 
 **Jira:** [WEEK-82](https://proqltc-1791495894841.atlassian.net/browse/WEEK-82) (verbetering) · **Confluence:** [WEEK-82](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7995418)

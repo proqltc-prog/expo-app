@@ -17,6 +17,9 @@ import { laadFrigo } from '@/opslag/frigo';
 import { bewaarFavoriet, Favoriet, favorietUitDag, isFavoriet } from '@/lib/favorieten';
 import { laadFavorieten, wijzigFavorieten } from '@/opslag/favorieten';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
+import { EigenRecept } from '@/lib/eigenrecepten';
+import { bereidingVoor } from '@/lib/bereiding';
+import { Ionicons } from '@expo/vector-icons';
 import { laadGezin } from '@/opslag/sync';
 import { trekFrigoAf } from '@/lib/frigo';
 import { aiPlanner as AI, aiTegoed } from '@/opslag/supabase';
@@ -111,6 +114,8 @@ export default function Weekplanning() {
   const [fase, setFase] = useState<Fase>('periode');
   const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
   const [eigenAantal, setEigenAantal] = useState(0);
+  // Eigen recepten, om de bereidingsstappen van een bevestigd gerecht te kunnen vinden (WEEK-81).
+  const [eigen, setEigen] = useState<EigenRecept[]>([]);
   // Beheer (WEEK-30): alleen de beheerder van het plan wijzigt het; de rest ziet het mee.
   const [mijnId, setMijnId] = useState<string | undefined>(undefined);
   const [leden, setLeden] = useState<GezinsLid[]>([]);
@@ -165,7 +170,10 @@ export default function Weekplanning() {
       laadProfiel().then(setProfiel);
       laadPlan().then(setPlan);
       laadFavorieten().then(setFavorieten);
-      laadEigenRecepten().then((lijst) => setEigenAantal(lijst.length));
+      laadEigenRecepten().then((lijst) => {
+        setEigen(lijst);
+        setEigenAantal(lijst.length);
+      });
       aiTegoed().then(setTegoed);
       ikId().then(setMijnId);
       laadLeden().then(setLeden).catch(() => setLeden([]));
@@ -481,6 +489,8 @@ export default function Weekplanning() {
               {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
               {plan.dagen.map(({ dag, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
                 const wijzigbaar = magDagWijzigen(plan.dagen[index]);
+                // Het icoon verschijnt enkel bij een bevestigd gerecht dat bereidingsstappen heeft (WEEK-81).
+                const heeftBereiding = bevestigd && bereidingVoor(recept, eigen, taal) !== null;
                 return (
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>
                     <View style={s.kaartKop}>
@@ -498,7 +508,20 @@ export default function Weekplanning() {
                         </Pressable>
                       )}
                     </View>
-                    <Text style={s.naam}>{recept.naam}</Text>
+                    <View style={s.naamRij}>
+                      <Text style={[s.naam, s.naamTekst]}>{recept.naam}</Text>
+                      {heeftBereiding && (
+                        <Pressable
+                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: recept.naam, minuten: String(recept.minuten) } })}
+                          accessibilityRole="button"
+                          accessibilityLabel={t('bereiding.icoon')}
+                          hitSlop={8}
+                          style={s.bereidingKnop}
+                        >
+                          <Ionicons name="book-outline" size={20} color={PETROL} />
+                        </Pressable>
+                      )}
+                    </View>
                     {bevestigd && !gedaan && <Text style={s.bevestigdTekst}>{t('planning.bevestigd')}</Text>}
                     {!gedaan && uitFrigo && uitFrigo.length > 0 && (
                       <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
@@ -642,6 +665,9 @@ const s = StyleSheet.create({
   resetTekst: { color: PETROL, fontSize: 18, fontWeight: '700' },
   naam: { fontSize: 17, fontWeight: '700', marginTop: 2, color: INKT },
   bevestigdTekst: { color: PETROL, fontWeight: '700', fontSize: 13, marginTop: 4 },
+  naamRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  naamTekst: { flex: 1 },
+  bereidingKnop: { width: 40, height: 40, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
   min: { color: MUTED, fontSize: 13 },

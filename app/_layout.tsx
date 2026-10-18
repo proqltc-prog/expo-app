@@ -51,6 +51,8 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
       {/* Mijn recepten (WEEK-45): eigen recepten beheren, bereikbaar vanuit het weekmenu. */}
       <Tabs.Screen name="recepten" options={{ title: t('recepten.titel'), href: null }} />
       <Tabs.Screen name="recept" options={{ title: t('recept.titelNieuw'), href: null }} />
+      {/* Bereiding (WEEK-81): de stappen van een bevestigd gerecht, vanuit het weekmenu. */}
+      <Tabs.Screen name="bereiding" options={{ title: t('bereiding.titel'), href: null }} />
     </Tabs>
   );
 }

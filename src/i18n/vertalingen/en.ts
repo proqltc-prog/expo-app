@@ -8,6 +8,13 @@ export const en: Vertalingen = {
   'welkom.knop': 'Choose your language',
   'welkom.doorgaan': 'Continue',
   'welkom.stap': 'Step 1 of 3: language · family · menu',
+  'bereiding.titel': 'Preparation',
+  'bereiding.icoon': 'Show preparation steps',
+  'bereiding.stap': 'Step {n} of {m}',
+  'bereiding.vorige': 'Previous',
+  'bereiding.volgende': 'Next',
+  'bereiding.klaar': 'Done',
+  'bereiding.geen': 'No steps are available for this recipe.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekly menu',
