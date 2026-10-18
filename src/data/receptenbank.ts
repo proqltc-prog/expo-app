@@ -10,7 +10,8 @@ export type Eenheid = 'g' | 'ml' | 'stuk' | 'teentje';
 export type Moment = 'ontbijt' | 'middag' | 'avond';
 export const MOMENTEN: readonly Moment[] = ['ontbijt', 'middag', 'avond'];
 
-export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'comfort', 'licht'];
+// Stijlen van de lokale receptenbank. 'licht' en 'comfort' zijn verwijderd (WEEK-78).
+export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan'];
 
 export type BankRecept = {
   id: string;
@@ -32,7 +33,7 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['pasta', 100, 'g'], ['pesto', 40, 'g'], ['broccoli', 100, 'g'], ['parmezaan', 15, 'g']],
   },
   {
-    id: 'omelet', soort: 'vegetarisch', minuten: 15, stijlen: ['klassiek', 'licht'], basis: 'brood',
+    id: 'omelet', soort: 'vegetarisch', minuten: 15, stijlen: ['klassiek'], basis: 'brood',
     namen: ['Omelet met groenten en brood', 'Omelette aux légumes et pain', 'Gemüseomelett mit Brot', 'Vegetable omelette with bread', 'Tortilla francesa con verduras y pan', 'Omelete de legumes com pão'],
     ingredienten: [['eieren', 2, 'stuk'], ['paprika', 0.5, 'stuk'], ['champignons', 60, 'g'], ['brood', 80, 'g']],
   },
@@ -42,12 +43,12 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['rode-linzen', 70, 'g'], ['kokosmelk', 100, 'ml'], ['currypasta', 15, 'g'], ['rijst', 75, 'g'], ['spinazie', 60, 'g']],
   },
   {
-    id: 'groentesoep', soort: 'vegetarisch', minuten: 30, stijlen: ['klassiek', 'licht'], basis: 'brood',
+    id: 'groentesoep', soort: 'vegetarisch', minuten: 30, stijlen: ['klassiek'], basis: 'brood',
     namen: ['Groentesoep met kaasboterhammen', 'Soupe de légumes et tartines au fromage', 'Gemüsesuppe mit Käsebroten', 'Vegetable soup with cheese sandwiches', 'Sopa de verduras con bocadillos de queso', 'Sopa de legumes com sandes de queijo'],
     ingredienten: [['soepgroenten', 200, 'g'], ['bouillon', 0.5, 'stuk'], ['brood', 100, 'g'], ['kaas', 30, 'g']],
   },
   {
-    id: 'wok-noedels', soort: 'vegetarisch', minuten: 20, stijlen: ['aziatisch', 'licht'], basis: 'noedels',
+    id: 'wok-noedels', soort: 'vegetarisch', minuten: 20, stijlen: ['aziatisch'], basis: 'noedels',
     namen: ['Noedels met wokgroenten en ei', 'Nouilles sautées aux légumes et œuf', 'Gebratene Nudeln mit Gemüse und Ei', 'Stir-fried noodles with vegetables and egg', 'Fideos salteados con verduras y huevo', 'Noodles salteados com legumes e ovo'],
     ingredienten: [['noedels', 90, 'g'], ['wokgroenten', 200, 'g'], ['sojasaus', 15, 'ml'], ['eieren', 1, 'stuk']],
   },
@@ -67,28 +68,28 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['eieren', 2, 'stuk'], ['tomatenblokjes', 150, 'g'], ['paprika', 0.5, 'stuk'], ['ui', 0.5, 'stuk'], ['brood', 80, 'g']],
   },
   {
-    id: 'couscous-feta', soort: 'vegetarisch', minuten: 25, stijlen: ['mediterraan', 'licht'], basis: 'granen',
+    id: 'couscous-feta', soort: 'vegetarisch', minuten: 25, stijlen: ['mediterraan'], basis: 'granen',
     namen: ['Couscous met courgette en feta', 'Couscous à la courgette et feta', 'Couscous mit Zucchini und Feta', 'Couscous with courgette and feta', 'Cuscús con calabacín y feta', 'Cuscuz com curgete e feta'],
     ingredienten: [['couscous', 70, 'g'], ['courgette', 100, 'g'], ['feta', 50, 'g'], ['tomaten', 1, 'stuk']],
   },
   {
-    id: 'mac-kaas', soort: 'vegetarisch', minuten: 25, stijlen: ['comfort'], basis: 'pasta',
+    id: 'mac-kaas', soort: 'vegetarisch', minuten: 25, stijlen: ['klassiek'], basis: 'pasta',
     namen: ['Macaroni met kaassaus en broccoli', 'Macaronis sauce fromage et brocoli', 'Makkaroni mit Käsesauce und Brokkoli', 'Macaroni cheese with broccoli', 'Macarrones con salsa de queso y brócoli', 'Macarrão com molho de queijo e brócolos'],
     ingredienten: [['macaroni', 100, 'g'], ['kaas', 50, 'g'], ['melk', 100, 'ml'], ['broccoli', 80, 'g']],
   },
   {
-    id: 'groentelasagne', soort: 'vegetarisch', minuten: 60, stijlen: ['italiaans', 'comfort'], basis: 'pasta',
+    id: 'groentelasagne', soort: 'vegetarisch', minuten: 60, stijlen: ['italiaans'], basis: 'pasta',
     namen: ['Groentelasagne met spinazie', 'Lasagne aux légumes et épinards', 'Gemüselasagne mit Spinat', 'Vegetable and spinach lasagne', 'Lasaña de verduras y espinacas', 'Lasanha de legumes e espinafres'],
     ingredienten: [['lasagnevellen', 80, 'g'], ['courgette', 100, 'g'], ['spinazie', 60, 'g'], ['kaas', 40, 'g'], ['tomatenblokjes', 120, 'g']],
   },
   // ── vis ──
   {
-    id: 'zalm-krieltjes', soort: 'vis', minuten: 30, stijlen: ['klassiek', 'licht'], basis: 'aardappel',
+    id: 'zalm-krieltjes', soort: 'vis', minuten: 30, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Zalm uit de oven met krieltjes', 'Saumon au four et grenailles', 'Ofenlachs mit Drillingen', 'Oven-baked salmon with baby potatoes', 'Salmón al horno con patatas baby', 'Salmão no forno com batatas pequenas'],
     ingredienten: [['zalmfilet', 125, 'g'], ['krieltjes', 200, 'g'], ['sperziebonen', 100, 'g'], ['citroen', 0.25, 'stuk']],
   },
   {
-    id: 'vissticks-puree', soort: 'vis', minuten: 25, stijlen: ['comfort', 'klassiek'], basis: 'aardappel',
+    id: 'vissticks-puree', soort: 'vis', minuten: 25, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Vissticks met puree en wortelen', 'Bâtonnets de poisson, purée et carottes', 'Fischstäbchen mit Püree und Karotten', 'Fish fingers with mash and carrots', 'Palitos de pescado con puré y zanahorias', 'Douradinhos com puré e cenouras'],
     ingredienten: [['vissticks', 4, 'stuk'], ['aardappelen', 200, 'g'], ['melk', 50, 'ml'], ['wortelen', 100, 'g']],
   },
@@ -98,12 +99,12 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['pasta', 100, 'g'], ['tonijn', 50, 'g'], ['tomatenblokjes', 120, 'g'], ['ui', 0.5, 'stuk']],
   },
   {
-    id: 'kabeljauw-teriyaki', soort: 'vis', minuten: 20, stijlen: ['aziatisch', 'licht'], basis: 'rijst',
+    id: 'kabeljauw-teriyaki', soort: 'vis', minuten: 20, stijlen: ['aziatisch'], basis: 'rijst',
     namen: ['Kabeljauw teriyaki met rijst', 'Cabillaud teriyaki et riz', 'Kabeljau Teriyaki mit Reis', 'Teriyaki cod with rice', 'Bacalao teriyaki con arroz', 'Bacalhau teriyaki com arroz'],
     ingredienten: [['kabeljauw', 125, 'g'], ['rijst', 75, 'g'], ['teriyakisaus', 20, 'ml'], ['wokgroenten', 150, 'g']],
   },
   {
-    id: 'vistacos', soort: 'vis', minuten: 20, stijlen: ['mexicaans', 'licht'], basis: 'wrap',
+    id: 'vistacos', soort: 'vis', minuten: 20, stijlen: ['mexicaans'], basis: 'wrap',
     namen: ['Vistaco’s met limoen', 'Tacos de poisson au citron vert', 'Fisch-Tacos mit Limette', 'Fish tacos with lime', 'Tacos de pescado con lima', 'Tacos de peixe com lima'],
     ingredienten: [['witvis', 110, 'g'], ['tortillas', 2, 'stuk'], ['sla', 30, 'g'], ['limoen', 0.25, 'stuk'], ['tomaten', 0.5, 'stuk']],
   },
@@ -113,7 +114,7 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['scampi', 100, 'g'], ['spaghetti', 100, 'g'], ['look', 1, 'teentje'], ['tomaten', 1, 'stuk']],
   },
   {
-    id: 'vispannetje', soort: 'vis', minuten: 35, stijlen: ['klassiek', 'comfort'], basis: 'aardappel',
+    id: 'vispannetje', soort: 'vis', minuten: 35, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Vispannetje met prei en puree', 'Gratin de poisson aux poireaux et purée', 'Fischpfanne mit Lauch und Püree', 'Fish and leek bake with mash', 'Cazuela de pescado con puerro y puré', 'Peixe com alho-francês e puré'],
     ingredienten: [['witvis', 125, 'g'], ['prei', 80, 'g'], ['room', 50, 'ml'], ['aardappelen', 200, 'g']],
   },
@@ -124,22 +125,22 @@ export const RECEPTENBANK: readonly BankRecept[] = [
   },
   // ── vlees ──
   {
-    id: 'kip-rijst', soort: 'vlees', minuten: 25, stijlen: ['klassiek', 'licht'], basis: 'rijst',
+    id: 'kip-rijst', soort: 'vlees', minuten: 25, stijlen: ['klassiek'], basis: 'rijst',
     namen: ['Kip met rijst en paprika', 'Poulet, riz et poivron', 'Hähnchen mit Reis und Paprika', 'Chicken with rice and peppers', 'Pollo con arroz y pimiento', 'Frango com arroz e pimento'],
     ingredienten: [['kipfilet', 125, 'g'], ['rijst', 75, 'g'], ['paprika', 0.5, 'stuk'], ['ui', 0.5, 'stuk']],
   },
   {
-    id: 'bolognaise', soort: 'vlees', minuten: 30, stijlen: ['italiaans', 'comfort'], basis: 'pasta',
+    id: 'bolognaise', soort: 'vlees', minuten: 30, stijlen: ['italiaans'], basis: 'pasta',
     namen: ['Spaghetti bolognaise', 'Spaghetti bolognaise', 'Spaghetti Bolognese', 'Spaghetti bolognese', 'Espaguetis a la boloñesa', 'Esparguete à bolonhesa'],
     ingredienten: [['spaghetti', 100, 'g'], ['gehakt', 100, 'g'], ['tomatenblokjes', 120, 'g'], ['wortelen', 50, 'g'], ['ui', 0.5, 'stuk']],
   },
   {
-    id: 'stoemp-worst', soort: 'vlees', minuten: 30, stijlen: ['klassiek', 'comfort'], basis: 'aardappel',
+    id: 'stoemp-worst', soort: 'vlees', minuten: 30, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Stoemp met worst', 'Stoemp et saucisse', 'Stoemp mit Wurst', 'Stoemp with sausage', 'Stoemp con salchicha', 'Stoemp com salsicha'],
     ingredienten: [['aardappelen', 250, 'g'], ['wortelen', 150, 'g'], ['worsten', 1, 'stuk'], ['boter', 10, 'g']],
   },
   {
-    id: 'balletjes-tomatensaus', soort: 'vlees', minuten: 40, stijlen: ['klassiek', 'comfort'], basis: 'aardappel',
+    id: 'balletjes-tomatensaus', soort: 'vlees', minuten: 40, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Balletjes in tomatensaus met frietjes uit de oven', 'Boulettes sauce tomate et frites au four', 'Fleischbällchen in Tomatensauce mit Ofenpommes', 'Meatballs in tomato sauce with oven chips', 'Albóndigas en salsa de tomate con patatas al horno', 'Almôndegas com molho de tomate e batatas no forno'],
     ingredienten: [['gehakt', 100, 'g'], ['tomatenblokjes', 150, 'g'], ['ui', 0.5, 'stuk'], ['aardappelen', 250, 'g']],
   },
@@ -154,12 +155,12 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['kipfilet', 110, 'g'], ['tortillas', 2, 'stuk'], ['paprika', 0.5, 'stuk'], ['ui', 0.5, 'stuk']],
   },
   {
-    id: 'stoverij', soort: 'vlees', minuten: 150, stijlen: ['klassiek', 'comfort'], basis: 'aardappel',
+    id: 'stoverij', soort: 'vlees', minuten: 150, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Vlaamse stoverij met frietjes', 'Carbonnade flamande et frites', 'Flämischer Rindfleischeintopf mit Pommes', 'Flemish beef stew with chips', 'Estofado flamenco con patatas fritas', 'Guisado flamengo com batatas fritas'],
     ingredienten: [['rundvlees', 150, 'g'], ['ui', 0.5, 'stuk'], ['bruin-bier', 100, 'ml'], ['aardappelen', 250, 'g']],
   },
   {
-    id: 'lasagne', soort: 'vlees', minuten: 60, stijlen: ['italiaans', 'comfort'], basis: 'pasta',
+    id: 'lasagne', soort: 'vlees', minuten: 60, stijlen: ['italiaans'], basis: 'pasta',
     namen: ['Lasagne', 'Lasagne', 'Lasagne', 'Lasagne', 'Lasaña', 'Lasanha'],
     ingredienten: [['lasagnevellen', 80, 'g'], ['gehakt', 100, 'g'], ['tomatenblokjes', 120, 'g'], ['kaas', 40, 'g'], ['melk', 100, 'ml']],
   },
@@ -169,18 +170,18 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['kippendijen', 150, 'g'], ['courgette', 100, 'g'], ['paprika', 0.5, 'stuk'], ['krieltjes', 200, 'g']],
   },
   {
-    id: 'hachis-parmentier', soort: 'vlees', minuten: 50, stijlen: ['comfort', 'klassiek'], basis: 'aardappel',
+    id: 'hachis-parmentier', soort: 'vlees', minuten: 50, stijlen: ['klassiek'], basis: 'aardappel',
     namen: ['Hachis parmentier', 'Hachis parmentier', 'Hackfleisch-Kartoffelauflauf', 'Cottage pie', 'Pastel de carne y puré', 'Empadão de carne'],
     ingredienten: [['gehakt', 100, 'g'], ['aardappelen', 250, 'g'], ['wortelen', 80, 'g'], ['melk', 50, 'ml']],
   },
   // ── ontbijt (WEEK-43) ──
   {
-    id: 'havermout-fruit', soort: 'vegetarisch', minuten: 10, stijlen: ['licht'], basis: 'granen', moment: 'ontbijt',
+    id: 'havermout-fruit', soort: 'vegetarisch', minuten: 10, stijlen: ['klassiek'], basis: 'granen', moment: 'ontbijt',
     namen: ['Havermout met fruit', 'Flocons d’avoine aux fruits', 'Haferflocken mit Obst', 'Oatmeal with fruit', 'Avena con fruta', 'Aveia com fruta'],
     ingredienten: [['havermout', 60, 'g'], ['melk', 150, 'ml'], ['fruit', 100, 'g'], ['honing', 10, 'ml']],
   },
   {
-    id: 'yoghurt-muesli', soort: 'vegetarisch', minuten: 5, stijlen: ['licht'], basis: 'granen', moment: 'ontbijt',
+    id: 'yoghurt-muesli', soort: 'vegetarisch', minuten: 5, stijlen: ['klassiek'], basis: 'granen', moment: 'ontbijt',
     namen: ['Yoghurt met muesli en fruit', 'Yaourt, muesli et fruits', 'Joghurt mit Müsli und Obst', 'Yogurt with muesli and fruit', 'Yogur con muesli y fruta', 'Iogurte com muesli e fruta'],
     ingredienten: [['yoghurt', 150, 'g'], ['muesli', 50, 'g'], ['fruit', 100, 'g']],
   },
@@ -190,13 +191,13 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     ingredienten: [['brood', 100, 'g'], ['kaas', 30, 'g'], ['komkommer', 0.5, 'stuk']],
   },
   {
-    id: 'avocado-ei', soort: 'vegetarisch', minuten: 15, stijlen: ['licht'], basis: 'brood', moment: 'ontbijt',
+    id: 'avocado-ei', soort: 'vegetarisch', minuten: 15, stijlen: ['mediterraan'], basis: 'brood', moment: 'ontbijt',
     namen: ['Avocadotoast met ei', 'Toast à l’avocat et œuf', 'Avocado-Toast mit Ei', 'Avocado toast with egg', 'Tostada de aguacate y huevo', 'Torrada de abacate e ovo'],
     ingredienten: [['brood', 80, 'g'], ['avocado', 0.5, 'stuk'], ['eieren', 1, 'stuk']],
   },
   // ── middag (WEEK-43) ──
   {
-    id: 'tonijnsalade', soort: 'vis', minuten: 10, stijlen: ['licht'], basis: 'brood', moment: 'middag',
+    id: 'tonijnsalade', soort: 'vis', minuten: 10, stijlen: ['mediterraan'], basis: 'brood', moment: 'middag',
     namen: ['Tonijnsalade op brood', 'Salade au thon sur pain', 'Thunfischsalat auf Brot', 'Tuna salad on bread', 'Ensalada de atún con pan', 'Salada de atum com pão'],
     ingredienten: [['tonijn', 80, 'g'], ['sla', 50, 'g'], ['tomaten', 0.5, 'stuk'], ['brood', 80, 'g']],
   },
