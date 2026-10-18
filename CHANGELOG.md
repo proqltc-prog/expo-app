@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.49.0] – 2026-10-18
+
+**Jira:** [WEEK-67](https://proqltc-1791495894841.atlassian.net/browse/WEEK-67) · **Confluence:** [WEEK-67 Schaalregel en dagbevestiging](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7340033)
+
+- Schaalregel voor het gezin: 1 per volwassene, 0,5 per kind van 0 tot 12 jaar (`src/lib/schaal.ts`).
+- Dagbevestiging in het weekplan: een bevestigde dag ligt vast, een nieuw weekplan vraagt bevestiging als er al dagen bevestigd zijn (`src/lib/planner/bevestiging.ts`).
+- 20 nieuwe unit tests, bestaande tests ongewijzigd.
+
 ## [0.48.5] – 2026-10-17
 
 **WEEK-38** – AdMob-bibliotheek naar 15, zodat de Android-build slaagt. [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-38) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/6652037)
