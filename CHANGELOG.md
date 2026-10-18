@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.51.0] – 2026-10-18
+
+**Jira:** [WEEK-70](https://proqltc-1791495894841.atlassian.net/browse/WEEK-70) · **Confluence:** [WEEK-70 Boodschappenlijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7471122)
+
+- Winkelvoorstel ingeklapt standaard, met een kaartje per winkel: adres, afstand, openingsuren en een link naar Google Maps.
+- 📍 opent de winkels in een popup.
+- Invoerveld en scanknop bovenaan de boodschappenlijst verwijderd.
+- Per open product een 📷: het gescande product gaat enkel naar dat lijstitem (toevoegen of weigeren).
+- Tests: adres, Google Maps-link en openingsuren, plus regressietest voor het uitlezen van OpenStreetMap.
+
 ## [0.50.0] – 2026-10-18
 
 **Jira:** [WEEK-69](https://proqltc-1791495894841.atlassian.net/browse/WEEK-69) · **Confluence:** [WEEK-69 Gezinssamenstelling](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7471105)

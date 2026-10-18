@@ -39,7 +39,7 @@ export default function Scan() {
   const [filmpjeBezig, setFilmpjeBezig] = useState(false);
   // Gescand vanaf de boodschappenlijst (WEEK-46): dan kan een product direct afgevinkt worden.
   // Met `item` (WEEK-49) worden de details van een product dat al in de frigo staat, gescand.
-  const { van, item } = useLocalSearchParams<{ van?: string; item?: string }>();
+  const { van, item, lijstItem } = useLocalSearchParams<{ van?: string; item?: string; lijstItem?: string }>();
   const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [frigoItems, setFrigoItems] = useState<FrigoItem[]>([]);
   useFocusEffect(
@@ -225,7 +225,23 @@ export default function Scan() {
       <Text style={s.kop}>{t('scan.additieven')}</Text>
       <Text style={s.tekstLinks}>{p.additieven.length ? p.additieven.join(', ') : t('scan.geenAdditieven')}</Text>
 
-      {van === 'lijst' && (() => {
+      {/* Per product (WEEK-70): het gescande product gaat enkel naar het lijstitem waarvandaan gescand werd. */}
+      {van === 'lijst' && lijstItem && (() => {
+        const doel = lijstItems.find((i) => i.id === lijstItem);
+        const naam = scanNaam(p, t('scan.onbekend'));
+        if (!doel) return <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>;
+        return (
+          <View style={s.knoppen}>
+            <Pressable style={[s.knop, { flex: 1 }]} onPress={() => vinkOpLijstAf(naam, [doel], p)} accessibilityRole="button">
+              <Text style={s.knopTekst}>{t('scan.productToevoegen')}</Text>
+            </Pressable>
+            <Pressable style={[s.knop, { flex: 1, backgroundColor: '#777' }]} onPress={opnieuw} accessibilityRole="button">
+              <Text style={s.knopTekst}>{t('scan.productWeigeren')}</Text>
+            </Pressable>
+          </View>
+        );
+      })()}
+      {van === 'lijst' && !lijstItem && (() => {
         const naam = scanNaam(p, t('scan.onbekend'));
         const matches = zoekOpLijst(lijstItems, naam);
         if (!matches.length) return <Text style={s.bron}>{t('scan.nietOpLijst')}</Text>;
