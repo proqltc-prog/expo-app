@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.2] – 2026-10-18
+
+**Jira:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/browse/WEEK-86) (herstel) · **Confluence:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8060931)
+
+- De Confluence-link in de sectie van 0.72.0 verwees naar de pagina van WEEK-73. Die verwijst nu naar de pagina van WEEK-86.
+
 ## [0.72.1] – 2026-10-18
 
 **Jira:** [WEEK-87](https://proqltc-1791495894841.atlassian.net/browse/WEEK-87) (verbetering) · **Confluence:** [WEEK-87](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8421386)
@@ -17,7 +23,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.72.0] – 2026-10-18
 
-**Jira:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/browse/WEEK-86) (verbetering) · **Confluence:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8159262)
+**Jira:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/browse/WEEK-86) (verbetering) · **Confluence:** [WEEK-86](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8060931)
 
 - De stijlen Thais, Japans en Koreaans hebben elk een eigen databasestijl. Eerder vielen ze onder aziatisch.
 - Dagkaarten van het weekplan tonen het eigen stijlbeeld van deze drie keukens.
