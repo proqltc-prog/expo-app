@@ -240,7 +240,7 @@ export default function Frigo() {
                 <Text style={s.icoTekst} accessibilityElementsHidden importantForAccessibility="no">{k === 'planner' ? '🛒' : '📦'}</Text>
               </View>
               <Text style={[s.keuzeTekst, aan && s.keuzeTekstAan]} numberOfLines={1}>{t(k === 'planner' ? 'frigo.sheetPlanner' : 'frigo.sheetLos')}</Text>
-              <View style={[s.teller, aan && { backgroundColor: kleur.accent, borderColor: kleur.accent }]}>
+              <View style={[s.tellerBlok, aan && { backgroundColor: kleur.accent, borderColor: kleur.accent }]}>
                 <Text style={[s.tellerTekst, aan && s.tellerTekstAan]}>{n}</Text>
               </View>
             </Pressable>
@@ -395,7 +395,7 @@ const s = StyleSheet.create({
   icoTekst: { fontSize: 16 },
   keuzeTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
   keuzeTekstAan: { color: INKT },
-  teller: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
+  tellerBlok: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
   tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
   tellerTekstAan: { color: '#fff' },
   streep: { height: 4, borderRadius: 2, marginTop: 10 },
