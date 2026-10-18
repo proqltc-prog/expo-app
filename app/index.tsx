@@ -164,7 +164,7 @@ export default function Weekplanning() {
       // Vrije tekst is verwijderd (WEEK-41); de keuzes sturen het plan.
       const verzoek = { opdracht: '', kooktijden, stijlen, vermijd, aantalDagen, momenten, profiel, taal, frigo };
       // WEEK-68: eerst de goedgekeurde recepten uit de database; de AI-planner blijft de terugval.
-      let nieuw: Weekplan | undefined;
+      let nieuw: Weekplan | null | undefined;
       if (modus === 'favorieten') {
         nieuw = planUitFavorieten(favorieten, verzoek, plan);
       } else {
