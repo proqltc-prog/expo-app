@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
@@ -15,6 +15,8 @@ import { wijzigPlan } from '@/opslag/plan';
 import { categorieNaam, dagSleutel, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { WinkelVoorstel } from '@/ui/winkelvoorstel';
+import { Ionicons } from '@expo/vector-icons';
+import { BOODSCHAPPEN_ICOON, categorieIcoon, WINKEL_ICOON } from '@/lib/lijstIcoon';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -25,6 +27,7 @@ const MIST = '#EEF1EC';
 const MUTED = '#5E6B63';
 
 type Hoofd = 'winkels' | 'boodschappen';
+type IoniconNaam = ComponentProps<typeof Ionicons>['name'];
 
 /** Totaal voeding en additieven van een gerecht, zodra alle producten gescand zijn (WEEK-50). */
 function GerechtRegel({ lijst, frigo, dag, recept }: { lijst: LijstItem[]; frigo: FrigoItem[]; dag: DagCode; recept: string }) {
@@ -137,6 +140,7 @@ export default function Lijst() {
         accessibilityRole="tab"
         accessibilityState={{ selected: aan }}
       >
+        <Ionicons name={(h === 'winkels' ? WINKEL_ICOON : BOODSCHAPPEN_ICOON) as IoniconNaam} size={18} color={aan ? kleur : MUTED} />
         <Text style={[s.hoofdTekst, aan && { color: kleur }]} numberOfLines={1}>
           {t(h === 'winkels' ? 'lijst.tabWinkels' : 'lijst.tabBoodschappen')}
         </Text>
@@ -194,7 +198,14 @@ export default function Lijst() {
             keyExtractor={(r, i) => `${r.sleutel}-${i}`}
             renderSectionHeader={({ section }) => (
               <View>
-                <Text style={s.kop}>{section.title}</Text>
+                {section.soort === 'categorie' ? (
+                  <View style={s.kopRij}>
+                    <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} />
+                    <Text style={s.kopInRij}>{section.title}</Text>
+                  </View>
+                ) : (
+                  <Text style={s.kop}>{section.title}</Text>
+                )}
                 {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
               </View>
             )}
@@ -267,6 +278,8 @@ const s = StyleSheet.create({
   offline: { color: '#7a5b00' },
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
+  kopRij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14, marginBottom: 4 },
+  kopInRij: { fontWeight: '700', fontSize: 14, color: '#444' },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: ORANJE, alignItems: 'center', justifyContent: 'center' },
   vinkjeAan: { backgroundColor: ORANJE },
