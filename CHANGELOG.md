@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.62.0] – 2026-10-18
+
+**Jira:** [WEEK-71](https://proqltc-1791495894841.atlassian.net/browse/WEEK-71) (verbetering, deel 3) · **Confluence:** [WEEK-71 deel 3](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700533)
+
+- Op het scan-scherm krijgt elk additief een korte uitleg: code, naam en functie (bv. E322: Lecithine · emulgator). Onbekende codes tonen enkel de code.
+- Bij gewoon scannen (vanaf het scan-tabblad) is er enkel de knop Terug; Afwijzen, Op de lijst en In de frigo zijn daar weggehaald.
+
 ## [0.61.0] – 2026-10-18
 
 **Jira:** [WEEK-77](https://proqltc-1791495894841.atlassian.net/browse/WEEK-77) (verbetering) · **Confluence:** [WEEK-77](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7700514)

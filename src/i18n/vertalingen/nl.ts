@@ -257,6 +257,7 @@ export const nl = {
   'scan.filmpjeNiet': 'Het filmpje is nu niet beschikbaar. Probeer het later opnieuw.',
   'scan.filmpjeTitel': 'Extra scans',
   'scan.bron': 'Gegevens: Open Food Facts (openfoodfacts.org). Geen medisch advies.',
+  'scan.terug': 'Terug',
 
   'voeding.kcal': 'Calorieën',
   'voeding.suikers': 'Suikers',
