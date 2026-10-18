@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.55.0] – 2026-10-18
+
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 4a) · **Confluence:** [WEEK-68 deel 4](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7634945)
+
+- Kooktijden, stijlen en vermijden hangen af van het moment: ochtend heeft Snel, Rustig en Uitgebreid; middag en avond hebben Snel en Verfijnd.
+- Nieuwe landenkeuken-stijlen voor middag en avond; "Ovenschotels" en "Snel en eenvoudig" zijn weggehaald.
+- Keuzes die bij een ander moment niet meer passen, vallen weg.
+- Het scherm gebruikt deze keuzes nog niet; de fasen van het weekmenu volgen in deel 4b.
+- 14 nieuwe unit tests.
+
 ## [0.54.0] – 2026-10-18
 
 **Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (deel 3) · **Confluence:** [WEEK-68 deel 3](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/7503874)
