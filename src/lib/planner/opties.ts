@@ -103,3 +103,37 @@ export function behoudGeldige(gekozen: readonly string[], opties: readonly Optie
   const ids = new Set(opties.map((o) => o.id));
   return gekozen.filter((id) => ids.has(id));
 }
+
+/** Alle kooktijden van de gekozen momenten, zonder dubbele, in volgorde. */
+export function kooktijdVoorMomenten(momenten: readonly Moment[]): KooktijdOptie[] {
+  return unie(momenten.map((m) => KOOKTIJD[m]));
+}
+
+/** Alle stijlen van de gekozen momenten, zonder dubbele, in volgorde. */
+export function stijlVoorMomenten(momenten: readonly Moment[]): Optie[] {
+  return unie(momenten.map((m) => STIJL[m]));
+}
+
+/** Alle vermijd-keuzes van de gekozen momenten, zonder dubbele, in volgorde. */
+export function vermijdVoorMomenten(momenten: readonly Moment[]): Optie[] {
+  return unie(momenten.map((m) => VERMIJD[m]));
+}
+
+function unie<T extends { id: string }>(lijsten: readonly (readonly T[])[]): T[] {
+  const gezien = new Set<string>();
+  const uit: T[] = [];
+  for (const lijst of lijsten) {
+    for (const o of lijst) {
+      if (gezien.has(o.id)) continue;
+      gezien.add(o.id);
+      uit.push(o);
+    }
+  }
+  return uit;
+}
+
+/** Alle kooktijd-ids die het scherm kan opslaan (van alle momenten samen). */
+export const KOOKTIJD_IDS: string[] = unie([KOOKTIJD.ontbijt, KOOKTIJD.middag]).map((o) => o.id);
+
+/** Alle stijl-ids die het scherm kan opslaan (van alle momenten samen). */
+export const STIJL_IDS: string[] = unie([STIJL.ontbijt, STIJL.middag]).map((o) => o.id);

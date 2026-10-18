@@ -43,6 +43,8 @@ export type PlanDag = {
   /** Ontbijt, middag of avond (WEEK-43). Ontbreekt: avond. */
   moment?: Moment;
   recept: PlanRecept;
+  /** De gebruiker heeft dit recept voor deze dag bevestigd: het ligt vast en de ingrediënten staan op de lijst (WEEK-71). */
+  bevestigd?: boolean;
   /** Het recept is gekookt (WEEK-19). */
   gedaan?: boolean;
   /** Wat er uit de frigo ging toen het recept op gedaan kwam, om het ongedaan te kunnen maken (WEEK-19). */

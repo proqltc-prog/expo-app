@@ -4,9 +4,12 @@ import {
   behoudGeldige,
   kooktijdOpties,
   kooktijdVan,
+  kooktijdVoorMomenten,
   standaardStijlen,
   stijlOpties,
+  stijlVoorMomenten,
   vermijdOpties,
+  vermijdVoorMomenten,
 } from '@/lib/planner/opties';
 
 const ids = (lijst: { id: string }[]) => lijst.map((o) => o.id);
@@ -84,5 +87,19 @@ describe('keuzes bij wisselen van moment', () => {
   });
   test('lege keuze blijft leeg', () => {
     assert.deepEqual(behoudGeldige([], vermijdOpties('ontbijt')), []);
+  });
+});
+
+describe('keuzes van meerdere momenten', () => {
+  test('kooktijden van ontbijt en avond zonder dubbele, in volgorde', () => {
+    assert.deepEqual(kooktijdVoorMomenten(['ontbijt', 'avond']).map((o) => o.id), ['snel', 'rustig', 'uitgebreid', 'verfijnd']);
+  });
+  test('stijlen van middag en ontbijt zonder dubbele', () => {
+    const ids = stijlVoorMomenten(['middag', 'ontbijt']).map((o) => o.id);
+    assert.equal(new Set(ids).size, ids.length);
+    assert.ok(ids.includes('hartig') && ids.includes('thais'));
+  });
+  test('vermijden van één moment is gelijk aan dat moment', () => {
+    assert.deepEqual(vermijdVoorMomenten(['avond']), vermijdOpties('avond'));
   });
 });

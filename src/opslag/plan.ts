@@ -16,7 +16,7 @@ const PLAN = SLEUTEL.plan;
 const OPDRACHTEN = SLEUTEL.opdrachten;
 const KEUZES = SLEUTEL.keuzes;
 
-export type Keuzes = { kooktijden: KooktijdCode[]; stijlen: StijlCode[]; vermijd: Vermijd[]; aantalDagen: number; momenten: Moment[] };
+export type Keuzes = { kooktijden: string[]; stijlen: string[]; vermijd: string[]; aantalDagen: number; momenten: Moment[] };
 
 export async function laadPlan(): Promise<Weekplan | null> {
   try {
