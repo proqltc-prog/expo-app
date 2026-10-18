@@ -2,7 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { BankRecept, Moment, MOMENTEN, RECEPTENBANK, Soort, StijlCode } from '@/data/receptenbank';
-import type { Vermijd } from '@/data/vermijden';
+import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
+import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { KooktijdCode } from '@/lib/planner/types';
 import { kiesbareRecepten, voegToe, vervangDoorRecept } from '@/lib/planner/kies';
 import { zelfdeDag } from '@/lib/planner/bijwerken';
@@ -38,9 +39,10 @@ export default function Kies() {
   useFocusEffect(
     useCallback(() => {
       laadKeuzes().then((k) => {
-        setKooktijden(k.kooktijden);
-        setStijlen(k.stijlen);
-        setVermijd(k.vermijd);
+        // De keuzes van het weekmenu worden hier vertaald naar de databasecodes, zoals de planner dat doet.
+        setKooktijden(kooktijdNaarDb(k.momenten, k.kooktijden));
+        setStijlen(stijlNaarDb(k.stijlen));
+        setVermijd(k.vermijd.filter((v): v is Vermijd => (VERMIJDBAAR as readonly string[]).includes(v)));
       });
       Promise.all([laadPlan(), ikId(), laadLeden().catch(() => [] as GezinsLid[])]).then(([plan, id, leden]) => {
         if (plan && !magPlanWijzigen(plan, id)) {

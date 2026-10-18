@@ -122,7 +122,7 @@ export default function Weekplanning() {
       if (p) setFase('plan');
     });
     laadKeuzes().then((k) => {
-      const momenten = k.momenten.length ? k.momenten : ['avond'];
+      const momenten: Moment[] = k.momenten.length ? k.momenten : ['avond'];
       const geldig = wijzigMomenten({ aantalDagen: k.aantalDagen, momenten, kooktijden: k.kooktijden, stijlen: k.stijlen, vermijd: k.vermijd }, momenten);
       setKeuzes({
         ...geldig,
