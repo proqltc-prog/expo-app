@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwPostcodeUrl, leesPunt } from '@/lib/postcodepunt';
+import { bouwPostcodeUrl, leesPlaats, leesPunt } from '@/lib/postcodepunt';
 
 describe('postcode naar punt: url (WEEK-60)', () => {
   test('zoekt op postcode in België', () => {
@@ -38,5 +38,31 @@ describe('postcode naar punt: antwoord lezen (WEEK-60)', () => {
     assert.equal(leesPunt({}), undefined);
     assert.equal(leesPunt([{ lat: 'x', lon: '4' }]), undefined);
     assert.equal(leesPunt(null), undefined);
+  });
+});
+
+describe('postcode naar plaats: gemeente en land (WEEK-69)', () => {
+  test('vraagt ook de adresgegevens op', () => {
+    assert.match(bouwPostcodeUrl('1760', '')!, /addressdetails=1/);
+  });
+
+  test('leest de gemeente uit het eerste resultaat', () => {
+    assert.deepEqual(leesPlaats([{ address: { city: 'Roosdaal', country: 'België' } }]), { gemeente: 'Roosdaal', land: 'België' });
+  });
+
+  test('valt terug op town, municipality of village als city ontbreekt', () => {
+    assert.deepEqual(leesPlaats([{ address: { village: 'Strijtem', country: 'België' } }]), { gemeente: 'Strijtem', land: 'België' });
+    assert.deepEqual(leesPlaats([{ address: { municipality: 'Lennik' } }]), { gemeente: 'Lennik', land: 'België' });
+  });
+
+  test('zonder land wordt België gekozen', () => {
+    assert.deepEqual(leesPlaats([{ address: { city: 'Roosdaal' } }]), { gemeente: 'Roosdaal', land: 'België' });
+  });
+
+  test('geen bruikbaar resultaat geeft undefined', () => {
+    assert.equal(leesPlaats([]), undefined);
+    assert.equal(leesPlaats([{ address: { country: 'België' } }]), undefined);
+    assert.equal(leesPlaats([{ lat: '50', lon: '4' }]), undefined);
+    assert.equal(leesPlaats(null), undefined);
   });
 });

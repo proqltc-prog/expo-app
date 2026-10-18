@@ -292,13 +292,9 @@ export const de: Vertalingen = {
   'profiel.waarom.tekst': 'So weiß die App genau, was du brauchst. Kein Überschuss, der im Kühlschrank verstaubt, kein Mangel mitten im Rezept. Einfach lecker essen.',
   'profiel.kinderHint': '0 bis 12 Jahre',
   'profiel.samen': 'Insgesamt {personen}',
-  'profiel.budget': 'Budget',
-  'profiel.budgetLabel': 'Einkaufsbudget pro Woche (€)',
-  'profiel.budgetPlaceholder': 'z. B. 150 – leer lassen, wenn kein Budget',
-  'profiel.maxKm': 'Maximale Entfernung für den Einkauf (km)',
-  'profiel.maxKmPlaceholder': 'z. B. 10 – leer lassen, wenn es egal ist',
   'profiel.adres': 'Adresse',
   'profiel.adresHint': 'Optional. Nur Ort und Land werden an die KI weitergegeben.',
+  'profiel.plaatsVoorstel': 'Gemeinde und Land werden anhand deiner Postleitzahl automatisch vorgeschlagen.',
   'profiel.winkelsTitel': 'Wofür brauchen wir die Postleitzahl?',
   'profiel.winkelsTekst': 'Wir nutzen deine Postleitzahl, um dir Supermärkte und Händler in deiner Nähe vorzuschlagen. Zuerst schauen wir nach Geschäften in der Nähe. Nichts wird vorgegeben: du entscheidest selbst, wo du einkaufst.',
   'profiel.postcode': 'Postleitzahl',
@@ -350,7 +346,5 @@ export const de: Vertalingen = {
 
   'fout.volwassenen': 'Wähle zwischen 1 und {max} Erwachsenen.',
   'fout.kinderen': 'Höchstens {max} Kinder.',
-  'fout.budget': 'Gib einen gültigen Betrag ein oder lass das Budget leer.',
-  'fout.maxKm': 'Gib eine ganze Zahl von 1 bis {max} km ein oder lass das Feld leer.',
   'fout.postcode': 'Diese Postleitzahl scheint nicht zu stimmen.',
 };

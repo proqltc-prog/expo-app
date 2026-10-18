@@ -292,13 +292,9 @@ export const fr: Vertalingen = {
   'profiel.waarom.tekst': 'Ainsi l’app sait exactement ce qu’il vous faut. Pas de surplus qui moisit dans le frigo, pas de manque au milieu de la recette. Juste bien manger.',
   'profiel.kinderHint': '0 à 12 ans',
   'profiel.samen': 'Au total {personen}',
-  'profiel.budget': 'Budget',
-  'profiel.budgetLabel': 'Budget courses par semaine (€)',
-  'profiel.budgetPlaceholder': 'p. ex. 150 – laisser vide si pas de budget',
-  'profiel.maxKm': 'Distance maximale pour faire les courses (km)',
-  'profiel.maxKmPlaceholder': 'p. ex. 10 – laisser vide si peu importe',
   'profiel.adres': 'Adresse',
   'profiel.adresHint': 'Facultatif. Seuls votre commune et votre pays sont transmis à l’IA.',
+  'profiel.plaatsVoorstel': 'La commune et le pays sont proposés automatiquement à partir de votre code postal.',
   'profiel.winkelsTitel': 'À quoi sert le code postal ?',
   'profiel.winkelsTekst': 'Nous utilisons ton code postal pour te proposer des supermarchés et des commerçants de ton quartier. Nous regardons d’abord les commerces les plus proches. Rien n’est imposé : tu choisis toi-même où tu fais tes courses.',
   'profiel.postcode': 'Code postal',
@@ -350,7 +346,5 @@ export const fr: Vertalingen = {
 
   'fout.volwassenen': 'Choisissez entre 1 et {max} adultes.',
   'fout.kinderen': '{max} enfants au maximum.',
-  'fout.budget': 'Saisissez un montant valide ou laissez le budget vide.',
-  'fout.maxKm': 'Saisissez un nombre entier de 1 à {max} km, ou laissez vide.',
   'fout.postcode': 'Ce code postal ne semble pas correct.',
 };

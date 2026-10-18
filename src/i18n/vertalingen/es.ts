@@ -292,13 +292,9 @@ export const es: Vertalingen = {
   'profiel.waarom.tekst': 'Así la app sabe exactamente lo que necesitas. Ni sobras que se pudren en la nevera, ni falta a mitad de receta. Solo buena comida.',
   'profiel.kinderHint': '0 a 12 años',
   'profiel.samen': 'En total {personen}',
-  'profiel.budget': 'Presupuesto',
-  'profiel.budgetLabel': 'Presupuesto semanal para la compra (€)',
-  'profiel.budgetPlaceholder': 'p. ej. 150 – déjalo vacío si no quieres presupuesto',
-  'profiel.maxKm': 'Distancia máxima para la compra (km)',
-  'profiel.maxKmPlaceholder': 'p. ej. 10 – déjalo vacío si no importa',
   'profiel.adres': 'Dirección',
   'profiel.adresHint': 'Opcional. Solo tu municipio y país se comparten con la IA.',
+  'profiel.plaatsVoorstel': 'El municipio y el país se proponen automáticamente según tu código postal.',
   'profiel.winkelsTitel': '¿Para qué es el código postal?',
   'profiel.winkelsTekst': 'Usamos tu código postal para sugerirte supermercados y comercios de tu barrio. Primero miramos las tiendas más cercanas. No se impone nada: tú eliges dónde compras.',
   'profiel.postcode': 'Código postal',
@@ -350,7 +346,5 @@ export const es: Vertalingen = {
 
   'fout.volwassenen': 'Elige entre 1 y {max} adultos.',
   'fout.kinderen': 'Como máximo {max} niños.',
-  'fout.budget': 'Introduce un importe válido o deja el presupuesto vacío.',
-  'fout.maxKm': 'Introduce un número entero de 1 a {max} km o déjalo vacío.',
   'fout.postcode': 'Este código postal no parece correcto.',
 };
