@@ -1,5 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { trekFrigoAf } from '@/lib/frigo';
 import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
@@ -345,5 +346,18 @@ describe('selectievakje per sectie (WEEK-111)', () => {
     const keuze = sectieKeuze([regel(['a'], false), regel(['b'], false)]);
     const nieuw = vinkAf(items, keuze.ids, keuze.afgevinkt, 'Ik');
     assert.deepEqual(nieuw.map((i) => i.afgevinkt), [true, true, false]);
+  });
+});
+
+describe('bevestigen zet enkel de ontbrekende ingrediënten op de lijst (WEEK-107)', () => {
+  test('regressie: wat al in de frigo ligt, komt niet op de lijst', () => {
+    const dag = dagen[0];
+    const alles = itemsUitPlan([dag]);
+    const eerste = alles[0];
+    const frigo = [{ id: 'x', naam: eerste.naam, afdeling: eerste.afdeling ?? 'groenten-fruit', toegevoegdOp: new Date().toISOString(), hoeveelheid: 99999, eenheid: eerste.eenheid }];
+    const lijst = voegPlanToe([], [dag], 'nl', (items) => trekFrigoAf(items, frigo as never));
+    assert.ok(!lijst.some((i) => i.naam === eerste.naam));
+    // De overige ingrediënten van het gerecht staan er wél op.
+    if (alles.length > 1) assert.ok(lijst.some((i) => i.naam === alles[1].naam));
   });
 });

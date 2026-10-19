@@ -2,7 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { FrigoItem } from '@/lib/frigo';
 import { verwijderUitFrigo } from '@/lib/frigo';
-import { zetOntbrekendOpLijst, itemsUitPlan, LijstItem } from '@/lib/lijst';
+import { itemsUitPlan, LijstItem } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import { markeerOntbrekend, receptStatus, werkOntbrekendBij } from '@/lib/planner/status';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
@@ -82,21 +82,6 @@ describe('werkOntbrekendBij', () => {
     assert.equal(werkOntbrekendBij(plan, [f('a', 'pasta')]), plan);
     const ontbrekend = markeerOntbrekend(plan, [f('a', 'pasta')], []);
     assert.equal(werkOntbrekendBij(ontbrekend, [f('x', 'chips')]), ontbrekend);
-  });
-});
-
-describe('zetOntbrekendOpLijst', () => {
-  test('voegt de ontbrekende ingrediënten van het recept toe, gekoppeld aan het recept', () => {
-    const lijst = zetOntbrekendOpLijst([], plan.dagen[0], ['pasta']);
-    assert.deepEqual(lijst.map((i) => [i.naam, i.hoeveelheid, i.recept?.naam, i.afgevinkt]), [['pasta', 300, 'Pasta pesto', false]]);
-  });
-  test('een item dat al gekocht was, staat weer open; geen dubbels', () => {
-    const [pasta] = itemsUitPlan([plan.dagen[0]]);
-    const gekocht: LijstItem[] = [{ ...pasta, afgevinkt: true, afgevinktDoor: 'Pauline' }];
-    const lijst = zetOntbrekendOpLijst(gekocht, plan.dagen[0], ['PASTA']);
-    assert.equal(lijst.length, 1);
-    assert.equal(lijst[0].afgevinkt, false);
-    assert.ok(!('afgevinktDoor' in lijst[0]));
   });
 });
 
