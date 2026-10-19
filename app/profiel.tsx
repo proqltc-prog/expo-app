@@ -13,9 +13,12 @@ import {
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
 import { zoekPlaats } from '@/opslag/winkels';
-import { Sleutel } from '@/i18n';
+import { Sleutel, TALEN, vertaal } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
+import { Inklapbaar } from '@/ui/inklapbaar';
+import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
+import { wisselGroep } from '@/lib/groepen';
 
 const KLEUR = '#2e7d4f';
 
@@ -43,7 +46,10 @@ function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; m
 }
 
 export default function ProfielScherm() {
-  const { t, tn } = useTaal();
+  const { t, tn, voorkeur, zetVoorkeur } = useTaal();
+  // Welke secties open staan (WEEK-126); standaard zijn ze allemaal ingeklapt.
+  const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
+  const wissel = (sleutel: string) => setUitgeklapt((o) => wisselGroep(o, sleutel));
   const [profiel, setProfiel] = useState<Profiel>(standaardProfiel());
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
   const [plaatsFout, setPlaatsFout] = useState(false);
@@ -110,9 +116,30 @@ export default function ProfielScherm() {
         ))}
       </View>
 
-      <GezinsRuimte />
+      {/* Taal (WEEK-126): de taal van dit toestel kiezen; standaard volgt de app de taal van het toestel. */}
+      <Inklapbaar titel={t('profiel.taal')} open={uitgeklapt.has('taal')} onWissel={() => wissel('taal')}>
+        <View style={s.kaart}>
+          <Text style={s.hint}>{t('profiel.taalHint')}</Text>
+          <Pressable style={s.taalRij} onPress={() => zetVoorkeur(undefined)} accessibilityRole="radio" accessibilityState={{ selected: voorkeur === undefined }}>
+            <Text style={s.label}>{t('profiel.taalToestel')}</Text>
+            {voorkeur === undefined && <Text style={s.vinkje}>✓</Text>}
+          </Pressable>
+          {TALEN.map((code) => (
+            <Pressable key={code} style={s.taalRij} onPress={() => zetVoorkeur(code)} accessibilityRole="radio" accessibilityState={{ selected: voorkeur === code }}>
+              <Text style={s.label}>{vertaal(code, 'taal.naam')}</Text>
+              {voorkeur === code && <Text style={s.vinkje}>✓</Text>}
+            </Pressable>
+          ))}
+        </View>
+      </Inklapbaar>
 
-      <Text style={s.kop}>{t('profiel.gezin')}</Text>
+      {gezinsruimteBeschikbaar() && (
+        <Inklapbaar titel={t('gezin.titel')} open={uitgeklapt.has('gezinsruimte')} onWissel={() => wissel('gezinsruimte')}>
+          <GezinsRuimte kopTonen={false} />
+        </Inklapbaar>
+      )}
+
+      <Inklapbaar titel={t('profiel.gezin')} open={uitgeklapt.has('gezin')} onWissel={() => wissel('gezin')}>
       <View style={s.kaart}>
         <View style={s.rij}>
           <Text style={s.label}>{t('profiel.volwassenen')}</Text>
@@ -127,13 +154,14 @@ export default function ProfielScherm() {
         </View>
         <Text style={s.totaal}>{t('profiel.samen', { personen: tn('algemeen.personen', aantalPersonen(profiel)) })}</Text>
       </View>
+      </Inklapbaar>
 
       <View style={s.waarom}>
         <Text style={s.waromKop}>{t('profiel.waarom.titel')}</Text>
         <Text style={s.hint}>{t('profiel.waarom.tekst')}</Text>
       </View>
 
-      <Text style={s.kop}>{t('profiel.adres')}</Text>
+      <Inklapbaar titel={t('profiel.adres')} open={uitgeklapt.has('adres')} onWissel={() => wissel('adres')}>
       <View style={s.kaart}>
         <View style={s.info}>
           <Text style={s.waromKop}>{t('profiel.winkelsTitel')}</Text>
@@ -156,6 +184,7 @@ export default function ProfielScherm() {
           <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} />
         </View>
       </View>
+      </Inklapbaar>
 
       {fouten.map((f) => (
         <Text key={f} style={s.fout}>• {t(`fout.${f}` as Sleutel, { max: FOUT_MAX[f] ?? '' })}</Text>
@@ -178,6 +207,8 @@ const s = StyleSheet.create({
   waarom: { borderLeftWidth: 3, borderLeftColor: KLEUR, paddingLeft: 12, gap: 4, marginTop: 4 },
   waromKop: { fontWeight: '700', fontSize: 15, color: '#333' },
   totaal: { color: '#777', fontSize: 13 },
+  taalRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
+  vinkje: { color: '#2e7d4f', fontWeight: '800', fontSize: 16 },
   teller: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   tellerKnop: { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   uit: { opacity: 0.3 },

@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.0] – 2026-10-19
+
+**Jira:** [WEEK-126](https://proqltc-1791495894841.atlassian.net/browse/WEEK-126) · **Confluence:** [WEEK-126 Gezinsprofiel: taal kiezen en secties ingeklapt](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11141121)
+
+- Op het gezinsprofiel kies je de taal van het toestel (of de taal van het toestel zelf).
+- De secties Taal, Gezinsruimte, Gezin en Adres staan standaard ingeklapt en klap je open of dicht.
+
 ## [0.85.3] – 2026-10-19
 
 **Jira:** [WEEK-127](https://proqltc-1791495894841.atlassian.net/browse/WEEK-127) · **Confluence:** [WEEK-127 Winkelvoorstel blijft laden](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10747906)
