@@ -142,7 +142,7 @@ export default function Weekplanning() {
     });
     laadKeuzes().then((k) => {
       const momenten: Moment[] = k.momenten.length ? k.momenten : ['avond'];
-      const geldig = wijzigMomenten({ aantalDagen: k.aantalDagen, momenten, kooktijden: k.kooktijden, stijlen: k.stijlen, vermijd: k.vermijd }, momenten);
+      const geldig = wijzigMomenten({ aantalDagen: k.aantalDagen, datums: k.datums, uitgesloten: k.uitgesloten, momenten, kooktijden: k.kooktijden, stijlen: k.stijlen, vermijd: k.vermijd }, momenten);
       // WEEK-97: zonder gekozen datums start de periode vandaag, voor de standaardperiode.
       const datums = k.datums.length ? k.datums : bereikDatums(vandaagIso(), PERIODE_STANDAARD);
       setKeuzes({
