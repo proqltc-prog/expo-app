@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { FASEN, Keuzes, kanVerder, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
+import { FASEN, Keuzes, kanVerder, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 
 const leeg: Keuzes = { aantalDagen: 6, momenten: ['avond'], kooktijden: ['snel'], stijlen: ['mediterraan'], vermijd: [] };
 
@@ -59,5 +59,33 @@ describe('wijzigen van het moment houdt geldige keuzes', () => {
     const nieuw = wijzigMomenten(leeg, ['ontbijt', 'avond']);
     assert.equal(nieuw.aantalDagen, 6);
     assert.deepEqual(nieuw.momenten, ['ontbijt', 'avond']);
+  });
+});
+
+describe('melding als de gebruiker nog niet verder kan', () => {
+  test('moment zonder maaltijd of kooktijd geeft de momentmelding', () => {
+    assert.equal(ontbrekendeVoorkeur('moment', { ...leeg, momenten: [] }), 'planning.meld.moment');
+    assert.equal(ontbrekendeVoorkeur('moment', { ...leeg, kooktijden: [] }), 'planning.meld.moment');
+  });
+  test('stijl zonder keuken geeft de stijlmelding', () => {
+    assert.equal(ontbrekendeVoorkeur('stijl', { ...leeg, stijlen: [] }), 'planning.meld.stijl');
+  });
+  test('met een volledige keuze is er geen melding', () => {
+    assert.equal(ontbrekendeVoorkeur('moment', leeg), undefined);
+    assert.equal(ontbrekendeVoorkeur('stijl', leeg), undefined);
+  });
+  test('periode en vermijden hebben nooit een melding', () => {
+    assert.equal(ontbrekendeVoorkeur('periode', { ...leeg, aantalDagen: 0 }), undefined);
+    assert.equal(ontbrekendeVoorkeur('vermijden', { ...leeg, stijlen: [] }), undefined);
+  });
+  test('er is een melding precies dan wanneer kanVerder false is (behalve bij periode en vermijden)', () => {
+    const varianten = [leeg, { ...leeg, momenten: [] }, { ...leeg, kooktijden: [] }, { ...leeg, stijlen: [] }];
+    for (const fase of FASEN) {
+      for (const k of varianten) {
+        const melding = ontbrekendeVoorkeur(fase, k);
+        if (kanVerder(fase, k)) assert.equal(melding, undefined, `${fase} mag, geen melding verwacht`);
+        else if (fase === 'moment' || fase === 'stijl') assert.notEqual(melding, undefined, `${fase} mag niet, melding verwacht`);
+      }
+    }
   });
 });

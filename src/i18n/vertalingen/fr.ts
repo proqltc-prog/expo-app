@@ -366,6 +366,8 @@ export const fr: Vertalingen = {
   'planning.kies.vermijd': 'Y a-t-il quelque chose à éviter ?',
   'planning.vermijdOptioneel': 'Facultatif. Passe cette étape si tu n’évites rien.',
   'planning.kies.plan': 'Ton menu de la semaine',
+  'planning.meld.moment': 'Choisis d’abord tes préférences : au moins un repas et un temps de cuisson.',
+  'planning.meld.stijl': 'Choisis d’abord tes préférences : au moins une cuisine.',
   'planning.kalender': 'Choisir la période',
   'planning.bevestig': 'Confirmer',
   'planning.nogTeBevestigen': 'À confirmer',

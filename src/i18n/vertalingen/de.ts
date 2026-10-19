@@ -366,6 +366,8 @@ export const de: Vertalingen = {
   'planning.kies.vermijd': 'Gibt es etwas, das du meiden möchtest?',
   'planning.vermijdOptioneel': 'Optional. Überspringen, wenn du nichts meiden willst.',
   'planning.kies.plan': 'Dein Wochenmenü',
+  'planning.meld.moment': 'Wähle zuerst deine Vorlieben: mindestens eine Mahlzeit und eine Kochzeit.',
+  'planning.meld.stijl': 'Wähle zuerst deine Vorlieben: mindestens eine Küche.',
   'planning.kalender': 'Zeitraum wählen',
   'planning.bevestig': 'Bestätigen',
   'planning.nogTeBevestigen': 'Noch zu bestätigen',
