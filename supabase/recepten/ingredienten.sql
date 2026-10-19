@@ -172,7 +172,9 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('rode_wijn', 'ml', 'overig', 'vegetarisch'),
   ('naan', 'g', 'graan', 'vegetarisch'),
   ('currybladeren', 'g', 'kruid', 'vegetarisch'),
-  ('hesp', 'g', 'vlees', 'vlees')
+  ('hesp', 'g', 'vlees', 'vlees'),
+  ('bladerdeeg', 'g', 'graan', 'vegetarisch'),
+  ('radijs', 'g', 'groente', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1214,7 +1216,19 @@ select i.id, v.taal, v.naam from (values
   ('hesp', 'de', 'Schinken'),
   ('hesp', 'en', 'ham'),
   ('hesp', 'es', 'jamón'),
-  ('hesp', 'pt', 'presunto')
+  ('hesp', 'pt', 'presunto'),
+  ('bladerdeeg', 'nl', 'bladerdeeg'),
+  ('bladerdeeg', 'fr', 'pâte feuilletée'),
+  ('bladerdeeg', 'de', 'Blätterteig'),
+  ('bladerdeeg', 'en', 'puff pastry'),
+  ('bladerdeeg', 'es', 'hojaldre'),
+  ('bladerdeeg', 'pt', 'massa folhada'),
+  ('radijs', 'nl', 'radijs'),
+  ('radijs', 'fr', 'radis'),
+  ('radijs', 'de', 'Radieschen'),
+  ('radijs', 'en', 'radish'),
+  ('radijs', 'es', 'rábano'),
+  ('radijs', 'pt', 'rabanete')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
