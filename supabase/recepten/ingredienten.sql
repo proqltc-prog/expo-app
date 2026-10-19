@@ -185,7 +185,11 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('italiaanse_kruiden', 'g', 'kruid', 'vegetarisch'),
   ('zwarte_bonen', 'g', 'groente', 'vegetarisch'),
   ('tamarinde', 'g', 'overig', 'vegetarisch'),
-  ('bieslook', 'g', 'kruid', 'vegetarisch')
+  ('bieslook', 'g', 'kruid', 'vegetarisch'),
+  ('knolselderij', 'g', 'groente', 'vegetarisch'),
+  ('panko', 'g', 'graan', 'vegetarisch'),
+  ('currymix', 'g', 'kruid', 'vegetarisch'),
+  ('garnalenpasta', 'g', 'overig', 'vis')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1305,7 +1309,31 @@ select i.id, v.taal, v.naam from (values
   ('bieslook', 'de', 'Schnittlauch'),
   ('bieslook', 'en', 'chives'),
   ('bieslook', 'es', 'cebollino'),
-  ('bieslook', 'pt', 'cebolinho')
+  ('bieslook', 'pt', 'cebolinho'),
+  ('knolselderij', 'nl', 'knolselderij'),
+  ('knolselderij', 'fr', 'céleri-rave'),
+  ('knolselderij', 'de', 'Knollensellerie'),
+  ('knolselderij', 'en', 'celeriac'),
+  ('knolselderij', 'es', 'apio nabo'),
+  ('knolselderij', 'pt', 'aipo-rábano'),
+  ('panko', 'nl', 'panko'),
+  ('panko', 'fr', 'panko'),
+  ('panko', 'de', 'Panko'),
+  ('panko', 'en', 'panko'),
+  ('panko', 'es', 'panko'),
+  ('panko', 'pt', 'panko'),
+  ('currymix', 'nl', 'Japanse currymix'),
+  ('currymix', 'fr', 'mélange de curry japonais'),
+  ('currymix', 'de', 'japanische Currymischung'),
+  ('currymix', 'en', 'Japanese curry mix'),
+  ('currymix', 'es', 'mezcla de curry japonés'),
+  ('currymix', 'pt', 'mistura de caril japonês'),
+  ('garnalenpasta', 'nl', 'garnalenpasta'),
+  ('garnalenpasta', 'fr', 'pâte de crevettes'),
+  ('garnalenpasta', 'de', 'Garnelenpaste'),
+  ('garnalenpasta', 'en', 'shrimp paste'),
+  ('garnalenpasta', 'es', 'pasta de gambas'),
+  ('garnalenpasta', 'pt', 'pasta de camarão')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
