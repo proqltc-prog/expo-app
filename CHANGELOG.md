@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.73.1] – 2026-10-19
+
+**Jira:** [WEEK-98](https://proqltc-1791495894841.atlassian.net/browse/WEEK-98) (bugfix) · **Confluence:** [WEEK-98](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9043977)
+
+- De vraag en de uitleg op het taalscherm volgen de gekozen taal.
+
 ## [0.73.0] – 2026-10-19
 
 **Jira:** [WEEK-92](https://proqltc-1791495894841.atlassian.net/browse/WEEK-92) (verbetering) · **Confluence:** [WEEK-92](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8978433)

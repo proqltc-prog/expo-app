@@ -59,8 +59,9 @@ export default function Welkom() {
     <ScrollView contentContainerStyle={s.taalContainer}>
       <View style={s.taalKop}>
         <Image source={require('../assets/icon.png')} style={s.logoKlein} accessibilityElementsHidden importantForAccessibility="no" />
-        <Text style={s.titel}>{t('welkom.knop')}</Text>
-        <Text style={s.tekst}>{t('welkom.tekst')}</Text>
+        {/* WEEK-98: de vraag volgt de gekozen taal, niet de taal die nog in de app staat. */}
+        <Text style={s.titel}>{vertaal(gekozen, 'welkom.knop')}</Text>
+        <Text style={s.tekst}>{vertaal(gekozen, 'welkom.tekst')}</Text>
       </View>
 
       <View style={s.lijst}>
@@ -86,7 +87,7 @@ export default function Welkom() {
 
       <View style={s.onderaan}>
         <Pressable style={s.knop} onPress={doorgaan} accessibilityRole="button">
-          <Text style={s.knopTekst}>{t('welkom.doorgaan')}</Text>
+          <Text style={s.knopTekst}>{vertaal(gekozen, 'welkom.doorgaan')}</Text>
         </Pressable>
         {stapIndicator(1)}
       </View>
