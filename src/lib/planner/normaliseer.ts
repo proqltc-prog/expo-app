@@ -78,11 +78,9 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     ...(normaliseerVermijd(ruw.vermijd).length ? { vermijd: normaliseerVermijd(ruw.vermijd) } : {}),
     taal: isTaal(ruw.taal) ? ruw.taal : 'nl',
     porties: typeof ruw.porties === 'number' && ruw.porties > 0 ? ruw.porties : 2,
-    bron: ruw.bron === 'ai' || ruw.bron === 'db' ? ruw.bron : 'lokaal', // oude 'favorieten'-plannen (WEEK-72) worden lokaal
+    bron: ruw.bron === 'db' ? 'db' : 'lokaal', // oude AI-plannen en 'favorieten'-plannen (WEEK-72) worden lokaal
     gemaaktOp: tekst(ruw.gemaaktOp) || new Date(0).toISOString(),
     ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
-    ...(ruw.terugval === true ? { terugval: true } : {}),
-    ...(ruw.aiLimiet === true ? { aiLimiet: true } : {}),
     ...(ruw.herhaald === true ? { herhaald: true } : {}),
     ...(ruw.kort === true ? { kort: true } : {}),
     ...(tekst(ruw.beheerder) ? { beheerder: tekst(ruw.beheerder) } : {}),

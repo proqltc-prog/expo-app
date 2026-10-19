@@ -3,8 +3,6 @@ import assert from 'node:assert/strict';
 import { RECEPTENBANK } from '@/data/receptenbank';
 import { FrigoItem, trekFrigoAf, verdeelFrigo } from '@/lib/frigo';
 import { itemsUitPlan, voegPlanToe } from '@/lib/lijst';
-import { bouwAiVerzoek, frigoVoorAi, planWeek } from '@/lib/planner/ai';
-import { gebruikersBericht, systeemPrompt } from '@/lib/planner/aiPrompt';
 import { frigoScore, kiesEersteDag, markeerUitFrigo } from '@/lib/planner/frigovoorrang';
 import { planLokaal } from '@/lib/planner/lokaal';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
@@ -116,29 +114,3 @@ describe('markeerUitFrigo', () => {
   });
 });
 
-describe('AI met frigo-voorrang', () => {
-  test('de frigo gaat mee, oudste eerst, met hoeveelheid en leeftijd', () => {
-    const lijst = frigoVoorAi([f('kokosmelk', 400, 'ml', 1), f('spinazie', 200, 'g', 5), f('eieren', undefined, undefined, 3)], NU);
-    assert.deepEqual(lijst, ['spinazie (200 g, 5 days)', 'eieren (3 days)', 'kokosmelk (400 ml, 1 days)']);
-    assert.equal(frigoVoorAi(Array.from({ length: 40 }, (_, i) => f(`p${i}`, 1, 'stuk', i)), NU).length, 25);
-  });
-  test('bericht en regels vermelden de frigo; zonder frigo geen vermelding', () => {
-    const metFrigo = bouwAiVerzoek(verzoek({ frigo: [f('spinazie', 200, 'g', 5)] }));
-    assert.equal(metFrigo.frigo?.length, 1);
-    assert.match(gebruikersBericht(metFrigo), /In the fridge \(oldest first\): spinazie/);
-    assert.match(systeemPrompt(), /first requested day must use the oldest/);
-    const zonder = bouwAiVerzoek(verzoek());
-    assert.ok(!('frigo' in zonder));
-    assert.doesNotMatch(gebruikersBericht(zonder), /fridge/);
-  });
-  test('ook het AI-plan toont wat uit de frigo komt', async () => {
-    const antwoord = { dagen: ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag'].map((dag, i) => ({ dag, recept: {
-      naam: `Gerecht ${i}`, soort: 'vegetarisch', minuten: 20, stijlen: [],
-      ingredienten: [{ naam: i === 0 ? 'spinazie' : 'prei', hoeveelheid: 200, eenheid: 'g', afdeling: 'groenten-fruit' }],
-    } })) };
-    const nep = (async () => new Response(JSON.stringify(antwoord), { status: 200 })) as typeof fetch;
-    const plan = await planWeek(verzoek({ frigo: [f('spinazie', 200, 'g', 5)] }), { url: 'https://x', fetch: nep });
-    assert.equal(plan.bron, 'ai');
-    assert.deepEqual(plan.dagen[0].uitFrigo, ['spinazie']);
-  });
-});

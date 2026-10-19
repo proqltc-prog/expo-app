@@ -1,19 +1,13 @@
 // Reset van één dag (WEEK-11): enkel die dag krijgt een nieuw recept, de rest van de week blijft staan.
-// Het nieuwe recept houdt rekening met de andere dagen (variatie) en met de oorspronkelijke wensen.
+// Het nieuwe recept houdt rekening met de andere dagen (variatie) en met de oorspronkelijke wensen. Lokaal, zonder AI (WEEK-116).
 import { BankRecept, RECEPTENBANK } from '@/data/receptenbank';
 import type { Profiel } from '@/lib/profiel';
-import { AiInstelling, terugvalVelden, vraagAi } from './ai';
 import { filterOpKeuzes, naarPlanRecept, passendeRecepten, toeval } from './lokaal';
 import { bankReceptVermijdt } from './vermijden';
 import { momentVan } from './moment';
 import type { PlanVerzoek, Weekplan } from './types';
 
 const naamSleutel = (naam: string) => naam.trim().toLocaleLowerCase();
-
-/** Het oorspronkelijke verzoek van een plan, met het huidige profiel. */
-export function verzoekUitPlan(plan: Weekplan, profiel: Profiel, seed?: number): PlanVerzoek {
-  return { kooktijden: plan.kooktijden, stijlen: plan.stijlen, vermijd: plan.vermijd, profiel, taal: plan.taal, seed };
-}
 
 /**
  * Kiest lokaal een vervangrecept voor dag `index`. Regels, van belangrijk naar minder belangrijk
@@ -69,31 +63,4 @@ export function resetDagLokaal(plan: Weekplan, index: number, seed: number = Dat
       i === index ? { dag: d.dag, ...(d.moment ? { moment: d.moment } : {}), recept: naarPlanRecept(nieuw, plan.taal, plan.porties) } : d
     ),
   };
-}
-
-/**
- * Vervangt dag `index`: met de AI als die ingesteld is (met de andere recepten als "vermijden"),
- * anders of bij een fout lokaal. Bij een AI-fout krijgt het plan `terugval: true`.
- */
-export async function resetDag(
-  plan: Weekplan,
-  index: number,
-  profiel: Profiel,
-  instelling: AiInstelling = {},
-  seed: number = Date.now()
-): Promise<Weekplan> {
-  const huidig = plan.dagen[index];
-  if (!huidig) return plan;
-  // De AI kent enkel avondrecepten: ontbijt en middag gaan lokaal (WEEK-43).
-  if (!instelling.url || (huidig.moment && huidig.moment !== 'avond')) return resetDagLokaal(plan, index, seed);
-  try {
-    const vermijd = plan.dagen.map((d) => d.recept.naam);
-    const [vervanging] = await vraagAi(verzoekUitPlan(plan, profiel, seed), instelling, [huidig.dag], vermijd);
-    if (vermijd.some((n) => naamSleutel(n) === naamSleutel(vervanging.recept.naam))) {
-      throw new Error('AI gaf een recept dat al in de week staat');
-    }
-    return { ...plan, dagen: plan.dagen.map((d, i) => (i === index ? vervanging : d)) };
-  } catch (e) {
-    return { ...resetDagLokaal(plan, index, seed), ...terugvalVelden(e) };
-  }
 }

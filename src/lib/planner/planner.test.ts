@@ -101,9 +101,12 @@ describe('normaliseerWeekplan', () => {
     const plan = planLokaal(verzoek());
     assert.deepEqual(normaliseerWeekplan(JSON.parse(JSON.stringify(plan))), plan);
   });
-  test('de limietmelding (terugval + aiLimiet) blijft bewaard', () => {
-    const plan = { ...planLokaal(verzoek()), terugval: true, aiLimiet: true };
-    assert.deepEqual(normaliseerWeekplan(JSON.parse(JSON.stringify(plan))), plan);
+  test('oude AI-vlaggen (terugval, aiLimiet) en bron ai worden niet meer bewaard (WEEK-116)', () => {
+    const oud = { ...planLokaal(verzoek()), bron: 'ai', terugval: true, aiLimiet: true };
+    const gelezen = normaliseerWeekplan(JSON.parse(JSON.stringify(oud)));
+    assert.equal(gelezen?.bron, 'lokaal');
+    assert.ok(!('terugval' in (gelezen ?? {})));
+    assert.ok(!('aiLimiet' in (gelezen ?? {})));
   });
   test('onbruikbare data geeft null', () => {
     assert.equal(normaliseerWeekplan(null), null);

@@ -11,6 +11,14 @@ import { porties as berekenPorties } from '@/lib/planner/hoeveelheid';
 import { toeval } from '@/lib/planner/lokaal';
 import { kooktijdVan, KooktijdCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
 import { dagenVoorVerzoek, voegDatumsToe } from '@/lib/planner/datums';
+import type { Vermijd } from '@/data/vermijden';
+import { heeftVermijdNaam } from '@/lib/planner/vermijden';
+
+/** Recepten met een vermeden ingrediënt vallen altijd weg, ook bij aanvullen (WEEK-116). */
+export function zonderVermeden(pool: DbPoolRecept[], vermijd: readonly Vermijd[] | undefined): DbPoolRecept[] {
+  if (!vermijd?.length) return pool;
+  return pool.filter((k) => !heeftVermijdNaam(k.recept.ingredienten, vermijd));
+}
 
 /** Een recept klaar voor de planner, met de eigenschappen waarop gefilterd wordt. */
 export type DbPoolRecept = {
@@ -63,8 +71,9 @@ function kiesVoorPlek(
 }
 
 /** Stelt een weekplan samen uit de databaserecepten. Geeft undefined als er voor geen enkel gekozen moment recepten zijn. */
-export function planUitDatabase(verzoek: PlanVerzoek, pool: DbPoolRecept[]): Weekplan | undefined {
+export function planUitDatabase(verzoek: PlanVerzoek, invoer: DbPoolRecept[]): Weekplan | undefined {
   const momenten = normaliseerMomenten(verzoek.momenten);
+  const pool = zonderVermeden(invoer, verzoek.vermijd);
   if (!pool.some((k) => momenten.includes(k.moment))) return undefined;
   const random = toeval(verzoek.seed ?? Date.now());
   const gebruikt = new Set<string>();
@@ -100,7 +109,7 @@ export function vervangDbDag(plan: Weekplan, index: number, pool: DbPoolRecept[]
   const doel = plan.dagen[index];
   if (!doel) return plan;
   const gebruikt = new Set(plan.dagen.map((d) => d.recept.id));
-  const keuze = kiesVoorPlek(pool, doel.moment ?? 'avond', { kooktijden: plan.kooktijden, stijlen: plan.stijlen }, gebruikt, toeval(seed));
+  const keuze = kiesVoorPlek(zonderVermeden(pool, plan.vermijd), doel.moment ?? 'avond', { kooktijden: plan.kooktijden, stijlen: plan.stijlen }, gebruikt, toeval(seed));
   if (!keuze || keuze.recept.id === doel.recept.id) return plan;
   const dagen = plan.dagen.map((d, i) => (i === index ? { ...d, recept: keuze.recept, gedaan: undefined, verbruikt: undefined, ontbreekt: undefined, uitFrigo: undefined } : d));
   return { ...plan, dagen };
