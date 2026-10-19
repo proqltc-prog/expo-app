@@ -1,11 +1,10 @@
 import type { Afdeling } from './ingredienten';
 
-// Vaste items voor ontbijt, middag (boterhammen), school en huishouden.
+// Vaste items voor ontbijt, middag (boterhammen) en huishouden. Schoolitems staan er niet meer bij (WEEK-123).
 // Categorie en items zijn codes; de tekst komt uit de vertalingen (categorie.<code>, item.<code>).
 export const VASTE_ITEMS = [
   { categorie: 'brood-beleg', items: ['brood', 'boter', 'kaas', 'hesp', 'choco'] },
   { categorie: 'fruit', items: ['appels', 'bananen', 'mandarijnen'] },
-  { categorie: 'school', items: ['koekjes', 'drinkbrikjes'] },
   { categorie: 'huishouden', items: ['wc-papier', 'tandpasta'] },
 ] as const;
 
