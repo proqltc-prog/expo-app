@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { bereidingVoor } from '@/lib/bereiding';
 import { EigenRecept } from '@/lib/eigenrecepten';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
@@ -39,13 +40,19 @@ export default function Bereiding() {
     );
   }
 
+  // WEEK-108: het kruisje keert altijd terug naar het weekmenu, ongeacht de geschiedenis.
+  const sluit = () => router.navigate('/');
+
   const volgende = () => {
-    if (index >= laatste) router.back();
+    if (index >= laatste) sluit();
     else setIndex(index + 1);
   };
 
   return (
     <View style={s.scherm}>
+      <Pressable onPress={sluit} accessibilityRole="button" accessibilityLabel={t('bereiding.sluit')} style={s.sluit} hitSlop={8}>
+        <Ionicons name="close" size={22} color={INKT} />
+      </Pressable>
       <ScrollView contentContainerStyle={s.inhoud}>
         <Text style={s.titel}>{naam}</Text>
         {minuten ? (
@@ -100,7 +107,8 @@ export default function Bereiding() {
 const s = StyleSheet.create({
   scherm: { flex: 1, backgroundColor: PAPIER },
   inhoud: { padding: 20, gap: 16, paddingBottom: 24 },
-  titel: { fontSize: 26, fontWeight: '800', color: INKT, lineHeight: 31 },
+  titel: { fontSize: 26, fontWeight: '800', color: INKT, lineHeight: 31, paddingRight: 52 },
+  sluit: { position: 'absolute', top: 12, right: 14, zIndex: 1, width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, alignItems: 'center', justifyContent: 'center' },
   chips: { flexDirection: 'row', gap: 8 },
   chip: { fontSize: 12, fontWeight: '700', color: PETROL, backgroundColor: PETROL_ZACHT, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10, overflow: 'hidden' },
   lijst: { gap: 12 },

@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, vinkAf, Weergave } from '@/lib/lijst';
+import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, sectieKeuze, vinkAf, Weergave } from '@/lib/lijst';
 import { FrigoItem } from '@/lib/frigo';
 import type { DagCode } from '@/lib/planner/types';
 import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
@@ -113,6 +113,21 @@ export default function Lijst() {
     if (afgevinkt) await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
   };
 
+  // Het selectievakje naast een rubriek of recept (WEEK-111): alle regels van de sectie samen.
+  // Enkel de items die echt van stand veranderen gaan naar of uit de frigo.
+  const toggleSectie = async (regels: LijstRegel[]) => {
+    const { afgevinkt, ids } = sectieKeuze(regels);
+    setItems((huidig) => vinkAf(huidig, ids, afgevinkt, ikNaam));
+    let onderliggend: LijstItem[] = [];
+    const nieuw = await wijzigLijst((huidig) => {
+      onderliggend = huidig.filter((i) => ids.includes(i.id) && i.afgevinkt !== afgevinkt);
+      return vinkAf(huidig, ids, afgevinkt, ikNaam);
+    });
+    setItems(nieuw);
+    const frigoNieuw = await wijzigFrigo((f) => pasFrigoAan(f, onderliggend, afgevinkt, new Date()));
+    if (afgevinkt) await wijzigPlan((plan) => werkOntbrekendBij(plan, frigoNieuw));
+  };
+
   const titel = (sectie: LijstSectie) => {
     if (sectie.soort === 'recept') return t('lijst.receptTitel', { dag: t(dagSleutel(sectie.dag)), recept: sectie.recept });
     if (sectie.soort === 'afdeling') return t(`afdeling.${sectie.afdeling}` as Sleutel);
@@ -141,7 +156,13 @@ export default function Lijst() {
         accessibilityState={{ selected: aan }}
       >
         <Ionicons name={(h === 'winkels' ? WINKEL_ICOON : BOODSCHAPPEN_ICOON) as IoniconNaam} size={18} color={aan ? kleur : MUTED} />
-        <Text style={[s.hoofdTekst, aan && { color: kleur }]} numberOfLines={1}>
+        {/* WEEK-111: het label wordt volledig getoond; past het niet, dan wordt het kleiner in plaats van afgekapt. */}
+        <Text
+          style={[s.hoofdTekst, aan && { color: kleur }]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.6}
+        >
           {t(h === 'winkels' ? 'lijst.tabWinkels' : 'lijst.tabBoodschappen')}
         </Text>
         {h === 'boodschappen' && (
@@ -196,19 +217,33 @@ export default function Lijst() {
           <SectionList
             sections={data}
             keyExtractor={(r, i) => `${r.sleutel}-${i}`}
-            renderSectionHeader={({ section }) => (
-              <View>
-                {section.soort === 'categorie' ? (
-                  <View style={s.kopRij}>
-                    <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} />
-                    <Text style={s.kopInRij}>{section.title}</Text>
+            renderSectionHeader={({ section }) => {
+              const alles = section.regels.length > 0 && section.regels.every((r) => r.afgevinkt);
+              return (
+                <View>
+                  <View style={s.sectieRij}>
+                    <View style={s.sectieTitel}>
+                      {section.soort === 'categorie' && (
+                        <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} />
+                      )}
+                      <Text style={s.kopInRij}>{section.title}</Text>
+                    </View>
+                    {/* Selectievakje (WEEK-111): vinkt alle ingrediënten van deze rubriek of dit recept samen af. */}
+                    <Pressable
+                      style={[s.vinkje, alles && s.vinkjeAan]}
+                      onPress={() => toggleSectie(section.regels)}
+                      hitSlop={8}
+                      accessibilityRole="checkbox"
+                      accessibilityState={{ checked: alles }}
+                      accessibilityLabel={`${t('lijst.selecteerSectie')}: ${section.title}`}
+                    >
+                      {alles && <Text style={s.vinkjeTekst}>✓</Text>}
+                    </Pressable>
                   </View>
-                ) : (
-                  <Text style={s.kop}>{section.title}</Text>
-                )}
-                {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
-              </View>
-            )}
+                  {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
+                </View>
+              );
+            }}
             renderItem={({ item }) => (
               <Pressable style={s.item} onPress={() => toggle(item)}>
                 <View style={[s.vinkje, item.afgevinkt && s.vinkjeAan]}>
@@ -262,7 +297,7 @@ export default function Lijst() {
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16 },
   hoofdSchakelaar: { flexDirection: 'row', backgroundColor: MIST, borderRadius: 18, padding: 5, marginTop: 12 },
-  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 14 },
+  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 6, borderRadius: 14 },
   hoofdTabAan: { backgroundColor: '#fff', shadowColor: '#17201A', shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
   hoofdTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
   teller: { color: '#666', marginVertical: 10 },
@@ -278,7 +313,8 @@ const s = StyleSheet.create({
   offline: { color: '#7a5b00' },
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
-  kopRij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14, marginBottom: 4 },
+  sectieRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 14, marginBottom: 4 },
+  sectieTitel: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
   kopInRij: { fontWeight: '700', fontSize: 14, color: '#444' },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: ORANJE, alignItems: 'center', justifyContent: 'center' },

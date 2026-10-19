@@ -19,6 +19,7 @@ import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { Ionicons } from '@expo/vector-icons';
+import { scanTerug } from '@/lib/scanBestemming';
 
 // Thema (WEEK-71): dezelfde kleuren als frigo en lijst. Petrol voor de hoofdacties, oranje voor afwijzen.
 const KLEUR = '#0F6B66';
@@ -89,8 +90,11 @@ export default function Scan() {
   };
 
   // Scan sluiten (WEEK-102): terug naar het vorige scherm, of naar het menu als er geen vorig scherm is.
+  // WEEK-110: met de herkomst (van) gaat het kruisje naar het scherm waar gescand werd, niet naar de taalkeuze.
   const annuleer = () => {
-    if (router.canGoBack()) router.back();
+    const terug = scanTerug(van);
+    if (terug) router.navigate(terug);
+    else if (router.canGoBack()) router.back();
     else router.navigate('/');
   };
 

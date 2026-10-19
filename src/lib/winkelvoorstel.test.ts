@@ -83,3 +83,12 @@ describe('winkelvoorstel: kiezen met zo weinig mogelijk stops (WEEK-57)', () => 
     assert.equal(v.stops[0].winkel.naam, 'Eerste');
   });
 });
+
+describe('winkels zonder postcodepunt (WEEK-112)', () => {
+  test('zonder punt worden de winkels nog steeds gekozen, alleen zonder afstand', () => {
+    const voorstel = kiesWinkels(['supermarkt'], [w('Delhaize Roosdaal', 'supermarkt', 50.9, 4.1)], undefined);
+    assert.equal(voorstel.nietGedekt.length, 0);
+    assert.equal(voorstel.stops.length, 1);
+    assert.equal(voorstel.stops[0].afstandKm, undefined);
+  });
+});

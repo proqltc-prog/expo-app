@@ -33,7 +33,7 @@ import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { dagSleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
-import { Fase, FASEN, Keuzes, kanVerder, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
+import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
@@ -386,21 +386,22 @@ export default function Weekplanning() {
     );
   };
 
-  // Een maaltijd toevoegen (WEEK-44): op het eerste gekozen moment.
-  const voegMaaltijdToe = () => {
-    if (!mag) return;
-    router.push(`/kies?moment=${keuzes.momenten[0] ?? 'avond'}`);
-  };
-
   const meldVoorkeur = ontbrekendeVoorkeur(fase, keuzes);
 
+  // WEEK-105: bij het binnenkomen van de stap Stijl staat niets geselecteerd.
   const gaVerder = () => {
     const volgende = volgendeFase(fase);
-    if (volgende && kanVerder(fase, keuzes)) setFase(volgende);
+    if (!volgende || !kanVerder(fase, keuzes)) return;
+    const nieuw = naarStap(volgende, keuzes);
+    if (nieuw !== keuzes) pasKeuzesAan(nieuw);
+    setFase(volgende);
   };
   const gaTerug = () => {
     const vorige = vorigeFase(fase);
-    if (vorige) setFase(vorige);
+    if (!vorige) return;
+    const nieuw = naarStap(vorige, keuzes);
+    if (nieuw !== keuzes) pasKeuzesAan(nieuw);
+    setFase(vorige);
   };
 
   const huidigeStap = FASEN.indexOf(fase);
@@ -607,7 +608,6 @@ export default function Weekplanning() {
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
-                      <View style={{ flex: 1 }} />
                       <Pressable
                         style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
                         onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer())}
@@ -626,14 +626,6 @@ export default function Weekplanning() {
                   </View>
                 );
               })}
-              {mag && (
-                <Pressable style={s.tweedeKnop} onPress={voegMaaltijdToe} accessibilityRole="button">
-                  <Text style={s.tweedeKnopTekst}>{t('planning.toevoegen')}</Text>
-                </Pressable>
-              )}
-              <Pressable style={s.tweedeKnop} onPress={() => router.navigate('/lijst')}>
-                <Text style={s.tweedeKnopTekst}>{t('menu.naarLijst')}</Text>
-              </Pressable>
             </>
           )}
 
@@ -701,13 +693,14 @@ const s = StyleSheet.create({
   kaartInhoud: { flex: 1, minWidth: 0, gap: 6 },
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
   dag: { fontSize: 13, color: MUTED, fontWeight: '600' },
-  kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  // WEEK-106: dag en status onder elkaar, zodat de status niet tegen de dagnaam aan staat.
+  kaartKop: { flexDirection: 'column', alignItems: 'flex-start', gap: 2 },
   naam: { fontSize: 17, fontWeight: '700', marginTop: 2, color: INKT },
   bevestigdTekst: { color: PETROL, fontWeight: '700', fontSize: 13, marginTop: 4 },
   naamRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   naamTekst: { flex: 1 },
   bereidingKnop: { width: 40, height: 40, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
-  rij: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  rij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-start', gap: 8, marginTop: 8 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
   min: { color: MUTED, fontSize: 13 },
   gepland: { color: MUTED, fontSize: 12, marginTop: 2 },
@@ -721,7 +714,8 @@ const s = StyleSheet.create({
   gedaanKnopAan: { backgroundColor: PETROL },
   gedaanTekst: { color: PETROL, fontSize: 12, fontWeight: '700' },
   gedaanTekstAan: { color: '#fff' },
-  actieRij: { flexDirection: 'row', gap: 10, marginTop: 8 },
+  // WEEK-106: links uitgelijnd en binnen de kaart; bij weinig breedte schuiven ze naar de volgende regel.
+  actieRij: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8, marginTop: 8 },
   actieIcoon: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, borderColor: PETROL, alignItems: 'center', justifyContent: 'center' },
   actieIcoonAan: { backgroundColor: PETROL },
   tweedeKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, padding: 12, alignItems: 'center' },
