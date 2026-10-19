@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.79.2] – 2026-10-19
+
+**Jira:** [WEEK-114](https://proqltc-1791495894841.atlassian.net/browse/WEEK-114) (bugfix) · **Confluence:** [WEEK-114](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10321921)
+
+- Weekmenu: de knop Gekookt staat op een eigen regel, links uitgelijnd, en loopt niet meer buiten de dagkaart.
+
 ## [0.79.1] – 2026-10-19
 
 **Jira:** [WEEK-113](https://proqltc-1791495894841.atlassian.net/browse/WEEK-113) (bugfix) · **Confluence:** [WEEK-113](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10289153)
