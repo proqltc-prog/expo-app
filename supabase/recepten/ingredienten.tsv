@@ -157,7 +157,7 @@ ijswater	ml	condiment	vegetarisch	ijswater	eau glacée	Eiswasser	ice water	agua 
 kimchi	g	groente	vegetarisch	kimchi	kimchi	Kimchi	kimchi	kimchi	kimchi
 glasnoedels	g	graan	vegetarisch	glasnoedels	nouilles de verre	Glasnudeln	glass noodles	fideos de cristal	noodles de vidro
 gedroogde_split_erwten	g	peulvrucht	vegetarisch	gedroogde splitérwten	pois cassés	getrocknete Spalterbsen	split peas	guisantes partidos	ervilhas partidas
-andijvie	g	groente	vegetarisch	andijvie	endive	Endivie	endive	endibia	endívia
+andijvie	g	groente	vegetarisch	andijvie	chicorée frisée	Endivie	curly endive	escarola	escarola
 rookworst	stuk	vlees	vlees	rookworst	saucisse fumée	Rauchwurst	smoked sausage	salchicha ahumada	salsicha fumada
 laurier	stuk	kruid	vegetarisch	laurier	feuille de laurier	Lorbeerblatt	bay leaf	hoja de laurel	folha de louro
 boerenkool	g	groente	vegetarisch	boerenkool	chou frisé	Grünkohl	kale	col rizada	couve
@@ -191,7 +191,7 @@ currymix	g	kruid	vegetarisch	Japanse currymix	mélange de curry japonais	japanis
 garnalenpasta	g	overig	vis	garnalenpasta	pâte de crevettes	Garnelenpaste	shrimp paste	pasta de gambas	pasta de camarão
 hazelnoten	g	noten	vegetarisch	hazelnoten	noisettes	Haselnüsse	hazelnuts	avellanas	avelãs
 tteokbokki	g	graan	vegetarisch	tteokbokki	tteokbokki	Tteokbokki	tteokbokki	tteokbokki	tteokbokki
-witlof	g	groente	vegetarisch	witlof	endive	Chicorée	endive	endibia	endívia
+witlof	g	groente	vegetarisch	witlof	endive	Chicorée	Belgian endive	endibia belga	endívia belga
 poedersuiker	g	zoet	vegetarisch	poedersuiker	sucre glace	Puderzucker	icing sugar	azúcar glas	açúcar em pó
 vanillesuiker	g	zoet	vegetarisch	vanillesuiker	sucre vanillé	Vanillezucker	vanilla sugar	azúcar vainillado	açúcar baunilhado
 ovenfriet	g	groente	vegetarisch	ovenfriet	frites au four	Ofenpommes	oven fries	patatas fritas al horno	batatas fritas ao forno
@@ -212,3 +212,24 @@ pistachenoten	g	noten	vegetarisch	pistachenoten	pistaches	Pistazien	pistachios	p
 vleesfond	ml	condiment	vlees	vleesfond	fond de viande	Fleischfond	beef stock	caldo de carne	caldo de carne
 pastinaak	g	groente	vegetarisch	pastinaak	panais	Pastinake	parsnip	chirivía	pastinaca
 doenjang	g	condiment	vegetarisch	doenjang	pâte de soja doenjang	Doenjang (Sojapaste)	doenjang (fermented soybean paste)	doenjang (pasta de soja fermentada)	doenjang (pasta de soja fermentada)
+kipdijen	g	vlees	vlees	kippendijen	cuisses de poulet	Hähnchenschenkel	chicken thighs	muslos de pollo	coxas de frango
+ketchup	g	condiment	vegetarisch	ketchup	ketchup	Ketchup	ketchup	kétchup	ketchup
+worcestershiresaus	ml	condiment	vis	Worcestershiresaus	sauce Worcestershire	Worcestershiresauce	Worcestershire sauce	salsa Worcestershire	molho Worcestershire
+dashi	ml	condiment	vis	dashi	dashi	Dashi	dashi	dashi	dashi
+udonnoedels	g	graan	vegetarisch	udonnoedels	nouilles udon	Udon-Nudeln	udon noodles	fideos udon	noodles udon
+spruitjes	g	groente	vegetarisch	spruitjes	choux de Bruxelles	Rosenkohl	Brussels sprouts	coles de Bruselas	couves de Bruxelas
+gorgonzola	g	zuivel	vegetarisch	gorgonzola	gorgonzola	Gorgonzola	gorgonzola	gorgonzola	gorgonzola
+brie	g	zuivel	vegetarisch	brie	brie	Brie	brie	brie	brie
+zoete_chilisaus	ml	condiment	vegetarisch	zoete chilisaus	sauce chili douce	süße Chilisoße	sweet chilli sauce	salsa de chile dulce	molho de chili doce
+tortillachips	g	graan	vegetarisch	tortillachips	chips de tortilla	Tortilla-Chips	tortilla chips	totopos	nachos
+hoisinsaus	ml	condiment	vegetarisch	hoisinsaus	sauce hoisin	Hoisinsoße	hoisin sauce	salsa hoisin	molho hoisin
+vijfkruidenpoeder	g	specerij	vegetarisch	vijfkruidenpoeder	poudre cinq épices	Fünf-Gewürze-Pulver	five-spice powder	polvo de cinco especias	pó de cinco especiarias
+sichuanpeper	g	specerij	vegetarisch	sichuanpeper	poivre de Sichuan	Sichuanpfeffer	Sichuan peppercorns	pimienta de Sichuán	pimenta de Sichuan
+ras_el_hanout	g	specerij	vegetarisch	ras el hanout	ras el hanout	Ras el Hanout	ras el hanout	ras el hanout	ras el hanout
+ananas	g	fruit	vegetarisch	ananas	ananas	Ananas	pineapple	piña	abacaxi
+mango	g	fruit	vegetarisch	mango	mangue	Mango	mango	mango	manga
+oesterzwammen	g	groente	vegetarisch	oesterzwammen	pleurotes	Austernpilze	oyster mushrooms	setas ostra	cogumelos ostra
+wijnazijn	ml	condiment	vegetarisch	witte wijnazijn	vinaigre de vin blanc	Weißweinessig	white wine vinegar	vinagre de vino blanco	vinagre de vinho branco
+varkensgehakt	g	vlees	vlees	varkensgehakt	chair à saucisse de porc	Schweinehack	pork mince	carne picada de cerdo	carne picada de porco
+gerookte_zalm	g	vis	vis	gerookte zalm	saumon fumé	Räucherlachs	smoked salmon	salmón ahumado	salmão fumado
+sinaasappelsap	ml	overig	vegetarisch	sinaasappelsap	jus d'orange	Orangensaft	orange juice	zumo de naranja	sumo de laranja
