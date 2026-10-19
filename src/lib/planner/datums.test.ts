@@ -45,6 +45,21 @@ describe('datums', () => {
     assert.equal(kortDatum('2026-10-19', 'en'), 'Mon 19 Oct');
     assert.equal(kortDatum('onzin', 'nl'), '');
   });
+
+  test('geeft in alle zes talen een afgekorte weekdag en datum (WEEK-93)', () => {
+    const talen = ['nl', 'fr', 'de', 'en', 'es', 'pt'] as const;
+    for (const taal of talen) {
+      const tekst = kortDatum('2026-10-19', taal);
+      assert.match(tekst, /^\S+ 19 \S+$/, `${taal}: ${tekst}`);
+    }
+    assert.equal(kortDatum('2026-10-19', 'fr'), 'lun 19 oct.');
+    assert.equal(kortDatum('2026-10-19', 'de'), 'Mo 19 Okt.');
+  });
+
+  test('bewaart de dag in lokale tijd, ook rond middernacht (WEEK-93 regressie)', () => {
+    assert.equal(kortDatum('2026-10-25', 'nl'), 'zo 25 okt');
+    assert.equal(kortDatum('2026-12-31', 'nl'), 'do 31 dec');
+  });
 });
 
 import { maandCellen, maandKop, weekKoppen } from '@/lib/planner/datums';

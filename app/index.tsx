@@ -527,7 +527,7 @@ export default function Weekplanning() {
               {plan.kort && <Text style={s.melding}>{t('planning.kort', { n: plan.dagen.length })}</Text>}
               {plan.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
               {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-              {plan.dagen.map(({ dag, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
+              {plan.dagen.map(({ dag, datum, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
                 const wijzigbaar = magDagWijzigen(plan.dagen[index]);
                 // Het icoon verschijnt enkel bij een bevestigd gerecht dat bereidingsstappen heeft (WEEK-81).
                 const heeftBereiding = bevestigd && bereidingVoor(recept, eigen, taal) !== null;
@@ -537,7 +537,7 @@ export default function Weekplanning() {
                     <Stijlbeeld id={beeldVoorReceptStijl(recept.stijlen[0]) ?? 'belgisch'} />
                     <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
-                      <Text style={s.dag}>{t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
+                      <Text style={s.dag}>{(datum ? kortDatum(datum, taal) : '') || t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
                       {gedaan ? (
                         <Text style={s.statusAan}>{t('planning.gedaan')}</Text>
                       ) : (

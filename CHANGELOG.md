@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.76.0] – 2026-10-19
+
+**Jira:** [WEEK-93](https://proqltc-1791495894841.atlassian.net/browse/WEEK-93) (verbetering) · **Confluence:** [WEEK-93](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9633793)
+
+- Elk recept in het weekmenu toont de weekdag met de exacte datum (bv. "ma 19 okt"), in de taal van de app.
+
 ## [0.75.0] – 2026-10-19
 
 **Jira:** [WEEK-97](https://proqltc-1791495894841.atlassian.net/browse/WEEK-97) (verbetering) · **Confluence:** [WEEK-97](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9502721)
