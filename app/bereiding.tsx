@@ -1,6 +1,6 @@
 // Bereiding (WEEK-81): de voorbereidingsstappen van een bevestigd gerecht, om te raadplegen tijdens het koken.
 import { useEffect, useMemo, useState } from 'react';
-import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { bereidingVoor } from '@/lib/bereiding';
@@ -32,15 +32,6 @@ export default function Bereiding() {
       setDb(dbLijst);
       setGeladen(true);
     });
-  }, []);
-
-  // WEEK-120: ook de fysieke terugknop van het toestel gaat terug naar het weekmenu, niet naar de taalkeuze.
-  useEffect(() => {
-    const abonnement = BackHandler.addEventListener('hardwareBackPress', () => {
-      router.navigate('/');
-      return true;
-    });
-    return () => abonnement.remove();
   }, []);
 
   const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);

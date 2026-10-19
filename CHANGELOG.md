@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.85.2] – 2026-10-19
+
+**Jira:** [WEEK-128](https://proqltc-1791495894841.atlassian.net/browse/WEEK-128) · **Confluence:** [WEEK-128 Terugknop gaat naar het weekmenu](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11108370)
+
+- De terugknop van Android gaat op elk scherm naar het weekmenu, niet meer naar de taalkeuze.
+
 ## [0.85.1] – 2026-10-19
 
 **Jira:** [WEEK-129](https://proqltc-1791495894841.atlassian.net/browse/WEEK-129) · **Confluence:** [WEEK-129 Gezinsruimte: toestel hoort al bij een gezin](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11108353)
