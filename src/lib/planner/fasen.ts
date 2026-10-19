@@ -45,6 +45,17 @@ export function kanVerder(fase: Fase, keuzes: Keuzes): boolean {
 }
 
 /**
+ * Welke melding hoort er onder de knop "Volgende" als de gebruiker nog niet verder kan?
+ * undefined als er niets ontbreekt of de stap altijd mag.
+ */
+export function ontbrekendeVoorkeur(fase: Fase, keuzes: Keuzes): 'planning.meld.moment' | 'planning.meld.stijl' | undefined {
+  if (kanVerder(fase, keuzes)) return undefined;
+  if (fase === 'moment') return 'planning.meld.moment';
+  if (fase === 'stijl') return 'planning.meld.stijl';
+  return undefined;
+}
+
+/**
  * Past de keuzes aan als de momenten veranderen: een kooktijd, stijl of vermijd-keuze die bij geen
  * enkel gekozen moment meer hoort, valt weg. Blijft een stijl leeg, dan krijgt die de standaard van het eerste moment.
  */
