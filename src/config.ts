@@ -1,6 +1,5 @@
 // Instellingen. Overschrijfbaar met EXPO_PUBLIC_*-variabelen in een bestand `.env.local` (wordt niet gecommit).
 // Expo zet die variabelen tijdens het bouwen in de app.
-import type { AiInstelling } from '@/lib/planner/ai';
 
 /**
  * Supabase-project voor de gezinsruimte (WEEK-8).
@@ -15,14 +14,4 @@ export const SUPABASE = {
   sleutel:
     process.env.EXPO_PUBLIC_SUPABASE_KEY ??
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4aGhqcXp4ZHBtbHpnamtoYW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjQxMzAsImV4cCI6MjEwNzIwMDEzMH0.6oDAo82vTrqZGAAK5vzKgFnCUr5h6X_EJbHJaCEvOQA',
-};
-
-/**
- * AI-planner (WEEK-23, uitgerold in WEEK-31): de server-functie plan-week in hetzelfde Supabase-project.
- * Leeg zetten (EXPO_PUBLIC_PLANNER_URL="") = enkel de lokale planner.
- * Het toegangstoken van het toestel komt erbij in src/opslag/supabase.ts (aiPlanner).
- */
-export const AI: AiInstelling = {
-  url: process.env.EXPO_PUBLIC_PLANNER_URL ?? (SUPABASE.url ? `${SUPABASE.url}/functions/v1/plan-week` : undefined),
-  apikey: process.env.EXPO_PUBLIC_PLANNER_KEY ?? SUPABASE.sleutel,
 };

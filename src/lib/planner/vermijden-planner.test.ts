@@ -1,6 +1,5 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AiFout, bouwAiVerzoek, leesAiAntwoord } from '@/lib/planner/ai';
 import { planLokaal } from '@/lib/planner/lokaal';
 import { resetDagLokaal } from '@/lib/planner/reset';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
@@ -36,28 +35,6 @@ describe('vermijden in de lokale planner (WEEK-41)', () => {
       const nieuw = resetDagLokaal(plan, index, index + 11);
       assert.ok(!nieuw.dagen[index].recept.ingredienten.some((i) => i.naam.toLowerCase() === 'room'));
     }
-  });
-});
-
-describe('vermijden bij de AI (WEEK-41)', () => {
-  test('het verzoek aan de AI bevat de uitsluitingen in gewone taal', () => {
-    const aiVerzoek = bouwAiVerzoek(verzoek({ vermijd: ['varkensvlees', 'noten'] }), ['maandag']);
-    assert.ok(aiVerzoek.uitsluiten?.some((t) => /pork/.test(t)));
-    assert.ok(aiVerzoek.uitsluiten?.some((t) => /nuts/.test(t)));
-  });
-
-  test('zonder keuzes staat er geen uitsluitingsveld in het verzoek', () => {
-    assert.equal('uitsluiten' in bouwAiVerzoek(verzoek(), ['maandag']), false);
-  });
-
-  test('een AI-recept met een verboden ingrediënt wordt afgekeurd', () => {
-    const dagen: DagCode[] = ['zondag', 'maandag'];
-    const recept = (naam: string, ingredient: string) => ({
-      naam, soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [{ naam: ingredient, hoeveelheid: 200, eenheid: 'g', afdeling: 'zuivel-eieren' }],
-    });
-    const ruw = { dagen: [{ dag: 'zondag', recept: recept('Pasta pesto', 'Pasta') }, { dag: 'maandag', recept: recept('Pasta crème', 'Room') }] };
-    assert.throws(() => leesAiAntwoord(ruw, verzoek({ vermijd: ['zuivel'] }), dagen), AiFout);
-    assert.equal(leesAiAntwoord(ruw, verzoek(), dagen).length, 2);
   });
 });
 

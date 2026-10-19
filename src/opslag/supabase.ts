@@ -4,9 +4,7 @@ import 'react-native-url-polyfill/auto';
 import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { AI, SUPABASE } from '@/config';
-import type { AiInstelling } from '@/lib/planner/ai';
-import { AiTegoed, leesTegoed } from '@/lib/planner/tegoed';
+import { SUPABASE } from '@/config';
 
 let client: SupabaseClient | null = null;
 
@@ -39,29 +37,4 @@ export async function zorgVoorSessie(): Promise<string> {
   const { data: nieuw, error } = await sb.auth.signInAnonymously();
   if (error || !nieuw.user) throw error ?? new Error('aanmelden_mislukt');
   return nieuw.user.id;
-}
-
-/** Toegangstoken van dit toestel (meldt zich zo nodig eerst anoniem aan). */
-export async function toegangstoken(): Promise<string | undefined> {
-  const sb = supabase();
-  if (!sb) return undefined;
-  await zorgVoorSessie();
-  const { data } = await sb.auth.getSession();
-  return data.session?.access_token;
-}
-
-/** De AI-planner met het toegangstoken van dit toestel (WEEK-31): enkel aangemelde toestellen mogen hem gebruiken. */
-export const aiPlanner: AiInstelling = { ...AI, token: toegangstoken };
-
-/** AI-tegoed van vandaag voor het gezin van dit toestel (WEEK-33), of null als het niet op te vragen is. */
-export async function aiTegoed(): Promise<AiTegoed | null> {
-  const sb = supabase();
-  if (!sb || !AI.url) return null;
-  try {
-    await zorgVoorSessie();
-    const { data, error } = await sb.rpc('ai_tegoed');
-    return error ? null : leesTegoed(data);
-  } catch {
-    return null;
-  }
 }

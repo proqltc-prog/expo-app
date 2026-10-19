@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.81.0] – 2026-10-19
+
+**Jira:** [WEEK-116](https://proqltc-1791495894841.atlassian.net/browse/WEEK-116) (verbetering) · **Confluence:** [WEEK-116](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10125333)
+
+- Geen AI meer: het weekmenu en het vervangen van een dag komen enkel uit de recepten in de databank (of, als die niet beschikbaar is, uit de ingebouwde lokale receptenbank).
+- Als er te weinig recepten passen bij de keuzes, wordt het weekmenu aangevuld met recepten van een andere stijl of kooktijd, met een melding dat dit gebeurde.
+- Vermeden ingrediënten (bv. varkensvlees, melk, noten) en het moment (ontbijt/avond) worden nooit overtreden, ook niet bij het aanvullen.
+- Regressietests toegevoegd voor deze regels.
+
 ## [0.80.0] – 2026-10-19
 
 **Jira:** [WEEK-107](https://proqltc-1791495894841.atlassian.net/browse/WEEK-107) (verbetering) · **Confluence:** [WEEK-107](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10420225)

@@ -125,3 +125,41 @@ describe('vervangDbDag (WEEK-68)', () => {
     assert.equal(vervangDbDag(origineel, 0, p, 3).dagen[0].gedaan, undefined);
   });
 });
+
+const spek: DbRecept['ingredienten'] = [{ code: 'spek', categorie: 'vlees', namen: { nl: 'spek' }, hoeveelheid: 100, eenheid: 'g' }];
+
+describe('vermijden en moment worden nooit overtreden (WEEK-116)', () => {
+  test('een vermeden ingrediënt komt niet op het plan, ook niet bij aanvullen', () => {
+    const p = pool(dbRecept(1, { ingredienten: spek, titels: { nl: 'Spaghetti carbonara' } }), dbRecept(2, { basis: 'rijst' }));
+    const plan = planUitDatabase({ ...standaardProfielVerzoek(), vermijd: ['varkensvlees'] }, p);
+    assert.ok(plan);
+    assert.ok(plan!.dagen.every((d) => d.recept.naam !== 'Spaghetti carbonara'));
+  });
+
+  test('regressie: is het enige recept vermeden, dan komt er geen plan met dat recept', () => {
+    const p = pool(dbRecept(1, { ingredienten: spek }));
+    const plan = planUitDatabase({ ...standaardProfielVerzoek(), vermijd: ['varkensvlees'] }, p);
+    assert.equal(plan, undefined);
+  });
+
+  test('een ontbijtrecept komt niet op een avondplan', () => {
+    const p = pool(dbRecept(1, { moment: 'ontbijt' }));
+    const plan = planUitDatabase({ ...standaardProfielVerzoek(), momenten: ['avond'] }, p);
+    assert.equal(plan, undefined);
+  });
+
+  test('regressie: een avondrecept komt niet op een ontbijtplan', () => {
+    const p = pool(dbRecept(1, { moment: 'avond' }), dbRecept(2, { moment: 'ontbijt' }));
+    const plan = planUitDatabase({ ...standaardProfielVerzoek(), momenten: ['ontbijt'] }, p);
+    assert.ok(plan);
+    assert.ok(plan!.dagen.every((d) => d.moment === 'ontbijt'));
+  });
+
+  test('een vervangen dag respecteert de vermijd-lijst van het plan', () => {
+    const p = pool(dbRecept(1, { ingredienten: spek }), dbRecept(2), dbRecept(3, { basis: 'rijst' }));
+    const origineel = planUitDatabase({ ...standaardProfielVerzoek(), vermijd: ['varkensvlees'], aantalDagen: 2 }, p);
+    assert.ok(origineel);
+    const nieuw = vervangDbDag(origineel!, 0, p, 7);
+    assert.ok(nieuw.dagen.every((d) => !d.recept.ingredienten.some((i) => i.naam === 'spek')));
+  });
+});

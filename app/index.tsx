@@ -6,8 +6,8 @@ import { Stijlbeeld } from '@/ui/stijlbeeld';
 import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe } from '@/lib/lijst';
-import { planWeek } from '@/lib/planner/ai';
-import { resetDag } from '@/lib/planner/reset';
+import { planLokaal } from '@/lib/planner/lokaal';
+import { resetDagLokaal } from '@/lib/planner/reset';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
@@ -18,7 +18,6 @@ import { laadFrigo } from '@/opslag/frigo';
 import { toonBereidingsIcoon } from '@/lib/bereiding';
 import { Ionicons } from '@expo/vector-icons';
 import { trekFrigoAf } from '@/lib/frigo';
-import { aiPlanner as AI } from '@/opslag/supabase';
 import { Weekplan } from '@/lib/planner/types';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { bereikDatums, dagenTussen, kortDatum, vandaagIso } from '@/lib/planner/datums';
@@ -218,7 +217,7 @@ export default function Weekplanning() {
   // Een knop die niet mag werken, legt uit waarom (WEEK-92): geen stille knop meer.
   const toonBeheer = () => Alert.alert(t('planning.beheerTitel'), beheerTekst);
 
-  // Een nieuw weekmenu uit de database (WEEK-68). De AI-planner blijft de terugval.
+  // Een nieuw weekmenu uit de database (WEEK-68). Zonder passende databankrecepten vult de lokale planner aan (WEEK-116).
   // Met bevestigde dagen vervangt dit ook de boodschappenlijst; de gebruiker is daar eerst mee akkoord gegaan.
   const maakPlan = async (resetLijst: boolean) => {
     if (!profiel || bezig || !mag) return;
@@ -238,7 +237,7 @@ export default function Weekplanning() {
         frigo,
       };
       const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
-      const nieuw = planUitDatabase(verzoek, pool) ?? (await planWeek(verzoek, AI));
+      const nieuw = planUitDatabase(verzoek, pool) ?? planLokaal(verzoek);
       if (!nieuw) {
         Alert.alert(t('planning.plan'), t('planning.geenRecepten'));
         return;
@@ -273,19 +272,16 @@ export default function Weekplanning() {
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
-      let nieuw: Weekplan;
-      if (plan.bron === 'db') {
-        const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
-        nieuw = vervangDbDag(plan, index, pool, Date.now());
-      } else {
-        nieuw = await resetDag(plan, index, profiel, AI);
-      }
+      // WEEK-116: een dag wordt altijd uit de databank vervangen; lukt dat niet, dan lokaal (geen AI).
+      const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
+      const uitDatabank = pool.length ? vervangDbDag(plan, index, pool, Date.now()) : plan;
+      const nieuw: Weekplan = uitDatabank !== plan ? uitDatabank : resetDagLokaal(plan, index, Date.now());
       // Enkel die ene dag in het nieuwste plan vervangen: wat intussen veranderde, blijft (WEEK-28).
       const nieuweDag = nieuw.dagen[index];
       const bewaard = nieuweDag
         ? await wijzigPlan((huidig) => {
             const vervangen = vervangDag(huidig, index, verwacht, nieuweDag);
-            return vervangen === huidig ? huidig : { ...vervangen, ...(nieuw.terugval ? { terugval: true } : {}), ...(nieuw.aiLimiet ? { aiLimiet: true } : {}) };
+            return vervangen === huidig ? huidig : vervangen;
           })
         : null;
       if (bewaard) setPlan(bewaard);
