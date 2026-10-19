@@ -33,6 +33,10 @@ export type Winkel = {
 
 export const MAX_WINKELS = 20;
 
+/** De zoekopdracht van de server mag zo lang duren (zie [timeout:…] in de query). De app wacht even lang (WEEK-127). */
+export const OVERPASS_SERVER_TIMEOUT_S = 25;
+export const OVERPASS_TIMEOUT_MS = (OVERPASS_SERVER_TIMEOUT_S + 5) * 1000;
+
 const BELGISCHE_POSTCODE = /^\d{4}$/;
 
 /** Haalt alles weg wat niet in een gemeentenaam hoort (zo blijft de Overpass-query veilig). */

@@ -1,14 +1,14 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
 import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
-import { metTimeout, probeerAchtereen, probeerOpnieuw } from '@/lib/netwerk';
-import { bouwQuery, bouwStraalQuery, leesWinkels, Winkel } from '@/lib/winkels';
+import { metTimeout, probeerAchtereen } from '@/lib/netwerk';
+import { bouwQuery, bouwStraalQuery, leesWinkels, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
 import type { Positie } from '@/lib/winkelvoorstel';
 
 // Overpass-servers: de tweede is een spiegel die we gebruiken als de eerste faalt (WEEK-95).
 const ENDPOINTS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
 
 async function vraag(endpoint: string, query: string, postcode: string): Promise<Winkel[]> {
-  const wacht = metTimeout();
+  const wacht = metTimeout(OVERPASS_TIMEOUT_MS);
   try {
     const antwoord = await fetch(endpoint, {
       method: 'POST',
@@ -25,12 +25,13 @@ async function vraag(endpoint: string, query: string, postcode: string): Promise
 
 /**
  * Winkels in de buurt. Met het punt van de postcode zoeken we binnen 10 km (WEEK-115); zonder punt
- * de zoekopdracht op postcode en gemeente. Elke server krijgt één nieuwe poging. Gooit een fout bij netwerkproblemen.
+ * de zoekopdracht op postcode en gemeente. Per server één poging, met een wachttijd die past bij de zoekopdracht (WEEK-127),
+ * daarna de tweede server. Gooit een fout bij netwerkproblemen.
  */
 export async function zoekWinkels(postcode: string, gemeente: string, punt?: Positie): Promise<Winkel[]> {
   const query = punt ? bouwStraalQuery(punt) : bouwQuery(postcode, gemeente);
   if (!query) return [];
-  return probeerAchtereen(ENDPOINTS.map((endpoint) => () => probeerOpnieuw(() => vraag(endpoint, query, postcode))));
+  return probeerAchtereen(ENDPOINTS.map((endpoint) => () => vraag(endpoint, query, postcode)));
 }
 
 /** Punt van de postcode (Nominatim). Undefined als de postcode niet gevonden wordt. */

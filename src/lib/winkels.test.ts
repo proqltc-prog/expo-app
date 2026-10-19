@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwQuery, bouwStraalQuery, foutReden, leesWinkels, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, Winkel } from '@/lib/winkels';
+import { bouwQuery, bouwStraalQuery, foutReden, leesWinkels, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, OVERPASS_SERVER_TIMEOUT_S, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
 
 describe('winkels in de buurt: query (WEEK-53)', () => {
   test('geldige Belgische postcode geeft een query op postcode en op gemeente', () => {
@@ -136,5 +136,14 @@ describe('reden van een mislukte winkelzoekopdracht (WEEK-115)', () => {
   test('een onbekende fout geeft onbekend', () => {
     assert.equal(foutReden(new Error('iets anders')), 'onbekend');
     assert.equal(foutReden(undefined), 'onbekend');
+  });
+});
+
+describe('wachttijd van de winkelzoeker (WEEK-127)', () => {
+  test('de app wacht langer dan de zoekopdracht van de server mag duren', () => {
+    assert.ok(OVERPASS_TIMEOUT_MS > OVERPASS_SERVER_TIMEOUT_S * 1000);
+  });
+  test('regressie: de zoekopdracht vraagt nog steeds de server-timeout die bij de wachttijd hoort', () => {
+    assert.ok(bouwStraalQuery({ lat: 50.9, lon: 4.2 }).includes(`[timeout:${OVERPASS_SERVER_TIMEOUT_S}]`));
   });
 });
