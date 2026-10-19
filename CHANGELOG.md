@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.83.1] – 2026-10-19
+
+**Jira:** [WEEK-122](https://proqltc-1791495894841.atlassian.net/browse/WEEK-122) · **Confluence:** [WEEK-122 Weekmenu kiest bij aanvullen korte recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10846218)
+
+- Bij aanvullen van het weekmenu kiest de planner korte recepten van het moment, niet meer recepten van 150 of 290 minuten.
+- Vermeden ingrediënten en het moment blijven altijd uitgesloten; recepten die bij de gekozen kooktijd passen, gaan voor.
+
 ## [0.83.0] – 2026-10-19
 
 **Jira:** [WEEK-121](https://proqltc-1791495894841.atlassian.net/browse/WEEK-121) (verbetering) · **Confluence:** [WEEK-121](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10911745)

@@ -39,9 +39,20 @@ export function maakDbPool(recepten: DbRecept[], taal: Taal, gezin: Gezin): DbPo
 /** De wensen die de keuze van een recept bepalen. */
 type WensVan = Pick<PlanVerzoek, 'kooktijden' | 'stijlen'>;
 
+/** Bij aanvullen kiest de planner uit de recepten die hooguit zoveel minuten langer zijn dan het kortste (WEEK-122). */
+const AANVUL_MARGE_MIN = 20;
+
+/** Kiest bij aanvullen een recept dat kort is: het kortste van de lijst, met een marge, en daaruit willekeurig. */
+function kiesKortste(lijst: DbPoolRecept[], random: () => number): DbPoolRecept {
+  const kortst = Math.min(...lijst.map((k) => k.recept.minuten));
+  const kort = lijst.filter((k) => k.recept.minuten <= kortst + AANVUL_MARGE_MIN);
+  return kort[Math.floor(random() * kort.length)];
+}
+
 /**
  * Kiest één recept voor een plek (dag + moment). Probeert eerst alle wensen en geen herhaling,
- * daarna wordt stap voor stap losgelaten. Geeft undefined als er geen recept voor het moment is.
+ * daarna wordt stap voor stap losgelaten. Bij aanvullen zonder passende kooktijd gaat het om korte recepten (WEEK-122).
+ * Geeft undefined als er geen recept voor het moment is.
  */
 function kiesVoorPlek(
   pool: DbPoolRecept[],
@@ -63,7 +74,7 @@ function kiesVoorPlek(
   for (let n = 0; n < niveaus.length; n++) {
     const lijst = perMoment.filter(niveaus[n]);
     if (lijst.length) {
-      const keuze = lijst[Math.floor(random() * lijst.length)];
+      const keuze = n >= 2 ? kiesKortste(lijst, random) : lijst[Math.floor(random() * lijst.length)];
       return { recept: keuze.recept, versoepeld: n > 0 };
     }
   }
