@@ -2,26 +2,25 @@
 // op een zachte achtergrond in de kleur van het land, met een vlaggenstrook onderaan.
 // Getekend met gewone views (geen extra native bibliotheek). Vormen en kleuren staan in src/lib/planner/stijlbeeld.ts.
 import { View } from 'react-native';
-import { stijlbeeld, Vorm } from '@/lib/planner/stijlbeeld';
+import { OPZET_BREEDTE, OPZET_HOOGTE, procent, stijlbeeld, Vorm } from '@/lib/planner/stijlbeeld';
 
 // Afmetingen in dp: de goedgekeurde opzet (viewBox 200x150) geschaald naar 96x72.
 const B = 96;
 const H = 72;
-const SCHAAL = 0.48;
 
 type BlokProps = { x: number; y: number; w: number; h: number; r?: number; kleur: string; rand?: boolean; onder?: boolean };
 
 /** Een vorm in de viewBox-coördinaten van de opzet. */
 function Blok({ x, y, w, h, r = 0, kleur, rand, onder }: BlokProps) {
-  const radius = onder ? { borderBottomLeftRadius: w / 2, borderBottomRightRadius: w / 2, borderTopLeftRadius: 2, borderTopRightRadius: 2 } : { borderRadius: r * SCHAAL };
+  const radius = onder ? { borderBottomLeftRadius: procent(w / 2, OPZET_BREEDTE), borderBottomRightRadius: procent(w / 2, OPZET_BREEDTE), borderTopLeftRadius: 2, borderTopRightRadius: 2 } : { borderRadius: procent(r, OPZET_BREEDTE) };
   return (
     <View
       style={{
         position: 'absolute',
-        left: x * SCHAAL,
-        top: y * SCHAAL,
-        width: w * SCHAAL,
-        height: h * SCHAAL,
+        left: procent(x, OPZET_BREEDTE),
+        top: procent(y, OPZET_HOOGTE),
+        width: procent(w, OPZET_BREEDTE),
+        height: procent(h, OPZET_HOOGTE),
         backgroundColor: kleur,
         borderWidth: rand ? 1 : 0,
         borderColor: '#E4E8E1',
@@ -135,12 +134,14 @@ function Gerecht({ vorm }: { vorm: Vorm }) {
 }
 
 /** Het beeld van één stijl. Onbekende stijl: niets tekenen. */
-export function Stijlbeeld({ id }: { id: string }) {
+export function Stijlbeeld({ id, vol }: { id: string; vol?: boolean }) {
   const b = stijlbeeld(id);
   if (!b) return null;
   const [land, wit, accent] = b.land;
+  // vol: het beeld vult de volledige breedte van de kaart (WEEK-94); anders het vaste formaat.
+  const formaat = vol ? { width: '100%' as const, aspectRatio: B / H } : { width: B, height: H };
   return (
-    <View style={{ width: B, height: H, borderRadius: 10, overflow: 'hidden', backgroundColor: '#FFFFFF' }}>
+    <View style={{ ...formaat, borderRadius: vol ? 0 : 10, overflow: 'hidden', backgroundColor: '#FFFFFF' }}>
       <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: land, opacity: 0.16 }} />
       <Blok x={50} y={25} w={100} h={100} r={50} kleur="#FFFFFF" rand />
       <Gerecht vorm={b.vorm} />

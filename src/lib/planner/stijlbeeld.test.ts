@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { STIJLBEELD_IDS, stijlbeeld } from '@/lib/planner/stijlbeeld';
+import { OPZET_BREEDTE, OPZET_HOOGTE, STIJLBEELD_IDS, procent, stijlbeeld } from '@/lib/planner/stijlbeeld';
 import { STIJL_IDS } from '@/lib/planner/opties';
 
 const HEX = /^#[0-9A-Fa-f]{6}$/;
@@ -57,5 +57,13 @@ describe('databasestijlen thais, japans en koreaans (WEEK-86)', () => {
     assert.equal(beeldVoorReceptStijl('mexicaans'), 'mexicaans');
     assert.equal(beeldVoorReceptStijl('aziatisch'), 'chinees');
     assert.equal(beeldVoorReceptStijl('klassiek'), 'belgisch');
+  });
+});
+
+describe('beeld schaalt mee met de kaart (WEEK-94)', () => {
+  test('procent rekent een maat van de opzet om naar een percentage', () => {
+    assert.equal(procent(70, OPZET_BREEDTE), '35%');
+    assert.equal(procent(150, OPZET_HOOGTE), '100%');
+    assert.equal(procent(0, OPZET_BREEDTE), '0%');
   });
 });

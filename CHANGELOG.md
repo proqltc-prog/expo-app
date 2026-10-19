@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.76.1] – 2026-10-19
+
+**Jira:** [WEEK-94](https://proqltc-1791495894841.atlassian.net/browse/WEEK-94) (bugfix) · **Confluence:** [WEEK-94](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9011203)
+
+- De keukenkaarten op de stap Stijl vullen de volledige breedte: het icoon en de naam zijn even groot en volledig zichtbaar.
+
 ## [0.76.0] – 2026-10-19
 
 **Jira:** [WEEK-93](https://proqltc-1791495894841.atlassian.net/browse/WEEK-93) (verbetering) · **Confluence:** [WEEK-93](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9633793)
