@@ -176,7 +176,10 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('bladerdeeg', 'g', 'graan', 'vegetarisch'),
   ('radijs', 'g', 'groente', 'vegetarisch'),
   ('schouderkarbonade', 'g', 'vlees', 'vlees'),
-  ('bier', 'ml', 'overig', 'vegetarisch')
+  ('bier', 'ml', 'overig', 'vegetarisch'),
+  ('guanciale', 'g', 'vlees', 'vlees'),
+  ('pecorino', 'g', 'zuivel', 'vegetarisch'),
+  ('maizena', 'g', 'overig', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1242,7 +1245,25 @@ select i.id, v.taal, v.naam from (values
   ('bier', 'de', 'Bier'),
   ('bier', 'en', 'beer'),
   ('bier', 'es', 'cerveza'),
-  ('bier', 'pt', 'cerveja')
+  ('bier', 'pt', 'cerveja'),
+  ('guanciale', 'nl', 'guanciale'),
+  ('guanciale', 'fr', 'guanciale'),
+  ('guanciale', 'de', 'Guanciale'),
+  ('guanciale', 'en', 'guanciale'),
+  ('guanciale', 'es', 'guanciale'),
+  ('guanciale', 'pt', 'guanciale'),
+  ('pecorino', 'nl', 'pecorino'),
+  ('pecorino', 'fr', 'pecorino'),
+  ('pecorino', 'de', 'Pecorino'),
+  ('pecorino', 'en', 'pecorino'),
+  ('pecorino', 'es', 'pecorino'),
+  ('pecorino', 'pt', 'pecorino'),
+  ('maizena', 'nl', 'maizena'),
+  ('maizena', 'fr', 'fécule de maïs'),
+  ('maizena', 'de', 'Maisstärke'),
+  ('maizena', 'en', 'cornstarch'),
+  ('maizena', 'es', 'maicena'),
+  ('maizena', 'pt', 'amido de milho')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
