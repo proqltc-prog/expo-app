@@ -10,6 +10,7 @@ import { AFDELINGEN } from '@/data/ingredienten';
 
 const gezin: Profiel = {
   ...standaardProfiel(),
+  volwassenen: 2,
   kinderen: 2,
   adres: { postcode: '1000', gemeente: 'Brussel', land: 'België' },
 };
