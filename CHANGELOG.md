@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.85.1] – 2026-10-19
+
+**Jira:** [WEEK-129](https://proqltc-1791495894841.atlassian.net/browse/WEEK-129) · **Confluence:** [WEEK-129 Gezinsruimte: toestel hoort al bij een gezin](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11108353)
+
+- Hoort het toestel volgens de server al bij een gezinsruimte, dan wordt die koppeling hersteld en wordt het gezin getoond.
+- De placeholder van de code-invoer is leesbaar in het donkere en het lichte thema.
+
 ## [0.85.0] – 2026-10-19
 
 **Jira:** [WEEK-125](https://proqltc-1791495894841.atlassian.net/browse/WEEK-125) · **Confluence:** [WEEK-125 Periode-kalender opnieuw tonen na koken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11075585)

@@ -14,6 +14,7 @@ import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import { normaliseerProfiel } from '@/lib/profiel';
 import {
+  alsEigenGezin,
   BIJHALEN,
   DocumentSleutel,
   eersteSamenvoeging,
@@ -523,13 +524,36 @@ function alsGezin(data: unknown, ikNaam: string): Gezin | null {
   return r && r.id && r.code ? { id: r.id, naam: r.naam ?? '', code: r.code, ...(naam ? { ikNaam: naam } : {}) } : null;
 }
 
+/**
+ * Bij "al_lid" is dit account volgens de server al lid van een gezin, maar mist de lokale koppeling (WEEK-129).
+ * Die koppeling wordt dan hersteld, zodat het gezin ook op het toestel zichtbaar wordt. Geeft de fout terug.
+ */
+async function metHerstel(bericht: string): Promise<Error> {
+  if (bericht.includes('al_lid')) {
+    await herstelKoppeling().catch(() => undefined);
+  }
+  return new Error(bericht);
+}
+
+async function herstelKoppeling(): Promise<void> {
+  const sb = supabase();
+  if (!sb) return;
+  const { data: sessie } = await sb.auth.getSession();
+  const uid = sessie.session?.user.id;
+  if (!uid) return;
+  const { data, error } = await sb.from('gezinsleden').select('gezinnen(id,naam,code)').eq('gebruiker_id', uid).limit(1);
+  if (error) throw error;
+  const gezin = alsEigenGezin(data);
+  if (gezin) await koppel(gezin);
+}
+
 /** Maakt een nieuwe gezinsruimte en deelt de gegevens van dit toestel. */
 export async function maakGezin(naam: string, lidNaam: string): Promise<Gezin> {
   const sb = supabase();
   if (!sb) throw new Error('geen_backend');
   await zorgVoorSessie();
   const { data, error } = await sb.rpc('maak_gezin', { p_naam: naam, p_lid_naam: lidNaam });
-  if (error) throw new Error(error.message);
+  if (error) throw await metHerstel(error.message);
   const gezin = alsGezin(data, lidNaam);
   if (!gezin) throw new Error('onbekend');
   await koppel(gezin);
@@ -542,7 +566,7 @@ export async function wordLid(code: string, lidNaam: string): Promise<Gezin> {
   if (!sb) throw new Error('geen_backend');
   await zorgVoorSessie();
   const { data, error } = await sb.rpc('word_lid', { p_code: code, p_lid_naam: lidNaam });
-  if (error) throw new Error(error.message);
+  if (error) throw await metHerstel(error.message);
   const gezin = alsGezin(data, lidNaam);
   if (!gezin) throw new Error('onbekende_code');
   await koppel(gezin);
