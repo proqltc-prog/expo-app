@@ -18,3 +18,11 @@ export function bereidingVoor(recept: { id: string; naam: string }, eigen: reado
   const stappen = BEREIDINGEN[bank.id]?.[taal] ?? BEREIDINGEN[bank.id]?.nl;
   return stappen && stappen.length ? [...stappen] : null;
 }
+
+/**
+ * Het icoon om de bereidingsstappen te openen (WEEK-113): altijd zichtbaar bij een bevestigd gerecht.
+ * Heeft het gerecht geen stappen, dan toont de pagina Bereiding zelf een melding.
+ */
+export function toonBereidingsIcoon(bevestigd?: boolean): boolean {
+  return bevestigd === true;
+}
