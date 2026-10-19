@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { onthoudVertrekUitGezinsprofiel } from '@/lib/planner/startfase';
@@ -13,7 +13,7 @@ import {
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
 import { zoekPlaats } from '@/opslag/winkels';
-import { Sleutel, Taal, TALEN, vertaal } from '@/i18n';
+import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
 
@@ -43,9 +43,12 @@ function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; m
 }
 
 export default function ProfielScherm() {
-  const { t, tn, voorkeur, zetVoorkeur } = useTaal();
+  const { t, tn } = useTaal();
   const [profiel, setProfiel] = useState<Profiel>(standaardProfiel());
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
+  const [plaatsFout, setPlaatsFout] = useState(false);
+  // Enkel het antwoord op de laatst ingevoerde postcode telt.
+  const laatstePostcode = useRef('');
 
   useFocusEffect(
     useCallback(() => {
@@ -63,19 +66,26 @@ export default function ProfielScherm() {
 
   // WEEK-69: bij een volledige Belgische postcode stellen we de gemeente en het land voor.
   // Het antwoord wordt enkel gebruikt als de postcode dan nog steeds dezelfde is.
+  // WEEK-104: lukt het opzoeken niet (geen verbinding of geen plaats), dan krijgt de gebruiker een melding.
   const wijzigPostcode = (postcode: string) => {
     wijzigAdres({ postcode });
     const pc = postcode.trim();
+    laatstePostcode.current = pc;
+    setPlaatsFout(false);
     if (!/^\d{4}$/.test(pc)) return;
     zoekPlaats(pc)
       .then((plaats) => {
-        if (!plaats) return;
+        if (laatstePostcode.current !== pc) return;
+        if (!plaats) {
+          setPlaatsFout(true);
+          return;
+        }
         setProfiel((p) =>
           p.adres.postcode.trim() === pc ? { ...p, adres: { ...p.adres, gemeente: plaats.gemeente, land: plaats.land } } : p,
         );
       })
       .catch(() => {
-        // Geen voorstel bij een netwerkfout: de gebruiker vult de gemeente zelf in.
+        if (laatstePostcode.current === pc) setPlaatsFout(true);
       });
   };
 
@@ -98,29 +108,6 @@ export default function ProfielScherm() {
         {['menu', 'lijst', 'frigo', 'scan', 'gezin'].map((k) => (
           <Text key={k} style={s.hint}>• {t(`howto.${k}` as Sleutel)}</Text>
         ))}
-      </View>
-
-      {/* Taal op dit toestel (WEEK-80): niet in het gezin en niet op andere toestellen. */}
-      <Text style={s.kop}>{t('profiel.taal')}</Text>
-      <View style={s.kaart}>
-        <Text style={s.hint}>{t('profiel.taalHint')}</Text>
-        <View style={s.chips}>
-          {([undefined, ...TALEN] as (Taal | undefined)[]).map((code) => {
-            const actief = voorkeur === code;
-            return (
-              <Pressable
-                key={code ?? 'toestel'}
-                style={[s.chip, actief && s.chipActief]}
-                onPress={() => zetVoorkeur(code)}
-                accessibilityState={{ selected: actief }}
-              >
-                <Text style={[s.chipTekst, actief && s.chipTekstActief]}>
-                  {code ? vertaal(code, 'taal.naam') : t('profiel.taalToestel')}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
       </View>
 
       <GezinsRuimte />
@@ -152,19 +139,22 @@ export default function ProfielScherm() {
           <Text style={s.waromKop}>{t('profiel.winkelsTitel')}</Text>
           <Text style={s.hint}>{t('profiel.winkelsTekst')}</Text>
         </View>
-        <Text style={s.hint}>{t('profiel.adresHint')}</Text>
         <Text style={s.hint}>{t('profiel.plaatsVoorstel')}</Text>
+        {plaatsFout && <Text style={s.fout}>{t('profiel.plaatsNietGevonden')}</Text>}
         <View style={s.rijVelden}>
-          <TextInput
-            style={[s.veld, { width: 100 }]}
-            value={profiel.adres.postcode}
-            onChangeText={wijzigPostcode}
-            placeholder={t('profiel.postcode')}
-            keyboardType="number-pad"
-          />
-          <TextInput style={[s.veld, { flex: 1 }]} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} placeholder={t('profiel.gemeente')} />
+          <View style={{ width: 100, gap: 4 }}>
+            <Text style={s.label}>{t('profiel.postcode')}</Text>
+            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" />
+          </View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={s.label}>{t('profiel.gemeente')}</Text>
+            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} />
+          </View>
         </View>
-        <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} placeholder={t('profiel.land')} />
+        <View style={{ gap: 4 }}>
+          <Text style={s.label}>{t('profiel.land')}</Text>
+          <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} />
+        </View>
       </View>
 
       {fouten.map((f) => (

@@ -28,13 +28,15 @@ import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
 
+// WEEK-104: de naam wordt niet meer gevraagd; een nieuw gezin krijgt een standaardnaam.
+const GEZINSNAAM_STANDAARD = 'Gezin';
+const LIDNAAM_STANDAARD = '';
+
 export function GezinsRuimte() {
   const { t } = useTaal();
   const [gezin, setGezin] = useState<Gezin | null | undefined>(undefined);
   const [leden, setLeden] = useState<GezinsLid[]>([]);
   const [status, setStatus] = useState<SyncStatus>(syncStatus());
-  const [naam, setNaam] = useState('');
-  const [gezinsnaam, setGezinsnaam] = useState('');
   const [code, setCode] = useState('');
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
@@ -80,7 +82,7 @@ export function GezinsRuimte() {
 
   const maak = () =>
     voerUit(async () => {
-      await maakGezin(gezinsnaam, naam);
+      await maakGezin(GEZINSNAAM_STANDAARD, LIDNAAM_STANDAARD);
       // Wie het gezin maakt, is ook beheerder van het weekplan (WEEK-65).
       const id = await ikId();
       if (id) await wijsPlanBeheerderAan(id);
@@ -92,7 +94,7 @@ export function GezinsRuimte() {
       setFout(t('gezin.fout.code'));
       return;
     }
-    voerUit(() => wordLid(gelezen, naam));
+    voerUit(() => wordLid(gelezen, LIDNAAM_STANDAARD));
   };
 
   const deel = () => gezin && Share.share({ message: t('gezin.deelTekst', { code: toonGezinscode(gezin.code) }) });
@@ -161,8 +163,6 @@ export function GezinsRuimte() {
         {!gezin ? (
           <>
             <Text style={s.uitleg}>{t('gezin.uitleg')}</Text>
-            <TextInput style={s.veld} value={naam} onChangeText={setNaam} placeholder={t('gezin.jouwNaam')} maxLength={40} />
-            <TextInput style={s.veld} value={gezinsnaam} onChangeText={setGezinsnaam} placeholder={t('gezin.gezinsnaam')} maxLength={60} />
             <Pressable style={[s.knop, bezig && s.uit]} onPress={maak} disabled={bezig}>
               {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('gezin.maak')}</Text>}
             </Pressable>

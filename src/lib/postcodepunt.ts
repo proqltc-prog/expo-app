@@ -4,6 +4,14 @@ import type { Positie } from '@/lib/winkelvoorstel';
 
 const BELGISCHE_POSTCODE = /^\d{4}$/;
 export const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
+/**
+ * Nominatim vraagt een herkenbare User-Agent (gebruiksvoorwaarden). Zonder die header
+ * kan de dienst een verzoek weigeren (WEEK-104).
+ */
+export const NOMINATIM_HEADERS: Record<string, string> = {
+  Accept: 'application/json',
+  'User-Agent': 'Famenu-app (https://github.com/proqltc-prog/expo-app)',
+};
 
 /** Zoek-URL voor één postcode (en optioneel gemeente). Geeft null bij een ongeldige postcode. */
 export function bouwPostcodeUrl(postcode: string, gemeente: string): string | null {
