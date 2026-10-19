@@ -8,7 +8,7 @@ import { ActivityIndicator, Linking, Modal, Pressable, ScrollView, StyleSheet, T
 import { useFocusEffect } from 'expo-router';
 import { LijstItem } from '@/lib/lijst';
 import { kiesWinkels, nodigeSoorten, Positie, Stop, Voorstel } from '@/lib/winkelvoorstel';
-import type { Winkel } from '@/lib/winkels';
+import { foutReden, type FoutReden, type Winkel } from '@/lib/winkels';
 import { adresRegel, googleMapsUrl, openingsurenRegels, SOORT_EMOJI } from '@/lib/winkelweergave';
 import { laadProfiel } from '@/opslag/profiel';
 import { zoekPostcodePunt, zoekWinkels } from '@/opslag/winkels';
@@ -75,6 +75,8 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
   const [stat, setStat] = useState<Stat>('laden');
   const [adres, setAdres] = useState<Adres>({ postcode: '', gemeente: '' });
   const [opgehaald, setOpgehaald] = useState<Opgehaald | undefined>();
+  // WEEK-115: de reden van een mislukte zoekopdracht, zodat de melding dat zegt.
+  const [reden, setReden] = useState<FoutReden>('onbekend');
   const [open, setOpen] = useState(false);
   const [popup, setPopup] = useState(false);
   const cache = useRef(new Map<string, Opgehaald>());
@@ -117,14 +119,16 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
       // Een mislukt of leeg postcodepunt mag de winkelzoeker niet stoppen (WEEK-112): dan zonder afstand.
       const positie = await zoekPostcodePunt(pc, gem).catch(() => undefined);
       if (!geldig) return;
-      const winkels = await zoekWinkels(pc, gem);
+      const winkels = await zoekWinkels(pc, gem, positie);
       if (!geldig) return;
       const resultaat: Opgehaald = { positie, winkels };
       cache.current.set(sleutel, resultaat);
       setOpgehaald(resultaat);
       setStat('klaar');
-    })().catch(() => {
-      if (geldig) setStat('fout');
+    })().catch((fout) => {
+      if (!geldig) return;
+      setReden(foutReden(fout));
+      setStat('fout');
     });
     return () => {
       geldig = false;
@@ -146,7 +150,7 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
       : stat === 'geenPostcode'
         ? t('winkels.geenPostcode')
         : stat === 'fout'
-          ? t('winkels.fout')
+          ? t(reden === 'druk' ? 'winkels.foutDruk' : reden === 'verbinding' ? 'winkels.foutVerbinding' : 'winkels.fout')
           : aantal === 0
             ? t('winkels.leeg')
             : t('winkels.samenvatting', { n: aantal });

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwQuery, leesWinkels, rangschik, schoonGemeente, MAX_WINKELS, Winkel } from '@/lib/winkels';
+import { bouwQuery, bouwStraalQuery, foutReden, leesWinkels, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, Winkel } from '@/lib/winkels';
 
 describe('winkels in de buurt: query (WEEK-53)', () => {
   test('geldige Belgische postcode geeft een query op postcode en op gemeente', () => {
@@ -91,5 +91,46 @@ describe('winkels in de buurt: rangschikken (WEEK-53)', () => {
     const r = rangschik([maak('Z', 'bakker', 'gemeente'), maak('B', 'supermarkt', 'postcode'), maak('A', 'bakker', 'postcode')]);
     // Zelfde postcode eerst (op soort, dan naam); daarna de andere gemeenten.
     assert.deepEqual(r.map((x) => x.naam), ['A', 'B', 'Z']);
+  });
+});
+
+describe('winkels binnen een straal (WEEK-115)', () => {
+  test('zoekt rond het punt van de postcode, niet in heel België', () => {
+    const q = bouwStraalQuery({ lat: 50.9, lon: 4.3 });
+    assert.match(q, /around:10000,50\.9,4\.3/);
+    assert.doesNotMatch(q, /ISO3166-1/);
+    assert.match(q, /"shop"~"\^\(/);
+  });
+
+  test('de straal wordt begrensd op 10 km', () => {
+    assert.equal(MAX_STRAAL_METERS, 10000);
+    assert.match(bouwStraalQuery({ lat: 50.9, lon: 4.3 }, 50000), /around:10000,/);
+  });
+
+  test('een kleinere straal blijft behouden', () => {
+    assert.match(bouwStraalQuery({ lat: 50.9, lon: 4.3 }, 2500), /around:2500,/);
+  });
+
+  test('regressie: de postcode-query blijft ongewijzigd voor het terugval-geval', () => {
+    const q = bouwQuery('1760', 'Roosdaal');
+    assert.match(q!, /"addr:postcode"="1760"/);
+    assert.match(q!, /ISO3166-1"="BE"/);
+  });
+});
+
+describe('reden van een mislukte winkelzoekopdracht (WEEK-115)', () => {
+  test('een overbelaste server (429 of 5xx) geeft druk', () => {
+    assert.equal(foutReden(new Error('Overpass 429')), 'druk');
+    assert.equal(foutReden(new Error('Overpass 504')), 'druk');
+  });
+
+  test('een netwerkfout geeft verbinding', () => {
+    assert.equal(foutReden(new TypeError('Network request failed')), 'verbinding');
+    assert.equal(foutReden(new Error('fetch failed')), 'verbinding');
+  });
+
+  test('een onbekende fout geeft onbekend', () => {
+    assert.equal(foutReden(new Error('iets anders')), 'onbekend');
+    assert.equal(foutReden(undefined), 'onbekend');
   });
 });

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { probeerAchtereen } from '@/lib/netwerk';
+import { probeerAchtereen, probeerOpnieuw } from '@/lib/netwerk';
 
 describe('probeerAchtereen (WEEK-95)', () => {
   test('geeft het antwoord van de eerste bron die lukt, en vraagt de rest niet', async () => {
@@ -39,5 +39,49 @@ describe('probeerAchtereen (WEEK-95)', () => {
 
   test('zonder bronnen is het een fout, geen leeg antwoord', async () => {
     await assert.rejects(probeerAchtereen<string>([]), /Geen bron/);
+  });
+});
+
+describe('probeerOpnieuw (WEEK-115)', () => {
+  const geenPauze = async () => undefined;
+
+  test('geeft het antwoord van de eerste poging als die lukt, zonder pauze', async () => {
+    let pauzes = 0;
+    const uit = await probeerOpnieuw(async () => 'A', 1500, async () => {
+      pauzes++;
+    });
+    assert.equal(uit, 'A');
+    assert.equal(pauzes, 0);
+  });
+
+  test('probeert \u00e9\u00e9n keer opnieuw na een storing', async () => {
+    let pogingen = 0;
+    const uit = await probeerOpnieuw(
+      async () => {
+        pogingen++;
+        if (pogingen === 1) throw new Error('Overpass 504');
+        return 'B';
+      },
+      1500,
+      geenPauze,
+    );
+    assert.equal(uit, 'B');
+    assert.equal(pogingen, 2);
+  });
+
+  test('geeft op na de tweede mislukte poging', async () => {
+    let pogingen = 0;
+    await assert.rejects(
+      probeerOpnieuw(
+        async () => {
+          pogingen++;
+          throw new Error('Overpass 429');
+        },
+        1500,
+        geenPauze,
+      ),
+      /429/,
+    );
+    assert.equal(pogingen, 2);
   });
 });

@@ -17,3 +17,21 @@ export async function probeerAchtereen<T>(bronnen: ReadonlyArray<() => Promise<T
   }
   throw laatste;
 }
+
+/**
+ * Probeert een bron één keer opnieuw na een korte pauze (WEEK-115).
+ * Een tijdelijke storing (bv. een overbelaste server) herstelt zich vaak binnen enkele seconden.
+ * De pauze is injecteerbaar zodat de logica zonder wachttijd te testen is.
+ */
+export async function probeerOpnieuw<T>(
+  bron: () => Promise<T>,
+  wachtMs = 1500,
+  pauze: (ms: number) => Promise<void> = (ms) => new Promise((klaar) => setTimeout(klaar, ms)),
+): Promise<T> {
+  try {
+    return await bron();
+  } catch {
+    await pauze(wachtMs);
+    return bron();
+  }
+}

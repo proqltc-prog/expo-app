@@ -1,6 +1,8 @@
 // Winkels in de buurt (WEEK-53). Pure logica: de query bouwen en de antwoorden van OpenStreetMap lezen.
 // Het netwerkverkeer zit in src/opslag/winkels.ts.
 
+import type { Positie } from '@/lib/winkelvoorstel';
+
 export type WinkelSoort = 'supermarkt' | 'slager' | 'bakker' | 'groenteboer';
 
 /** OpenStreetMap-tag (shop=…) naar onze soort. */
@@ -108,4 +110,33 @@ export function leesWinkels(ruw: unknown, postcode: string): Winkel[] {
     });
   }
   return rangschik(uit);
+}
+
+/** Grootste zoekstraal in meter (WEEK-115): binnen 10 km rond het punt van de postcode. */
+export const MAX_STRAAL_METERS = 10000;
+
+/**
+ * Overpass-query voor winkels binnen een straal rond een punt (WEEK-115).
+ * Veel lichter dan de query op heel België; de straal wordt begrensd op MAX_STRAAL_METERS.
+ */
+export function bouwStraalQuery(punt: Positie, straalMeter: number = MAX_STRAAL_METERS): string {
+  const straal = Math.min(Math.max(1, Math.round(straalMeter)), MAX_STRAAL_METERS);
+  const soorten = Object.keys(WINKEL_TAGS).join('|');
+  return [
+    '[out:json][timeout:25];',
+    '(',
+    `nwr(around:${straal},${punt.lat},${punt.lon})["shop"~"^(${soorten})$"];`,
+    ');',
+    `out center ${MAX_WINKELS * 25};`,
+  ].join('\n');
+}
+
+export type FoutReden = 'druk' | 'verbinding' | 'onbekend';
+
+/** Leest uit een zoekfout of de server te druk was of dat er geen verbinding was (WEEK-115). */
+export function foutReden(fout: unknown): FoutReden {
+  const tekst = fout instanceof Error ? fout.message : String(fout ?? '');
+  if (/Overpass (429|5\d\d)/.test(tekst)) return 'druk';
+  if (fout instanceof TypeError || /network|netwerk|fetch/i.test(tekst)) return 'verbinding';
+  return 'onbekend';
 }

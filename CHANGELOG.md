@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.79.3] – 2026-10-19
+
+**Jira:** [WEEK-115](https://proqltc-1791495894841.atlassian.net/browse/WEEK-115) (bugfix, vervolg op WEEK-112) · **Confluence:** [WEEK-115](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10354689)
+
+- Boodschappenlijst, tab Winkels: winkels worden gezocht binnen 10 km rond de postcode, in plaats van in heel België. Een storing wordt één keer opnieuw geprobeerd.
+- De melding bij een mislukte zoekopdracht zegt of de winkelzoeker te druk is of dat er geen verbinding is.
+
 ## [0.79.2] – 2026-10-19
 
 **Jira:** [WEEK-114](https://proqltc-1791495894841.atlassian.net/browse/WEEK-114) (bugfix) · **Confluence:** [WEEK-114](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10321921)

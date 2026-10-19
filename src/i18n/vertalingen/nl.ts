@@ -277,6 +277,8 @@ export const nl = {
   'profiel.intro': 'Wie komt er aan tafel? Geef het even door, dan rekenen wij de rest uit.',
   'winkels.geenPostcode': 'Vul een geldige postcode in bij je profiel om winkels voor te stellen.',
   'winkels.fout': 'Winkels zoeken lukte niet. Probeer het later opnieuw.',
+  'winkels.foutDruk': 'De winkelzoeker is even te druk. Probeer het over enkele minuten opnieuw.',
+  'winkels.foutVerbinding': 'Geen verbinding met de winkelzoeker. Controleer je internetverbinding.',
   'winkels.leeg': 'Geen winkels gevonden in jouw buurt.',
   'winkels.voorstelTitel': 'Waar doe je boodschappen?',
   'winkels.nietGedekt': 'Voor {soorten} vonden we geen winkel in de buurt.',
