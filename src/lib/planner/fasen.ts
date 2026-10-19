@@ -72,3 +72,13 @@ export function wijzigMomenten(keuzes: Keuzes, momenten: Moment[]): Keuzes {
   const vermijd = behoudGeldige(keuzes.vermijd, vermijdVoorMomenten(momenten));
   return { ...keuzes, momenten, kooktijden, stijlen, vermijd };
 }
+
+/**
+ * Keuzes bij het binnenkomen van een stap (WEEK-105). Bij de stap Stijl start niets geselecteerd:
+ * de gebruiker kiest zelf minstens één keuken. De andere stappen laten de keuzes ongemoeid.
+ */
+export function naarStap(doel: Fase, keuzes: Keuzes): Keuzes {
+  // Zelfde object terug bij de andere stappen, zodat de aanroeper niets hoeft op te slaan.
+  if (doel === 'stijl') return { ...keuzes, stijlen: [] };
+  return keuzes;
+}

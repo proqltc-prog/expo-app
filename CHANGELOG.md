@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.79.0] – 2026-10-19
+
+**Jira:** [WEEK-105](https://proqltc-1791495894841.atlassian.net/browse/WEEK-105) (verbetering) · [WEEK-106](https://proqltc-1791495894841.atlassian.net/browse/WEEK-106) (verbetering) · [WEEK-108](https://proqltc-1791495894841.atlassian.net/browse/WEEK-108) (verbetering) · [WEEK-109](https://proqltc-1791495894841.atlassian.net/browse/WEEK-109) (verbetering) · [WEEK-110](https://proqltc-1791495894841.atlassian.net/browse/WEEK-110) (bugfix) · [WEEK-111](https://proqltc-1791495894841.atlassian.net/browse/WEEK-111) (verbetering) · [WEEK-112](https://proqltc-1791495894841.atlassian.net/browse/WEEK-112) (bugfix)
+
+**Confluence:** [WEEK-105](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10059777) · [WEEK-106](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10092545) · [WEEK-108](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10125313) · [WEEK-109](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10158081) · [WEEK-110](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10190849) · [WEEK-111](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10223617) · [WEEK-112](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10256385)
+
+- WEEK-105: Bij terugkeren naar een stap van de weekplanner staan de stijlen niet langer vooraf geselecteerd.
+- WEEK-106: Weekmenu: de acties en labels op de plankaarten lijnen links uit, de status staat onder de dagnaam, en de twee onderste knoppen zijn weg.
+- WEEK-108: Bereiding: een kruisje rechtsboven laat je de bereiding sluiten en terugkeren naar het weekmenu.
+- WEEK-109: Frigo: het label van de planner staat op één regel (Recepten, in alle talen).
+- WEEK-110: Scanner: het kruisje brengt je terug naar het scherm waar de scanner gestart werd, in plaats van naar de startpagina.
+- WEEK-111: Boodschappenlijst: de tabnamen zijn volledig zichtbaar, en naast elke rubriek of elk recept staat een selectievakje om alle ingrediënten samen af te vinken.
+- WEEK-112: Boodschappenlijst: de winkels worden getoond, ook als het postcodepunt niet opgehaald kan worden.
+
 ## [0.78.0] – 2026-10-19
 
 **Jira:** [WEEK-104](https://proqltc-1791495894841.atlassian.net/browse/WEEK-104) (verbetering) · **Confluence:** [WEEK-104](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10027009)

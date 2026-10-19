@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, planSleutel, LijstItem, normaliseerLijst, samenvoegen, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
@@ -310,5 +310,40 @@ describe('lijstitems per weekplan (WEEK-29)', () => {
     assert.ok(!trekFrigoAf(week2, frigo).some((i) => i.id === week2[0].id));
     // en wie toch opnieuw koopt, krijgt een tweede exemplaar in de frigo
     assert.equal(pasFrigoAan(frigo, [week2[0]], true, new Date('2026-10-10T10:00:00Z')).length, 2);
+  });
+});
+
+describe('selectievakje per sectie (WEEK-111)', () => {
+  const regel = (ids: string[], afgevinkt: boolean): LijstRegel => ({
+    sleutel: ids.join('+'), naam: ids.join('+'), categorie: 'groente', afgevinkt, ids, recepten: [],
+  } as unknown as LijstRegel);
+
+  test('vinkt alle regels van de sectie af als er nog open regels zijn', () => {
+    const keuze = sectieKeuze([regel(['a'], true), regel(['b', 'c'], false)]);
+    assert.equal(keuze.afgevinkt, true);
+    assert.deepEqual(keuze.ids, ['a', 'b', 'c']);
+  });
+
+  test('zet de sectie weer open als alle regels al afgevinkt zijn', () => {
+    const keuze = sectieKeuze([regel(['a'], true), regel(['b'], true)]);
+    assert.equal(keuze.afgevinkt, false);
+    assert.deepEqual(keuze.ids, ['a', 'b']);
+  });
+
+  test('een lege sectie vinkt niets af', () => {
+    const keuze = sectieKeuze([]);
+    assert.equal(keuze.afgevinkt, true);
+    assert.deepEqual(keuze.ids, []);
+  });
+
+  test('regressie: vinkAf op de sectie-ids raakt enkel die items en laat de rest ongemoeid', () => {
+    const items = [
+      { id: 'a', naam: 'appel', afgevinkt: false },
+      { id: 'b', naam: 'peer', afgevinkt: false },
+      { id: 'x', naam: 'brood', afgevinkt: false },
+    ] as unknown as LijstItem[];
+    const keuze = sectieKeuze([regel(['a'], false), regel(['b'], false)]);
+    const nieuw = vinkAf(items, keuze.ids, keuze.afgevinkt, 'Ik');
+    assert.deepEqual(nieuw.map((i) => i.afgevinkt), [true, true, false]);
   });
 });

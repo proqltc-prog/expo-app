@@ -193,6 +193,15 @@ export function vinkAf(items: readonly LijstItem[], ids: readonly string[], afge
   });
 }
 
+/**
+ * Het selectievakje naast een rubriek of recept (WEEK-111): alle regels van de sectie samen.
+ * Zijn ze allemaal afgevinkt, dan wordt de sectie weer open gezet; anders wordt alles afgevinkt.
+ */
+export function sectieKeuze(regels: readonly LijstRegel[]): { afgevinkt: boolean; ids: string[] } {
+  const alles = regels.length > 0 && regels.every((r) => r.afgevinkt);
+  return { afgevinkt: !alles, ids: regels.flatMap((r) => r.ids) };
+}
+
 /** Een item dat de gebruiker zelf toevoegt; in een gedeelde lijst met de naam van wie het toevoegde. */
 export function eigenItem(naam: string, nu: Date, door?: string): LijstItem | null {
   const n = naam.trim();

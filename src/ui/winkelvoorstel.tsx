@@ -19,7 +19,8 @@ const KLEUR = '#2e7d4f';
 
 type Stat = 'laden' | 'klaar' | 'fout' | 'geenPostcode';
 type Adres = { postcode: string; gemeente: string };
-type Opgehaald = { positie: Positie; winkels: Winkel[] };
+// WEEK-112: het punt van de postcode is optioneel; zonder punt zijn de winkels toch te tonen (zonder afstand).
+type Opgehaald = { positie?: Positie; winkels: Winkel[] };
 
 /** Afstand als "350 m" of "2,3 km". */
 function afstandTekst(km: number): string {
@@ -113,15 +114,12 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
     let geldig = true;
     setStat('laden');
     (async () => {
-      const positie = await zoekPostcodePunt(pc, gem);
+      // Een mislukt of leeg postcodepunt mag de winkelzoeker niet stoppen (WEEK-112): dan zonder afstand.
+      const positie = await zoekPostcodePunt(pc, gem).catch(() => undefined);
       if (!geldig) return;
-      if (!positie) {
-        setStat('geenPostcode');
-        return;
-      }
       const winkels = await zoekWinkels(pc, gem);
       if (!geldig) return;
-      const resultaat = { positie, winkels };
+      const resultaat: Opgehaald = { positie, winkels };
       cache.current.set(sleutel, resultaat);
       setOpgehaald(resultaat);
       setStat('klaar');

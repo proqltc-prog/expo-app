@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { FASEN, Keuzes, kanVerder, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
+import { FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 
 const leeg: Keuzes = { aantalDagen: 6, datums: [], uitgesloten: [], momenten: ['avond'], kooktijden: ['snel'], stijlen: ['mediterraan'], vermijd: [] };
 
@@ -87,5 +87,25 @@ describe('melding als de gebruiker nog niet verder kan', () => {
         else if (fase === 'moment' || fase === 'stijl') assert.notEqual(melding, undefined, `${fase} mag niet, melding verwacht`);
       }
     }
+  });
+});
+
+describe('keuzes bij het binnenkomen van een stap (WEEK-105)', () => {
+  test('bij de stap Stijl staat niets geselecteerd, ook als er eerder keuzes waren', () => {
+    assert.deepEqual(naarStap('stijl', leeg).stijlen, []);
+  });
+  test('de andere stappen laten de stijlkeuzes staan (regressie)', () => {
+    for (const doel of ['periode', 'moment', 'vermijden', 'plan'] as const) {
+      assert.deepEqual(naarStap(doel, leeg).stijlen, ['mediterraan'], doel);
+    }
+  });
+  test('zonder stijl kan de gebruiker de stap Stijl niet verlaten', () => {
+    assert.equal(kanVerder('stijl', naarStap('stijl', leeg)), false);
+  });
+  test('de overige keuzes blijven ongewijzigd bij de stap Stijl', () => {
+    const k = naarStap('stijl', leeg);
+    assert.equal(k.aantalDagen, leeg.aantalDagen);
+    assert.deepEqual(k.momenten, leeg.momenten);
+    assert.deepEqual(k.vermijd, leeg.vermijd);
   });
 });
