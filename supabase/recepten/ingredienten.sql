@@ -182,7 +182,10 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('maizena', 'g', 'overig', 'vegetarisch'),
   ('spitskool', 'g', 'groente', 'vegetarisch'),
   ('water', 'ml', 'overig', 'vegetarisch'),
-  ('italiaanse_kruiden', 'g', 'kruid', 'vegetarisch')
+  ('italiaanse_kruiden', 'g', 'kruid', 'vegetarisch'),
+  ('zwarte_bonen', 'g', 'groente', 'vegetarisch'),
+  ('tamarinde', 'g', 'overig', 'vegetarisch'),
+  ('bieslook', 'g', 'kruid', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1284,7 +1287,25 @@ select i.id, v.taal, v.naam from (values
   ('italiaanse_kruiden', 'de', 'italienische Kräuter'),
   ('italiaanse_kruiden', 'en', 'Italian herbs'),
   ('italiaanse_kruiden', 'es', 'hierbas italianas'),
-  ('italiaanse_kruiden', 'pt', 'ervas italianas')
+  ('italiaanse_kruiden', 'pt', 'ervas italianas'),
+  ('zwarte_bonen', 'nl', 'zwarte bonen'),
+  ('zwarte_bonen', 'fr', 'haricots noirs'),
+  ('zwarte_bonen', 'de', 'schwarze Bohnen'),
+  ('zwarte_bonen', 'en', 'black beans'),
+  ('zwarte_bonen', 'es', 'frijoles negros'),
+  ('zwarte_bonen', 'pt', 'feijão preto'),
+  ('tamarinde', 'nl', 'tamarinde'),
+  ('tamarinde', 'fr', 'tamarin'),
+  ('tamarinde', 'de', 'Tamarinde'),
+  ('tamarinde', 'en', 'tamarind'),
+  ('tamarinde', 'es', 'tamarindo'),
+  ('tamarinde', 'pt', 'tamarindo'),
+  ('bieslook', 'nl', 'bieslook'),
+  ('bieslook', 'fr', 'ciboulette'),
+  ('bieslook', 'de', 'Schnittlauch'),
+  ('bieslook', 'en', 'chives'),
+  ('bieslook', 'es', 'cebollino'),
+  ('bieslook', 'pt', 'cebolinho')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
