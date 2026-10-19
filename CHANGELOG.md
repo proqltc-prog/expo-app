@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.83.0] – 2026-10-19
+
+**Jira:** [WEEK-121](https://proqltc-1791495894841.atlassian.net/browse/WEEK-121) (verbetering) · **Confluence:** [WEEK-121](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10911745)
+
+- Databank: alle 100 goedgekeurde recepten hebben bereidingsstappen in nl, fr, de, en, es en pt.
+- Bereiding: databankrecepten tonen hun stappen in de gekozen taal (terugval op nl).
+- Nieuwe tabel recept_bereidingen in Supabase, met leesrecht voor iedereen.
+
 ## [0.82.0] – 2026-10-19
 
 **Jira:** [WEEK-120](https://proqltc-1791495894841.atlassian.net/browse/WEEK-120) (bugfix en verbetering) · **Confluence:** [WEEK-120](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10813441)

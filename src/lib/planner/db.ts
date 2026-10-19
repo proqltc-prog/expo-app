@@ -29,9 +29,12 @@ export type DbRecept = {
   basis: Basis | null;
   titels: Vertalingen;
   ingredienten: DbIngredient[];
+  /** Bereidingsstappen per taal (WEEK-121). Ontbreekt het veld, dan zijn er geen stappen. */
+  bereidingen?: Partial<Record<Taal, string[]>>;
 };
 
 const TALEN: Taal[] = ['nl', 'fr', 'en'];
+const ALLE_TALEN: readonly Taal[] = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
 
 /** Kiest de tekst in de gevraagde taal, met terugval op nl en daarna op de eerste beschikbare. */
 export function kiesTekst(vertalingen: Vertalingen, taal: Taal): string | undefined {
@@ -103,7 +106,33 @@ export function leesDbRecept(ruw: unknown): DbRecept | undefined {
     basis: (r.basis as Basis | null) ?? null,
     titels: vertalingen,
     ingredienten,
+    bereidingen: leesBereidingen(r.recept_bereidingen),
   };
+}
+
+/** De bereidingsstappen van een DB-recept in de gevraagde taal (WEEK-121). Terugval: nl, dan de eerste beschikbare taal. */
+export function bereidingVoorDbRecept(r: DbRecept, taal: Taal): string[] | null {
+  const bron = r.bereidingen ?? {};
+  const stappen = bron[taal] ?? bron.nl ?? Object.values(bron).find((s) => !!s && s.length > 0);
+  return stappen && stappen.length ? [...stappen] : null;
+}
+
+/** Leest [{taal, stappen}] naar een map per taal; onbekende talen en lege stappen vallen weg. */
+export function leesBereidingen(ruw: unknown): Partial<Record<Taal, string[]>> {
+  const uit: Partial<Record<Taal, string[]>> = {};
+  if (!Array.isArray(ruw)) return uit;
+  for (const rij of ruw) {
+    if (!rij || typeof rij !== 'object') continue;
+    const r = rij as Record<string, unknown>;
+    const taal = r.taal;
+    const stappen = Array.isArray(r.stappen)
+      ? r.stappen.filter((s): s is string => typeof s === 'string' && s.trim() !== '').map((s) => s.trim())
+      : [];
+    if (typeof taal === 'string' && ALLE_TALEN.includes(taal as Taal) && stappen.length > 0) {
+      uit[taal as Taal] = stappen;
+    }
+  }
+  return uit;
 }
 
 function leesDbIngredient(ruw: unknown): DbIngredient | undefined {
