@@ -194,7 +194,9 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('tteokbokki', 'g', 'graan', 'vegetarisch'),
   ('witlof', 'g', 'groente', 'vegetarisch'),
   ('poedersuiker', 'g', 'zoet', 'vegetarisch'),
-  ('vanillesuiker', 'g', 'zoet', 'vegetarisch')
+  ('vanillesuiker', 'g', 'zoet', 'vegetarisch'),
+  ('ovenfriet', 'g', 'groente', 'vegetarisch'),
+  ('mayonaise', 'g', 'condiment', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1368,7 +1370,19 @@ select i.id, v.taal, v.naam from (values
   ('vanillesuiker', 'de', 'Vanillezucker'),
   ('vanillesuiker', 'en', 'vanilla sugar'),
   ('vanillesuiker', 'es', 'azúcar vainillado'),
-  ('vanillesuiker', 'pt', 'açúcar baunilhado')
+  ('vanillesuiker', 'pt', 'açúcar baunilhado'),
+  ('ovenfriet', 'nl', 'ovenfriet'),
+  ('ovenfriet', 'fr', 'frites au four'),
+  ('ovenfriet', 'de', 'Ofenpommes'),
+  ('ovenfriet', 'en', 'oven fries'),
+  ('ovenfriet', 'es', 'patatas fritas al horno'),
+  ('ovenfriet', 'pt', 'batatas fritas ao forno'),
+  ('mayonaise', 'nl', 'mayonaise'),
+  ('mayonaise', 'fr', 'mayonnaise'),
+  ('mayonaise', 'de', 'Mayonnaise'),
+  ('mayonaise', 'en', 'mayonnaise'),
+  ('mayonaise', 'es', 'mayonesa'),
+  ('mayonaise', 'pt', 'maionese')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
