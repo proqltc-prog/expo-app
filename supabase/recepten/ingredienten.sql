@@ -179,7 +179,10 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('bier', 'ml', 'overig', 'vegetarisch'),
   ('guanciale', 'g', 'vlees', 'vlees'),
   ('pecorino', 'g', 'zuivel', 'vegetarisch'),
-  ('maizena', 'g', 'overig', 'vegetarisch')
+  ('maizena', 'g', 'overig', 'vegetarisch'),
+  ('spitskool', 'g', 'groente', 'vegetarisch'),
+  ('water', 'ml', 'overig', 'vegetarisch'),
+  ('italiaanse_kruiden', 'g', 'kruid', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1263,7 +1266,25 @@ select i.id, v.taal, v.naam from (values
   ('maizena', 'de', 'Maisstärke'),
   ('maizena', 'en', 'cornstarch'),
   ('maizena', 'es', 'maicena'),
-  ('maizena', 'pt', 'amido de milho')
+  ('maizena', 'pt', 'amido de milho'),
+  ('spitskool', 'nl', 'spitskool'),
+  ('spitskool', 'fr', 'chou pointu'),
+  ('spitskool', 'de', 'Spitzkohl'),
+  ('spitskool', 'en', 'pointed cabbage'),
+  ('spitskool', 'es', 'repollo puntiagudo'),
+  ('spitskool', 'pt', 'repolho-pontiagudo'),
+  ('water', 'nl', 'water'),
+  ('water', 'fr', 'eau'),
+  ('water', 'de', 'Wasser'),
+  ('water', 'en', 'water'),
+  ('water', 'es', 'agua'),
+  ('water', 'pt', 'água'),
+  ('italiaanse_kruiden', 'nl', 'Italiaanse kruiden'),
+  ('italiaanse_kruiden', 'fr', 'herbes italiennes'),
+  ('italiaanse_kruiden', 'de', 'italienische Kräuter'),
+  ('italiaanse_kruiden', 'en', 'Italian herbs'),
+  ('italiaanse_kruiden', 'es', 'hierbas italianas'),
+  ('italiaanse_kruiden', 'pt', 'ervas italianas')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
