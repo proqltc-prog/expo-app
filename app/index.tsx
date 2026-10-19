@@ -13,6 +13,7 @@ import { laadDbRecepten } from '@/opslag/receptenbank';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
 import { verwijderDag, zonderReceptVanLijst } from '@/lib/planner/kies';
 import { receptStatus } from '@/lib/planner/status';
+import { neemVertrekUitGezinsprofielVlag, startFase } from '@/lib/planner/startfase';
 import { laadFrigo } from '@/opslag/frigo';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { EigenRecept } from '@/lib/eigenrecepten';
@@ -129,9 +130,10 @@ export default function Weekplanning() {
   const [mijnId, setMijnId] = useState<string | undefined>(undefined);
   const [leden, setLeden] = useState<GezinsLid[]>([]);
   useEffect(() => {
+    // WEEK-100/101: enkel een plan met bevestigde, nog niet gekookte dagen opent op het plan; anders start bij Periode.
     laadPlan().then((p) => {
       setPlan(p);
-      if (p) setFase('plan');
+      setFase(startFase(p));
     });
     laadKeuzes().then((k) => {
       const momenten: Moment[] = k.momenten.length ? k.momenten : ['avond'];
@@ -172,7 +174,12 @@ export default function Weekplanning() {
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then(setProfiel);
-      laadPlan().then(setPlan);
+      // WEEK-100: na de gezinssamenstelling start de planner opnieuw bij de juiste stap; anders blijft de stap staan.
+      const vanGezin = neemVertrekUitGezinsprofielVlag();
+      laadPlan().then((p) => {
+        setPlan(p);
+        if (vanGezin) setFase(startFase(p));
+      });
       laadEigenRecepten().then(setEigen);
       ikId().then(setMijnId);
       laadLeden().then(setLeden).catch(() => setLeden([]));
