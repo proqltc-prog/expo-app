@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -79,5 +79,23 @@ describe('bevestiging blijft bewaard', () => {
     const p = normaliseerWeekplan(ruw);
     assert.equal(p?.dagen[0].bevestigd, true);
     assert.equal(p?.dagen[1].bevestigd, undefined);
+  });
+});
+
+describe('alleBevestigdeGekookt (WEEK-125)', () => {
+  const dag = (wijziging: Partial<PlanDag> = {}): PlanDag => ({ dag: 'maandag', moment: 'avond', recept: { id: 'x', naam: 'X', soort: 'vlees', minuten: 20, stijlen: ['klassiek'], ingredienten: [] }, ...wijziging } as PlanDag);
+  const plan = (dagen: PlanDag[]): Weekplan => ({ dagen, kooktijden: [], stijlen: [], taal: 'nl', bron: 'db', gemaaktOp: '' } as unknown as Weekplan);
+
+  test('zonder bevestigde dag is het antwoord nee', () => {
+    assert.equal(alleBevestigdeGekookt(plan([dag()])), false);
+  });
+  test('een bevestigde dag die nog niet gekookt is, is nee', () => {
+    assert.equal(alleBevestigdeGekookt(plan([dag({ bevestigd: true })])), false);
+  });
+  test('alle bevestigde dagen gekookt is ja, ook als andere dagen niet bevestigd zijn', () => {
+    assert.equal(alleBevestigdeGekookt(plan([dag({ bevestigd: true, gedaan: true }), dag()])), true);
+  });
+  test('regressie: één bevestigde dag nog niet gekookt, is nee', () => {
+    assert.equal(alleBevestigdeGekookt(plan([dag({ bevestigd: true, gedaan: true }), dag({ bevestigd: true })])), false);
   });
 });

@@ -33,7 +33,7 @@ import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
-import { bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -321,6 +321,8 @@ export default function Weekplanning() {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
       const nieuw = await wijzigPlanEnFrigo((huidig, frigo) => wisselGedaan(huidig, frigo, index, verwacht));
       if (nieuw) setPlan(nieuw);
+      // WEEK-125: is het laatste bevestigde recept gekookt, dan toont de planner weer de periode-kalender.
+      if (nieuw && alleBevestigdeGekookt(nieuw)) setFase('periode');
     } finally {
       setBezigGedaan(null);
     }
