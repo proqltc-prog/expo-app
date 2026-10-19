@@ -30,14 +30,20 @@ export function aantalPersonen(p: Profiel): number {
   return p.volwassenen + p.kinderen;
 }
 
-export type ProfielFout = 'volwassenen' | 'kinderen' | 'postcode';
+/** Fouten die bij bewaren getoond worden. Het adres is verplicht (WEEK-99). */
+export type ProfielFout = 'volwassenen' | 'kinderen' | 'postcodeLeeg' | 'postcode' | 'gemeente' | 'land';
 
 /** Controleert een profiel en geeft de lijst met fouten terug (leeg = in orde). */
 export function valideerProfiel(p: Profiel): ProfielFout[] {
   const fouten: ProfielFout[] = [];
   if (!Number.isInteger(p.volwassenen) || p.volwassenen < 1 || p.volwassenen > MAX_VOLWASSENEN) fouten.push('volwassenen');
   if (!Number.isInteger(p.kinderen) || p.kinderen < 0 || p.kinderen > MAX_KINDEREN) fouten.push('kinderen');
-  if (p.adres.postcode.trim() !== '' && !/^[0-9A-Za-z -]{3,10}$/.test(p.adres.postcode.trim())) fouten.push('postcode');
+  // WEEK-99: postcode, gemeente en land zijn verplicht; een ingevulde postcode moet ook kloppen.
+  const pc = p.adres.postcode.trim();
+  if (pc === '') fouten.push('postcodeLeeg');
+  else if (!/^[0-9A-Za-z -]{3,10}$/.test(pc)) fouten.push('postcode');
+  if (p.adres.gemeente.trim() === '') fouten.push('gemeente');
+  if (p.adres.land.trim() === '') fouten.push('land');
   return fouten;
 }
 

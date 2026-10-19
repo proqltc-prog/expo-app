@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.74.2] – 2026-10-19
+
+**Jira:** [WEEK-99](https://proqltc-1791495894841.atlassian.net/browse/WEEK-99) (bugfix) · **Confluence:** [WEEK-99](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9404417)
+
+- Bij bewaren van het gezinsprofiel zijn postcode, gemeente en land verplicht; een duidelijke melding toont wat ontbreekt.
+
 ## [0.74.1] – 2026-10-19
 
 **Jira:** [WEEK-100](https://proqltc-1791495894841.atlassian.net/browse/WEEK-100), [WEEK-101](https://proqltc-1791495894841.atlassian.net/browse/WEEK-101) (bugfix) · **Confluence:** [WEEK-100](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9338890), [WEEK-101](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9338909)
