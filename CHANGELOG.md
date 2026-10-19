@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.5] – 2026-10-19
+
+**Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (verbetering) · **Confluence:** [WEEK-68 deel 5](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8749057)
+
+- Onder de knop Volgende van het weekmenu staat een melding als er nog geen maaltijd, kooktijd of keuken is gekozen.
+
 ## [0.72.4] – 2026-10-18
 
 **Jira:** [WEEK-89](https://proqltc-1791495894841.atlassian.net/browse/WEEK-89) (verbetering) · **Confluence:** [WEEK-89](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8060953)

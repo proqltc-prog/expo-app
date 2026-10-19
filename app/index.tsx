@@ -31,7 +31,7 @@ import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { dagSleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
-import { Fase, FASEN, Keuzes, kanVerder, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
+import { Fase, FASEN, Keuzes, kanVerder, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
@@ -348,6 +348,8 @@ export default function Weekplanning() {
     router.push(`/kies?moment=${keuzes.momenten[0] ?? 'avond'}`);
   };
 
+  const meldVoorkeur = ontbrekendeVoorkeur(fase, keuzes);
+
   const gaVerder = () => {
     const volgende = volgendeFase(fase);
     if (volgende && kanVerder(fase, keuzes)) setFase(volgende);
@@ -573,6 +575,8 @@ export default function Weekplanning() {
 
         </View>
       )}
+
+      {meldVoorkeur && <Text style={s.melding}>{t(meldVoorkeur)}</Text>}
 
       <View style={s.navigatie}>
         {vorigeFase(fase) && (

@@ -367,6 +367,8 @@ export const nl = {
   'planning.kies.vermijd': 'Is er iets wat je wilt vermijden?',
   'planning.vermijdOptioneel': 'Dit is optioneel. Sla over als je niets wilt vermijden.',
   'planning.kies.plan': 'Je weekmenu',
+  'planning.meld.moment': 'Kies eerst je voorkeuren: minstens één maaltijd en één kooktijd.',
+  'planning.meld.stijl': 'Kies eerst je voorkeuren: minstens één keuken.',
   'planning.kalender': 'Periode kiezen',
   'planning.bevestig': 'Bevestigen',
   'planning.nogTeBevestigen': 'Nog te bevestigen',
