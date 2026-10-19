@@ -32,7 +32,7 @@ const KLEUR = '#2e7d4f';
 const GEZINSNAAM_STANDAARD = 'Gezin';
 const LIDNAAM_STANDAARD = '';
 
-export function GezinsRuimte() {
+export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const { t } = useTaal();
   const [gezin, setGezin] = useState<Gezin | null | undefined>(undefined);
   const [leden, setLeden] = useState<GezinsLid[]>([]);
@@ -160,7 +160,7 @@ export function GezinsRuimte() {
 
   return (
     <>
-      <Text style={s.kop}>{t('gezin.titel')}</Text>
+      {kopTonen && <Text style={s.kop}>{t('gezin.titel')}</Text>}
       <View style={s.kaart}>
         {!gezin ? (
           <>
