@@ -15,9 +15,7 @@ import { verwijderDag, zonderReceptVanLijst } from '@/lib/planner/kies';
 import { receptStatus } from '@/lib/planner/status';
 import { neemVertrekUitGezinsprofielVlag, startFase } from '@/lib/planner/startfase';
 import { laadFrigo } from '@/opslag/frigo';
-import { laadEigenRecepten } from '@/opslag/eigenRecepten';
-import { EigenRecept } from '@/lib/eigenrecepten';
-import { bereidingVoor } from '@/lib/bereiding';
+import { toonBereidingsIcoon } from '@/lib/bereiding';
 import { Ionicons } from '@expo/vector-icons';
 import { trekFrigoAf } from '@/lib/frigo';
 import { aiPlanner as AI } from '@/opslag/supabase';
@@ -129,8 +127,6 @@ export default function Weekplanning() {
   const [kalenderOpen, setKalenderOpen] = useState(false);
   // De stap waarin het weekmenu staat; met een bestaand plan opent het direct op het plan (WEEK-68 deel 4b).
   const [fase, setFase] = useState<Fase>('periode');
-  // Eigen recepten, om de bereidingsstappen van een bevestigd gerecht te kunnen vinden (WEEK-81).
-  const [eigen, setEigen] = useState<EigenRecept[]>([]);
   // Beheer (WEEK-30): alleen de beheerder van het plan wijzigt het; de rest ziet het mee.
   const [mijnId, setMijnId] = useState<string | undefined>(undefined);
   const [leden, setLeden] = useState<GezinsLid[]>([]);
@@ -207,7 +203,6 @@ export default function Weekplanning() {
         setPlan(p);
         if (vanGezin) setFase(startFase(p));
       });
-      laadEigenRecepten().then(setEigen);
       ikId().then(setMijnId);
       laadLeden().then(setLeden).catch(() => setLeden([]));
     }, [])
@@ -530,8 +525,8 @@ export default function Weekplanning() {
               {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
               {plan.dagen.map(({ dag, datum, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
                 const wijzigbaar = magDagWijzigen(plan.dagen[index]);
-                // Het icoon verschijnt enkel bij een bevestigd gerecht dat bereidingsstappen heeft (WEEK-81).
-                const heeftBereiding = bevestigd && bereidingVoor(recept, eigen, taal) !== null;
+                // Het icoon verschijnt bij elk bevestigd gerecht (WEEK-81, WEEK-113).
+                const heeftBereiding = toonBereidingsIcoon(bevestigd);
                 return (
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>
                     <View style={s.kaartRij}>

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bereidingVoor } from '@/lib/bereiding';
+import { bereidingVoor, toonBereidingsIcoon } from '@/lib/bereiding';
 import { BEREIDINGEN } from '@/data/bereidingen';
 import { RECEPTENBANK } from '@/data/receptenbank';
 import type { EigenRecept } from '@/lib/eigenrecepten';
@@ -54,5 +54,19 @@ describe('bereidingVoor (WEEK-81)', () => {
     const stappen = bereidingVoor({ id: 'eigen:abc', naam: 'x' }, [eigen], 'nl');
     stappen?.push('extra');
     assert.equal(eigen.stappen.length, 2);
+  });
+});
+
+describe('icoon bereidingsstappen (WEEK-113)', () => {
+  test('een bevestigd gerecht toont altijd het icoon', () => {
+    assert.equal(toonBereidingsIcoon(true), true);
+  });
+
+  test('een niet-bevestigd gerecht toont het icoon niet', () => {
+    assert.equal(toonBereidingsIcoon(false), false);
+  });
+
+  test('regressie: een gerecht zonder bekende stappen geeft null (de pagina Bereiding toont dan de melding)', () => {
+    assert.equal(bereidingVoor({ id: 'onbekend-xyz', naam: 'Onbekend gerecht' }, [], 'nl'), null);
   });
 });
