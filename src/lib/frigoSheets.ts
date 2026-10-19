@@ -5,7 +5,7 @@
 import { afdelingVan, ingredientNaam, INGREDIENT_CODES, IngredientCode } from '@/data/ingredienten';
 import type { Afdeling } from '@/data/ingredienten';
 import { TALEN, Taal } from '@/i18n';
-import { FrigoItem, frigoBron, voegZelfToe, ZelfExtra } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoBron, voegZelfToe, ZelfExtra } from '@/lib/frigo';
 
 export type CatalogusItem = { code: IngredientCode; naam: string; afdeling: Afdeling };
 
@@ -68,6 +68,14 @@ export function sheets(frigo: readonly FrigoItem[]): { planner: FrigoItem[]; los
     los: frigo.filter((f) => frigoBron(f) === 'los'),
   };
 }
+
+/** Het aantal producten van een sheet, zoals de teller op het scherm en op de tab (WEEK-96): één bron, zo kloppen ze. */
+export function aantalSheet(frigo: readonly FrigoItem[], sheet: Sheet): number {
+  return aantalProducten(sheets(frigo)[sheet]);
+}
+
+/** Icoon per sheet (WEEK-96): duidelijke lijnicoontjes in plaats van emoji. Ionicons-namen. */
+export const SHEET_ICOON: Record<Sheet, string> = { planner: 'calendar-outline', los: 'cube-outline' };
 
 /**
  * Zet een ingrediënt uit de catalogus in de planner-frigo.

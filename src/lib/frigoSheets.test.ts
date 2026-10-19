@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { catalogus, inCatalogus, koppelBronnen, normaliseer, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
+import { aantalSheet, catalogus, inCatalogus, koppelBronnen, normaliseer, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
 import { FrigoItem, voegZelfToe } from '@/lib/frigo';
 
 const nu = new Date('2026-10-18T10:00:00.000Z');
@@ -115,5 +115,31 @@ describe('sheetkleuren (WEEK-75)', () => {
     const f = voegLosToe(voegPlannerToe([], catalogus('nl')[0], nu), 'los product', nu);
     assert.equal(sheets(f).planner.length, 1);
     assert.equal(sheets(f).los.length, 1);
+  });
+});
+
+describe('teller per sheet (WEEK-96)', () => {
+  test('de tab en de teller tellen dezelfde producten: dubbele regels tellen één keer', () => {
+    const nu = new Date('2026-10-19T10:00:00');
+    let frigo: FrigoItem[] = [];
+    const ui = catalogus('nl');
+    // Zelfde ingrediënt twee keer toegevoegd: twee frigo-items, één product op het scherm.
+    frigo = voegPlannerToe(frigo, ui[0], nu);
+    frigo = [...frigo, { ...frigo[0], id: 'dubbel' }];
+    assert.equal(sheets(frigo).planner.length, 2);
+    assert.equal(aantalSheet(frigo, 'planner'), 1);
+  });
+
+  test('de sheets tellen elk enkel hun eigen producten', () => {
+    const nu = new Date('2026-10-19T10:00:00');
+    let frigo: FrigoItem[] = voegPlannerToe([], catalogus('nl')[0], nu);
+    frigo = voegLosToe(frigo, 'Yoghurt', nu);
+    assert.equal(aantalSheet(frigo, 'planner'), 1);
+    assert.equal(aantalSheet(frigo, 'los'), 1);
+  });
+
+  test('elke sheet heeft een lijnicoontje van Ionicons', () => {
+    assert.equal(SHEET_ICOON.planner, 'calendar-outline');
+    assert.equal(SHEET_ICOON.los, 'cube-outline');
   });
 });
