@@ -17,6 +17,7 @@ import { useTaal } from '@/ui/taal';
 import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 import { Ionicons } from '@expo/vector-icons';
 import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from '@/lib/lijstIcoon';
+import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -55,6 +56,8 @@ export default function Lijst() {
   const [items, setItems] = useState<LijstItem[]>([]);
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [weergave, setWeergave] = useState<Weergave>('recept');
+  // Welke groepen open staan (WEEK-124); standaard is alles ingeklapt.
+  const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   // Hoofdtabbladen: winkels (voorstel) of de boodschappen zelf. Standaard de boodschappen.
   const [hoofd, setHoofd] = useState<Hoofd>('boodschappen');
   const [gezin, setGezin] = useState<Gezin | null>(null);
@@ -135,9 +138,9 @@ export default function Lijst() {
   };
 
   const data = useMemo(
-    () => maakSecties(items, weergave).map((sectie) => ({ ...sectie, title: titel(sectie), data: sectie.regels })),
+    () => maakSecties(items, weergave).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
     // titel() gebruikt de taal; daarom staat taal in de afhankelijkheden
-    [items, weergave, taal]
+    [items, weergave, taal, uitgeklapt]
   );
 
   // De teller telt wat er in de winkel te kopen valt: alles samengeteld over recepten heen.
@@ -222,12 +225,21 @@ export default function Lijst() {
               return (
                 <View>
                   <View style={s.sectieRij}>
-                    <View style={s.sectieTitel}>
+                    {/* Tikken op de titel klapt de groep open of dicht, met de teller van de items (WEEK-124). */}
+                    <Pressable
+                      style={s.sectieTitel}
+                      onPress={() => setUitgeklapt((o) => wisselGroep(o, section.sleutel))}
+                      accessibilityRole="button"
+                      accessibilityState={{ expanded: uitgeklapt.has(section.sleutel) }}
+                      accessibilityLabel={section.title}
+                    >
                       {section.soort === 'categorie' && (
                         <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} />
                       )}
                       <Text style={s.kopInRij}>{section.title}</Text>
-                    </View>
+                      <Text style={s.groepTeller}>{section.regels.length}</Text>
+                      <Ionicons name={(uitgeklapt.has(section.sleutel) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={KLEUR} />
+                    </Pressable>
                     {/* Selectievakje (WEEK-111): vinkt alle ingrediënten van deze rubriek of dit recept samen af. */}
                     <Pressable
                       style={[s.vinkje, alles && s.vinkjeAan]}
@@ -315,6 +327,7 @@ const s = StyleSheet.create({
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   sectieRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 14, marginBottom: 4 },
   sectieTitel: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  groepTeller: { color: '#6b7a72', fontWeight: '700', fontSize: 13 },
   kopInRij: { fontWeight: '700', fontSize: 14, color: '#444' },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: ORANJE, alignItems: 'center', justifyContent: 'center' },

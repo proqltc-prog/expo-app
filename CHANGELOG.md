@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.84.0] – 2026-10-19
+
+**Jira:** [WEEK-124](https://proqltc-1791495894841.atlassian.net/browse/WEEK-124) · **Confluence:** [WEEK-124 Groepen op lijst en frigo standaard ingeklapt](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11042817)
+
+- Groepen op de lijst en in de frigo zijn standaard ingeklapt en tonen het aantal items.
+- Tik op de titel van een groep om die open of dicht te klappen.
+
 ## [0.83.2] – 2026-10-19
 
 **Jira:** [WEEK-123](https://proqltc-1791495894841.atlassian.net/browse/WEEK-123)

@@ -9,6 +9,7 @@ import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
+import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { aantalSheet, CatalogusItem, inCatalogus, koppelBronnen, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
@@ -75,6 +76,8 @@ export default function Frigo() {
   const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>('overig');
   // Welk product de details open heeft staan (WEEK-49); één tegelijk.
   const [open, setOpen] = useState<string | null>(null);
+  // Welke afdelingen open staan (WEEK-124); standaard is alles ingeklapt.
+  const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   // Welk product de houdbaarheid open heeft staan, en wat er getypt is (WEEK-20).
   const [houdbaarOpen, setHoudbaarOpen] = useState<string | null>(null);
   const [houdbaarTekst, setHoudbaarTekst] = useState('');
@@ -146,8 +149,8 @@ export default function Frigo() {
 
   const zichtbaar = sheet === 'planner' ? sheets(frigo).planner : sheets(frigo).los;
   const secties = useMemo(
-    () => frigoSecties(zichtbaar).map((s) => ({ ...s, title: t(`afdeling.${s.afdeling}` as Sleutel), data: s.regels })),
-    [frigo, sheet, taal]
+    () => frigoSecties(zichtbaar).map((s) => ({ ...s, title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(s.regels, s.afdeling, uitgeklapt) })),
+    [frigo, sheet, taal, uitgeklapt]
   );
   const aantal = aantalProducten(zichtbaar);
   // Accentkleur van de actieve sheet: petrol voor planner-frigo, oranje voor losse producten (WEEK-75).
@@ -260,7 +263,19 @@ export default function Frigo() {
         sections={secties}
         ListHeaderComponent={kop}
         keyExtractor={(r) => r.sleutel}
-        renderSectionHeader={({ section }) => <Text style={s.kop}>{section.title}</Text>}
+        renderSectionHeader={({ section }) => (
+          // Tikken op de afdeling klapt de groep open of dicht, met de teller van de producten (WEEK-124).
+          <Pressable
+            style={s.groepKop}
+            onPress={() => setUitgeklapt((o) => wisselGroep(o, section.afdeling))}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: uitgeklapt.has(section.afdeling) }}
+          >
+            <Text style={s.kop}>{section.title}</Text>
+            <Text style={s.groepTeller}>{section.regels.length}</Text>
+            <Ionicons name={(uitgeklapt.has(section.afdeling) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={MUTED} />
+          </Pressable>
+        )}
         renderItem={({ item }) => {
           const toon = open === item.sleutel && !!item.product;
           return (
@@ -363,6 +378,8 @@ const s = StyleSheet.create({
   chipTekst: { color: '#444' },
   chipTekstAan: { color: '#fff', fontWeight: '600' },
   kop: { fontWeight: '800', fontSize: 15, color: INKT, marginTop: 18, marginBottom: 2 },
+  groepKop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  groepTeller: { color: MUTED, fontWeight: '700', fontSize: 13 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, marginTop: 8, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#E4E8E1' },
   tekstBlok: { flex: 1 },
   naam: { fontSize: 16, fontWeight: '600', color: INKT },
