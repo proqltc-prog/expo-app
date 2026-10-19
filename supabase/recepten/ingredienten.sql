@@ -189,7 +189,10 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('knolselderij', 'g', 'groente', 'vegetarisch'),
   ('panko', 'g', 'graan', 'vegetarisch'),
   ('currymix', 'g', 'kruid', 'vegetarisch'),
-  ('garnalenpasta', 'g', 'overig', 'vis')
+  ('garnalenpasta', 'g', 'overig', 'vis'),
+  ('hazelnoten', 'g', 'noten', 'vegetarisch'),
+  ('tteokbokki', 'g', 'graan', 'vegetarisch'),
+  ('witlof', 'g', 'groente', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1333,7 +1336,25 @@ select i.id, v.taal, v.naam from (values
   ('garnalenpasta', 'de', 'Garnelenpaste'),
   ('garnalenpasta', 'en', 'shrimp paste'),
   ('garnalenpasta', 'es', 'pasta de gambas'),
-  ('garnalenpasta', 'pt', 'pasta de camarão')
+  ('garnalenpasta', 'pt', 'pasta de camarão'),
+  ('hazelnoten', 'nl', 'hazelnoten'),
+  ('hazelnoten', 'fr', 'noisettes'),
+  ('hazelnoten', 'de', 'Haselnüsse'),
+  ('hazelnoten', 'en', 'hazelnuts'),
+  ('hazelnoten', 'es', 'avellanas'),
+  ('hazelnoten', 'pt', 'avelãs'),
+  ('tteokbokki', 'nl', 'tteokbokki'),
+  ('tteokbokki', 'fr', 'tteokbokki'),
+  ('tteokbokki', 'de', 'Tteokbokki'),
+  ('tteokbokki', 'en', 'tteokbokki'),
+  ('tteokbokki', 'es', 'tteokbokki'),
+  ('tteokbokki', 'pt', 'tteokbokki'),
+  ('witlof', 'nl', 'witlof'),
+  ('witlof', 'fr', 'endive'),
+  ('witlof', 'de', 'Chicorée'),
+  ('witlof', 'en', 'endive'),
+  ('witlof', 'es', 'endibia'),
+  ('witlof', 'pt', 'endívia')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
