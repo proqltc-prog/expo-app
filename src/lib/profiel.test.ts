@@ -9,7 +9,8 @@ import {
   valideerProfiel,
 } from '@/lib/profiel';
 
-const gezin = (wijziging: Partial<Profiel> = {}): Profiel => ({ ...standaardProfiel(), volwassenen: 2, ...wijziging });
+const volledigAdres = { postcode: '1760', gemeente: 'Roosdaal', land: 'België' };
+const gezin = (wijziging: Partial<Profiel> = {}): Profiel => ({ ...standaardProfiel(), volwassenen: 2, adres: volledigAdres, ...wijziging });
 
 describe('standaardProfiel', () => {
   test('start leeg: 0 volwassenen en 0 kinderen (WEEK-91), en niet geldig voor het opslaan', () => {
@@ -17,7 +18,8 @@ describe('standaardProfiel', () => {
     assert.equal(p.volwassenen, 0);
     assert.equal(p.kinderen, 0);
     assert.equal(aantalPersonen(p), 0);
-    assert.deepEqual(valideerProfiel(p), ['volwassenen']);
+    // WEEK-99: het adres is verplicht; een leeg gezin mist ook postcode en gemeente.
+    assert.deepEqual(valideerProfiel(p), ['volwassenen', 'postcodeLeeg', 'gemeente']);
   });
   test('heeft geen budget en geen maximale afstand meer (WEEK-69)', () => {
     const p = standaardProfiel();
@@ -40,7 +42,7 @@ describe('budget en maximale afstand zijn verwijderd (WEEK-69)', () => {
     assert.equal(p.volwassenen, 2);
   });
   test('een profiel met oude velden blijft geldig', () => {
-    assert.deepEqual(valideerProfiel(normaliseerProfiel({ weekbudget: -5, maxKm: 'veel' })), []);
+    assert.deepEqual(valideerProfiel(normaliseerProfiel({ weekbudget: -5, maxKm: 'veel', adres: volledigAdres })), []);
   });
 });
 
@@ -62,10 +64,15 @@ describe('valideerProfiel', () => {
     assert.deepEqual(valideerProfiel(gezin({ kinderen: 1.5 })), ['kinderen']);
     assert.deepEqual(valideerProfiel(gezin({ kinderen: -1 })), ['kinderen']);
   });
-  test('postcode is optioneel maar moet geldig zijn als ze ingevuld is', () => {
-    const adres = { ...standaardProfiel().adres, postcode: '1760' };
-    assert.deepEqual(valideerProfiel(gezin({ adres })), []);
-    assert.deepEqual(valideerProfiel(gezin({ adres: { ...adres, postcode: '17!' } })), ['postcode']);
+  test('postcode, gemeente en land zijn verplicht (WEEK-99)', () => {
+    assert.deepEqual(valideerProfiel(gezin()), []);
+    assert.deepEqual(valideerProfiel(gezin({ adres: { ...volledigAdres, postcode: '' } })), ['postcodeLeeg']);
+    assert.deepEqual(valideerProfiel(gezin({ adres: { ...volledigAdres, postcode: '   ' } })), ['postcodeLeeg']);
+    assert.deepEqual(valideerProfiel(gezin({ adres: { ...volledigAdres, gemeente: '' } })), ['gemeente']);
+    assert.deepEqual(valideerProfiel(gezin({ adres: { ...volledigAdres, land: ' ' } })), ['land']);
+  });
+  test('een ingevulde postcode moet ook kloppen', () => {
+    assert.deepEqual(valideerProfiel(gezin({ adres: { ...volledigAdres, postcode: '17!' } })), ['postcode']);
   });
   test('te veel kinderen', () => {
     assert.ok(valideerProfiel(gezin({ kinderen: 11 })).includes('kinderen'));
@@ -82,7 +89,7 @@ describe('normaliseerProfiel', () => {
     assert.equal(normaliseerProfiel({ kinderen: [7, 'x', 4, 30] }).kinderen, 4);
   });
   test('behoudt geldige velden en herstelt foute', () => {
-    const p = normaliseerProfiel({ volwassenen: 0, kinderen: 3, adres: { gemeente: 'Roosdaal' } });
+    const p = normaliseerProfiel({ volwassenen: 0, kinderen: 3, adres: { postcode: '1760', gemeente: 'Roosdaal' } });
     assert.equal(p.volwassenen, 1);
     assert.equal(p.kinderen, 3);
     assert.equal(p.adres.gemeente, 'Roosdaal');

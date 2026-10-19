@@ -22,7 +22,10 @@ const KLEUR = '#2e7d4f';
 const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   volwassenen: MAX_VOLWASSENEN,
   kinderen: MAX_KINDEREN,
+  postcodeLeeg: undefined,
   postcode: undefined,
+  gemeente: undefined,
+  land: undefined,
 };
 
 function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; max: number; onChange: (n: number) => void }) {
