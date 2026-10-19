@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.78.0] – 2026-10-19
+
+**Jira:** [WEEK-104](https://proqltc-1791495894841.atlassian.net/browse/WEEK-104) (verbetering) · **Confluence:** [WEEK-104](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10027009)
+
+- Gezinsprofiel: de taalkeuze op het scherm is weggehaald, en onder Gezinsruimte zijn de invulvelden voor naam weg; een nieuw gezin krijgt de standaardnaam Gezin.
+- Gezinsprofiel: de tellers heten Volwassenen en Kinderen, en een nieuw profiel start op 0 en 0.
+- Gezinsprofiel: boven de adresvelden staan labels (Postcode, Gemeente, Land), en de zin over de AI is weggehaald.
+- Gezinsprofiel: postcode invullen vult gemeente en land weer automatisch in; lukt het opzoeken niet, dan verschijnt een melding.
+
 ## [0.77.1] – 2026-10-19
 
 **Jira:** [WEEK-103](https://proqltc-1791495894841.atlassian.net/browse/WEEK-103) (bugfix) · **Confluence:** [WEEK-103](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9961473)

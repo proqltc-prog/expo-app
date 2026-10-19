@@ -1,5 +1,5 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
-import { bouwPostcodeUrl, leesPlaats, leesPunt } from '@/lib/postcodepunt';
+import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
 import { probeerAchtereen } from '@/lib/netwerk';
 import { bouwQuery, leesWinkels, Winkel } from '@/lib/winkels';
 import type { Positie } from '@/lib/winkelvoorstel';
@@ -28,7 +28,7 @@ export async function zoekWinkels(postcode: string, gemeente: string): Promise<W
 export async function zoekPostcodePunt(postcode: string, gemeente: string): Promise<Positie | undefined> {
   const url = bouwPostcodeUrl(postcode, gemeente);
   if (!url) return undefined;
-  const antwoord = await fetch(url, { headers: { Accept: 'application/json' } });
+  const antwoord = await fetch(url, { headers: NOMINATIM_HEADERS });
   if (!antwoord.ok) throw new Error(`Nominatim ${antwoord.status}`);
   return leesPunt(await antwoord.json());
 }
@@ -37,7 +37,7 @@ export async function zoekPostcodePunt(postcode: string, gemeente: string): Prom
 export async function zoekPlaats(postcode: string): Promise<{ gemeente: string; land: string } | undefined> {
   const url = bouwPostcodeUrl(postcode, '');
   if (!url) return undefined;
-  const antwoord = await fetch(url, { headers: { Accept: 'application/json' } });
+  const antwoord = await fetch(url, { headers: NOMINATIM_HEADERS });
   if (!antwoord.ok) throw new Error(`Nominatim ${antwoord.status}`);
   return leesPlaats(await antwoord.json());
 }

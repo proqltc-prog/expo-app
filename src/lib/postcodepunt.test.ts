@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwPostcodeUrl, leesPlaats, leesPunt } from '@/lib/postcodepunt';
+import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
 
 describe('postcode naar punt: url (WEEK-60)', () => {
   test('zoekt op postcode in België', () => {
@@ -64,5 +64,12 @@ describe('postcode naar plaats: gemeente en land (WEEK-69)', () => {
     assert.equal(leesPlaats([{ address: { country: 'België' } }]), undefined);
     assert.equal(leesPlaats([{ lat: '50', lon: '4' }]), undefined);
     assert.equal(leesPlaats(null), undefined);
+  });
+});
+
+describe('postcode naar punt: verzoek (WEEK-104)', () => {
+  test('het verzoek stuurt een herkenbare User-Agent mee, zoals Nominatim vraagt', () => {
+    assert.match(NOMINATIM_HEADERS['User-Agent'], /Famenu/);
+    assert.equal(NOMINATIM_HEADERS.Accept, 'application/json');
   });
 });
