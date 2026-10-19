@@ -41,5 +41,5 @@ jobs:
         run: |
           npx --yes eas-cli@latest build --platform android --profile ${{ inputs.profiel }} --non-interactive --no-wait --json > build.json
           ID=$(jq -r '.[0].id // empty' build.json)
-          EIGENAAR=$(npx --yes eas-cli@latest whoami 2>/dev/null | head -1)
+          EIGENAAR=$(npx --yes eas-cli@latest whoami 2>/dev/null | head -1 | awk '{print $1}')
           echo "::notice::Build gestart: https://expo.dev/accounts/$EIGENAAR/projects/famenu/builds/$ID (klaar na 10–20 minuten; download daar de APK/AAB)"
