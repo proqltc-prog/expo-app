@@ -253,6 +253,7 @@ export const es: Vertalingen = {
   'scan.filmpjeTitel': 'Escaneos extra',
   'scan.bron': 'Datos: Open Food Facts (openfoodfacts.org). No es consejo médico.',
   'scan.terug': 'Volver',
+  'scan.annuleer': 'Cancelar',
 
   'voeding.kcal': 'Calorías',
   'voeding.suikers': 'Azúcares',
