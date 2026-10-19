@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.77.0] – 2026-10-19
+
+**Jira:** [WEEK-96](https://proqltc-1791495894841.atlassian.net/browse/WEEK-96) (verbetering) · **Confluence:** [WEEK-96](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9797633)
+
+- De twee sheets van de frigo hebben duidelijke lijnicoontjes en een subtiele paginatitel; de labels worden niet meer afgesneden.
+- In de planner-frigo verdwijnen de ingrediëntknoppen (ze verschijnen enkel bij zoeken) en de link "Scan voor details".
+- De teller op de tab en de teller onderaan tellen dezelfde producten (dubbele regels tellen één keer): het getal klopt nu.
+
 ## [0.76.2] – 2026-10-19
 
 **Jira:** [WEEK-95](https://proqltc-1791495894841.atlassian.net/browse/WEEK-95) (bugfix) · **Confluence:** [WEEK-95](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9732097)
