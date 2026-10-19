@@ -601,7 +601,6 @@ export default function Weekplanning() {
 
 const s = StyleSheet.create({
   container: { padding: 16, gap: 12, paddingBottom: 40, backgroundColor: PAPIER },
-  melding: { color: PETROL, fontWeight: '600' },
   profiel: { color: PETROL, fontWeight: '600' },
   stappen: { flexDirection: 'row', gap: 6 },
   stap: { flex: 1, height: 6, borderRadius: 3, backgroundColor: LIJN },
