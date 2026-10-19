@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.73.0] – 2026-10-19
+
+**Jira:** [WEEK-92](https://proqltc-1791495894841.atlassian.net/browse/WEEK-92) (verbetering) · **Confluence:** [WEEK-92](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8978433)
+
+- De AI-teller en de AI-terugvalmeldingen zijn weg uit het weekmenu.
+- Dagacties (bevestigen, ander gerecht, zelf kiezen, verwijderen) zijn duidelijke icoonknoppen, uitgelijnd op één rij.
+- Een dagactie die niet mag (geen beheerder) legt uit waarom, in plaats van stil te blijven.
+- De knop 'Gekookt' toont de status duidelijk; een afgewerkt gerecht toont '✓ Gekookt' in de kop.
+
 ## [0.72.6] – 2026-10-19
 
 **Jira:** [WEEK-91](https://proqltc-1791495894841.atlassian.net/browse/WEEK-91) (bugfix) · **Confluence:** [WEEK-91](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8847371)
