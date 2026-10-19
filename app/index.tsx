@@ -19,8 +19,7 @@ import { EigenRecept } from '@/lib/eigenrecepten';
 import { bereidingVoor } from '@/lib/bereiding';
 import { Ionicons } from '@expo/vector-icons';
 import { trekFrigoAf } from '@/lib/frigo';
-import { aiPlanner as AI, aiTegoed } from '@/opslag/supabase';
-import { AiTegoed, tegoedTekst } from '@/lib/planner/tegoed';
+import { aiPlanner as AI } from '@/opslag/supabase';
 import { Weekplan } from '@/lib/planner/types';
 import { PERIODE_OPTIES, PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
@@ -99,6 +98,21 @@ function Chips<T extends string | number>({ opties, gekozen, label, onWissel }: 
   );
 }
 
+/** Icoonknop voor een actie op één dag (WEEK-92). Het label blijft voor schermlezers en in de tooltip. */
+function ActieIcoon({ naam, label, onPress, aan, bezig }: { naam: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; aan?: boolean; bezig?: boolean }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      hitSlop={8}
+      style={[s.actieIcoon, aan && s.actieIcoonAan]}
+    >
+      {bezig ? <ActivityIndicator size="small" color={PETROL} /> : <Ionicons name={naam} size={22} color={aan ? '#fff' : PETROL} />}
+    </Pressable>
+  );
+}
+
 export default function Weekplanning() {
   const { t, tn, taal } = useTaal();
   const [profiel, setProfiel] = useState<Profiel | null>(null);
@@ -114,8 +128,6 @@ export default function Weekplanning() {
   // Beheer (WEEK-30): alleen de beheerder van het plan wijzigt het; de rest ziet het mee.
   const [mijnId, setMijnId] = useState<string | undefined>(undefined);
   const [leden, setLeden] = useState<GezinsLid[]>([]);
-  const [tegoed, setTegoed] = useState<AiTegoed | null>(null);
-
   useEffect(() => {
     laadPlan().then((p) => {
       setPlan(p);
@@ -156,15 +168,12 @@ export default function Weekplanning() {
   const wisselStijl = (id: string) => pasKeuzesAan({ ...keuzes, stijlen: wissel(keuzes.stijlen, id) });
   const wisselVermijdKeuze = (v: Vermijd) => pasKeuzesAan({ ...keuzes, vermijd: wissel(keuzes.vermijd, v) });
 
-  const vernieuwTegoed = () => aiTegoed().then(setTegoed);
-
   // Bij elk bezoek opnieuw laden: frigo of lijst kunnen het plan intussen aangepast hebben (WEEK-13).
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then(setProfiel);
       laadPlan().then(setPlan);
       laadEigenRecepten().then(setEigen);
-      aiTegoed().then(setTegoed);
       ikId().then(setMijnId);
       laadLeden().then(setLeden).catch(() => setLeden([]));
     }, [])
@@ -177,6 +186,8 @@ export default function Weekplanning() {
       ? t('planning.alleenBeheerder', { naam: beheerderNaam(leden, plan.beheerder) ?? '' })
       : t('planning.alleenBeheerderOnbekend')
     : '';
+  // Een knop die niet mag werken, legt uit waarom (WEEK-92): geen stille knop meer.
+  const toonBeheer = () => Alert.alert(t('planning.beheerTitel'), beheerTekst);
 
   // Een nieuw weekmenu uit de database (WEEK-68). De AI-planner blijft de terugval.
   // Met bevestigde dagen vervangt dit ook de boodschappenlijst; de gebruiker is daar eerst mee akkoord gegaan.
@@ -215,7 +226,6 @@ export default function Weekplanning() {
       setFase('plan');
     } finally {
       setBezig(false);
-      vernieuwTegoed();
     }
   };
 
@@ -251,7 +261,6 @@ export default function Weekplanning() {
       if (bewaard) setPlan(bewaard);
     } finally {
       setBezigDag(null);
-      vernieuwTegoed();
     }
   };
 
@@ -450,22 +459,13 @@ export default function Weekplanning() {
           <Pressable style={[s.knop, bezig && s.uit]} onPress={vraagNieuwPlan} disabled={bezig || !profiel || !mag}>
             {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
           </Pressable>
-          {tegoed && (() => {
-            const { sleutel, waarden } = tegoedTekst(tegoed);
-            return <Text style={s.tegoed}>{t(sleutel, waarden)}</Text>;
-          })()}
-
           {!plan && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
           {plan && !mag && <Text style={s.melding}>{beheerTekst}</Text>}
 
           {plan && (
             <>
-              <Text style={s.bron}>
-                {t(plan.bron === 'ai' ? 'planning.bronAi' : 'planning.bronLokaal')}
-              </Text>
               {plan.kort && <Text style={s.melding}>{t('planning.kort', { n: plan.dagen.length })}</Text>}
               {plan.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
-              {plan.terugval && <Text style={s.melding}>{t(plan.aiLimiet ? 'planning.aiLimiet' : 'planning.aiMislukt')}</Text>}
               {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
               {plan.dagen.map(({ dag, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
                 const wijzigbaar = magDagWijzigen(plan.dagen[index]);
@@ -478,20 +478,10 @@ export default function Weekplanning() {
                     <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
                       <Text style={s.dag}>{t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
-                      {!gedaan && (
+                      {gedaan ? (
+                        <Text style={s.statusAan}>{t('planning.gedaan')}</Text>
+                      ) : (
                         <Text style={bevestigd ? s.statusAan : s.statusWacht}>{t(bevestigd ? 'planning.bevestigd' : 'planning.nogTeBevestigen')}</Text>
-                      )}
-                      {wijzigbaar && (
-                        <Pressable
-                          style={s.reset}
-                          onPress={() => herdoeDag(index)}
-                          disabled={bezigDag !== null || !mag}
-                          accessibilityRole="button"
-                          accessibilityLabel={t('planning.reset', { dag: t(dagSleutel(dag)) })}
-                          hitSlop={8}
-                        >
-                          {bezigDag === index ? <ActivityIndicator size="small" color={PETROL} /> : <Text style={s.resetTekst}>↻</Text>}
-                        </Pressable>
                       )}
                     </View>
                     <View style={s.naamRij}>
@@ -529,16 +519,29 @@ export default function Weekplanning() {
                       null
                     )}
                     {wijzigbaar && (
-                      <View style={s.acties}>
-                        <Pressable style={s.bevestigKnop} onPress={() => bevestigDagKnop(index)} accessibilityRole="button" disabled={!mag}>
-                          <Text style={s.bevestigKnopTekst}>{t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}</Text>
-                        </Pressable>
-                        <Pressable style={s.kiesKnop} onPress={() => kiesZelf(index)} accessibilityRole="button" disabled={!mag}>
-                          <Text style={s.kiesKnopTekst}>{t('planning.zelfKiezen')}</Text>
-                        </Pressable>
-                        <Pressable style={s.kiesKnop} onPress={() => verwijderMaaltijd(index)} accessibilityRole="button" disabled={!mag}>
-                          <Text style={s.kiesKnopTekst}>{t('planning.verwijderen')}</Text>
-                        </Pressable>
+                      <View style={s.actieRij}>
+                        <ActieIcoon
+                          naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
+                          label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
+                          aan={!!bevestigd}
+                          onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer())}
+                        />
+                        <ActieIcoon
+                          naam="refresh-outline"
+                          label={t('planning.reset', { dag: t(dagSleutel(dag)) })}
+                          bezig={bezigDag === index}
+                          onPress={() => (mag ? herdoeDag(index) : toonBeheer())}
+                        />
+                        <ActieIcoon
+                          naam="create-outline"
+                          label={t('planning.zelfKiezen')}
+                          onPress={() => (mag ? kiesZelf(index) : toonBeheer())}
+                        />
+                        <ActieIcoon
+                          naam="trash-outline"
+                          label={t('planning.verwijderen')}
+                          onPress={() => (mag ? verwijderMaaltijd(index) : toonBeheer())}
+                        />
                       </View>
                     )}
                     <View style={s.rij}>
@@ -547,14 +550,15 @@ export default function Weekplanning() {
                       <View style={{ flex: 1 }} />
                       <Pressable
                         style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
-                        onPress={() => wisselGedaanKnop(index)}
-                        disabled={bezigGedaan !== null || !mag}
+                        onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer())}
+                        disabled={bezigGedaan !== null}
                         accessibilityRole="checkbox"
                         accessibilityState={{ checked: !!gedaan }}
                         accessibilityLabel={t('planning.gedaanLabel', { recept: recept.naam })}
                         hitSlop={6}
                       >
-                        <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t(gedaan ? 'planning.gedaan' : 'planning.gekookt')}</Text>
+                        <Ionicons name={gedaan ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={gedaan ? '#fff' : PETROL} />
+                        <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t('planning.gekookt')}</Text>
                       </Pressable>
                     </View>
                     </View>
@@ -627,8 +631,6 @@ const s = StyleSheet.create({
   tegelTekstAan: { color: PETROL },
   melding: { backgroundColor: ORANJE_ZACHT, color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   leeg: { color: MUTED, textAlign: 'center', marginTop: 8 },
-  bron: { color: MUTED, fontSize: 12 },
-  tegoed: { color: MUTED, fontSize: 12, textAlign: 'center' },
   kaart: { backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: LIJN },
   kaartBevestigd: { borderColor: PETROL, borderWidth: 1.5 },
   statusAan: { color: PETROL, fontSize: 12, fontWeight: '700' },
@@ -638,8 +640,6 @@ const s = StyleSheet.create({
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
   dag: { fontSize: 13, color: MUTED, fontWeight: '600' },
   kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  reset: { width: 32, height: 32, borderRadius: 16, borderWidth: 1.5, borderColor: PETROL, alignItems: 'center', justifyContent: 'center' },
-  resetTekst: { color: PETROL, fontSize: 18, fontWeight: '700' },
   naam: { fontSize: 17, fontWeight: '700', marginTop: 2, color: INKT },
   bevestigdTekst: { color: PETROL, fontWeight: '700', fontSize: 13, marginTop: 4 },
   naamRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -655,15 +655,13 @@ const s = StyleSheet.create({
   ontbreektKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   kleineKnop: { borderWidth: 1.5, borderColor: ORANJE, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
   kleineKnopTekst: { color: '#7a3a06', fontSize: 12, fontWeight: '700' },
-  gedaanKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
+  gedaanKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
   gedaanKnopAan: { backgroundColor: PETROL },
   gedaanTekst: { color: PETROL, fontSize: 12, fontWeight: '700' },
   gedaanTekstAan: { color: '#fff' },
-  acties: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', marginTop: 8 },
-  bevestigKnop: { backgroundColor: PETROL, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 6 },
-  bevestigKnopTekst: { color: '#fff', fontSize: 12, fontWeight: '700' },
-  kiesKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
-  kiesKnopTekst: { color: PETROL, fontSize: 12, fontWeight: '700' },
+  actieRij: { flexDirection: 'row', gap: 10, marginTop: 8 },
+  actieIcoon: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, borderColor: PETROL, alignItems: 'center', justifyContent: 'center' },
+  actieIcoonAan: { backgroundColor: PETROL },
   tweedeKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, padding: 12, alignItems: 'center' },
   tweedeKnopTekst: { color: PETROL, fontWeight: '700', fontSize: 15 },
   knop: { backgroundColor: PETROL, borderRadius: 14, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
