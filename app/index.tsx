@@ -603,6 +603,9 @@ export default function Weekplanning() {
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
+                    </View>
+                    {/* WEEK-114: de knop Gekookt op een eigen regel, links uitgelijnd, zodat hij nooit buiten de kaart valt. */}
+                    <View style={s.gedaanRij}>
                       <Pressable
                         style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
                         onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer())}
@@ -696,6 +699,7 @@ const s = StyleSheet.create({
   naamTekst: { flex: 1 },
   bereidingKnop: { width: 40, height: 40, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
   rij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-start', gap: 8, marginTop: 8 },
+  gedaanRij: { flexDirection: 'row', justifyContent: 'flex-start', marginTop: 6 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
   min: { color: MUTED, fontSize: 13 },
   gepland: { color: MUTED, fontSize: 12, marginTop: 2 },
