@@ -18,6 +18,7 @@ import { additiefWeergave } from '@/data/additieven';
 import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
+import { Ionicons } from '@expo/vector-icons';
 
 // Thema (WEEK-71): dezelfde kleuren als frigo en lijst. Petrol voor de hoofdacties, oranje voor afwijzen.
 const KLEUR = '#0F6B66';
@@ -85,6 +86,12 @@ export default function Scan() {
     } catch {
       setStatus({ soort: 'fout' });
     }
+  };
+
+  // Scan sluiten (WEEK-102): terug naar het vorige scherm, of naar het menu als er geen vorig scherm is.
+  const annuleer = () => {
+    if (router.canGoBack()) router.back();
+    else router.navigate('/');
   };
 
   const opnieuw = () => {
@@ -168,6 +175,16 @@ export default function Scan() {
           barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
           onBarcodeScanned={opScan}
         />
+        {/* WEEK-102: de scan sluiten, zonder het scherm eerst te moeten verlaten. */}
+        <Pressable
+          onPress={annuleer}
+          accessibilityRole="button"
+          accessibilityLabel={t('scan.annuleer')}
+          hitSlop={12}
+          style={s.annuleer}
+        >
+          <Ionicons name="close" size={26} color="#fff" />
+        </Pressable>
         <View style={s.overlay}>
           <View style={s.kader} />
           <Text style={s.hint}>{t('scan.richt')}</Text>
@@ -313,6 +330,7 @@ const s = StyleSheet.create({
   knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  annuleer: { position: 'absolute', top: 16, right: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
   kader: { width: 260, height: 150, borderWidth: 3, borderColor: '#fff', borderRadius: 16 },
   hint: { color: '#fff', marginTop: 16, fontWeight: '600', textShadowColor: '#000', textShadowRadius: 4 },
   resultaat: { padding: 16, gap: 8, backgroundColor: PAPIER },
