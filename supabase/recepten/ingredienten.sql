@@ -174,7 +174,9 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('currybladeren', 'g', 'kruid', 'vegetarisch'),
   ('hesp', 'g', 'vlees', 'vlees'),
   ('bladerdeeg', 'g', 'graan', 'vegetarisch'),
-  ('radijs', 'g', 'groente', 'vegetarisch')
+  ('radijs', 'g', 'groente', 'vegetarisch'),
+  ('schouderkarbonade', 'g', 'vlees', 'vlees'),
+  ('bier', 'ml', 'overig', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1228,7 +1230,19 @@ select i.id, v.taal, v.naam from (values
   ('radijs', 'de', 'Radieschen'),
   ('radijs', 'en', 'radish'),
   ('radijs', 'es', 'rábano'),
-  ('radijs', 'pt', 'rabanete')
+  ('radijs', 'pt', 'rabanete'),
+  ('schouderkarbonade', 'nl', 'schouderkarbonade'),
+  ('schouderkarbonade', 'fr', 'échine de porc'),
+  ('schouderkarbonade', 'de', 'Schweineschulter'),
+  ('schouderkarbonade', 'en', 'pork shoulder'),
+  ('schouderkarbonade', 'es', 'paletilla de cerdo'),
+  ('schouderkarbonade', 'pt', 'paleta de porco'),
+  ('bier', 'nl', 'bier'),
+  ('bier', 'fr', 'bière'),
+  ('bier', 'de', 'Bier'),
+  ('bier', 'en', 'beer'),
+  ('bier', 'es', 'cerveza'),
+  ('bier', 'pt', 'cerveja')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
