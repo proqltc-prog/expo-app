@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { AppState, Pressable, Text } from 'react-native';
-import { router, Tabs } from 'expo-router';
+import { AppState, BackHandler, Pressable, Text } from 'react-native';
+import { router, Tabs, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
+import { gaatNaarMenu } from '@/lib/terugknop';
 
 const KLEUR = '#2e7d4f';
 
@@ -28,6 +29,16 @@ function InstellingenKnop() {
 
 function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
   const { t } = useTaal();
+  // WEEK-128: de fysieke terugknop gaat op elk scherm van de app naar het weekmenu, nooit naar de taalkeuze.
+  const pad = usePathname();
+  useEffect(() => {
+    const abonnement = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (!gaatNaarMenu(pad)) return false;
+      router.navigate('/');
+      return true;
+    });
+    return () => abonnement.remove();
+  }, [pad]);
   // WEEK-91: het menu is altijd de eerste route; het welkomstscherm komt er bovenop en vervangt zichzelf.
   // Zo keert terugnavigeren (bv. vanuit de scanner) nooit naar de taalkeuze terug.
   useEffect(() => {
