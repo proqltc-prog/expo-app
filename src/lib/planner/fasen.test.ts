@@ -2,7 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { FASEN, Keuzes, kanVerder, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 
-const leeg: Keuzes = { aantalDagen: 6, momenten: ['avond'], kooktijden: ['snel'], stijlen: ['mediterraan'], vermijd: [] };
+const leeg: Keuzes = { aantalDagen: 6, datums: [], uitgesloten: [], momenten: ['avond'], kooktijden: ['snel'], stijlen: ['mediterraan'], vermijd: [] };
 
 describe('volgorde van de stappen', () => {
   test('vijf stappen in vaste volgorde', () => {

@@ -8,6 +8,10 @@ export type Fase = (typeof FASEN)[number];
 
 export type Keuzes = {
   aantalDagen: number;
+  /** De gekozen datums van de periode (WEEK-97). */
+  datums: string[];
+  /** Dagen binnen het bereik die de gebruiker uitgeschakeld heeft (WEEK-97). */
+  uitgesloten: string[];
   momenten: Moment[];
   kooktijden: string[];
   stijlen: string[];

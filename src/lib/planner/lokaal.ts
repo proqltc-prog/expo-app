@@ -1,3 +1,4 @@
+import { dagenVoorVerzoek, voegDatumsToe } from '@/lib/planner/datums';
 // Lokale planner: stelt een weekplan samen uit de receptenbank, zonder internet.
 // Wordt gebruikt als er geen AI-planner is ingesteld of als die faalt.
 import { afdelingVan, ingredientNaam } from '@/data/ingredienten';
@@ -136,7 +137,12 @@ export function dagenVoorPlan(aantal: number): DagCode[] {
 }
 
 export function planLokaal(verzoek: PlanVerzoek, bank: readonly BankRecept[] = RECEPTENBANK): Weekplan {
-  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const plan = planLokaalBasis(verzoek, bank);
+  return { ...plan, dagen: voegDatumsToe(plan.dagen, verzoek.datums) };
+}
+
+function planLokaalBasis(verzoek: PlanVerzoek, bank: readonly BankRecept[]): Weekplan {
+  const dagen = dagenVoorVerzoek(verzoek, STANDAARD_AANTAL_DAGEN);
   const momenten = normaliseerMomenten(verzoek.momenten);
   // Elke dag krijgt één plek per gekozen moment, dag voor dag (WEEK-43).
   const sloten = dagen.flatMap((dag) => momenten.map((moment) => ({ dag, moment })));

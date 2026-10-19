@@ -14,7 +14,7 @@ import { naElkaar } from './wachtrij';
 const PLAN = SLEUTEL.plan;
 const KEUZES = SLEUTEL.keuzes;
 
-export type Keuzes = { kooktijden: string[]; stijlen: string[]; vermijd: string[]; aantalDagen: number; momenten: Moment[] };
+export type Keuzes = { kooktijden: string[]; stijlen: string[]; vermijd: string[]; aantalDagen: number; momenten: Moment[]; datums: string[]; uitgesloten: string[] };
 
 export async function laadPlan(): Promise<Weekplan | null> {
   try {
@@ -95,7 +95,7 @@ export async function laadKeuzes(): Promise<Keuzes> {
     const ruw = await AsyncStorage.getItem(KEUZES);
     return normaliseerKeuzes(ruw ? JSON.parse(ruw) : null);
   } catch {
-    return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'] };
+    return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'], datums: [], uitgesloten: [] };
   }
 }
 
