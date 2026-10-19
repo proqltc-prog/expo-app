@@ -7,7 +7,7 @@ import type { Gezin } from '@/lib/schaal';
 import { DbRecept, naarPlanRecept } from '@/lib/planner/db';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { normaliseerMomenten } from '@/lib/planner/moment';
-import { porties as berekenPorties } from '@/lib/planner/hoeveelheid';
+import { schaalFactor } from '@/lib/schaal';
 import { toeval } from '@/lib/planner/lokaal';
 import { kooktijdVan, KooktijdCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
 import { dagenVoorVerzoek, voegDatumsToe } from '@/lib/planner/datums';
@@ -94,7 +94,7 @@ export function planUitDatabase(verzoek: PlanVerzoek, invoer: DbPoolRecept[]): W
     stijlen: [...verzoek.stijlen],
     vermijd: verzoek.vermijd,
     taal: verzoek.taal,
-    porties: berekenPorties(verzoek.profiel),
+    porties: schaalFactor(verzoek.profiel),
     bron: 'db',
     gemaaktOp: new Date().toISOString(),
     versoepeld: versoepeld || undefined,

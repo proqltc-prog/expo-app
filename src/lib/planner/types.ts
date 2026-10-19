@@ -85,7 +85,7 @@ export type Weekplan = {
   /** Gebruiker-id van de beheerder: enkel die mag het plan wijzigen (WEEK-30). Ontbreekt bij een plan zonder gezin. */
   beheerder?: string;
   taal: Taal;
-  /** Aantal volwassen porties waarvoor de hoeveelheden berekend zijn. */
+  /** Schaalfactor waarvoor de hoeveelheden berekend zijn (volwassene 1, kind 0 tot 12 jaar 0,5; zie src/lib/schaal.ts). */
   porties: number;
   /** lokaal = receptenbank van de app, db = recepten uit de database. Geen AI (WEEK-116). */
   bron: 'lokaal' | 'db';
