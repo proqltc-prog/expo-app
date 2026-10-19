@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.85.3] – 2026-10-19
+
+**Jira:** [WEEK-127](https://proqltc-1791495894841.atlassian.net/browse/WEEK-127) · **Confluence:** [WEEK-127 Winkelvoorstel blijft laden](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10747906)
+
+- De winkelzoeker wacht even lang als de zoekopdracht van de server mag duren (30 s in plaats van 10 s), met één poging per server. Zo blijft het laden niet eindeloos draaien.
+
 ## [0.85.2] – 2026-10-19
 
 **Jira:** [WEEK-128](https://proqltc-1791495894841.atlassian.net/browse/WEEK-128) · **Confluence:** [WEEK-128 Terugknop gaat naar het weekmenu](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11108370)
