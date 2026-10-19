@@ -163,3 +163,25 @@ describe('vermijden en moment worden nooit overtreden (WEEK-116)', () => {
     assert.ok(nieuw.dagen.every((d) => !d.recept.ingredienten.some((i) => i.naam === 'spek')));
   });
 });
+
+describe('planUitDatabase: aanvullen kiest korte recepten (WEEK-122)', () => {
+  test('bij aanvullen komt een recept van 290 minuten niet op het plan als er een korter recept is', () => {
+    const p = pool(dbRecept(1, { kooktijdMin: 290 }), dbRecept(2, { kooktijdMin: 25 }));
+    const uit = plan(p, { aantalDagen: 1, kooktijden: ['snel'] })!;
+    assert.equal(uit.dagen[0].recept.id, 'db-2');
+    assert.equal(uit.versoepeld, true);
+  });
+  test('regressie: over veel seeds kiest het plan nooit het langste recept als een korter beschikbaar is', () => {
+    const p = pool(dbRecept(1, { kooktijdMin: 290 }), dbRecept(2, { kooktijdMin: 25 }), dbRecept(3, { kooktijdMin: 30 }));
+    for (let seed = 1; seed <= 20; seed++) {
+      const uit = plan(p, { aantalDagen: 1, kooktijden: ['snel'], seed })!;
+      assert.notEqual(uit.dagen[0].recept.id, 'db-1', `seed ${seed}`);
+    }
+  });
+  test('regressie: een recept dat wel bij de gekozen kooktijd past, gaat voor op een korter recept', () => {
+    const p = pool(dbRecept(1, { kooktijdMin: 60 }), dbRecept(2, { kooktijdMin: 15 }));
+    const uit = plan(p, { aantalDagen: 1, kooktijden: ['uitgebreid'] })!;
+    assert.equal(uit.dagen[0].recept.id, 'db-1');
+    assert.equal(uit.versoepeld, undefined);
+  });
+});
