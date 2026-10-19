@@ -210,7 +210,8 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('zaatar', 'g', 'specerij', 'vegetarisch'),
   ('dadels', 'g', 'fruit', 'vegetarisch'),
   ('pistachenoten', 'g', 'noten', 'vegetarisch'),
-  ('vleesfond', 'ml', 'condiment', 'vlees')
+  ('vleesfond', 'ml', 'condiment', 'vlees'),
+  ('pastinaak', 'g', 'groente', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1480,7 +1481,13 @@ select i.id, v.taal, v.naam from (values
   ('vleesfond', 'de', 'Fleischfond'),
   ('vleesfond', 'en', 'beef stock'),
   ('vleesfond', 'es', 'caldo de carne'),
-  ('vleesfond', 'pt', 'caldo de carne')
+  ('vleesfond', 'pt', 'caldo de carne'),
+  ('pastinaak', 'nl', 'pastinaak'),
+  ('pastinaak', 'fr', 'panais'),
+  ('pastinaak', 'de', 'Pastinake'),
+  ('pastinaak', 'en', 'parsnip'),
+  ('pastinaak', 'es', 'chirivía'),
+  ('pastinaak', 'pt', 'pastinaca')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
