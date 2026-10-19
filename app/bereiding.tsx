@@ -5,7 +5,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { bereidingVoor } from '@/lib/bereiding';
 import { EigenRecept } from '@/lib/eigenrecepten';
+import type { DbRecept } from '@/lib/planner/db';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
+import { laadDbRecepten } from '@/opslag/receptenbank';
 import { useTaal } from '@/ui/taal';
 
 const PETROL = '#0F6B66';
@@ -19,12 +21,15 @@ export default function Bereiding() {
   const { t, taal } = useTaal();
   const { id, naam, minuten } = useLocalSearchParams<{ id: string; naam: string; minuten?: string }>();
   const [eigen, setEigen] = useState<EigenRecept[]>([]);
+  // WEEK-121: databankrecepten hebben hun stappen in de databank; een netwerkfout laat ze gewoon leeg.
+  const [db, setDb] = useState<DbRecept[]>([]);
   const [geladen, setGeladen] = useState(false);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    laadEigenRecepten().then((lijst) => {
+    Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[])]).then(([lijst, dbLijst]) => {
       setEigen(lijst);
+      setDb(dbLijst);
       setGeladen(true);
     });
   }, []);
@@ -38,7 +43,7 @@ export default function Bereiding() {
     return () => abonnement.remove();
   }, []);
 
-  const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal) ?? [], [id, naam, eigen, taal]);
+  const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);
   const laatste = stappen.length - 1;
 
   if (geladen && stappen.length === 0) {

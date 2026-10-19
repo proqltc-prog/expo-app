@@ -9,6 +9,7 @@ import { supabase } from '@/opslag/supabase';
 const SELECTIE =
   'id, porties, kooktijd_min, moment, stijl, soort, basis, ' +
   'recept_vertalingen(taal, titel), ' +
+  'recept_bereidingen(taal, stappen), ' +
   'recept_ingredienten(hoeveelheid, eenheid, optioneel, ingredienten(code, categorie, ingredient_vertalingen(taal, naam)))';
 
 let cache: DbRecept[] | undefined;

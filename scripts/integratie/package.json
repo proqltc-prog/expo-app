@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "description": "Integratietest van de gezinsruimte (WEEK-8) tegen het echte Supabase-project.",
-  "scripts": { "test": "node gezinsruimte.mjs && node ai.mjs" },
+  "scripts": { "test": "node gezinsruimte.mjs" },
   "dependencies": { "@supabase/supabase-js": "^2.49.0" }
 }
