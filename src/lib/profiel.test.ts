@@ -9,13 +9,15 @@ import {
   valideerProfiel,
 } from '@/lib/profiel';
 
-const gezin = (wijziging: Partial<Profiel> = {}): Profiel => ({ ...standaardProfiel(), ...wijziging });
+const gezin = (wijziging: Partial<Profiel> = {}): Profiel => ({ ...standaardProfiel(), volwassenen: 2, ...wijziging });
 
 describe('standaardProfiel', () => {
-  test('is geldig en telt 2 personen', () => {
+  test('start leeg: 0 volwassenen en 0 kinderen (WEEK-91), en niet geldig voor het opslaan', () => {
     const p = standaardProfiel();
-    assert.deepEqual(valideerProfiel(p), []);
-    assert.equal(aantalPersonen(p), 2);
+    assert.equal(p.volwassenen, 0);
+    assert.equal(p.kinderen, 0);
+    assert.equal(aantalPersonen(p), 0);
+    assert.deepEqual(valideerProfiel(p), ['volwassenen']);
   });
   test('heeft geen budget en geen maximale afstand meer (WEEK-69)', () => {
     const p = standaardProfiel();

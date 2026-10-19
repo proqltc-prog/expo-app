@@ -17,7 +17,7 @@ describe('porties en afronden', () => {
     assert.equal(KIND_PORTIE, 0.5);
     assert.equal(porties(gezin), 3);
     assert.equal(porties({ ...standaardProfiel(), volwassenen: 2, kinderen: 1 }), 3);
-    assert.equal(porties(standaardProfiel()), 2);
+    assert.equal(porties({ ...standaardProfiel(), volwassenen: 2 }), 2);
   });
   test('afronden naar winkelhoeveelheden', () => {
     assert.equal(rondAf(325, 'g'), 330);
@@ -188,7 +188,7 @@ describe('kooktijd en stijl (WEEK-10)', () => {
 
 describe('oude plannen na het verwijderen van favorieten (WEEK-72)', () => {
   test('een opgeslagen plan met bron favorieten blijft leesbaar en valt terug op lokaal', () => {
-    const plan = planLokaal({ kooktijden: [], stijlen: [], profiel: standaardProfiel(), taal: 'nl', seed: 3 });
+    const plan = planLokaal({ kooktijden: [], stijlen: [], profiel: { ...standaardProfiel(), volwassenen: 2 }, taal: 'nl', seed: 3 });
     const oud = { ...JSON.parse(JSON.stringify(plan)), bron: 'favorieten' };
     const gelezen = normaliseerWeekplan(oud);
     assert.ok(gelezen, 'het plan wordt niet weggegooid');

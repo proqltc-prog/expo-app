@@ -18,8 +18,9 @@ export const MAX_VOLWASSENEN = 10;
 export const MAX_KINDEREN = 10;
 
 export function standaardProfiel(): Profiel {
+  // WEEK-91: een nieuw gezin start leeg (0 en 0); de gebruiker vult zelf in.
   return {
-    volwassenen: 2,
+    volwassenen: 0,
     kinderen: 0,
     adres: { postcode: '', gemeente: '', land: 'België' },
   };

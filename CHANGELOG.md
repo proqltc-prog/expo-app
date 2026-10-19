@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.72.6] – 2026-10-19
+
+**Jira:** [WEEK-91](https://proqltc-1791495894841.atlassian.net/browse/WEEK-91) (bugfix) · **Confluence:** [WEEK-91](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8847371)
+
+- Het welkomstscherm met de taalkeuze verschijnt bij de eerste opening, ook als er al een taal in de opslag staat.
+- Een nieuw gezin start met 0 volwassenen en 0 kinderen.
+- Terugnavigeren vanuit de scanner komt niet meer op de taalkeuze terecht.
+
 ## [0.72.5] – 2026-10-19
 
 **Jira:** [WEEK-68](https://proqltc-1791495894841.atlassian.net/browse/WEEK-68) (verbetering) · **Confluence:** [WEEK-68 deel 5](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/8749057)

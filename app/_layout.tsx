@@ -5,9 +5,8 @@ import { router, Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
-import { laadTaal } from '@/opslag/taal';
 import { laadWelkomGezien } from '@/opslag/welkom';
-import { welkomNodig } from '@/lib/welkom';
+import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
 
 const KLEUR = '#2e7d4f';
 
@@ -29,9 +28,14 @@ function InstellingenKnop() {
 
 function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
   const { t } = useTaal();
+  // WEEK-91: het menu is altijd de eerste route; het welkomstscherm komt er bovenop en vervangt zichzelf.
+  // Zo keert terugnavigeren (bv. vanuit de scanner) nooit naar de taalkeuze terug.
+  useEffect(() => {
+    if (startNaam === 'welkom') router.replace(ROUTE_WELKOM);
+  }, [startNaam]);
   return (
     <Tabs
-      initialRouteName={startNaam}
+      initialRouteName="index"
       screenOptions={{
         tabBarActiveTintColor: KLEUR,
         headerTitleStyle: { fontWeight: '700' },
@@ -68,8 +72,8 @@ export default function Layout() {
   const [start, setStart] = useState<'index' | 'welkom' | undefined>(undefined);
   useEffect(() => {
     let actief = true;
-    Promise.all([laadWelkomGezien(), laadTaal()]).then(([gezien, taal]) => {
-      if (actief) setStart(welkomNodig(gezien, taal) ? 'welkom' : 'index');
+    laadWelkomGezien().then((gezien) => {
+      if (actief) setStart(welkomNodig(gezien) ? 'welkom' : 'index');
     });
     return () => {
       actief = false;
