@@ -66,6 +66,10 @@ describe('icoon bereidingsstappen (WEEK-113)', () => {
     assert.equal(toonBereidingsIcoon(false), false);
   });
 
+  test('een gerecht zonder bevestigd-vlag (undefined) toont het icoon niet', () => {
+    assert.equal(toonBereidingsIcoon(undefined), false);
+  });
+
   test('regressie: een gerecht zonder bekende stappen geeft null (de pagina Bereiding toont dan de melding)', () => {
     assert.equal(bereidingVoor({ id: 'onbekend-xyz', naam: 'Onbekend gerecht' }, [], 'nl'), null);
   });
