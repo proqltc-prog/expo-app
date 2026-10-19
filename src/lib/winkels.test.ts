@@ -122,6 +122,10 @@ describe('reden van een mislukte winkelzoekopdracht (WEEK-115)', () => {
   test('een overbelaste server (429 of 5xx) geeft druk', () => {
     assert.equal(foutReden(new Error('Overpass 429')), 'druk');
     assert.equal(foutReden(new Error('Overpass 504')), 'druk');
+    // WEEK-120: een afgebroken aanvraag (wachttijd bereikt) is een verbindingsprobleem, geen eindeloos laden.
+    const afgebroken = new Error('This operation was aborted');
+    afgebroken.name = 'AbortError';
+    assert.equal(foutReden(afgebroken), 'verbinding');
   });
 
   test('een netwerkfout geeft verbinding', () => {

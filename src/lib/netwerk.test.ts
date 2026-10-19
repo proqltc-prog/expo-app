@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { probeerAchtereen, probeerOpnieuw } from '@/lib/netwerk';
+import { metTimeout, probeerAchtereen, probeerOpnieuw, TIMEOUT_MS } from '@/lib/netwerk';
 
 describe('probeerAchtereen (WEEK-95)', () => {
   test('geeft het antwoord van de eerste bron die lukt, en vraagt de rest niet', async () => {
@@ -83,5 +83,23 @@ describe('probeerOpnieuw (WEEK-115)', () => {
       /429/,
     );
     assert.equal(pogingen, 2);
+  });
+});
+
+describe('metTimeout (WEEK-120)', () => {
+  test('breekt de aanvraag af na de wachttijd, zodat de zoeker nooit blijft draaien', async () => {
+    const wacht = metTimeout(5);
+    assert.equal(wacht.signal.aborted, false);
+    await new Promise((r) => setTimeout(r, 30));
+    assert.equal(wacht.signal.aborted, true);
+  });
+  test('klaar() annuleert de wachttijd als het antwoord op tijd komt', async () => {
+    const wacht = metTimeout(5);
+    wacht.klaar();
+    await new Promise((r) => setTimeout(r, 30));
+    assert.equal(wacht.signal.aborted, false);
+  });
+  test('standaard wacht de app 10 seconden', () => {
+    assert.equal(TIMEOUT_MS, 10000);
   });
 });
