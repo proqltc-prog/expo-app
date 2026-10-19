@@ -196,7 +196,13 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('poedersuiker', 'g', 'zoet', 'vegetarisch'),
   ('vanillesuiker', 'g', 'zoet', 'vegetarisch'),
   ('ovenfriet', 'g', 'groente', 'vegetarisch'),
-  ('mayonaise', 'g', 'condiment', 'vegetarisch')
+  ('mayonaise', 'g', 'condiment', 'vegetarisch'),
+  ('koolraap', 'g', 'groente', 'vegetarisch'),
+  ('gelatine', 'g', 'overig', 'vlees'),
+  ('framboos', 'g', 'fruit', 'vegetarisch'),
+  ('braam', 'g', 'fruit', 'vegetarisch'),
+  ('kwark', 'g', 'zuivel', 'vegetarisch'),
+  ('mariabiscuit', 'g', 'zoet', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1382,7 +1388,43 @@ select i.id, v.taal, v.naam from (values
   ('mayonaise', 'de', 'Mayonnaise'),
   ('mayonaise', 'en', 'mayonnaise'),
   ('mayonaise', 'es', 'mayonesa'),
-  ('mayonaise', 'pt', 'maionese')
+  ('mayonaise', 'pt', 'maionese'),
+  ('koolraap', 'nl', 'koolraap'),
+  ('koolraap', 'fr', 'chou-rave'),
+  ('koolraap', 'de', 'Kohlrabi'),
+  ('koolraap', 'en', 'kohlrabi'),
+  ('koolraap', 'es', 'colinabo'),
+  ('koolraap', 'pt', 'couve-rábano'),
+  ('gelatine', 'nl', 'gelatine'),
+  ('gelatine', 'fr', 'gélatine'),
+  ('gelatine', 'de', 'Gelatine'),
+  ('gelatine', 'en', 'gelatin'),
+  ('gelatine', 'es', 'gelatina'),
+  ('gelatine', 'pt', 'gelatina'),
+  ('framboos', 'nl', 'framboos'),
+  ('framboos', 'fr', 'framboise'),
+  ('framboos', 'de', 'Himbeere'),
+  ('framboos', 'en', 'raspberry'),
+  ('framboos', 'es', 'frambuesa'),
+  ('framboos', 'pt', 'framboesa'),
+  ('braam', 'nl', 'braam'),
+  ('braam', 'fr', 'mûre'),
+  ('braam', 'de', 'Brombeere'),
+  ('braam', 'en', 'blackberry'),
+  ('braam', 'es', 'mora'),
+  ('braam', 'pt', 'amora'),
+  ('kwark', 'nl', 'kwark'),
+  ('kwark', 'fr', 'fromage blanc'),
+  ('kwark', 'de', 'Quark'),
+  ('kwark', 'en', 'quark'),
+  ('kwark', 'es', 'requesón'),
+  ('kwark', 'pt', 'queijo fresco'),
+  ('mariabiscuit', 'nl', 'mariabiscuit'),
+  ('mariabiscuit', 'fr', 'biscuit Marie'),
+  ('mariabiscuit', 'de', 'Butterkeks'),
+  ('mariabiscuit', 'en', 'Marie biscuit'),
+  ('mariabiscuit', 'es', 'galleta maría'),
+  ('mariabiscuit', 'pt', 'bolacha maria')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
