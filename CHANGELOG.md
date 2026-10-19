@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.75.0] – 2026-10-19
+
+**Jira:** [WEEK-97](https://proqltc-1791495894841.atlassian.net/browse/WEEK-97) (verbetering) · **Confluence:** [WEEK-97](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9502721)
+
+- De periode van het weekmenu is een kalender met datums: kies een startdag en een laatste dag (max. 7 dagen, vanaf vandaag).
+- Elke gekozen dag kan uit- en weer aangezet worden; het plan gebruikt de geselecteerde dagen.
+
 ## [0.74.2] – 2026-10-19
 
 **Jira:** [WEEK-99](https://proqltc-1791495894841.atlassian.net/browse/WEEK-99) (bugfix) · **Confluence:** [WEEK-99](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9404417)

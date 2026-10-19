@@ -1,3 +1,4 @@
+import { isGeldigeIso, plandagenVoorDatums } from '@/lib/planner/datums';
 // Controle van een weekplan dat van buitenaf komt (opslag op het toestel of AI-antwoord).
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
@@ -55,6 +56,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
       if (!recept) return null;
       const dag: PlanDag = { dag: d.dag as DagCode, recept };
       if (MOMENTEN.includes(d.moment as Moment)) dag.moment = d.moment as Moment;
+      if (isGeldigeIso(d.datum)) dag.datum = d.datum;
       const ontbreekt = Array.isArray(d.ontbreekt) ? d.ontbreekt.filter((n): n is string => typeof n === 'string' && !!n.trim()) : [];
       if (ontbreekt.length) dag.ontbreekt = ontbreekt;
       const uitFrigo = Array.isArray(d.uitFrigo) ? d.uitFrigo.filter((n): n is string => typeof n === 'string' && !!n.trim()) : [];
@@ -94,8 +96,10 @@ export function normaliseerKeuzes(ruw: unknown): {
   vermijd: Vermijd[];
   aantalDagen: number;
   momenten: Moment[];
+  datums: string[];
+  uitgesloten: string[];
 } {
-  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'] };
+  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'], datums: [], uitgesloten: [] };
   // Oude codes (snel/gemiddeld/uitgebreid, klassiek…) en de keuzes van het weekmenu blijven geldig.
   const kooktijdToegestaan = [...new Set<string>([...KOOKTIJDEN, ...KOOKTIJD_IDS])];
   const stijlToegestaan = [...new Set<string>([...STIJLEN, ...STIJL_IDS])];
@@ -105,5 +109,13 @@ export function normaliseerKeuzes(ruw: unknown): {
     vermijd: normaliseerVermijd(ruw.vermijd),
     aantalDagen: normaliseerPeriode(ruw.aantalDagen) ?? PERIODE_STANDAARD,
     momenten: normaliseerMomenten(ruw.momenten),
+    datums: normaliseerDatums(ruw.datums),
+    uitgesloten: normaliseerDatums(ruw.uitgesloten),
   };
+}
+
+/** Gekozen datums: geldig, uniek, gesorteerd en binnen 7 dagen (WEEK-97). */
+function normaliseerDatums(ruw: unknown): string[] {
+  if (!Array.isArray(ruw)) return [];
+  return plandagenVoorDatums(ruw.filter((d): d is string => typeof d === 'string')).map((p) => p.datum);
 }

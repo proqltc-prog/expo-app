@@ -22,7 +22,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { trekFrigoAf } from '@/lib/frigo';
 import { aiPlanner as AI } from '@/opslag/supabase';
 import { Weekplan } from '@/lib/planner/types';
-import { PERIODE_OPTIES, PERIODE_STANDAARD } from '@/lib/planner/periode';
+import { PERIODE_STANDAARD } from '@/lib/planner/periode';
+import { bereikDatums, dagenTussen, kortDatum, vandaagIso } from '@/lib/planner/datums';
+import { Kalender } from '@/ui/kalender';
 import { aantalPersonen, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
@@ -73,6 +75,8 @@ const wissel = <T,>(lijst: T[], waarde: T) => (lijst.includes(waarde) ? lijst.fi
 
 const STANDAARD_KEUZES: Keuzes = {
   aantalDagen: PERIODE_STANDAARD,
+  datums: [],
+  uitgesloten: [],
   momenten: ['avond'],
   kooktijden: ['snel'],
   stijlen: standaardStijlen('avond'),
@@ -122,6 +126,7 @@ export default function Weekplanning() {
   const [bezigDag, setBezigDag] = useState<number | null>(null);
   const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
   const [keuzes, setKeuzes] = useState<Keuzes>(STANDAARD_KEUZES);
+  const [kalenderOpen, setKalenderOpen] = useState(false);
   // De stap waarin het weekmenu staat; met een bestaand plan opent het direct op het plan (WEEK-68 deel 4b).
   const [fase, setFase] = useState<Fase>('periode');
   // Eigen recepten, om de bereidingsstappen van een bevestigd gerecht te kunnen vinden (WEEK-81).
@@ -137,9 +142,14 @@ export default function Weekplanning() {
     });
     laadKeuzes().then((k) => {
       const momenten: Moment[] = k.momenten.length ? k.momenten : ['avond'];
-      const geldig = wijzigMomenten({ aantalDagen: k.aantalDagen, momenten, kooktijden: k.kooktijden, stijlen: k.stijlen, vermijd: k.vermijd }, momenten);
+      const geldig = wijzigMomenten({ aantalDagen: k.aantalDagen, datums: k.datums, uitgesloten: k.uitgesloten, momenten, kooktijden: k.kooktijden, stijlen: k.stijlen, vermijd: k.vermijd }, momenten);
+      // WEEK-97: zonder gekozen datums start de periode vandaag, voor de standaardperiode.
+      const datums = k.datums.length ? k.datums : bereikDatums(vandaagIso(), PERIODE_STANDAARD);
       setKeuzes({
         ...geldig,
+        datums,
+        uitgesloten: k.uitgesloten,
+        aantalDagen: datums.length - k.uitgesloten.length,
         kooktijden: geldig.kooktijden.length ? geldig.kooktijden : ['snel'],
         stijlen: geldig.stijlen.length ? geldig.stijlen : standaardStijlen(momenten[0]),
       });
@@ -159,7 +169,24 @@ export default function Weekplanning() {
     setKeuzes(nieuw);
     bewaarKeuzes(nieuw);
   };
-  const kiesPeriode = (n: number) => pasKeuzesAan({ ...keuzes, aantalDagen: n });
+  // WEEK-97: de periode is een reeks datums; uitgeschakelde dagen blijven in de reeks staan zodat ze terug aan kunnen.
+  const gekozenDatums = keuzes.datums.filter((d) => !keuzes.uitgesloten.includes(d));
+  const pasPeriodeAan = (datums: string[], uitgesloten: string[]) => {
+    const actief = datums.filter((d) => !uitgesloten.includes(d));
+    pasKeuzesAan({ ...keuzes, datums, uitgesloten, aantalDagen: actief.length });
+  };
+  const bevestigKalender = (van: string, tot: string) => {
+    setKalenderOpen(false);
+    pasPeriodeAan(bereikDatums(van, dagenTussen(van, tot) + 1), []);
+  };
+  const wisselDatum = (iso: string) => {
+    if (keuzes.uitgesloten.includes(iso)) return pasPeriodeAan(keuzes.datums, keuzes.uitgesloten.filter((d) => d !== iso));
+    // Minstens één dag blijft gekozen.
+    if (gekozenDatums.length <= 1) return;
+    pasPeriodeAan(keuzes.datums, [...keuzes.uitgesloten, iso]);
+  };
+  const periodeVan = keuzes.datums[0];
+  const periodeTot = keuzes.datums[keuzes.datums.length - 1];
   // Minstens één moment blijft aan; de volgorde is altijd ontbijt, middag, avond.
   const wisselMoment = (m: Moment) => {
     const ruw = wissel(keuzes.momenten, m);
@@ -209,6 +236,7 @@ export default function Weekplanning() {
         stijlen: stijlNaarDb(keuzes.stijlen),
         vermijd: keuzes.vermijd.filter((v): v is Vermijd => (VERMIJDBAAR as readonly string[]).includes(v)),
         aantalDagen: keuzes.aantalDagen,
+        datums: gekozenDatums,
         momenten: keuzes.momenten,
         profiel,
         taal,
@@ -407,11 +435,36 @@ export default function Weekplanning() {
         <View style={s.blok}>
           <View style={s.kopRij}>
             <View style={s.kalender} accessibilityRole="image" accessibilityLabel={t('planning.kalender')}>
-              <Text style={s.kalenderTekst}>📅</Text>
+              <Ionicons name="calendar-outline" size={22} color={PETROL} />
+              <Text style={s.kalenderDag}>{new Date().getDate()}</Text>
             </View>
             {kopStap('planning.kies.periode')}
           </View>
-          <Chips opties={PERIODE_OPTIES as readonly number[]} gekozen={[keuzes.aantalDagen]} label={(n) => tn('periode.dagen', n)} onWissel={kiesPeriode} />
+          <Pressable style={s.kalenderKnop} onPress={() => setKalenderOpen(true)} accessibilityRole="button">
+            <Text style={s.kalenderKnopTekst}>{t('planning.kalenderKnop')}</Text>
+          </Pressable>
+          {periodeVan && periodeTot && (
+            <Text style={s.hint}>{t('planning.periodeSamenvatting', { van: kortDatum(periodeVan, taal), tot: kortDatum(periodeTot, taal) })}</Text>
+          )}
+          {keuzes.datums.length > 0 && (
+            <>
+              <Text style={s.hint}>{t('planning.periodeHint')}</Text>
+              <Chips
+                opties={keuzes.datums}
+                gekozen={gekozenDatums}
+                label={(iso) => kortDatum(iso, taal)}
+                onWissel={wisselDatum}
+              />
+            </>
+          )}
+          {kalenderOpen && (
+            <Kalender
+              vandaag={vandaagIso()}
+              begin={gekozenDatums.length ? { van: gekozenDatums[0], tot: gekozenDatums[gekozenDatums.length - 1] } : undefined}
+              onBevestig={bevestigKalender}
+              onSluit={() => setKalenderOpen(false)}
+            />
+          )}
         </View>
       )}
 
@@ -624,8 +677,10 @@ const s = StyleSheet.create({
   kop: { fontSize: 18, fontWeight: '800', color: INKT, flexShrink: 1 },
   subkop: { fontWeight: '700', color: MUTED, marginTop: 4 },
   hint: { color: MUTED, fontSize: 13 },
-  kalender: { width: 40, height: 40, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
-  kalenderTekst: { fontSize: 20 },
+  kalender: { width: 48, height: 48, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
+  kalenderDag: { fontSize: 12, fontWeight: '800', color: PETROL, marginTop: -2 },
+  kalenderKnop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, paddingVertical: 12 },
+  kalenderKnopTekst: { color: PETROL, fontWeight: '700' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 7 },
   chipAan: { backgroundColor: PETROL },

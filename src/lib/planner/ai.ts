@@ -1,9 +1,10 @@
+import { dagenVoorVerzoek, voegDatumsToe } from '@/lib/planner/datums';
 // AI-planner (WEEK-23): vraagt een weekplan aan de server-functie en controleert het antwoord.
 // Faalt er iets (geen internet, time-out, ongeldig antwoord), dan valt de app terug op de lokale planner.
 import { profielContext } from '@/lib/profiel';
 import { isAlleenAvond } from './moment';
 import { porties as berekenPorties } from './hoeveelheid';
-import { dagenVoorPlan, planLokaal, STANDAARD_AANTAL_DAGEN } from './lokaal';
+import { planLokaal, STANDAARD_AANTAL_DAGEN } from './lokaal';
 import { normaliseerRecept } from './normaliseer';
 import { markeerUitFrigo } from './frigovoorrang';
 import type { FrigoItem } from '@/lib/frigo';
@@ -60,7 +61,7 @@ export function bouwAiVerzoek(verzoek: PlanVerzoek, dagen?: DagCode[], vermijd?:
     opdracht: '',
     kooktijden: [...verzoek.kooktijden],
     stijlen: [...verzoek.stijlen],
-    dagen: dagen ?? dagenVoorPlan(verzoek.aantalDagen ?? STANDAARD_AANTAL_DAGEN),
+    dagen: dagen ?? dagenVoorVerzoek(verzoek, STANDAARD_AANTAL_DAGEN),
     ...(vermijd?.length ? { vermijd } : {}),
     ...(verzoek.vermijd?.length ? { uitsluiten: verzoek.vermijd.map((v) => VERMIJD_AI[v]) } : {}),
     ...(frigo.length ? { frigo } : {}),
@@ -132,11 +133,11 @@ export async function vraagAi(
 export async function planWeek(verzoek: PlanVerzoek, instelling: AiInstelling = {}): Promise<Weekplan> {
   // De AI kent enkel avondrecepten: ontbijt of middag gaat lokaal, tot de AI-prompt het moment kent (WEEK-43).
   if (!instelling.url || !isAlleenAvond(verzoek.momenten)) return planLokaal(verzoek);
-  const dagen = dagenVoorPlan(verzoek.aantalDagen ?? STANDAARD_AANTAL_DAGEN);
+  const dagen = dagenVoorVerzoek(verzoek, STANDAARD_AANTAL_DAGEN);
   try {
     const planDagen = await vraagAi(verzoek, instelling, dagen);
     return {
-      dagen: verzoek.frigo?.length ? markeerUitFrigo(planDagen, verzoek.frigo) : planDagen,
+      dagen: voegDatumsToe(verzoek.frigo?.length ? markeerUitFrigo(planDagen, verzoek.frigo) : planDagen, verzoek.datums),
       kooktijden: verzoek.kooktijden,
       stijlen: verzoek.stijlen,
       ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),

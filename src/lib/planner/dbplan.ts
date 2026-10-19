@@ -10,6 +10,7 @@ import { normaliseerMomenten } from '@/lib/planner/moment';
 import { porties as berekenPorties } from '@/lib/planner/hoeveelheid';
 import { toeval } from '@/lib/planner/lokaal';
 import { kooktijdVan, KooktijdCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
+import { dagenVoorVerzoek, voegDatumsToe } from '@/lib/planner/datums';
 
 /** Een recept klaar voor de planner, met de eigenschappen waarop gefilterd wordt. */
 export type DbPoolRecept = {
@@ -25,11 +26,6 @@ export function maakDbPool(recepten: DbRecept[], taal: Taal, gezin: Gezin): DbPo
     const recept = naarPlanRecept(r, taal, gezin);
     return recept ? [{ recept, moment: r.moment, kooktijd: kooktijdVan(r.kooktijdMin), stijlen: [r.stijl] }] : [];
   });
-}
-
-/** Het aantal dagen dat het plan telt (1 tot en met 7). */
-function dagenVan(aantal: number | undefined): (typeof WEEKDAGEN)[number][] {
-  return WEEKDAGEN.slice(0, Math.min(7, Math.max(1, aantal ?? PERIODE_STANDAARD)));
 }
 
 /** De wensen die de keuze van een recept bepalen. */
@@ -74,7 +70,7 @@ export function planUitDatabase(verzoek: PlanVerzoek, pool: DbPoolRecept[]): Wee
   const gebruikt = new Set<string>();
   const planDagen: PlanDag[] = [];
   let versoepeld = false;
-  for (const dag of dagenVan(verzoek.aantalDagen)) {
+  for (const dag of dagenVoorVerzoek(verzoek, PERIODE_STANDAARD)) {
     for (const moment of momenten) {
       const keuze = kiesVoorPlek(pool, moment, verzoek, gebruikt, random);
       if (!keuze) continue;
@@ -84,7 +80,7 @@ export function planUitDatabase(verzoek: PlanVerzoek, pool: DbPoolRecept[]): Wee
     }
   }
   return {
-    dagen: planDagen,
+    dagen: voegDatumsToe(planDagen, verzoek.datums),
     kooktijden: [...verzoek.kooktijden],
     stijlen: [...verzoek.stijlen],
     vermijd: verzoek.vermijd,

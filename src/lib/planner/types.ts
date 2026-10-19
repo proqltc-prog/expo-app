@@ -40,6 +40,8 @@ export type PlanRecept = {
 
 export type PlanDag = {
   dag: DagCode;
+  /** De datum van de dag (YYYY-MM-DD), als het plan met gekozen datums is gemaakt (WEEK-97). */
+  datum?: string;
   /** Ontbijt, middag of avond (WEEK-43). Ontbreekt: avond. */
   moment?: Moment;
   recept: PlanRecept;
@@ -63,6 +65,8 @@ export type PlanVerzoek = {
   vermijd?: Vermijd[];
   /** Gekozen periode in dagen (WEEK-42). */
   aantalDagen?: number;
+  /** De gekozen datums (YYYY-MM-DD), binnen een periode van 7 dagen (WEEK-97). */
+  datums?: string[];
   /** Gekozen maaltijdmomenten (WEEK-43); leeg of ontbrekend is avond. */
   momenten?: Moment[];
   profiel: Profiel;
