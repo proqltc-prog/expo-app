@@ -23,3 +23,12 @@ export function bevestigdeDagen(plan: Weekplan): PlanDag[] {
 export function heeftBevestigdPlan(plan: Weekplan): boolean {
   return plan.dagen.some((d) => d.bevestigd);
 }
+
+/**
+ * Zijn alle bevestigde dagen gekookt? Dan is de voorgestelde week af en toont de planner weer de periode (WEEK-125).
+ * Zonder bevestigde dag is het antwoord nee.
+ */
+export function alleBevestigdeGekookt(plan: Weekplan): boolean {
+  const bevestigd = bevestigdeDagen(plan);
+  return bevestigd.length > 0 && bevestigd.every((d) => d.gedaan);
+}

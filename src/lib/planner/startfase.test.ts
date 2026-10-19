@@ -42,6 +42,13 @@ describe('waar de weekplanner start', () => {
     );
   });
 
+  test('WEEK-125: zijn alle bevestigde recepten gekookt, dan start de gebruiker bij Periode, ook met niet-bevestigde dagen', () => {
+    assert.equal(
+      startFase(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag' })])),
+      'periode',
+    );
+  });
+
   test('als alle recepten gekookt zijn, start de gebruiker opnieuw bij Periode', () => {
     assert.equal(
       startFase(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true, gedaan: true })])),

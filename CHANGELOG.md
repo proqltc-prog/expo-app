@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.85.0] – 2026-10-19
+
+**Jira:** [WEEK-125](https://proqltc-1791495894841.atlassian.net/browse/WEEK-125) · **Confluence:** [WEEK-125 Periode-kalender opnieuw tonen na koken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11075585)
+
+- Zijn alle bevestigde recepten van het weekmenu gekookt, dan toont de planner weer de periode-kalender, zodat de gebruiker een nieuwe periode kan kiezen.
+
 ## [0.84.0] – 2026-10-19
 
 **Jira:** [WEEK-124](https://proqltc-1791495894841.atlassian.net/browse/WEEK-124) · **Confluence:** [WEEK-124 Groepen op lijst en frigo standaard ingeklapt](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11042817)
