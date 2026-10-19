@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { KIND_PORTIE, porties, rondAf } from '@/lib/planner/hoeveelheid';
+import { rondAf } from '@/lib/planner/hoeveelheid';
+import { KIND_FACTOR, schaalFactor } from '@/lib/schaal';
 import { naarPlanRecept, planLokaal, soortenSchema, STANDAARD_AANTAL_DAGEN, toeval } from '@/lib/planner/lokaal';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanVerzoek } from '@/lib/planner/types';
@@ -13,11 +14,19 @@ const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
 });
 
 describe('porties en afronden', () => {
-  test('elk kind telt als een halve portie, het totaal wordt naar boven afgerond', () => {
-    assert.equal(KIND_PORTIE, 0.5);
-    assert.equal(porties(gezin), 3);
-    assert.equal(porties({ ...standaardProfiel(), volwassenen: 2, kinderen: 1 }), 3);
-    assert.equal(porties({ ...standaardProfiel(), volwassenen: 2 }), 2);
+  test('elk kind telt als een halve portie, de factor wordt niet naar boven afgerond (WEEK-119)', () => {
+    assert.equal(KIND_FACTOR, 0.5);
+    assert.equal(schaalFactor(gezin), 3);
+    assert.equal(schaalFactor({ ...standaardProfiel(), volwassenen: 2, kinderen: 1 }), 2.5);
+    assert.equal(schaalFactor({ ...standaardProfiel(), volwassenen: 2 }), 2);
+  });
+  test('databank en ingebouwde receptenbank rekenen dezelfde hoeveelheden (WEEK-119)', () => {
+    const profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 1 };
+    const recept = RECEPTENBANK[0];
+    const plan = naarPlanRecept(recept, 'nl', schaalFactor(profiel));
+    recept.ingredienten.forEach(([code, hoeveelheid, eenheid], i) => {
+      assert.equal(plan.ingredienten[i].hoeveelheid, rondAf(hoeveelheid * 2.5, eenheid), `ingrediënt ${code}`);
+    });
   });
   test('afronden naar winkelhoeveelheden', () => {
     assert.equal(rondAf(325, 'g'), 330);

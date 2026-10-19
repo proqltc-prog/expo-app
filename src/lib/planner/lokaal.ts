@@ -6,7 +6,8 @@ import { PERIODE_STANDAARD } from './periode';
 import { momentVan, normaliseerMomenten } from './moment';
 import { BankRecept, Moment, RECEPTENBANK, Soort } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
-import { porties as berekenPorties, rondAf } from './hoeveelheid';
+import { rondAf } from './hoeveelheid';
+import { schaalFactor } from '@/lib/schaal';
 import { DagCode, KooktijdCode, kooktijdVan, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 import type { StijlCode } from '@/data/receptenbank';
 import { kiesEersteDag, markeerUitFrigo } from './frigovoorrang';
@@ -161,7 +162,7 @@ function planLokaalBasis(verzoek: PlanVerzoek, bank: readonly BankRecept[]): Wee
     kandidatenPerMoment.set(moment, keuze.recepten);
   }
   const schema = soortenSchema(sloten.length);
-  const porties = berekenPorties(verzoek.profiel);
+  const porties = schaalFactor(verzoek.profiel);
 
   const gekozen: BankRecept[] = [];
   const planDagen: PlanDag[] = [];
