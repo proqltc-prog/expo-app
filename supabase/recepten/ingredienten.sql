@@ -192,7 +192,9 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('garnalenpasta', 'g', 'overig', 'vis'),
   ('hazelnoten', 'g', 'noten', 'vegetarisch'),
   ('tteokbokki', 'g', 'graan', 'vegetarisch'),
-  ('witlof', 'g', 'groente', 'vegetarisch')
+  ('witlof', 'g', 'groente', 'vegetarisch'),
+  ('poedersuiker', 'g', 'zoet', 'vegetarisch'),
+  ('vanillesuiker', 'g', 'zoet', 'vegetarisch')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1354,7 +1356,19 @@ select i.id, v.taal, v.naam from (values
   ('witlof', 'de', 'Chicorée'),
   ('witlof', 'en', 'endive'),
   ('witlof', 'es', 'endibia'),
-  ('witlof', 'pt', 'endívia')
+  ('witlof', 'pt', 'endívia'),
+  ('poedersuiker', 'nl', 'poedersuiker'),
+  ('poedersuiker', 'fr', 'sucre glace'),
+  ('poedersuiker', 'de', 'Puderzucker'),
+  ('poedersuiker', 'en', 'icing sugar'),
+  ('poedersuiker', 'es', 'azúcar glas'),
+  ('poedersuiker', 'pt', 'açúcar em pó'),
+  ('vanillesuiker', 'nl', 'vanillesuiker'),
+  ('vanillesuiker', 'fr', 'sucre vanillé'),
+  ('vanillesuiker', 'de', 'Vanillezucker'),
+  ('vanillesuiker', 'en', 'vanilla sugar'),
+  ('vanillesuiker', 'es', 'azúcar vainillado'),
+  ('vanillesuiker', 'pt', 'açúcar baunilhado')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
