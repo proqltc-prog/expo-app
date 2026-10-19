@@ -276,6 +276,8 @@ export const en: Vertalingen = {
   'profiel.intro': 'Who’s joining for dinner? Tell us, and we’ll work out the rest.',
   'winkels.geenPostcode': 'Enter a valid postcode in your profile to see suggested shops.',
   'winkels.fout': 'Searching for shops failed. Please try again later.',
+  'winkels.foutDruk': 'The shop search is busy right now. Please try again in a few minutes.',
+  'winkels.foutVerbinding': 'No connection to the shop search. Check your internet connection.',
   'winkels.leeg': 'No shops found near you.',
   'winkels.voorstelTitel': 'Where to shop?',
   'winkels.nietGedekt': 'For {soorten} we found no store nearby.',

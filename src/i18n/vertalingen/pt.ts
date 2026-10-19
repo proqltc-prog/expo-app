@@ -276,6 +276,8 @@ export const pt: Vertalingen = {
   'profiel.intro': 'Quem se senta à mesa? Diz-nos, e nós tratamos do resto.',
   'winkels.geenPostcode': 'Introduza um código postal válido no seu perfil para ver lojas sugeridas.',
   'winkels.fout': 'A procura falhou. Tente novamente mais tarde.',
+  'winkels.foutDruk': 'O serviço de procura de lojas está ocupado. Tente novamente daqui a alguns minutos.',
+  'winkels.foutVerbinding': 'Sem ligação ao serviço de procura de lojas. Verifique a sua ligação à internet.',
   'winkels.leeg': 'Não foram encontradas lojas perto de si.',
   'winkels.voorstelTitel': 'Onde fazer as compras?',
   'winkels.nietGedekt': 'Para {soorten} não encontrámos nenhuma loja perto.',

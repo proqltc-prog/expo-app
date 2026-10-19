@@ -276,6 +276,8 @@ export const de: Vertalingen = {
   'profiel.intro': 'Wer sitzt am Tisch? Sag es kurz, dann rechnen wir den Rest aus.',
   'winkels.geenPostcode': 'Trage im Profil eine gültige Postleitzahl ein, um Geschäfte vorzuschlagen.',
   'winkels.fout': 'Die Suche ist fehlgeschlagen. Versuch es später erneut.',
+  'winkels.foutDruk': 'Der Shop-Suchdienst ist gerade ausgelastet. Versuch es in ein paar Minuten erneut.',
+  'winkels.foutVerbinding': 'Keine Verbindung zum Shop-Suchdienst. Prüf deine Internetverbindung.',
   'winkels.leeg': 'In deiner Nähe wurden keine Geschäfte gefunden.',
   'winkels.voorstelTitel': 'Wo kaufst du ein?',
   'winkels.nietGedekt': 'Für {soorten} haben wir keinen Laden in der Nähe gefunden.',

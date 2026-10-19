@@ -1,7 +1,7 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
 import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
-import { probeerAchtereen } from '@/lib/netwerk';
-import { bouwQuery, leesWinkels, Winkel } from '@/lib/winkels';
+import { probeerAchtereen, probeerOpnieuw } from '@/lib/netwerk';
+import { bouwQuery, bouwStraalQuery, leesWinkels, Winkel } from '@/lib/winkels';
 import type { Positie } from '@/lib/winkelvoorstel';
 
 // Overpass-servers: de tweede is een spiegel die we gebruiken als de eerste faalt (WEEK-95).
@@ -17,11 +17,14 @@ async function vraag(endpoint: string, query: string, postcode: string): Promise
   return leesWinkels(await antwoord.json(), postcode);
 }
 
-/** Winkels op postcode en gemeente. Gooit een fout bij netwerkproblemen. */
-export async function zoekWinkels(postcode: string, gemeente: string): Promise<Winkel[]> {
-  const query = bouwQuery(postcode, gemeente);
+/**
+ * Winkels in de buurt. Met het punt van de postcode zoeken we binnen 10 km (WEEK-115); zonder punt
+ * de zoekopdracht op postcode en gemeente. Elke server krijgt één nieuwe poging. Gooit een fout bij netwerkproblemen.
+ */
+export async function zoekWinkels(postcode: string, gemeente: string, punt?: Positie): Promise<Winkel[]> {
+  const query = punt ? bouwStraalQuery(punt) : bouwQuery(postcode, gemeente);
   if (!query) return [];
-  return probeerAchtereen(ENDPOINTS.map((endpoint) => () => vraag(endpoint, query, postcode)));
+  return probeerAchtereen(ENDPOINTS.map((endpoint) => () => probeerOpnieuw(() => vraag(endpoint, query, postcode))));
 }
 
 /** Punt van de postcode (Nominatim). Undefined als de postcode niet gevonden wordt. */
