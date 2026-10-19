@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.74.1] – 2026-10-19
+
+**Jira:** [WEEK-100](https://proqltc-1791495894841.atlassian.net/browse/WEEK-100), [WEEK-101](https://proqltc-1791495894841.atlassian.net/browse/WEEK-101) (bugfix) · **Confluence:** [WEEK-100](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9338890), [WEEK-101](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9338909)
+
+- Na het bewaren van de gezinssamenstelling gaat de app direct naar het menu.
+- Vanuit de gezinssamenstelling start de weekplanner bij Periode zolang er geen dag bevestigd is.
+- Na het koken van alle recepten start de weekplanner opnieuw bij Periode.
+
 ## [0.74.0] – 2026-10-19
 
 **Jira:** [WEEK-102](https://proqltc-1791495894841.atlassian.net/browse/WEEK-102) (verbetering) · **Confluence:** [WEEK-102](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9240577)

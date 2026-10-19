@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { onthoudVertrekUitGezinsprofiel } from '@/lib/planner/startfase';
 import {
   aantalPersonen,
   MAX_KINDEREN,
@@ -49,6 +50,8 @@ export default function ProfielScherm() {
         setProfiel(p);
         setFouten([]);
       });
+      // WEEK-100: bij elk vertrek (knop, menu of bewaren) onthouden zodat de weekplanner opnieuw start.
+      return () => onthoudVertrekUitGezinsprofiel();
     }, [])
   );
 
@@ -78,7 +81,8 @@ export default function ProfielScherm() {
     setFouten(gevonden);
     if (gevonden.length) return;
     await bewaarProfiel(profiel);
-    Alert.alert(t('profiel.bewaard.titel'), t('profiel.bewaard.tekst', { personen: tn('algemeen.personen', aantalPersonen(profiel)) }));
+    // WEEK-100: na bewaren direct naar het menu.
+    router.navigate('/');
   };
 
   return (
