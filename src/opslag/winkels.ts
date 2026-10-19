@@ -1,12 +1,14 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
 import { bouwPostcodeUrl, leesPlaats, leesPunt } from '@/lib/postcodepunt';
+import { probeerAchtereen } from '@/lib/netwerk';
 import { bouwQuery, leesWinkels, Winkel } from '@/lib/winkels';
 import type { Positie } from '@/lib/winkelvoorstel';
 
-const ENDPOINT = 'https://overpass-api.de/api/interpreter';
+// Overpass-servers: de tweede is een spiegel die we gebruiken als de eerste faalt (WEEK-95).
+const ENDPOINTS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
 
-async function vraag(query: string, postcode: string): Promise<Winkel[]> {
-  const antwoord = await fetch(ENDPOINT, {
+async function vraag(endpoint: string, query: string, postcode: string): Promise<Winkel[]> {
+  const antwoord = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `data=${encodeURIComponent(query)}`,
@@ -18,7 +20,8 @@ async function vraag(query: string, postcode: string): Promise<Winkel[]> {
 /** Winkels op postcode en gemeente. Gooit een fout bij netwerkproblemen. */
 export async function zoekWinkels(postcode: string, gemeente: string): Promise<Winkel[]> {
   const query = bouwQuery(postcode, gemeente);
-  return query ? vraag(query, postcode) : [];
+  if (!query) return [];
+  return probeerAchtereen(ENDPOINTS.map((endpoint) => () => vraag(endpoint, query, postcode)));
 }
 
 /** Punt van de postcode (Nominatim). Undefined als de postcode niet gevonden wordt. */

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BOODSCHAPPEN_ICOON, categorieIcoon, WINKEL_ICOON } from '@/lib/lijstIcoon';
+import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from '@/lib/lijstIcoon';
 
 describe('lijstIcoon (WEEK-77)', () => {
   test('de twee tabbladen hebben elk een eigen icoon', () => {
@@ -24,5 +24,12 @@ describe('lijstIcoon (WEEK-77)', () => {
     for (const c of ['brood-beleg', 'fruit', 'school', 'huishouden', 'extra', 'gescand', 'avondeten']) {
       assert.notEqual(categorieIcoon(c), '', c);
     }
+  });
+});
+
+describe('scannericoon (WEEK-95)', () => {
+  test('het scannericoon is een Ionicons-naam, geen emoji of afbeelding', () => {
+    assert.match(SCANNER_ICOON, /^[a-z]+(-[a-z]+)*-outline$/);
+    assert.notEqual(SCANNER_ICOON, WINKEL_ICOON);
   });
 });
