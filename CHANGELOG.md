@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.83.2] – 2026-10-19
+
+**Jira:** [WEEK-123](https://proqltc-1791495894841.atlassian.net/browse/WEEK-123)
+
+- Koekjes en drinkbrikjes (schooltas) komen niet meer standaard op de boodschappenlijst.
+
 ## [0.83.1] – 2026-10-19
 
 **Jira:** [WEEK-122](https://proqltc-1791495894841.atlassian.net/browse/WEEK-122) · **Confluence:** [WEEK-122 Weekmenu kiest bij aanvullen korte recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10846218)

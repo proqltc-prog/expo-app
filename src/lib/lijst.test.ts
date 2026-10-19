@@ -33,6 +33,21 @@ describe('itemsUitPlan', () => {
   });
 });
 
+describe('schoolitems staan niet standaard op de lijst (WEEK-123)', () => {
+  test('een nieuw weekplan zet geen koekjes of drinkbrikjes op de lijst', () => {
+    const lijst = voegPlanToe([], dagen, 'nl');
+    assert.equal(lijst.some((i) => i.categorie === 'school'), false);
+    assert.equal(lijst.some((i) => i.naam === 'koekjes' || i.naam === 'drinkbrikjes'), false);
+    assert.equal(vasteItems('nl').some((i) => i.categorie === 'school'), false);
+  });
+  test('regressie: ontbijt-, fruit- en huishoudelijke vaste items blijven op de lijst', () => {
+    const lijst = voegPlanToe([], dagen, 'nl');
+    assert.ok(lijst.some((i) => i.categorie === 'brood-beleg'));
+    assert.ok(lijst.some((i) => i.categorie === 'fruit'));
+    assert.ok(lijst.some((i) => i.categorie === 'huishouden'));
+  });
+});
+
 describe('voegPlanToe (WEEK-15)', () => {
   test('zet alle ingrediënten van het plan en de vaste items op een lege lijst', () => {
     const lijst = voegPlanToe([], dagen, 'nl');
