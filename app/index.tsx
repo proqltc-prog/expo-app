@@ -5,7 +5,7 @@ import { Moment, MOMENTEN, Soort } from '@/data/receptenbank';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
 import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
-import { planSleutel, voegPlanToe, zetOntbrekendOpLijst } from '@/lib/lijst';
+import { planSleutel, voegPlanToe } from '@/lib/lijst';
 import { planWeek } from '@/lib/planner/ai';
 import { resetDag } from '@/lib/planner/reset';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
@@ -330,15 +330,6 @@ export default function Weekplanning() {
     }
   };
 
-  // Ingrediënt ontbreekt (WEEK-13): opnieuw op de boodschappenlijst zetten.
-  const ontbrekendOpLijst = async (index: number) => {
-    const dag = plan?.dagen[index];
-    if (!plan || !dag?.ontbreekt?.length) return;
-    const sleutel = planSleutel(plan);
-    await wijzigLijst((items) => zetOntbrekendOpLijst(items, dag, dag.ontbreekt ?? [], sleutel));
-    Alert.alert(t('menu.klaar.titel'), t('planning.opLijstKlaar', { namen: dag.ontbreekt.join(', ') }));
-  };
-
   // Gerecht verwijderen (WEEK-44): het gerecht gaat uit het plan, de ingrediënten ook van de lijst.
   // Niet voor een bevestigde of gekookt gerecht; enkel de items van dat recept op die dag gaan weg.
   const verwijderMaaltijd = (index: number) => {
@@ -561,9 +552,6 @@ export default function Weekplanning() {
                       <View style={s.ontbreekt}>
                         <Text style={s.ontbreektTekst}>{t('status.ontbreekt', { namen: (ontbreekt ?? []).join(', ') })}</Text>
                         <View style={s.ontbreektKnoppen}>
-                          <Pressable style={s.kleineKnop} onPress={() => ontbrekendOpLijst(index)}>
-                            <Text style={s.kleineKnopTekst}>{t('planning.opLijst')}</Text>
-                          </Pressable>
                           {wijzigbaar && (
                             <Pressable style={s.kleineKnop} onPress={() => herdoeDag(index)} disabled={bezigDag !== null || !mag}>
                               <Text style={s.kleineKnopTekst}>{t('planning.anderGerecht')}</Text>

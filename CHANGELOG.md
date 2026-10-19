@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.80.0] – 2026-10-19
+
+**Jira:** [WEEK-107](https://proqltc-1791495894841.atlassian.net/browse/WEEK-107) (verbetering) · **Confluence:** [WEEK-107](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10420225)
+
+- Weekmenu: de knop 'Op de lijst zetten' bij een ontbrekend ingrediënt is weg. Ingrediënten komen enkel op de boodschappenlijst via bevestigen, en dan enkel de ingrediënten die nog ontbreken.
+
 ## [0.79.3] – 2026-10-19
 
 **Jira:** [WEEK-115](https://proqltc-1791495894841.atlassian.net/browse/WEEK-115) (bugfix, vervolg op WEEK-112) · **Confluence:** [WEEK-115](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10354689)

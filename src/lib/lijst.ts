@@ -320,19 +320,3 @@ export function normaliseerLijst(ruw: unknown): LijstItem[] {
   return Array.isArray(ruw) ? ruw.map(leesLijstItem).filter((i): i is LijstItem => i !== null) : [];
 }
 
-/**
- * Zet ontbrekende ingrediënten van één recept (opnieuw) op de boodschappenlijst (WEEK-13).
- * Gebruikt dezelfde ids als bij het overzetten van het plan; een item dat al gekocht was, staat weer open.
- */
-export function zetOntbrekendOpLijst(items: readonly LijstItem[], dag: PlanDag, namen: readonly string[], sleutel?: string): LijstItem[] {
-  const gezocht = new Set(namen.map(klein));
-  const nodig = itemsUitPlan([dag], sleutel).filter((i) => gezocht.has(klein(i.naam)));
-  const ids = new Set(nodig.map((i) => i.id));
-  const bestaand = new Set(items.map((i) => i.id));
-  const bijgewerkt = items.map((i) => {
-    if (!ids.has(i.id) || !i.afgevinkt) return i;
-    const { afgevinktDoor: _weg, ...rest } = i;
-    return { ...rest, afgevinkt: false };
-  });
-  return [...bijgewerkt, ...nodig.filter((i) => !bestaand.has(i.id))];
-}
