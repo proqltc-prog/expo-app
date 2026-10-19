@@ -169,7 +169,10 @@ insert into ingredienten (code, eenheid, categorie, soort) values
   ('shiitake', 'g', 'groente', 'vegetarisch'),
   ('nori', 'stuk', 'overig', 'vegetarisch'),
   ('mosterdzaad', 'g', 'kruid', 'vegetarisch'),
-  ('rode_wijn', 'ml', 'overig', 'vegetarisch')
+  ('rode_wijn', 'ml', 'overig', 'vegetarisch'),
+  ('naan', 'g', 'graan', 'vegetarisch'),
+  ('currybladeren', 'g', 'kruid', 'vegetarisch'),
+  ('hesp', 'g', 'vlees', 'vlees')
 on conflict (code) do nothing;
 
 insert into ingredient_vertalingen (ingredient_id, taal, naam)
@@ -1193,7 +1196,25 @@ select i.id, v.taal, v.naam from (values
   ('rode_wijn', 'de', 'Rotwein'),
   ('rode_wijn', 'en', 'red wine'),
   ('rode_wijn', 'es', 'vino tinto'),
-  ('rode_wijn', 'pt', 'vinho tinto')
+  ('rode_wijn', 'pt', 'vinho tinto'),
+  ('naan', 'nl', 'naan'),
+  ('naan', 'fr', 'naan'),
+  ('naan', 'de', 'Naan'),
+  ('naan', 'en', 'naan'),
+  ('naan', 'es', 'naan'),
+  ('naan', 'pt', 'naan'),
+  ('currybladeren', 'nl', 'currybladeren'),
+  ('currybladeren', 'fr', 'feuilles de curry'),
+  ('currybladeren', 'de', 'Curryblätter'),
+  ('currybladeren', 'en', 'curry leaves'),
+  ('currybladeren', 'es', 'hojas de curry'),
+  ('currybladeren', 'pt', 'folhas de caril'),
+  ('hesp', 'nl', 'hesp'),
+  ('hesp', 'fr', 'jambon'),
+  ('hesp', 'de', 'Schinken'),
+  ('hesp', 'en', 'ham'),
+  ('hesp', 'es', 'jamón'),
+  ('hesp', 'pt', 'presunto')
 ) as v(code, taal, naam)
 join ingredienten i on i.code = v.code
 on conflict (ingredient_id, taal) do nothing;
