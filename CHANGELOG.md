@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.81.1] – 2026-10-19
+
+**Jira:** [WEEK-118](https://proqltc-1791495894841.atlassian.net/browse/WEEK-118) (opruiming, vervolg op WEEK-116) · **Confluence:** [WEEK-118](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10485761)
+
+- Verwijderd: de AI-serverfunctie plan-week, de AI-limiettest en de AI-limietobjecten in de database (migratie verwijder_ai_objecten). De recepten blijven behouden.
+
 ## [0.81.0] – 2026-10-19
 
 **Jira:** [WEEK-116](https://proqltc-1791495894841.atlassian.net/browse/WEEK-116) (verbetering) · **Confluence:** [WEEK-116](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10125333)
