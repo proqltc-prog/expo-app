@@ -54,3 +54,12 @@ const BEELD_VOOR_DB_STIJL: Record<string, string> = {
 export function beeldVoorReceptStijl(stijl: string | undefined): string | undefined {
   return stijl ? BEELD_VOOR_DB_STIJL[stijl] : undefined;
 }
+
+/** Het tekenvlak van een beeld (WEEK-94): de opzet is 200 x 150, zodat het beeld mee schaalt met de kaart. */
+export const OPZET_BREEDTE = 200;
+export const OPZET_HOOGTE = 150;
+
+/** Een maat uit de opzet als percentage van het vlak, bv. procent(70, 200) = "35%". */
+export function procent(waarde: number, totaal: number): `${number}%` {
+  return `${Math.round((waarde / totaal) * 10000) / 100}%` as `${number}%`;
+}

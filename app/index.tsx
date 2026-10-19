@@ -496,7 +496,7 @@ export default function Weekplanning() {
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: aan }}
                 >
-                  <Stijlbeeld id={o.id} />
+                  <Stijlbeeld id={o.id} vol />
                   <Text style={[s.tegelTekst, aan && s.tegelTekstAan]}>{t(STIJL_SLEUTEL[o.id as keyof typeof STIJL_SLEUTEL] ?? 'stijlOptie.hartig')}</Text>
                 </Pressable>
               );
