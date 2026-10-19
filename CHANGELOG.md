@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.77.1] – 2026-10-19
+
+**Jira:** [WEEK-103](https://proqltc-1791495894841.atlassian.net/browse/WEEK-103) (bugfix) · **Confluence:** [WEEK-103](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9961473)
+
+- De Android-build-workflow maakt een werkende link naar de buildpagina op expo.dev (de eigenaarsnaam bevat geen extra tekst meer).
+
 ## [0.77.0] – 2026-10-19
 
 **Jira:** [WEEK-96](https://proqltc-1791495894841.atlassian.net/browse/WEEK-96) (verbetering) · **Confluence:** [WEEK-96](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9797633)
