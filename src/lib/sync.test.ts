@@ -1,3 +1,4 @@
+import { alsEigenGezin } from '@/lib/sync';
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -197,5 +198,19 @@ describe('bijhalen naast live updates (WEEK-26)', () => {
     assert.ok(BIJHALEN.intervalMs <= 60_000);
     assert.ok(BIJHALEN.naVerbindenMs.length >= 1);
     assert.ok(BIJHALEN.naVerbindenMs.every((ms, i, a) => ms > 0 && (i === 0 || ms > a[i - 1]) && ms < BIJHALEN.intervalMs));
+  });
+});
+
+describe('alsEigenGezin (WEEK-129)', () => {
+  test('leest het gezin uit een rij met het gezin als object', () => {
+    assert.deepEqual(alsEigenGezin({ gezinnen: { id: 'g1', naam: 'Gezin', code: 'ABC234' } }), { id: 'g1', naam: 'Gezin', code: 'ABC234' });
+  });
+  test('leest het gezin ook als lijst van één', () => {
+    assert.deepEqual(alsEigenGezin([{ gezinnen: [{ id: 'g1', naam: 'Gezin', code: 'ABC234' }] }]), { id: 'g1', naam: 'Gezin', code: 'ABC234' });
+  });
+  test('zonder gezin of zonder code is het resultaat leeg', () => {
+    assert.equal(alsEigenGezin(null), null);
+    assert.equal(alsEigenGezin({ gezinnen: null }), null);
+    assert.equal(alsEigenGezin({ gezinnen: { id: 'g1' } }), null);
   });
 });

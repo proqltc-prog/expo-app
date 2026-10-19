@@ -77,6 +77,8 @@ export function GezinsRuimte() {
       setFout(t(`gezin.fout.${leesGezinFout(e instanceof Error ? e.message : String(e))}` as Sleutel));
     } finally {
       setBezig(false);
+      // Ook na een fout: bij "al_lid" is de koppeling intussen hersteld en moet het gezin zichtbaar worden (WEEK-129).
+      await vernieuw().catch(() => undefined);
     }
   };
 
@@ -173,6 +175,7 @@ export function GezinsRuimte() {
                 value={code}
                 onChangeText={setCode}
                 placeholder={t('gezin.codePlaceholder')}
+                placeholderTextColor="#8a948e"
                 autoCapitalize="characters"
                 autoCorrect={false}
                 maxLength={8}
@@ -247,7 +250,7 @@ const s = StyleSheet.create({
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5', gap: 10 },
   uitleg: { color: '#555' },
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
-  codeVeld: { flex: 1, letterSpacing: 2, fontWeight: '600' },
+  codeVeld: { flex: 1, letterSpacing: 2, fontWeight: '600', color: '#1d2420' },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },

@@ -216,3 +216,14 @@ export const BIJHALEN = {
   /** Zolang de app open en verbonden is: zo vaak bijhalen. */
   intervalMs: 60_000,
 } as const;
+
+/**
+ * Het gezin waar dit account volgens de server al lid van is (WEEK-129).
+ * Leest de rij uit gezinsleden met het gezin erbij; PostgREST geeft het gezin als object of als lijst.
+ */
+export function alsEigenGezin(ruw: unknown): { id: string; naam: string; code: string } | null {
+  const rij = (Array.isArray(ruw) ? ruw[0] : ruw) as { gezinnen?: unknown } | null;
+  const gezin = (Array.isArray(rij?.gezinnen) ? rij?.gezinnen[0] : rij?.gezinnen) as { id?: unknown; naam?: unknown; code?: unknown } | null | undefined;
+  if (!gezin || typeof gezin.id !== 'string' || typeof gezin.code !== 'string') return null;
+  return { id: gezin.id, naam: typeof gezin.naam === 'string' ? gezin.naam : '', code: gezin.code };
+}
