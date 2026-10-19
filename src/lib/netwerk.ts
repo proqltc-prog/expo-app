@@ -35,3 +35,15 @@ export async function probeerOpnieuw<T>(
     return bron();
   }
 }
+
+/** Wachttijd voor een netwerkaanvraag (WEEK-120): daarna geldt de aanvraag als mislukt, zodat de zoeker nooit blijft draaien. */
+export const TIMEOUT_MS = 10000;
+
+/**
+ * Een signaal dat na `ms` afbreekt, en `klaar()` om de wachttijd te annuleren als het antwoord er is.
+ */
+export function metTimeout(ms: number = TIMEOUT_MS): { signal: AbortSignal; klaar: () => void } {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return { signal: controller.signal, klaar: () => clearTimeout(id) };
+}

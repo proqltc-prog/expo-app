@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.82.0] – 2026-10-19
+
+**Jira:** [WEEK-120](https://proqltc-1791495894841.atlassian.net/browse/WEEK-120) (bugfix en verbetering) · **Confluence:** [WEEK-120](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10813441)
+
+- Weekmenu: na 'zelf kiezen' ga je terug naar het weekmenu, niet naar de taalkeuze.
+- Weekmenu: de knop Gekookt staat enkel bij een bevestigd recept.
+- Weekmenu: de acties (bevestigen, reset, zelf kiezen, verwijderen) staan onder de stijlafbeelding.
+- Winkels: netwerkaanvragen stoppen na 10 seconden met een melding over de verbinding, in plaats van eindeloos te laden.
+- Bereiding: de fysieke terugknop gaat naar het weekmenu.
+- Scanner: na het zetten van een product in de frigo blijf je op de scanner.
+- Scanner: het kruisje verschijnt enkel bij scannen vanuit de lijst of de frigo.
+- Frigo: geen scanlink per los product meer; de scanknop bovenaan volstaat.
+- Regressietests voor de wachttijd van de winkelzoeker.
+
 ## [0.81.2] – 2026-10-19
 
 **Jira:** [WEEK-119](https://proqltc-1791495894841.atlassian.net/browse/WEEK-119) (bugfix) · **Confluence:** [WEEK-119](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/10584065)

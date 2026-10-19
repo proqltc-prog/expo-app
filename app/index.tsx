@@ -517,7 +517,35 @@ export default function Weekplanning() {
                 return (
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>
                     <View style={s.kaartRij}>
+                    <View style={s.kaartLinks}>
                     <Stijlbeeld id={beeldVoorReceptStijl(recept.stijlen[0]) ?? 'belgisch'} />
+                      {wijzigbaar && (
+                        <View style={s.actieRij}>
+                          <ActieIcoon
+                            naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
+                            label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
+                            aan={!!bevestigd}
+                            onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer())}
+                          />
+                          <ActieIcoon
+                            naam="refresh-outline"
+                            label={t('planning.reset', { dag: t(dagSleutel(dag)) })}
+                            bezig={bezigDag === index}
+                            onPress={() => (mag ? herdoeDag(index) : toonBeheer())}
+                          />
+                          <ActieIcoon
+                            naam="create-outline"
+                            label={t('planning.zelfKiezen')}
+                            onPress={() => (mag ? kiesZelf(index) : toonBeheer())}
+                          />
+                          <ActieIcoon
+                            naam="trash-outline"
+                            label={t('planning.verwijderen')}
+                            onPress={() => (mag ? verwijderMaaltijd(index) : toonBeheer())}
+                          />
+                        </View>
+                      )}
+                    </View>
                     <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
                       <Text style={s.dag}>{(datum ? kortDatum(datum, taal) : '') || t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
@@ -558,37 +586,12 @@ export default function Weekplanning() {
                     ) : (
                       null
                     )}
-                    {wijzigbaar && (
-                      <View style={s.actieRij}>
-                        <ActieIcoon
-                          naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
-                          label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
-                          aan={!!bevestigd}
-                          onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer())}
-                        />
-                        <ActieIcoon
-                          naam="refresh-outline"
-                          label={t('planning.reset', { dag: t(dagSleutel(dag)) })}
-                          bezig={bezigDag === index}
-                          onPress={() => (mag ? herdoeDag(index) : toonBeheer())}
-                        />
-                        <ActieIcoon
-                          naam="create-outline"
-                          label={t('planning.zelfKiezen')}
-                          onPress={() => (mag ? kiesZelf(index) : toonBeheer())}
-                        />
-                        <ActieIcoon
-                          naam="trash-outline"
-                          label={t('planning.verwijderen')}
-                          onPress={() => (mag ? verwijderMaaltijd(index) : toonBeheer())}
-                        />
-                      </View>
-                    )}
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
                     </View>
                     {/* WEEK-114: de knop Gekookt op een eigen regel, links uitgelijnd, zodat hij nooit buiten de kaart valt. */}
+                    {bevestigd && (
                     <View style={s.gedaanRij}>
                       <Pressable
                         style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
@@ -603,6 +606,7 @@ export default function Weekplanning() {
                         <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t('planning.gekookt')}</Text>
                       </Pressable>
                     </View>
+                    )}
                     </View>
                     </View>
                   </View>
@@ -672,6 +676,7 @@ const s = StyleSheet.create({
   statusAan: { color: PETROL, fontSize: 12, fontWeight: '700' },
   statusWacht: { color: '#B4500A', fontSize: 12, fontWeight: '700' },
   kaartRij: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+  kaartLinks: { width: 96, gap: 8 },
   kaartInhoud: { flex: 1, minWidth: 0, gap: 6 },
   kaartGedaan: { backgroundColor: '#f3f8f5', borderColor: '#cfe3d7' },
   dag: { fontSize: 13, color: MUTED, fontWeight: '600' },
@@ -698,7 +703,7 @@ const s = StyleSheet.create({
   gedaanTekst: { color: PETROL, fontSize: 12, fontWeight: '700' },
   gedaanTekstAan: { color: '#fff' },
   // WEEK-106: links uitgelijnd en binnen de kaart; bij weinig breedte schuiven ze naar de volgende regel.
-  actieRij: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8, marginTop: 8 },
+  actieRij: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8 },
   actieIcoon: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, borderColor: PETROL, alignItems: 'center', justifyContent: 'center' },
   actieIcoonAan: { backgroundColor: PETROL },
   tweedeKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, padding: 12, alignItems: 'center' },

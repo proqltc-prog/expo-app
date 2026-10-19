@@ -136,6 +136,7 @@ export type FoutReden = 'druk' | 'verbinding' | 'onbekend';
 /** Leest uit een zoekfout of de server te druk was of dat er geen verbinding was (WEEK-115). */
 export function foutReden(fout: unknown): FoutReden {
   const tekst = fout instanceof Error ? fout.message : String(fout ?? '');
+  if (fout instanceof Error && fout.name === 'AbortError') return 'verbinding';
   if (/Overpass (429|5\d\d)/.test(tekst)) return 'druk';
   if (fout instanceof TypeError || /network|netwerk|fetch/i.test(tekst)) return 'verbinding';
   return 'onbekend';

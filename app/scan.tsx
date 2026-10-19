@@ -108,8 +108,7 @@ export default function Scan() {
     const naam = scanNaam(product, t('scan.onbekend'));
     await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), { afdeling: afdelingUitCategorieen(product.categorieen) }));
     Alert.alert(t('scan.inFrigo'), t('scan.inFrigoGedaan', { naam }));
-    opnieuw();
-    if (van === 'frigo') router.navigate('/frigo');
+    opnieuw(); // WEEK-120: de gebruiker blijft op de scanner
   };
 
   // Details van een product dat al in de frigo staat (WEEK-49): het item krijgt de gescande gegevens.
@@ -179,16 +178,18 @@ export default function Scan() {
           barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
           onBarcodeScanned={opScan}
         />
-        {/* WEEK-102: de scan sluiten, zonder het scherm eerst te moeten verlaten. */}
-        <Pressable
-          onPress={annuleer}
-          accessibilityRole="button"
-          accessibilityLabel={t('scan.annuleer')}
-          hitSlop={12}
-          style={s.annuleer}
-        >
-          <Ionicons name="close" size={26} color="#fff" />
-        </Pressable>
+        {/* WEEK-102: de scan sluiten. WEEK-120: enkel bij scannen vanuit de lijst of de frigo. */}
+        {scanTerug(van) !== undefined && (
+          <Pressable
+            onPress={annuleer}
+            accessibilityRole="button"
+            accessibilityLabel={t('scan.annuleer')}
+            hitSlop={12}
+            style={s.annuleer}
+          >
+            <Ionicons name="close" size={26} color="#fff" />
+          </Pressable>
+        )}
         <View style={s.overlay}>
           <View style={s.kader} />
           <Text style={s.hint}>{t('scan.richt')}</Text>

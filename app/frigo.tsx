@@ -332,12 +332,7 @@ export default function Frigo() {
                 <Pressable onPress={() => setOpen(toon ? null : item.sleutel)} accessibilityRole="button" accessibilityState={{ expanded: toon }}>
                   <Text style={s.rijLink}>{t('frigo.productDetails')} {toon ? '▴' : '▾'}</Text>
                 </Pressable>
-              ) : sheet === 'los' ? (
-                // In de planner-sheet geen scanlink (WEEK-96): enkel de losse producten worden gescand.
-                <Pressable onPress={() => router.navigate(`/scan?van=frigo&item=${encodeURIComponent(item.ids[0])}`)} accessibilityRole="button">
-                  <Text style={s.rijLink}>{t('frigo.scanDetails')}</Text>
-                </Pressable>
-              ) : null}
+              ) : null /* WEEK-120: geen scanlink per losse product; de scanknop bovenaan volstaat. */}
               {toon && item.product ? <ProductDetails product={item.product} /> : null}
             </View>
           );

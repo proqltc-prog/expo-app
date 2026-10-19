@@ -68,7 +68,7 @@ export default function Kies() {
         // Bestaande dag vervangen; enkel als die dag nog hetzelfde is als toen het scherm opende.
         const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
         await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorRecept(huidig, index, recept) : huidig));
-        router.back();
+        router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
         return;
       }
       // Nieuwe maaltijd op de eerste vrije dag voor dit moment.
@@ -89,7 +89,7 @@ export default function Kies() {
         Alert.alert(t('kies.titel'), t('planning.geenVrijeDag'));
         return;
       }
-      router.back();
+      router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
     } finally {
       setBezig(false);
     }
