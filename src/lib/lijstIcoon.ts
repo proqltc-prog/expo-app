@@ -3,6 +3,8 @@
 
 export const WINKEL_ICOON = 'storefront-outline';
 export const BOODSCHAPPEN_ICOON = 'cart-outline';
+/** Het scannericoon naast een lijstregel (WEEK-95): een barcode-icoon, geen camera-emoji. */
+export const SCANNER_ICOON = 'barcode-outline';
 
 const CATEGORIE_ICOON: Record<string, string> = {
   avondeten: 'restaurant-outline',

@@ -16,7 +16,7 @@ import { categorieNaam, dagSleutel, getal, hoeveelheidTekst, Sleutel } from '@/i
 import { useTaal } from '@/ui/taal';
 import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 import { Ionicons } from '@expo/vector-icons';
-import { BOODSCHAPPEN_ICOON, categorieIcoon, WINKEL_ICOON } from '@/lib/lijstIcoon';
+import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from '@/lib/lijstIcoon';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -240,7 +240,7 @@ export default function Lijst() {
                     accessibilityRole="button"
                     accessibilityLabel={t('lijst.scanProduct')}
                   >
-                    <Text style={s.scanKnopTekst}>📷</Text>
+                    <Ionicons name={SCANNER_ICOON as IoniconNaam} size={20} color="#2e7d4f" />
                   </Pressable>
                 )}
               </Pressable>

@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.76.2] – 2026-10-19
+
+**Jira:** [WEEK-95](https://proqltc-1791495894841.atlassian.net/browse/WEEK-95) (bugfix) · **Confluence:** [WEEK-95](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9732097)
+
+- Winkels zoeken: bij een storing van de eerste Overpass-server wordt een tweede server geprobeerd voordat de melding "Winkels zoeken lukte niet" verschijnt.
+- In de boodschappenlijst is het camera-emoji vervangen door een scannericoon.
+
 ## [0.76.1] – 2026-10-19
 
 **Jira:** [WEEK-94](https://proqltc-1791495894841.atlassian.net/browse/WEEK-94) (bugfix) · **Confluence:** [WEEK-94](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/9011203)
