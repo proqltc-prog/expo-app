@@ -238,10 +238,11 @@ export function afdelingVan(i: LijstItem): string {
 }
 
 /**
- * Weergave per recept: eerst de recepten in de volgorde van de week (zondag → zaterdag),
+ * Weergave per recept: eerst de recepten in de volgorde van het weekplan (de kalender),
  * daarna de overige items per lijstcategorie (vaste items, zelf toegevoegd, gescand).
+ * `dagVolgorde`: de dagcodes in de volgorde van plan.dagen (WEEK-144). Zonder: de weekvolgorde.
  */
-export function perRecept(items: readonly LijstItem[]): LijstSectie[] {
+export function perRecept(items: readonly LijstItem[], dagVolgorde: readonly DagCode[] = WEEKDAGEN): LijstSectie[] {
   const recepten = new Map<string, { dag: DagCode; recept: string; items: LijstItem[] }>();
   const overige = new Map<string, LijstItem[]>();
   for (const i of items) {
@@ -255,7 +256,7 @@ export function perRecept(items: readonly LijstItem[]): LijstSectie[] {
     }
   }
   const receptSecties: LijstSectie[] = [...recepten.entries()]
-    .sort(([, a], [, b]) => WEEKDAGEN.indexOf(a.dag) - WEEKDAGEN.indexOf(b.dag))
+    .sort(([, a], [, b]) => dagVolgorde.indexOf(a.dag) - dagVolgorde.indexOf(b.dag))
     .map(([sleutel, g]) => ({ sleutel: `recept|${sleutel}`, soort: 'recept', dag: g.dag, recept: g.recept, regels: samenvoegen(g.items) }));
   const overigeSecties: LijstSectie[] = [...overige.entries()].map(([categorie, groep]) => ({
     sleutel: `categorie|${categorie}`,
@@ -288,8 +289,8 @@ export function perAfdeling(items: readonly LijstItem[]): LijstSectie[] {
     }));
 }
 
-export function secties(items: readonly LijstItem[], weergave: Weergave): LijstSectie[] {
-  return weergave === 'recept' ? perRecept(items) : perAfdeling(items);
+export function secties(items: readonly LijstItem[], weergave: Weergave, dagVolgorde?: readonly DagCode[]): LijstSectie[] {
+  return weergave === 'recept' ? perRecept(items, dagVolgorde) : perAfdeling(items);
 }
 
 /**
