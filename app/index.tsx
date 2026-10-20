@@ -33,7 +33,7 @@ import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
-import { alleDagenAfgerond, bevestigPlanDag, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -262,7 +262,8 @@ export default function Weekplanning() {
   };
 
   const vraagNieuwPlan = () => {
-    if (!plan || !heeftBevestigdPlan(plan)) return maakPlan(false);
+    // WEEK-143: de bevestiging enkel bij zichtbare, bevestigde recepten.
+    if (!vraagtBevestigingVoorNieuwPlan(plan)) return maakPlan(false);
     Alert.alert(t('planning.plan'), t('planning.resetVraag'), [
       { text: t('planning.annuleer'), style: 'cancel' },
       { text: t('planning.resetBevestig'), style: 'destructive', onPress: () => maakPlan(true) },

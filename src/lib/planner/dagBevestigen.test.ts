@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -145,5 +145,23 @@ describe('periode pas als alle recepten bevestigd én gekookt zijn (WEEK-140)', 
   });
   test('een plan zonder dagen is niet af', () => {
     assert.equal(alleDagenAfgerond(plan([])), false);
+  });
+});
+
+describe('de popup bij een nieuw weekmenu verschijnt enkel bij zichtbare bevestigde recepten (WEEK-143)', () => {
+  test('zonder plan geen popup', () => {
+    assert.equal(vraagtBevestigingVoorNieuwPlan(null), false);
+  });
+  test('een plan met alleen niet-bevestigde recepten: geen popup', () => {
+    assert.equal(vraagtBevestigingVoorNieuwPlan(plan([dag({ dag: 'maandag' })])), false);
+  });
+  test('een bevestigd, nog niet gekookt recept: popup', () => {
+    assert.equal(vraagtBevestigingVoorNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true })])), true);
+  });
+  test('bevestigd en gekookt, het hele plan is af: geen popup, want niets is zichtbaar', () => {
+    assert.equal(vraagtBevestigingVoorNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true })])), false);
+  });
+  test('een gekookt bevestigd recept naast een open bevestigd recept: popup', () => {
+    assert.equal(vraagtBevestigingVoorNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })])), true);
   });
 });
