@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.12] – 2026-10-20
+
+**Jira:** [WEEK-142](https://proqltc-1791495894841.atlassian.net/browse/WEEK-142) · **Confluence:** [WEEK-142 Android terugknop op het weekmenu sluit de app](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11763714)
+
+- Op het weekmenu sluit de fysieke terugknop van Android de app, in plaats van terug te gaan naar de taalkeuze.
+
 ## [0.86.6] – 2026-10-20
 
 **Jira:** [WEEK-136](https://proqltc-1791495894841.atlassian.net/browse/WEEK-136) · **Confluence:** [WEEK-136 Boodschappenlijst: geen vaste items bij een nieuw weekplan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11599873)
@@ -15,11 +21,11 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij het genereren van een nieuw weekplan komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
 - Vaste items die al op de lijst stonden, verdwijnen bij een nieuw weekplan.
 
-## [0.86.12] – 2026-10-20
+## [0.86.10] – 2026-10-20
 
-**Jira:** [WEEK-142](https://proqltc-1791495894841.atlassian.net/browse/WEEK-142) · **Confluence:** [WEEK-142 Android terugknop op het weekmenu sluit de app](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11763714)
+**Jira:** [WEEK-140](https://proqltc-1791495894841.atlassian.net/browse/WEEK-140) · **Confluence:** [WEEK-140 Planner: periode pas als alle recepten bevestigd en gekookt zijn](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11927553)
 
-- Op het weekmenu sluit de fysieke terugknop van Android de app, in plaats van terug te gaan naar de taalkeuze.
+- Na het koken gaat de planner pas naar de periode als alle recepten van het weekplan bevestigd én gekookt zijn.
 
 ## [0.86.9] – 2026-10-20
 
