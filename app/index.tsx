@@ -249,7 +249,8 @@ export default function Weekplanning() {
       }
       if (resetLijst && plan) {
         const oud = plan;
-        await wijzigLijst((items) => voegPlanToe(items, [], taal, undefined, planSleutel(oud)));
+        // WEEK-136: een nieuw weekplan zet geen vaste items (brood & beleg, fruit, huishouden) op de lijst.
+        await wijzigLijst((items) => voegPlanToe(items, [], taal, undefined, planSleutel(oud), false));
       }
       setPlan(nieuw);
       setFase('plan');

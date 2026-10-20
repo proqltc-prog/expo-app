@@ -131,7 +131,9 @@ export function voegPlanToe(
       !i.recept &&
       // items van een weekmenu uit een oudere versie (zonder recept-koppeling) horen bij het vorige plan
       i.categorie !== 'avondeten' &&
-      !(isVastItemId(i.id) && receptNamen.has(klein(i.naam)))
+      !(isVastItemId(i.id) && receptNamen.has(klein(i.naam))) &&
+      // WEEK-136: zonder vaste items (nieuw weekplan, bevestigen) verdwijnen ook de vaste items die al op de lijst staan
+      (metVasteItems || !isVastItemId(i.id))
   );
   const aanwezig = new Set([...behouden.map((i) => i.id), ...behouden.map((i) => klein(i.naam))]);
   const ontbrekendVast = metVasteItems

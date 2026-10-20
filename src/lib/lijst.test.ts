@@ -377,6 +377,27 @@ describe('bevestigen zet enkel de ontbrekende ingrediënten op de lijst (WEEK-10
   });
 });
 
+describe('een nieuw weekplan zet geen vaste items op de lijst (WEEK-136)', () => {
+  test('met metVasteItems false komen brood & beleg, fruit en huishouden niet op de lijst', () => {
+    const lijst = voegPlanToe([], dagen, 'nl', undefined, 'nieuw', false);
+    assert.equal(lijst.some((i) => i.categorie === 'brood-beleg' || i.categorie === 'fruit' || i.categorie === 'huishouden'), false);
+    assert.equal(lijst.filter((i) => i.recept).length, 4);
+  });
+  test('vaste items die al op de lijst staan, verdwijnen bij een nieuw weekplan', () => {
+    const eerst = voegPlanToe([], dagen, 'nl', undefined, 'oud');
+    assert.ok(eerst.some((i) => i.categorie === 'fruit'));
+    const opnieuw = voegPlanToe(eerst, [], 'nl', undefined, 'nieuw', false);
+    assert.equal(opnieuw.some((i) => i.categorie === 'brood-beleg' || i.categorie === 'fruit' || i.categorie === 'huishouden'), false);
+  });
+  test('regressie: vaste items die zelf toegevoegd of afgevinkt zijn, blijven bij bevestigen gewoon bewaard', () => {
+    const eerst = voegPlanToe([], dagen, 'nl', undefined, 'oud');
+    const fruit = eerst.find((i) => i.categorie === 'fruit')!;
+    const afgevinkt = vinkAf(eerst, [fruit.id], true);
+    const opnieuw = voegPlanToe(afgevinkt, dagen, 'nl', undefined, 'oud');
+    assert.equal(opnieuw.some((i) => i.id === fruit.id && i.afgevinkt), true);
+  });
+});
+
 describe('bevestigen zet geen vaste items op de lijst (WEEK-131)', () => {
   test('zonder vaste items komen enkel de ingrediënten van het plan op de lijst', () => {
     const lijst = voegPlanToe([], dagen, 'nl', undefined, undefined, false);
