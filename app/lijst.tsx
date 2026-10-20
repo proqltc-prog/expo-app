@@ -1,9 +1,9 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { LijstItem, LijstRegel, LijstSectie, secties as maakSecties, sectieKeuze, telRegels, vinkAf, Weergave } from '@/lib/lijst';
+import { alleenHuidigPlan, LijstItem, LijstRegel, LijstSectie, secties as maakSecties, sectieKeuze, telRegels, vinkAf, Weergave } from '@/lib/lijst';
 import { FrigoItem } from '@/lib/frigo';
-import type { DagCode } from '@/lib/planner/types';
+import type { DagCode, Weekplan } from '@/lib/planner/types';
 import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
 import { laadFrigo } from '@/opslag/frigo';
 import { bewaarWeergave, laadLijst, laadWeergave, wijzigLijst } from '@/opslag/lijst';
@@ -11,7 +11,7 @@ import { bijWijziging, Gezin, laadGezin, syncStatus, SyncStatus } from '@/opslag
 import { pasFrigoAan } from '@/lib/frigo';
 import { wijzigFrigo } from '@/opslag/frigo';
 import { werkOntbrekendBij } from '@/lib/planner/status';
-import { wijzigPlan } from '@/opslag/plan';
+import { laadPlan, wijzigPlan } from '@/opslag/plan';
 import { categorieNaam, dagSleutel, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { WinkelVoorstel } from '@/ui/winkelvoorstel';
@@ -54,6 +54,8 @@ function GerechtRegel({ lijst, frigo, dag, recept }: { lijst: LijstItem[]; frigo
 export default function Lijst() {
   const { t, taal } = useTaal();
   const [items, setItems] = useState<LijstItem[]>([]);
+  // WEEK-138: enkel recepten van het huidige weekplan horen op de lijst.
+  const [plan, setPlan] = useState<Weekplan | null>(null);
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [weergave, setWeergave] = useState<Weergave>('recept');
   // Welke groepen open staan (WEEK-124); standaard is alles ingeklapt.
@@ -80,11 +82,16 @@ export default function Lijst() {
 
   // Live: een ander gezinslid vinkte iets af of voegde iets toe (WEEK-8).
   useEffect(() => bijWijziging('lijst', () => laadLijst().then(setItems)), []);
+  useEffect(() => bijWijziging('plan', () => laadPlan().then(setPlan)), []);
+  useEffect(() => {
+    laadPlan().then(setPlan);
+  }, []);
   useEffect(() => bijWijziging('frigo', () => laadFrigo().then(setFrigo)), []);
 
   useFocusEffect(
     useCallback(() => {
       laadLijst().then(setItems);
+      laadPlan().then(setPlan);
       laadFrigo().then(setFrigo);
     }, [])
   );
@@ -137,14 +144,15 @@ export default function Lijst() {
     return categorieNaam(taal, sectie.categorie);
   };
 
+  const zichtbaar = useMemo(() => alleenHuidigPlan(items, plan), [items, plan]);
   const data = useMemo(
-    () => maakSecties(items, weergave).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
+    () => maakSecties(zichtbaar, weergave).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
     // titel() gebruikt de taal; daarom staat taal in de afhankelijkheden
-    [items, weergave, taal, uitgeklapt]
+    [zichtbaar, weergave, taal, uitgeklapt]
   );
 
   // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.
-  const { open, totaal } = useMemo(() => telRegels(maakSecties(items, weergave)), [items, weergave]);
+  const { open, totaal } = useMemo(() => telRegels(maakSecties(zichtbaar, weergave)), [zichtbaar, weergave]);
 
   const hoofdTabs = (['winkels', 'boodschappen'] as const).map((h) => {
     const aan = hoofd === h;
@@ -184,7 +192,7 @@ export default function Lijst() {
 
       {hoofd === 'winkels' ? (
         <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-          <WinkelVoorstel items={items} />
+          <WinkelVoorstel items={zichtbaar} />
         </ScrollView>
       ) : (
         <>
@@ -251,7 +259,7 @@ export default function Lijst() {
                       {alles && <Text style={s.vinkjeTekst}>✓</Text>}
                     </Pressable>
                   </View>
-                  {section.soort === 'recept' && <GerechtRegel lijst={items} frigo={frigo} dag={section.dag} recept={section.recept} />}
+                  {section.soort === 'recept' && <GerechtRegel lijst={zichtbaar} frigo={frigo} dag={section.dag} recept={section.recept} />}
                 </View>
               );
             }}
@@ -294,7 +302,7 @@ export default function Lijst() {
             stickySectionHeadersEnabled={false}
             contentContainerStyle={{ paddingBottom: 32 }}
           />
-          {items.some((i) => i.afgevinkt) && (
+          {zichtbaar.some((i) => i.afgevinkt) && (
             <Pressable style={s.wis} onPress={() => wijzig((huidig) => huidig.filter((i) => !i.afgevinkt))}>
               <Text style={{ color: ORANJE, fontWeight: '600' }}>{t('lijst.wissen')}</Text>
             </Pressable>
