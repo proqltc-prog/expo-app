@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.5] – 2026-10-20
+
+**Jira:** [WEEK-135](https://proqltc-1791495894841.atlassian.net/browse/WEEK-135) · **Confluence:** [WEEK-135 Frigo en lijst na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11534337)
+
+- Na het koken van alle recepten staan er geen ingrediënten meer op de boodschappenlijst die niet meer nodig zijn, ook niet met de frigo erbij.
+- Regressietests voor het koken van recepten en de lijst (gedrag van v0.86.4 vastgelegd).
+
 ## [0.86.4] – 2026-10-20
 
 **Jira:** [WEEK-134](https://proqltc-1791495894841.atlassian.net/browse/WEEK-134) · **Confluence:** [WEEK-134 Boodschappenlijst: gekookt recept verdwijnt van de lijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11501569)
