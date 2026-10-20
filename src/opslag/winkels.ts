@@ -1,11 +1,11 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
 // Bewaart de resultaten per postcode op dit toestel (WEEK-148).
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { bewaarInCache, leesWinkelCache, WinkelCacheItem } from '@/lib/winkelcache';
+import { bewaarInCache, isBewaardWaard, leesWinkelCache, WinkelCacheItem } from '@/lib/winkelcache';
 import { SLEUTEL } from '@/opslag/sleutels';
 import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
 import { eersteGeslaagd, metTimeout } from '@/lib/netwerk';
-import { bouwQuery, bouwStraalQuery, leesWinkels, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
+import { bouwQuery, bouwStraalQuery, leesWinkels, overpassFout, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
 import type { Positie } from '@/lib/winkelvoorstel';
 
 // Overpass-servers: de tweede is een spiegel. Beide worden tegelijk gevraagd, het eerste bruikbare antwoord wint (WEEK-145).
@@ -21,7 +21,11 @@ async function vraag(endpoint: string, query: string, postcode: string): Promise
       signal: wacht.signal,
     });
     if (!antwoord.ok) throw new Error(`Overpass ${antwoord.status}`);
-    return leesWinkels(await antwoord.json(), postcode);
+    // WEEK-152: een time-out van de server is een fout, geen leeg resultaat; dan probeert de andere server het.
+    const json: unknown = await antwoord.json();
+    const fout = overpassFout(json);
+    if (fout) throw new Error(fout);
+    return leesWinkels(json, postcode);
   } finally {
     wacht.klaar();
   }
@@ -74,6 +78,7 @@ export async function laadWinkelCache(): Promise<WinkelCacheItem[]> {
 
 /** Bewaart het resultaat voor deze postcode. Mislukt het bewaren, dan merkt de gebruiker niets: de volgende zoekopdracht vult het opnieuw. */
 export async function bewaarWinkelCache(item: WinkelCacheItem): Promise<void> {
+  if (!isBewaardWaard(item)) return;
   try {
     const huidig = await laadWinkelCache();
     await AsyncStorage.setItem(SLEUTEL.winkelCache, JSON.stringify(bewaarInCache(huidig, item)));

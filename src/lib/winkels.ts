@@ -34,7 +34,7 @@ export type Winkel = {
 export const MAX_WINKELS = 20;
 
 /** De zoekopdracht van de server mag zo lang duren (zie [timeout:…] in de query). De app wacht even lang (WEEK-127). */
-export const OVERPASS_SERVER_TIMEOUT_S = 12;
+export const OVERPASS_SERVER_TIMEOUT_S = 20;
 export const OVERPASS_TIMEOUT_MS = (OVERPASS_SERVER_TIMEOUT_S + 5) * 1000;
 
 const BELGISCHE_POSTCODE = /^\d{4}$/;
@@ -57,7 +57,7 @@ export function bouwQuery(postcode: string, gemeente: string): string | null {
   const delen = [`${filter}["addr:postcode"="${pc}"];`];
   if (gem) delen.push(`${filter}["addr:city"="${gem}"];`);
   return [
-    '[out:json][timeout:12];',
+    `[out:json][timeout:${OVERPASS_SERVER_TIMEOUT_S}];`,
     'area["ISO3166-1"="BE"][admin_level=2]->.b;',
     '(',
     ...delen,
@@ -75,6 +75,18 @@ export function rangschik(winkels: Winkel[]): Winkel[] {
 }
 
 /** Leest het antwoord van Overpass. Onbruikbare of onbekende elementen worden overgeslagen. */
+/**
+ * WEEK-152: Overpass geeft bij een time-out HTTP 200 met lege elementen en een 'remark' (runtime error).
+ * Dat is geen echt lege buurt maar een mislukte zoekopdracht. Geeft de reden terug, of undefined als het antwoord klopt.
+ */
+export function overpassFout(ruw: unknown): string | undefined {
+  if (!ruw || typeof ruw !== 'object') return 'Overpass: leeg antwoord';
+  const remark = (ruw as { remark?: unknown }).remark;
+  if (typeof remark === 'string' && /runtime error|timed out|timeout|out of memory/i.test(remark)) return `Overpass: ${remark}`;
+  if (!Array.isArray((ruw as { elements?: unknown }).elements)) return 'Overpass: geen elementen';
+  return undefined;
+}
+
 export function leesWinkels(ruw: unknown, postcode: string): Winkel[] {
   if (!ruw || typeof ruw !== 'object') return [];
   const elementen = (ruw as { elements?: unknown }).elements;
@@ -127,7 +139,7 @@ export function bouwStraalQuery(punt: Positie, straalMeter: number = MAX_STRAAL_
   const straal = Math.min(Math.max(1, Math.round(straalMeter)), MAX_STRAAL_METERS);
   const soorten = Object.keys(WINKEL_TAGS).join('|');
   return [
-    '[out:json][timeout:12];',
+    `[out:json][timeout:${OVERPASS_SERVER_TIMEOUT_S}];`,
     '(',
     `nwr(around:${straal},${punt.lat},${punt.lon})["shop"~"^(${soorten})$"];`,
     ');',
