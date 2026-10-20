@@ -8,6 +8,11 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.89.2] – 2026-10-20
+
+**Jira:** [WEEK-151](https://proqltc-1791495894841.atlassian.net/browse/WEEK-151) · **Confluence:** [WEEK-151 Weekmenu: recepttitel niet meer midden in een woord afbreken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288038)
+
+- Op het weekmenu staat de receptnaam over de volle breedte van de kaart. Het boekje voor de bereiding verhuisde naar de rij met het label en de kooktijd, zodat woorden niet meer midden in het woord afbreken.
 ## [0.89.1] – 2026-10-20
 
 **Jira:** [WEEK-150](https://proqltc-1791495894841.atlassian.net/browse/WEEK-150) · **Confluence:** [WEEK-150 Kalender weekmenu: geen verleden datums meer](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12484609)
