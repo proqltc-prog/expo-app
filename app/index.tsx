@@ -33,7 +33,7 @@ import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
-import { alleBevestigdeGekookt, bevestigPlanDag, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -209,6 +209,8 @@ export default function Weekplanning() {
 
   // Mag ik dit plan wijzigen? Zonder plan (nog) wel: het nieuwe plan wordt dan van mij (WEEK-30).
   const mag = !plan || magPlanWijzigen(plan, mijnId);
+  // WEEK-139: het weekmenu toont kaarten enkel als er een plan gegenereerd is en niet alles gekookt is.
+  const kaarten = zichtbaarWeekmenu(plan);
   const beheerTekst = plan?.beheerder
     ? beheerderNaam(leden, plan.beheerder)
       ? t('planning.alleenBeheerder', { naam: beheerderNaam(leden, plan.beheerder) ?? '' })
@@ -509,16 +511,16 @@ export default function Weekplanning() {
           <Pressable style={[s.knop, bezig && s.uit]} onPress={vraagNieuwPlan} disabled={bezig || !profiel || !mag}>
             {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
           </Pressable>
-          {!plan && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
+          {!kaarten && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
           {plan && !mag && <Text style={s.melding}>{beheerTekst}</Text>}
 
-          {plan && (
+          {kaarten && (
             <>
-              {plan.kort && <Text style={s.melding}>{t('planning.kort', { n: plan.dagen.length })}</Text>}
-              {plan.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
-              {plan.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
-              {plan.dagen.map(({ dag, datum, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
-                const wijzigbaar = magDagWijzigen(plan.dagen[index]);
+              {kaarten.kort && <Text style={s.melding}>{t('planning.kort', { n: kaarten.dagen.length })}</Text>}
+              {kaarten.herhaald && <Text style={s.melding}>{t('planning.herhaald')}</Text>}
+              {kaarten.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
+              {kaarten.dagen.map(({ dag, datum, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
+                const wijzigbaar = magDagWijzigen(kaarten.dagen[index]);
                 // Het icoon verschijnt bij elk bevestigd gerecht (WEEK-81, WEEK-113).
                 const heeftBereiding = toonBereidingsIcoon(bevestigd);
                 return (
@@ -579,7 +581,7 @@ export default function Weekplanning() {
                     {!gedaan && uitFrigo && uitFrigo.length > 0 && (
                       <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
                     )}
-                    {receptStatus(plan.dagen[index]) === 'ontbreekt' ? (
+                    {receptStatus(kaarten.dagen[index]) === 'ontbreekt' ? (
                       <View style={s.ontbreekt}>
                         <Text style={s.ontbreektTekst}>{t('status.ontbreekt', { namen: (ontbreekt ?? []).join(', ') })}</Text>
                         <View style={s.ontbreektKnoppen}>

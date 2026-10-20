@@ -15,6 +15,13 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij het genereren van een nieuw weekplan komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
 - Vaste items die al op de lijst stonden, verdwijnen bij een nieuw weekplan.
 
+## [0.86.9] – 2026-10-20
+
+**Jira:** [WEEK-139](https://proqltc-1791495894841.atlassian.net/browse/WEEK-139) · **Confluence:** [WEEK-139 Weekmenu: geen receptkaarten zonder plan of na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11796481)
+
+- Het weekmenu toont geen receptkaarten zonder gegenereerd plan.
+- Als alle recepten van het weekmenu gekookt zijn, is de lijst met receptkaarten leeg.
+
 ## [0.86.8] – 2026-10-20
 
 **Jira:** [WEEK-138](https://proqltc-1791495894841.atlassian.net/browse/WEEK-138) · **Confluence:** [WEEK-138 Boodschappenlijst: enkel recepten van het huidige weekplan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11730945)

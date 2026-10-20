@@ -27,6 +27,14 @@ export function openBevestigdeDagen(plan: Weekplan): PlanDag[] {
   return plan.dagen.filter((d) => d.bevestigd && !d.gedaan);
 }
 
+/**
+ * WEEK-139: welk weekmenu getoond wordt. Zonder gegenereerd plan, of als alle recepten gekookt zijn, is er niets te tonen.
+ */
+export function zichtbaarWeekmenu(plan: Weekplan | null): Weekplan | null {
+  if (!plan || plan.dagen.length === 0) return null;
+  return plan.dagen.every((d) => d.gedaan) ? null : plan;
+}
+
 /** Is er minstens één dag bevestigd? Dan vraagt een nieuw weekplan eerst een bevestiging van de reset. */
 export function heeftBevestigdPlan(plan: Weekplan): boolean {
   return plan.dagen.some((d) => d.bevestigd);
