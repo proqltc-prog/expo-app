@@ -22,38 +22,36 @@ const plan = (dagen: PlanDag[]): Weekplan => ({
   gemaaktOp: '2026-10-18T10:00:00.000Z',
 });
 
-describe('waar de weekplanner start', () => {
+describe('waar de weekplanner start (WEEK-133)', () => {
   test('zonder plan start de gebruiker bij Periode', () => {
     assert.equal(startFase(null), 'periode');
   });
 
-  test('een plan zonder bevestigde dag start bij Periode, ook voor een nieuwe gebruiker met een plan', () => {
-    assert.equal(startFase(plan([dag({ dag: 'maandag' }), dag({ dag: 'dinsdag' })])), 'periode');
+  test('een plan zonder dagen start bij Periode', () => {
+    assert.equal(startFase(plan([])), 'periode');
+  });
+
+  test('een gegenereerd plan waar nog niets bevestigd is, opent op het plan', () => {
+    assert.equal(startFase(plan([dag({ dag: 'maandag' }), dag({ dag: 'dinsdag' })])), 'plan');
   });
 
   test('een plan met een bevestigde dag opent op het plan', () => {
     assert.equal(startFase(plan([dag({ dag: 'maandag', bevestigd: true }), dag({ dag: 'dinsdag' })])), 'plan');
   });
 
-  test('een plan met een bevestigde dag die nog niet gekookt is, opent op het plan', () => {
-    assert.equal(
-      startFase(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })])),
-      'plan',
-    );
+  test('een plan met een gekookt en een nog niet gekookt recept opent op het plan', () => {
+    assert.equal(startFase(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })])), 'plan');
   });
 
-  test('WEEK-125: zijn alle bevestigde recepten gekookt, dan start de gebruiker bij Periode, ook met niet-bevestigde dagen', () => {
-    assert.equal(
-      startFase(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag' })])),
-      'periode',
-    );
-  });
-
-  test('als alle recepten gekookt zijn, start de gebruiker opnieuw bij Periode', () => {
+  test('als alle recepten van het plan gekookt zijn, start de gebruiker opnieuw bij Periode', () => {
     assert.equal(
       startFase(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true, gedaan: true })])),
       'periode',
     );
+  });
+
+  test('regressie: alle gekookt, ook zonder bevestiging, start bij Periode', () => {
+    assert.equal(startFase(plan([dag({ dag: 'maandag', gedaan: true })])), 'periode');
   });
 });
 
