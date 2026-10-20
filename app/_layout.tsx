@@ -7,7 +7,7 @@ import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
-import { gaatNaarMenu } from '@/lib/terugknop';
+import { gaatNaarMenu, sluitAppOp } from '@/lib/terugknop';
 
 const KLEUR = '#2e7d4f';
 
@@ -33,6 +33,11 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
   const pad = usePathname();
   useEffect(() => {
     const abonnement = BackHandler.addEventListener('hardwareBackPress', () => {
+      // WEEK-142: op het weekmenu sluit de knop de app; anders stapelt Android terug naar de taalkeuze.
+      if (sluitAppOp(pad)) {
+        BackHandler.exitApp();
+        return true;
+      }
       if (!gaatNaarMenu(pad)) return false;
       router.navigate('/');
       return true;

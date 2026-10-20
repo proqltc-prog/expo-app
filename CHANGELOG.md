@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.12] – 2026-10-20
+
+**Jira:** [WEEK-142](https://proqltc-1791495894841.atlassian.net/browse/WEEK-142) · **Confluence:** [WEEK-142 Android terugknop op het weekmenu sluit de app](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11763714)
+
+- Op het weekmenu sluit de fysieke terugknop van Android de app, in plaats van terug te gaan naar de taalkeuze.
+
 ## [0.86.11] – 2026-10-20
 
 **Jira:** [WEEK-141](https://proqltc-1791495894841.atlassian.net/browse/WEEK-141) · **Confluence:** [WEEK-141 Frigo: producten van de lijst weg na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11993089)
