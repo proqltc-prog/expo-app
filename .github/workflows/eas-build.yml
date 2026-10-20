@@ -47,15 +47,15 @@ jobs:
           # eas-cli is vastgepind (niet @latest) zodat een nieuwe release de build niet meer breekt (WEEK-153).
           EAS="npx --yes eas-cli@${EAS_CLI_VERSIE}"
           if ! $EAS build --platform android --profile ${{ inputs.profiel }} --non-interactive --no-wait --json > build.json 2> build.fout; then
-            echo "::error::EAS-build kon niet worden gestart. Uitvoer van eas-cli:"
-            cat build.fout
-            cat build.json || true
+            # Eén regel, zodat de foutmelding zichtbaar is in de annotatie van de run.
+            FOUT=$(cat build.fout build.json 2>/dev/null | tr '\n' ' ' | cut -c1-900)
+            echo "::error::EAS-build kon niet worden gestart: $FOUT"
             exit 1
           fi
           ID=$(jq -r '.[0].id // empty' build.json)
           if [ -z "$ID" ]; then
-            echo "::error::EAS gaf geen build-id terug. Uitvoer:"
-            cat build.json
+            FOUT=$(tr '\n' ' ' < build.json | cut -c1-900)
+            echo "::error::EAS gaf geen build-id terug: $FOUT"
             exit 1
           fi
           EIGENAAR=$($EAS whoami 2>/dev/null | head -1 | awk '{print $1}')
