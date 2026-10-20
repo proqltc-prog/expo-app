@@ -16,6 +16,7 @@ export const fr: Vertalingen = {
   'bereiding.klaar': 'Terminé',
   'bereiding.sluit': 'Fermer la préparation',
   'bereiding.geen': 'Aucune étape n’est disponible pour cette recette.',
+  'bereiding.ingredienten': 'Ingrédients',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Menu de la semaine',

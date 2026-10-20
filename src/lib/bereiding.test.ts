@@ -1,9 +1,10 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bereidingVoor, toonBereidingsIcoon } from '@/lib/bereiding';
+import { bereidingVoor, ingredientenVoor, toonBereidingsIcoon } from '@/lib/bereiding';
 import { BEREIDINGEN } from '@/data/bereidingen';
 import { RECEPTENBANK } from '@/data/receptenbank';
 import type { EigenRecept } from '@/lib/eigenrecepten';
+import type { Weekplan } from '@/lib/planner/types';
 
 const eigen: EigenRecept = {
   id: 'eigen:abc',
@@ -72,5 +73,30 @@ describe('icoon bereidingsstappen (WEEK-113)', () => {
 
   test('regressie: een gerecht zonder bekende stappen geeft null (de pagina Bereiding toont dan de melding)', () => {
     assert.equal(bereidingVoor({ id: 'onbekend-xyz', naam: 'Onbekend gerecht' }, [], 'nl'), null);
+  });
+});
+
+describe('ingredientenVoor (WEEK-146)', () => {
+  const plan = {
+    dagen: [
+      { dag: 'zondag', recept: { id: 'db-1', naam: 'Pasta', soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [{ naam: 'Pasta', hoeveelheid: 400, eenheid: 'g', afdeling: 'droogwaren' }, { naam: 'Tomaat', hoeveelheid: 3, eenheid: 'stuk', afdeling: 'groenten-fruit' }] } },
+      { dag: 'maandag', recept: { id: 'db-2', naam: 'Soep', soort: 'vegetarisch', minuten: 30, stijlen: [], ingredienten: [{ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' }] } },
+    ],
+  } as unknown as Weekplan;
+
+  test('geeft de ingrediënten van het gerecht uit het plan, met de hoeveelheden voor het gezin', () => {
+    assert.deepEqual(ingredientenVoor(plan, 'db-1'), [
+      { naam: 'Pasta', hoeveelheid: 400, eenheid: 'g' },
+      { naam: 'Tomaat', hoeveelheid: 3, eenheid: 'stuk' },
+    ]);
+  });
+
+  test('een ander gerecht geeft enkel zijn eigen ingrediënten', () => {
+    assert.deepEqual(ingredientenVoor(plan, 'db-2'), [{ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk' }]);
+  });
+
+  test('een gerecht dat niet in het plan staat, of geen plan, geeft een lege lijst', () => {
+    assert.deepEqual(ingredientenVoor(plan, 'db-999'), []);
+    assert.deepEqual(ingredientenVoor(null, 'db-1'), []);
   });
 });

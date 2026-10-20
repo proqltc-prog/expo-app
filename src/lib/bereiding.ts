@@ -4,6 +4,7 @@ import { RECEPTENBANK } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { bereidingVoorDbRecept, type DbRecept } from '@/lib/planner/db';
+import type { Weekplan } from '@/lib/planner/types';
 
 /**
  * De bereidingsstappen van een maaltijd, of null als er geen bekend zijn.
@@ -37,4 +38,17 @@ export function bereidingVoor(
  */
 export function toonBereidingsIcoon(bevestigd?: boolean): boolean {
   return bevestigd === true;
+}
+
+/** Eén ingrediënt voor de bereidingspagina: de hoeveelheid is al voor het gezin omgerekend (WEEK-146). */
+export type BereidingIngredient = { naam: string; hoeveelheid: number; eenheid: string };
+
+/**
+ * De ingrediënten van een gerecht uit het weekplan, in de volgorde van het recept (WEEK-146).
+ * Het plan bevat de hoeveelheden al voor het gezin, dus die tonen we zoals ze zijn. Staat het gerecht niet in het plan, dan is de lijst leeg.
+ */
+export function ingredientenVoor(plan: Weekplan | null, receptId: string): BereidingIngredient[] {
+  const dag = plan?.dagen.find((d) => d.recept.id === receptId);
+  if (!dag) return [];
+  return dag.recept.ingredienten.map(({ naam, hoeveelheid, eenheid }) => ({ naam, hoeveelheid, eenheid }));
 }
