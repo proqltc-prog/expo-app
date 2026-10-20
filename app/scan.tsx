@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
-import { GRATIS_SCANS_PER_DAG, magScannen, minutenTotReset, resterendeScans, ScanTeller } from '@/lib/scanteller';
+import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { laadScanTeller, registreerBonusScans, registreerScan } from '@/opslag/scanteller';
 import { bekijkBeloondFilmpje } from '@/opslag/advertentie';
 import { BELONING_SCANS, beloningVoor } from '@/lib/beloning';
@@ -156,12 +156,10 @@ export default function Scan() {
   };
 
   if (status.soort === 'scannen' && rest === 0) {
-    const reset = minutenTotReset(new Date());
+    // WEEK-149: geen reset meer om middernacht; het filmpje is de enige weg om verder te scannen.
     return (
       <View style={s.midden}>
         <Text style={s.tekst}>{t('scan.limiet', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
-        {/* Aftelling tot de reset om middernacht (WEEK-51). */}
-        <Text style={s.tekst}>{t('scan.reset', { uren: String(Math.floor(reset / 60)), minuten: String(reset % 60) })}</Text>
         <Pressable style={s.knop} onPress={kijkFilmpje} disabled={filmpjeBezig}>
           <Text style={s.knopTekst}>{t('scan.filmpje', { n: BELONING_SCANS })}</Text>
         </Pressable>

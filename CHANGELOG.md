@@ -8,6 +8,11 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.89.0] – 2026-10-20
+
+**Jira:** [WEEK-149](https://proqltc-1791495894841.atlassian.net/browse/WEEK-149) · **Confluence:** [WEEK-149 Scan: na 10 gratis scans enkel het reclamefilmpje](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12222466)
+
+- Na de 10 gratis scans van de dag toont de scanpagina enkel de knop voor het beloonde filmpje. De aftelling tot middernacht is verwijderd.
 ## [0.88.1] – 2026-10-20
 
 **Jira:** [WEEK-148](https://proqltc-1791495894841.atlassian.net/browse/WEEK-148) · **Confluence:** [WEEK-148 Winkels: resultaat per postcode bewaard en knop Opnieuw proberen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288020)
