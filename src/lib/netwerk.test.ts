@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { metTimeout, probeerAchtereen, probeerOpnieuw, TIMEOUT_MS } from '@/lib/netwerk';
+import { eersteGeslaagd, metTimeout, probeerAchtereen, probeerOpnieuw, TIMEOUT_MS } from '@/lib/netwerk';
 
 describe('probeerAchtereen (WEEK-95)', () => {
   test('geeft het antwoord van de eerste bron die lukt, en vraagt de rest niet', async () => {
@@ -101,5 +101,54 @@ describe('metTimeout (WEEK-120)', () => {
   });
   test('standaard wacht de app 10 seconden', () => {
     assert.equal(TIMEOUT_MS, 10000);
+  });
+});
+
+describe('eersteGeslaagd (WEEK-145)', () => {
+  test('geeft het eerste antwoord dat binnenkomt, ook als een andere bron later antwoordt', async () => {
+    const uit = await eersteGeslaagd([
+      () => new Promise<string>((klaar) => setTimeout(() => klaar('traag'), 80)),
+      async () => 'snel',
+    ]);
+    assert.equal(uit, 'snel');
+  });
+
+  test('een trage bron houdt een snelle niet tegen: beide worden tegelijk gestart', async () => {
+    const gestart: string[] = [];
+    const uit = await eersteGeslaagd([
+      () => (gestart.push('a'), new Promise<string>(() => undefined)), // hangt voor altijd
+      async () => (gestart.push('b'), 'B'),
+    ]);
+    assert.equal(uit, 'B');
+    assert.deepEqual(gestart, ['a', 'b']);
+  });
+
+  test('een bron die faalt, wordt overgeslagen zolang een andere lukt', async () => {
+    const uit = await eersteGeslaagd([
+      async () => {
+        throw new Error('down');
+      },
+      async () => 'OK',
+    ]);
+    assert.equal(uit, 'OK');
+  });
+
+  test('faalt alleen als alle bronnen falen, met de fout van de laatste', async () => {
+    await assert.rejects(
+      eersteGeslaagd<string>([
+        async () => {
+          throw new Error('eerste');
+        },
+        async () => {
+          await new Promise((klaar) => setTimeout(klaar, 20));
+          throw new Error('tweede');
+        },
+      ]),
+      /tweede/,
+    );
+  });
+
+  test('zonder bronnen geeft het een fout', async () => {
+    await assert.rejects(eersteGeslaagd<string>([]), /Geen bron/);
   });
 });

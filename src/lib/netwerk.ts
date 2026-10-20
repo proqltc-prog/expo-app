@@ -19,6 +19,25 @@ export async function probeerAchtereen<T>(bronnen: ReadonlyArray<() => Promise<T
 }
 
 /**
+ * Vraagt alle bronnen tegelijk en geeft het eerste geslaagde antwoord (WEEK-145).
+ * Een trage of kapotte bron houdt zo de rest niet tegen. Lukt geen enkele, dan wordt de fout van de laatste mislukte bron gegooid.
+ */
+export function eersteGeslaagd<T>(bronnen: ReadonlyArray<() => Promise<T>>): Promise<T> {
+  if (!bronnen.length) return Promise.reject(new Error('Geen bron om te proberen'));
+  return new Promise<T>((oplossen, afwijzen) => {
+    let mislukt = 0;
+    let laatste: unknown;
+    for (const bron of bronnen) {
+      bron().then(oplossen, (fout) => {
+        laatste = fout;
+        mislukt += 1;
+        if (mislukt === bronnen.length) afwijzen(laatste);
+      });
+    }
+  });
+}
+
+/**
  * Probeert een bron één keer opnieuw na een korte pauze (WEEK-115).
  * Een tijdelijke storing (bv. een overbelaste server) herstelt zich vaak binnen enkele seconden.
  * De pauze is injecteerbaar zodat de logica zonder wachttijd te testen is.

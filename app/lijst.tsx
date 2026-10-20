@@ -145,14 +145,16 @@ export default function Lijst() {
   };
 
   const zichtbaar = useMemo(() => alleenHuidigPlan(items, plan), [items, plan]);
+  // WEEK-144: receptgroepen in de volgorde van het weekplan, niet op weekdag.
+  const dagVolgorde = useMemo(() => plan?.dagen.map((d) => d.dag), [plan]);
   const data = useMemo(
-    () => maakSecties(zichtbaar, weergave).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
+    () => maakSecties(zichtbaar, weergave, dagVolgorde).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
     // titel() gebruikt de taal; daarom staat taal in de afhankelijkheden
-    [zichtbaar, weergave, taal, uitgeklapt]
+    [zichtbaar, weergave, dagVolgorde, taal, uitgeklapt]
   );
 
   // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.
-  const { open, totaal } = useMemo(() => telRegels(maakSecties(zichtbaar, weergave)), [zichtbaar, weergave]);
+  const { open, totaal } = useMemo(() => telRegels(maakSecties(zichtbaar, weergave, dagVolgorde)), [zichtbaar, weergave, dagVolgorde]);
 
   const hoofdTabs = (['winkels', 'boodschappen'] as const).map((h) => {
     const aan = hoofd === h;

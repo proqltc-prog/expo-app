@@ -13,6 +13,17 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 **Jira:** [WEEK-146](https://proqltc-1791495894841.atlassian.net/browse/WEEK-146) · **Confluence:** [WEEK-146 Bereiding toont de ingrediënten van het gerecht](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288002)
 
 - De bereidingspagina toont boven de stappen de ingrediënten van het gerecht, met de hoeveelheden uit het weekplan.
+## [0.86.15] – 2026-10-20
+
+**Jira:** [WEEK-145](https://proqltc-1791495894841.atlassian.net/browse/WEEK-145) · **Confluence:** [WEEK-145 Winkels laden: parallel zoeken en kortere wachttijd](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12255233)
+
+- Winkels in de buurt worden bij beide servers tegelijk opgevraagd; het eerste antwoord telt. Een trage server houdt het zoeken niet meer tegen.
+- De wachttijd is verkort (12 seconden op de server, 15 seconden in de app), zodat een storing sneller gemeld wordt dan na 25 seconden.
+## [0.86.14] – 2026-10-20
+
+**Jira:** [WEEK-144](https://proqltc-1791495894841.atlassian.net/browse/WEEK-144) · **Confluence:** [WEEK-144 Recepten op de lijst in kalendervolgorde](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12189697)
+
+- Op de lijst (weergave 'Per recept') staan de recepten in de volgorde van het weekplan, dus in de kalender, en niet meer op vaste weekdag.
 
 ## [0.86.13] – 2026-10-20
 
