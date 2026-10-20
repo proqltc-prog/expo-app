@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -129,5 +129,21 @@ describe('het weekmenu toont enkel een gegenereerd plan dat niet volledig gekook
   });
   test('als alle recepten gekookt zijn, staat het weekmenu leeg', () => {
     assert.equal(zichtbaarWeekmenu(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', gedaan: true })])), null);
+  });
+});
+
+describe('periode pas als alle recepten bevestigd én gekookt zijn (WEEK-140)', () => {
+  test('één bevestigd en gekookt recept van zeven is niet af', () => {
+    const p = plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), ...['dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag'].map((d) => dag({ dag: d as PlanDag['dag'] }))]);
+    assert.equal(alleDagenAfgerond(p), false);
+  });
+  test('een gekookt maar niet bevestigd recept is niet af', () => {
+    assert.equal(alleDagenAfgerond(plan([dag({ dag: 'maandag', gedaan: true })])), false);
+  });
+  test('pas als alle recepten bevestigd én gekookt zijn, is het plan af', () => {
+    assert.equal(alleDagenAfgerond(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true, gedaan: true })])), true);
+  });
+  test('een plan zonder dagen is niet af', () => {
+    assert.equal(alleDagenAfgerond(plan([])), false);
   });
 });

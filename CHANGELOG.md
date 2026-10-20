@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.11] – 2026-10-20
+
+**Jira:** [WEEK-141](https://proqltc-1791495894841.atlassian.net/browse/WEEK-141) · **Confluence:** [WEEK-141 Frigo: producten van de lijst weg na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11993089)
+
+- Zodra alle recepten van het weekplan gekookt zijn, gaan de producten van de boodschappenlijst uit de frigo. Losse producten blijven staan.
+- Ontkook je het laatste recept, dan komen die producten weer in de frigo.
+
 ## [0.86.6] – 2026-10-20
 
 **Jira:** [WEEK-136](https://proqltc-1791495894841.atlassian.net/browse/WEEK-136) · **Confluence:** [WEEK-136 Boodschappenlijst: geen vaste items bij een nieuw weekplan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11599873)
@@ -15,12 +22,11 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij het genereren van een nieuw weekplan komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
 - Vaste items die al op de lijst stonden, verdwijnen bij een nieuw weekplan.
 
-## [0.86.11] – 2026-10-20
+## [0.86.10] – 2026-10-20
 
-**Jira:** [WEEK-141](https://proqltc-1791495894841.atlassian.net/browse/WEEK-141) · **Confluence:** [WEEK-141 Frigo: producten van de lijst weg na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11993089)
+**Jira:** [WEEK-140](https://proqltc-1791495894841.atlassian.net/browse/WEEK-140) · **Confluence:** [WEEK-140 Planner: periode pas als alle recepten bevestigd en gekookt zijn](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11927553)
 
-- Zodra alle recepten van het weekplan gekookt zijn, gaan de producten van de boodschappenlijst uit de frigo. Losse producten blijven staan.
-- Ontkook je het laatste recept, dan komen die producten weer in de frigo.
+- Na het koken gaat de planner pas naar de periode als alle recepten van het weekplan bevestigd én gekookt zijn.
 
 ## [0.86.9] – 2026-10-20
 

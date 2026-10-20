@@ -28,6 +28,14 @@ export function openBevestigdeDagen(plan: Weekplan): PlanDag[] {
 }
 
 /**
+ * WEEK-140: is het weekmenu helemaal af? Alle recepten van het plan zijn bevestigd én gekookt.
+ * Pas dan toont de planner weer de periode. Eén gekookt bevestigd recept volstaat niet.
+ */
+export function alleDagenAfgerond(plan: Weekplan): boolean {
+  return plan.dagen.length > 0 && plan.dagen.every((d) => d.bevestigd && d.gedaan);
+}
+
+/**
  * WEEK-139: welk weekmenu getoond wordt. Zonder gegenereerd plan, of als alle recepten gekookt zijn, is er niets te tonen.
  */
 export function zichtbaarWeekmenu(plan: Weekplan | null): Weekplan | null {
