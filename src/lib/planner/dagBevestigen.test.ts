@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -113,5 +113,21 @@ describe('alleen niet-gekookte bevestigde dagen op de lijst (WEEK-134)', () => {
 
   test('een niet-bevestigde dag komt nooit op de lijst', () => {
     assert.deepEqual(openBevestigdeDagen(plan([dag({ dag: 'maandag' })])), []);
+  });
+});
+
+describe('het weekmenu toont enkel een gegenereerd plan dat niet volledig gekookt is (WEEK-139)', () => {
+  test('zonder plan is er niets te tonen', () => {
+    assert.equal(zichtbaarWeekmenu(null), null);
+  });
+  test('een plan zonder dagen toont niets', () => {
+    assert.equal(zichtbaarWeekmenu(plan([])), null);
+  });
+  test('een gegenereerd plan met open recepten wordt getoond, ook zonder bevestiging', () => {
+    const p = plan([dag({ dag: 'maandag' }), dag({ dag: 'dinsdag', bevestigd: true, gedaan: true })]);
+    assert.equal(zichtbaarWeekmenu(p), p);
+  });
+  test('als alle recepten gekookt zijn, staat het weekmenu leeg', () => {
+    assert.equal(zichtbaarWeekmenu(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', gedaan: true })])), null);
   });
 });

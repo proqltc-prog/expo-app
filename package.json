@@ -1,6 +1,6 @@
 {
   "name": "gezond-boodschappen",
-  "version": "0.86.8",
+  "version": "0.86.9",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
