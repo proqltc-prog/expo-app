@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.1] – 2026-10-20
+
+**Jira:** [WEEK-131](https://proqltc-1791495894841.atlassian.net/browse/WEEK-131) · **Confluence:** [WEEK-131 Vaste items niet op de lijst bij bevestigen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11337729)
+
+- Bij het bevestigen van één recept komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
+
 ## [0.86.0] – 2026-10-19
 
 **Jira:** [WEEK-126](https://proqltc-1791495894841.atlassian.net/browse/WEEK-126) · **Confluence:** [WEEK-126 Gezinsprofiel: taal kiezen en secties ingeklapt](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11141121)

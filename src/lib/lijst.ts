@@ -107,13 +107,16 @@ export function vasteItems(taal: Taal): LijstItem[] {
  * - Een vast item dat ook in een recept zit (bv. brood), komt er niet nog eens apart bij.
  * - `aanpassing` past de items uit het plan aan vóór ze op de lijst komen
  *   (bv. aftrekken wat al in de frigo ligt, WEEK-12).
+ * - `metVasteItems` (WEEK-131): bij het bevestigen van één recept komen de vaste items (brood, fruit, huishouden)
+ *   niet op de lijst, want die horen niet bij het recept.
  */
 export function voegPlanToe(
   bestaand: readonly LijstItem[],
   dagen: readonly PlanDag[],
   taal: Taal,
   aanpassing: (items: LijstItem[]) => LijstItem[] = (i) => i,
-  sleutel?: string
+  sleutel?: string,
+  metVasteItems: boolean = true
 ): LijstItem[] {
   const oud = new Map(bestaand.map((i) => [i.id, i]));
   const volledig = itemsUitPlan(dagen, sleutel);
@@ -131,9 +134,9 @@ export function voegPlanToe(
       !(isVastItemId(i.id) && receptNamen.has(klein(i.naam)))
   );
   const aanwezig = new Set([...behouden.map((i) => i.id), ...behouden.map((i) => klein(i.naam))]);
-  const ontbrekendVast = vasteItems(taal).filter(
-    (v) => !aanwezig.has(v.id) && !aanwezig.has(klein(v.naam)) && !receptNamen.has(klein(v.naam))
-  );
+  const ontbrekendVast = metVasteItems
+    ? vasteItems(taal).filter((v) => !aanwezig.has(v.id) && !aanwezig.has(klein(v.naam)) && !receptNamen.has(klein(v.naam)))
+    : [];
   return [...uitPlan, ...behouden, ...ontbrekendVast];
 }
 
