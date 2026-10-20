@@ -3,9 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { bereidingVoor } from '@/lib/bereiding';
+import { hoeveelheidTekst } from '@/i18n';
+import { bereidingVoor, ingredientenVoor } from '@/lib/bereiding';
 import { EigenRecept } from '@/lib/eigenrecepten';
 import type { DbRecept } from '@/lib/planner/db';
+import type { Weekplan } from '@/lib/planner/types';
+import { laadPlan } from '@/opslag/plan';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { useTaal } from '@/ui/taal';
@@ -24,18 +27,22 @@ export default function Bereiding() {
   // WEEK-121: databankrecepten hebben hun stappen in de databank; een netwerkfout laat ze gewoon leeg.
   const [db, setDb] = useState<DbRecept[]>([]);
   const [geladen, setGeladen] = useState(false);
+  // WEEK-146: de ingrediënten komen uit het weekplan, met de hoeveelheden al voor het gezin.
+  const [plan, setPlan] = useState<Weekplan | null>(null);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[])]).then(([lijst, dbLijst]) => {
+    Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[]), laadPlan().catch(() => null)]).then(([lijst, dbLijst, huidigPlan]) => {
       setEigen(lijst);
       setDb(dbLijst);
+      setPlan(huidigPlan);
       setGeladen(true);
     });
   }, []);
 
   const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);
   const laatste = stappen.length - 1;
+  const ingredienten = useMemo(() => ingredientenVoor(plan, id ?? ''), [plan, id]);
 
   if (geladen && stappen.length === 0) {
     return (
@@ -63,6 +70,18 @@ export default function Bereiding() {
         {minuten ? (
           <View style={s.chips}>
             <Text style={s.chip}>{t('algemeen.minuten', { n: Number(minuten) })}</Text>
+          </View>
+        ) : null}
+
+        {ingredienten.length ? (
+          <View style={s.ingKaart}>
+            <Text style={s.ingKop}>{t('bereiding.ingredienten')}</Text>
+            {ingredienten.map((ing, n) => (
+              <View key={n} style={s.ingRij}>
+                <Text style={s.ingNaam}>{ing.naam}</Text>
+                <Text style={s.ingHoeveelheid}>{hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
+              </View>
+            ))}
           </View>
         ) : null}
 
@@ -116,6 +135,11 @@ const s = StyleSheet.create({
   sluit: { position: 'absolute', top: 12, right: 14, zIndex: 1, width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, alignItems: 'center', justifyContent: 'center' },
   chips: { flexDirection: 'row', gap: 8 },
   chip: { fontSize: 12, fontWeight: '700', color: PETROL, backgroundColor: PETROL_ZACHT, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10, overflow: 'hidden' },
+  ingKaart: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, borderRadius: 18, padding: 14, gap: 4 },
+  ingKop: { fontSize: 13, fontWeight: '800', color: PETROL, letterSpacing: 0.5, marginBottom: 4 },
+  ingRij: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: LIJN, paddingVertical: 7 },
+  ingNaam: { flex: 1, minWidth: 0, fontSize: 15, color: INKT },
+  ingHoeveelheid: { fontSize: 15, fontWeight: '700', color: MUTED, marginLeft: 12 },
   lijst: { gap: 12 },
   stap: { flexDirection: 'row', gap: 14, backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, borderRadius: 18, padding: 14 },
   stapActief: { backgroundColor: PETROL_ZACHT, borderColor: PETROL, borderWidth: 2 },

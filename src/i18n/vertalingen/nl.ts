@@ -17,6 +17,7 @@ export const nl = {
   'bereiding.klaar': 'Klaar',
   'bereiding.sluit': 'Sluit bereiding',
   'bereiding.geen': 'Voor dit recept zijn geen stappen bekend.',
+  'bereiding.ingredienten': 'Ingrediënten',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',

@@ -16,6 +16,7 @@ export const de: Vertalingen = {
   'bereiding.klaar': 'Fertig',
   'bereiding.sluit': 'Zubereitung schließen',
   'bereiding.geen': 'Für dieses Rezept sind keine Schritte bekannt.',
+  'bereiding.ingredienten': 'Zutaten',
 
   'tab.menu': 'Menü',
   'tab.menu.titel': 'Wochenmenü',

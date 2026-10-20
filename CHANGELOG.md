@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.87.0] – 2026-10-20
+
+**Jira:** [WEEK-146](https://proqltc-1791495894841.atlassian.net/browse/WEEK-146) · **Confluence:** [WEEK-146 Bereiding toont de ingrediënten van het gerecht](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288002)
+
+- De bereidingspagina toont boven de stappen de ingrediënten van het gerecht, met de hoeveelheden uit het weekplan.
+
 ## [0.86.13] – 2026-10-20
 
 **Jira:** [WEEK-143](https://proqltc-1791495894841.atlassian.net/browse/WEEK-143) · **Confluence:** [WEEK-143 Weekmenu: bevestigingspopup enkel bij zichtbare bevestigde recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12124161)
