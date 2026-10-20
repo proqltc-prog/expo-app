@@ -13,9 +13,14 @@ on:
         options: [preview, production]
         default: preview
 
+env:
+  # Vastgepinde eas-cli-versie (WEEK-153). Bijwerken na een getest resultaat.
+  EAS_CLI_VERSIE: '16'
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Vaste runner-versie: ubuntu-latest migreert naar Ubuntu 26 (WEEK-153).
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,12 +39,24 @@ jobs:
       - name: EAS-project koppelen (eenmalig aangemaakt, daarna hergebruikt)
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npx --yes eas-cli@latest init --non-interactive --force
+        run: npx --yes eas-cli@${EAS_CLI_VERSIE} init --non-interactive --force
       - name: Build starten
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          npx --yes eas-cli@latest build --platform android --profile ${{ inputs.profiel }} --non-interactive --no-wait --json > build.json
+          # eas-cli is vastgepind (niet @latest) zodat een nieuwe release de build niet meer breekt (WEEK-153).
+          EAS="npx --yes eas-cli@${EAS_CLI_VERSIE}"
+          if ! $EAS build --platform android --profile ${{ inputs.profiel }} --non-interactive --no-wait --json > build.json 2> build.fout; then
+            echo "::error::EAS-build kon niet worden gestart. Uitvoer van eas-cli:"
+            cat build.fout
+            cat build.json || true
+            exit 1
+          fi
           ID=$(jq -r '.[0].id // empty' build.json)
-          EIGENAAR=$(npx --yes eas-cli@latest whoami 2>/dev/null | head -1 | awk '{print $1}')
+          if [ -z "$ID" ]; then
+            echo "::error::EAS gaf geen build-id terug. Uitvoer:"
+            cat build.json
+            exit 1
+          fi
+          EIGENAAR=$($EAS whoami 2>/dev/null | head -1 | awk '{print $1}')
           echo "::notice::Build gestart: https://expo.dev/accounts/$EIGENAAR/projects/famenu/builds/$ID (klaar na 10–20 minuten; download daar de APK/AAB)"

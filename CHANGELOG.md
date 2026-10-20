@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.89.4] – 2026-10-20
+
+**WEEK-153** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-153) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12615681)
+
+- Android-build (GitHub Actions): eas-cli vastgepind op versie 16 in plaats van @latest, runner vastgezet op ubuntu-24.04, en de foutuitvoer van EAS wordt bij een mislukte start getoond.
+
 ## [0.89.3] – 2026-10-20
 
 **Jira:** [WEEK-152](https://proqltc-1791495894841.atlassian.net/browse/WEEK-152) · **Confluence:** [WEEK-152 Winkels: geen resultaten meer door time-out](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12091394)
