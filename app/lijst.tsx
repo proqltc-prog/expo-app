@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { LijstItem, LijstRegel, LijstSectie, samenvoegen, secties as maakSecties, sectieKeuze, vinkAf, Weergave } from '@/lib/lijst';
+import { LijstItem, LijstRegel, LijstSectie, secties as maakSecties, sectieKeuze, telRegels, vinkAf, Weergave } from '@/lib/lijst';
 import { FrigoItem } from '@/lib/frigo';
 import type { DagCode } from '@/lib/planner/types';
 import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
@@ -143,9 +143,8 @@ export default function Lijst() {
     [items, weergave, taal, uitgeklapt]
   );
 
-  // De teller telt wat er in de winkel te kopen valt: alles samengeteld over recepten heen.
-  const alleRegels = useMemo(() => samenvoegen(items, { overCategorieen: true }), [items]);
-  const open = alleRegels.filter((r) => !r.afgevinkt).length;
+  // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.
+  const { open, totaal } = useMemo(() => telRegels(maakSecties(items, weergave)), [items, weergave]);
 
   const hoofdTabs = (['winkels', 'boodschappen'] as const).map((h) => {
     const aan = hoofd === h;
@@ -215,7 +214,7 @@ export default function Lijst() {
             </Text>
           )}
           <Text style={s.teller}>
-            {alleRegels.length ? t('lijst.teller', { open, totaal: alleRegels.length }) : t('lijst.leeg')}
+            {totaal ? t('lijst.teller', { open, totaal }) : t('lijst.leeg')}
           </Text>
           <SectionList
             sections={data}
