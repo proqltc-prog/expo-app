@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.89.1] – 2026-10-20
+
+**Jira:** [WEEK-150](https://proqltc-1791495894841.atlassian.net/browse/WEEK-150) · **Confluence:** [WEEK-150 Kalender weekmenu: geen verleden datums meer](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12484609)
+
+- In de kalender van het weekmenu wordt een eerder gekozen periode in het verleden niet meer voorgeselecteerd, en kan een startdag vóór vandaag niet meer bevestigd worden.
+
 ## [0.89.0] – 2026-10-20
 
 **Jira:** [WEEK-149](https://proqltc-1791495894841.atlassian.net/browse/WEEK-149) · **Confluence:** [WEEK-149 Scan: na 10 gratis scans enkel het reclamefilmpje](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12222466)
