@@ -60,7 +60,7 @@ describe('koken werkt de lijst bij (WEEK-135)', () => {
   test('de frigo wordt bij koken niet nog eens afgetrokken van de open recepten', () => {
     // Een gekocht product (van de lijst, bron planner) dat recept 1 gebruikt: na koken is het weg uit de frigo,
     // en het open recept 2 rekent enkel met wat er nog is.
-    const gekocht: FrigoItem = { id: 'f1', naam: 'wortel', hoeveelheid: 150, eenheid: 'g', afdeling: 'groenten', toegevoegdOp: '2026-10-19T10:00:00.000Z', bron: 'planner', lijstId: 'x' };
+    const gekocht: FrigoItem = { id: 'f1', naam: 'wortel', hoeveelheid: 150, eenheid: 'g', afdeling: 'groenten-fruit', toegevoegdOp: '2026-10-19T10:00:00.000Z', bron: 'planner', lijstId: 'x' };
     const r1Wortel = recept('Stoof', [ing('wortel', 150)]);
     let p = plan([
       { dag: 'maandag', moment: 'avond', recept: r1Wortel, bevestigd: true },
