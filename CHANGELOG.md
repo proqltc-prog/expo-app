@@ -15,6 +15,12 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij het genereren van een nieuw weekplan komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
 - Vaste items die al op de lijst stonden, verdwijnen bij een nieuw weekplan.
 
+## [0.86.12] – 2026-10-20
+
+**Jira:** [WEEK-142](https://proqltc-1791495894841.atlassian.net/browse/WEEK-142) · **Confluence:** [WEEK-142 Android terugknop op het weekmenu sluit de app](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11763714)
+
+- Op het weekmenu sluit de fysieke terugknop van Android de app, in plaats van terug te gaan naar de taalkeuze.
+
 ## [0.86.9] – 2026-10-20
 
 **Jira:** [WEEK-139](https://proqltc-1791495894841.atlassian.net/browse/WEEK-139) · **Confluence:** [WEEK-139 Weekmenu: geen receptkaarten zonder plan of na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11796481)
