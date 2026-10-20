@@ -379,7 +379,7 @@ const s = StyleSheet.create({
   chipTekstAan: { color: '#fff', fontWeight: '600' },
   kop: { fontWeight: '800', fontSize: 15, color: INKT, marginTop: 18, marginBottom: 2 },
   groepKop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  groepTeller: { color: MUTED, fontWeight: '700', fontSize: 13 },
+  groepTeller: { color: MUTED, fontWeight: '700', fontSize: 13, flexShrink: 0 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, marginTop: 8, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#E4E8E1' },
   tekstBlok: { flex: 1 },
   naam: { fontSize: 16, fontWeight: '600', color: INKT },

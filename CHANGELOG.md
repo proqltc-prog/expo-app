@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.2] – 2026-10-20
+
+**Jira:** [WEEK-132](https://proqltc-1791495894841.atlassian.net/browse/WEEK-132) · **Confluence:** [WEEK-132 Groepsteller bij lange titel op lijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11370497)
+
+- Bij een lange groepstitel op de lijst breekt de titel af; de teller en het selectievakje blijven op hun plaats.
+
 ## [0.86.1] – 2026-10-20
 
 **Jira:** [WEEK-131](https://proqltc-1791495894841.atlassian.net/browse/WEEK-131) · **Confluence:** [WEEK-131 Vaste items niet op de lijst bij bevestigen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11337729)
