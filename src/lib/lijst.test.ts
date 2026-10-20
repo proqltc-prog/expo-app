@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { trekFrigoAf } from '@/lib/frigo';
-import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, telRegels, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
@@ -436,5 +436,36 @@ describe('gekookt recept verdwijnt van de lijst (WEEK-134)', () => {
     const lijst = voegPlanToe([], [dag('maandag', r1)], 'nl', undefined, 'p1', false);
     assert.ok(lijst.every((i) => i.recept || i.categorie === 'avondeten' || !i.categorie.startsWith('brood')));
     assert.equal(lijst.filter((i) => i.categorie !== 'avondeten' && !i.recept).length, 0);
+  });
+});
+
+describe('de teller telt de som van de secties (WEEK-137)', () => {
+  const ing = (naam: string, categorie = 'avondeten') => ({ id: `${categorie}-${naam}`, naam, categorie, afgevinkt: false, eenheid: 'g' });
+  const recept = (dag: 'maandag' | 'dinsdag', naam: string, ingredienten: string[]) =>
+    ingredienten.map((n) => ({ ...ing(n), recept: { dag, naam } }));
+
+  test('per recept: het totaal is de som van de tellers per recept, ook als ingrediënten dubbel voorkomen', () => {
+    const items = [...recept('maandag', 'Pasta', ['ui', 'tomaat']), ...recept('dinsdag', 'Soep', ['ui', 'wortel'])];
+    const secties = perRecept(items);
+    const telling = telRegels(secties);
+    assert.equal(telling.totaal, secties.reduce((som, sectie) => som + sectie.regels.length, 0));
+    assert.equal(telling.totaal, 4);
+    assert.equal(telling.open, 4);
+  });
+
+  test('per categorie: de teller telt de unieke ingrediënten per categorie en het totaal is de som', () => {
+    const items = [...recept('maandag', 'Pasta', ['ui']), ...recept('dinsdag', 'Soep', ['ui', 'wortel'])];
+    const secties = perAfdeling(items);
+    const telling = telRegels(secties);
+    assert.equal(telling.totaal, secties.reduce((som, sectie) => som + sectie.regels.length, 0));
+  });
+
+  test('afgevinkte regels tellen niet mee als open', () => {
+    const items = recept('maandag', 'Pasta', ['ui', 'tomaat']).map((i) => (i.naam === 'ui' ? { ...i, afgevinkt: true } : i));
+    assert.deepEqual(telRegels(perRecept(items)), { open: 1, totaal: 2 });
+  });
+
+  test('een lege lijst telt niets', () => {
+    assert.deepEqual(telRegels([]), { open: 0, totaal: 0 });
   });
 });

@@ -291,6 +291,20 @@ export function secties(items: readonly LijstItem[], weergave: Weergave): LijstS
   return weergave === 'recept' ? perRecept(items) : perAfdeling(items);
 }
 
+/**
+ * De teller bovenaan de lijst (WEEK-137): het totaal is de som van de tellers per sectie in de huidige weergave,
+ * zodat het altijd klopt met wat er onder elkaar staat. Elke sectie telt haar unieke ingrediënten.
+ */
+export function telRegels(secties: readonly LijstSectie[]): { open: number; totaal: number } {
+  let open = 0;
+  let totaal = 0;
+  for (const sectie of secties) {
+    totaal += sectie.regels.length;
+    open += sectie.regels.filter((r) => !r.afgevinkt).length;
+  }
+  return { open, totaal };
+}
+
 export function isWeergave(w: unknown): w is Weergave {
   return w === 'recept' || w === 'categorie';
 }

@@ -15,6 +15,12 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij het genereren van een nieuw weekplan komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
 - Vaste items die al op de lijst stonden, verdwijnen bij een nieuw weekplan.
 
+## [0.86.7] – 2026-10-20
+
+**Jira:** [WEEK-137](https://proqltc-1791495894841.atlassian.net/browse/WEEK-137) · **Confluence:** [WEEK-137 Boodschappenlijst: teller klopt met de tellers per recept of categorie](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11665409)
+
+- De teller bovenaan de boodschappenlijst is de som van de tellers per recept of categorie in de huidige weergave.
+
 ## [0.86.5] – 2026-10-20
 
 **Jira:** [WEEK-135](https://proqltc-1791495894841.atlassian.net/browse/WEEK-135) · **Confluence:** [WEEK-135 Frigo en lijst na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11534337)
