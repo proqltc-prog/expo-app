@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { trekFrigoAf } from '@/lib/frigo';
-import { aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, telRegels, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { alleenHuidigPlan, aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, telRegels, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
 import { VASTE_ITEMS } from '@/data/vasteItems';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
@@ -467,5 +467,39 @@ describe('de teller telt de som van de secties (WEEK-137)', () => {
 
   test('een lege lijst telt niets', () => {
     assert.deepEqual(telRegels([]), { open: 0, totaal: 0 });
+  });
+});
+
+describe('alleen recepten van het huidige plan op de lijst (WEEK-138)', () => {
+  const ing = (naam: string) => ({ id: `recept-${naam}`, naam, categorie: 'avondeten', afgevinkt: false, eenheid: 'g', recept: { dag: 'maandag' as const, naam: 'Pasta' } });
+  const eigen = { id: 'eigen-appels', naam: 'appels', categorie: 'fruit', afgevinkt: false };
+  const dag = (d: 'maandag' | 'dinsdag', naam: string, bevestigd: boolean, gedaan = false) => ({
+    dag: d,
+    recept: { id: naam, naam, soort: 'vegetarisch' as const, minuten: 20, stijlen: ['italiaans' as const], ingredienten: [] },
+    bevestigd,
+    gedaan,
+  });
+  const plan = (dagen: ReturnType<typeof dag>[]) => ({ dagen, kooktijden: [], stijlen: [], taal: 'nl' as const, porties: 1, bron: 'db' as const, gemaaktOp: '2026-10-20T08:00:00.000Z' });
+  const lijst = [ing('ui'), { ...ing('tomaat'), recept: { dag: 'maandag' as const, naam: 'Pasta' } }, eigen];
+
+  test('zonder weekplan: geen recepten, wel eigen items', () => {
+    assert.deepEqual(alleenHuidigPlan(lijst, null).map((i) => i.id), ['eigen-appels']);
+  });
+
+  test('een gekookt recept of een niet-bevestigd recept toont geen ingrediënten', () => {
+    const gekookt = plan([dag('maandag', 'Pasta', true, true)]);
+    assert.deepEqual(alleenHuidigPlan(lijst, gekookt).map((i) => i.id), ['eigen-appels']);
+    const nietBevestigd = plan([dag('maandag', 'Pasta', false)]);
+    assert.deepEqual(alleenHuidigPlan(lijst, nietBevestigd).map((i) => i.id), ['eigen-appels']);
+  });
+
+  test('een bevestigd, niet gekookt recept van het huidige plan blijft staan', () => {
+    const open = plan([dag('maandag', 'Pasta', true)]);
+    assert.equal(alleenHuidigPlan(lijst, open).filter((i) => i.recept).length, 2);
+  });
+
+  test('ingrediënten van een recept dat niet (meer) op het plan staat, verdwijnen', () => {
+    const andereRecept = plan([dag('dinsdag', 'Soep', true)]);
+    assert.deepEqual(alleenHuidigPlan(lijst, andereRecept).map((i) => i.id), ['eigen-appels']);
   });
 });

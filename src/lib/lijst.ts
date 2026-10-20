@@ -2,7 +2,8 @@ import type { Afdeling } from '@/data/ingredienten';
 import { AFDELINGEN } from '@/data/ingredienten';
 import { VAST_AFDELING, VASTE_ITEMS } from '@/data/vasteItems';
 import { Sleutel, Taal, vertaal } from '@/i18n';
-import { DagCode, PlanDag, WEEKDAGEN } from '@/lib/planner/types';
+import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
+import { DagCode, PlanDag, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
 
 // Pure logica voor de boodschappenlijst (zonder opslag), zodat ze los testbaar is.
 // Opslag op het toestel staat in src/opslag/lijst.ts.
@@ -289,6 +290,15 @@ export function perAfdeling(items: readonly LijstItem[]): LijstSectie[] {
 
 export function secties(items: readonly LijstItem[], weergave: Weergave): LijstSectie[] {
   return weergave === 'recept' ? perRecept(items) : perAfdeling(items);
+}
+
+/**
+ * WEEK-138: enkel de recepten van het huidige weekplan die bevestigd en nog niet gekookt zijn, tonen op de lijst.
+ * Zonder weekplan, of als alle recepten gekookt zijn, geen recepten. Eigen en gescande items blijven staan.
+ */
+export function alleenHuidigPlan(items: readonly LijstItem[], plan: Weekplan | null): LijstItem[] {
+  const openDagen = plan ? openBevestigdeDagen(plan) : [];
+  return items.filter((i) => !i.recept || openDagen.some((d) => d.dag === i.recept?.dag && d.recept.naam === i.recept?.naam));
 }
 
 /**
