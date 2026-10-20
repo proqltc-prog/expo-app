@@ -18,6 +18,8 @@ export const nl = {
   'bereiding.sluit': 'Sluit bereiding',
   'bereiding.geen': 'Voor dit recept zijn geen stappen bekend.',
   'bereiding.ingredienten': 'Ingrediënten',
+  'bereiding.inFrigo': 'In de frigo',
+  'bereiding.deelsInFrigo': 'Deels in de frigo',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
@@ -270,6 +272,7 @@ export const nl = {
   'profiel.intro': 'Wie komt er aan tafel? Geef het even door, dan rekenen wij de rest uit.',
   'winkels.geenPostcode': 'Vul een geldige postcode in bij je profiel om winkels voor te stellen.',
   'winkels.fout': 'Winkels zoeken lukte niet. Probeer het later opnieuw.',
+  'winkels.opnieuw': 'Opnieuw proberen',
   'winkels.foutDruk': 'De winkelzoeker is even te druk. Probeer het over enkele minuten opnieuw.',
   'winkels.foutVerbinding': 'Geen verbinding met de winkelzoeker. Controleer je internetverbinding.',
   'winkels.leeg': 'Geen winkels gevonden in jouw buurt.',

@@ -17,6 +17,8 @@ export const es: Vertalingen = {
   'bereiding.sluit': 'Cerrar preparación',
   'bereiding.geen': 'No hay pasos disponibles para esta receta.',
   'bereiding.ingredienten': 'Ingredientes',
+  'bereiding.inFrigo': 'En la nevera',
+  'bereiding.deelsInFrigo': 'Parcialmente en la nevera',
 
   'tab.menu': 'Menú',
   'tab.menu.titel': 'Menú semanal',
@@ -269,6 +271,7 @@ export const es: Vertalingen = {
   'profiel.intro': '¿Quién se sienta a la mesa? Dinos cuántos sois y calculamos el resto.',
   'winkels.geenPostcode': 'Introduce un código postal válido en tu perfil para ver tiendas sugeridas.',
   'winkels.fout': 'La búsqueda ha fallado. Inténtalo más tarde.',
+  'winkels.opnieuw': 'Reintentar',
   'winkels.foutDruk': 'El buscador de tiendas está muy ocupado. Inténtalo de nuevo en unos minutos.',
   'winkels.foutVerbinding': 'Sin conexión con el buscador de tiendas. Revisa tu conexión a internet.',
   'winkels.leeg': 'No se han encontrado tiendas cerca de ti.',

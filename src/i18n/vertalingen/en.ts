@@ -17,6 +17,8 @@ export const en: Vertalingen = {
   'bereiding.sluit': 'Close preparation',
   'bereiding.geen': 'No steps are available for this recipe.',
   'bereiding.ingredienten': 'Ingredients',
+  'bereiding.inFrigo': 'In the fridge',
+  'bereiding.deelsInFrigo': 'Partly in the fridge',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekly menu',
@@ -269,6 +271,7 @@ export const en: Vertalingen = {
   'profiel.intro': 'Who’s joining for dinner? Tell us, and we’ll work out the rest.',
   'winkels.geenPostcode': 'Enter a valid postcode in your profile to see suggested shops.',
   'winkels.fout': 'Searching for shops failed. Please try again later.',
+  'winkels.opnieuw': 'Try again',
   'winkels.foutDruk': 'The shop search is busy right now. Please try again in a few minutes.',
   'winkels.foutVerbinding': 'No connection to the shop search. Check your internet connection.',
   'winkels.leeg': 'No shops found near you.',

@@ -11,7 +11,8 @@ import { kiesWinkels, nodigeSoorten, Positie, Stop, Voorstel } from '@/lib/winke
 import { foutReden, type FoutReden, type Winkel } from '@/lib/winkels';
 import { adresRegel, googleMapsUrl, openingsurenRegels, SOORT_EMOJI } from '@/lib/winkelweergave';
 import { laadProfiel } from '@/opslag/profiel';
-import { zoekPostcodePunt, zoekWinkels } from '@/opslag/winkels';
+import { bewaarWinkelCache, laadWinkelCache, zoekPostcodePunt, zoekWinkels } from '@/opslag/winkels';
+import { isVers, winkelSleutel, zoekInCache } from '@/lib/winkelcache';
 import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -73,6 +74,8 @@ function WinkelKaart({ stop }: { stop: Stop }) {
 export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
   const { t } = useTaal();
   const [stat, setStat] = useState<Stat>('laden');
+  // WEEK-148: een hogere versie zoekt opnieuw, ook als het resultaat al bewaard is (knop Opnieuw proberen).
+  const [versie, setVersie] = useState(0);
   const [adres, setAdres] = useState<Adres>({ postcode: '', gemeente: '' });
   const [opgehaald, setOpgehaald] = useState<Opgehaald | undefined>();
   // WEEK-115: de reden van een mislukte zoekopdracht, zodat de melding dat zegt.
@@ -97,7 +100,8 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
   // Welke winkeltypes de openstaande lijst nodig heeft; enkel rekenen, geen netwerk.
   const nodig = useMemo(() => nodigeSoorten(items.filter((i) => !i.afgevinkt).map((i) => i.afdeling)), [items]);
 
-  // Ophalen alleen bij een andere postcode; anders uit de cache.
+  // Ophalen alleen bij een andere postcode; anders uit de cache (WEEK-148): eerst het geheugen, dan het toestel.
+  // Een verouderd resultaat van het toestel toont meteen en wordt op de achtergrond ververst.
   useEffect(() => {
     const pc = adres.postcode.trim();
     const gem = adres.gemeente.trim();
@@ -106,7 +110,8 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
       setOpgehaald(undefined);
       return;
     }
-    const sleutel = `${pc}|${gem}`;
+    const sleutel = winkelSleutel(pc, gem);
+    if (versie > 0) cache.current.delete(sleutel);
     const bekend = cache.current.get(sleutel);
     if (bekend) {
       setOpgehaald(bekend);
@@ -116,6 +121,15 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
     let geldig = true;
     setStat('laden');
     (async () => {
+      const lokaal = await laadWinkelCache().then((c) => zoekInCache(c, sleutel)).catch(() => undefined);
+      if (!geldig) return;
+      if (lokaal) {
+        const bewaard: Opgehaald = { positie: lokaal.positie, winkels: lokaal.winkels };
+        cache.current.set(sleutel, bewaard);
+        setOpgehaald(bewaard);
+        setStat('klaar');
+        if (isVers(lokaal, new Date())) return;
+      }
       // Een mislukt of leeg postcodepunt mag de winkelzoeker niet stoppen (WEEK-112): dan zonder afstand.
       const positie = await zoekPostcodePunt(pc, gem).catch(() => undefined);
       if (!geldig) return;
@@ -125,15 +139,18 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
       cache.current.set(sleutel, resultaat);
       setOpgehaald(resultaat);
       setStat('klaar');
+      void bewaarWinkelCache({ sleutel, positie, winkels, opgehaaldOp: new Date().toISOString() });
     })().catch((fout) => {
       if (!geldig) return;
+      // Mislukt een vernieuwing terwijl er al een bewaard resultaat staat, dan blijft dat resultaat staan.
+      if (cache.current.has(sleutel)) return;
       setReden(foutReden(fout));
       setStat('fout');
     });
     return () => {
       geldig = false;
     };
-  }, [adres.postcode, adres.gemeente]);
+  }, [adres.postcode, adres.gemeente, versie]);
 
   // Elke wijziging van de lijst (ook na een recept) rekent het voorstel opnieuw uit.
   const voorstel: Voorstel = useMemo(
@@ -167,6 +184,11 @@ export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
           <Text style={s.kop}>{t('winkels.voorstelTitel')}</Text>
           <Text style={s.samenvatting}>{samenvatting}</Text>
         </Pressable>
+        {stat === 'fout' && (
+          <Pressable style={s.opnieuwKnop} onPress={() => setVersie((v) => v + 1)} accessibilityRole="button">
+            <Text style={s.opnieuwTekst}>{t('winkels.opnieuw')}</Text>
+          </Pressable>
+        )}
         {stat === 'klaar' && aantal > 0 && (
           <Pressable style={s.popupKnop} onPress={() => setPopup(true)} accessibilityRole="button" accessibilityLabel={t('winkels.toonWinkels')}>
             <Text style={s.popupKnopTekst}>📍</Text>
@@ -219,6 +241,8 @@ const s = StyleSheet.create({
   kop: { fontWeight: '700', fontSize: 15, color: '#333' },
   samenvatting: { color: '#777', fontSize: 13 },
   chevron: { color: KLEUR, fontSize: 18, paddingHorizontal: 4 },
+  opnieuwKnop: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, borderWidth: 1.5, borderColor: '#0F6B66' },
+  opnieuwTekst: { color: '#0F6B66', fontWeight: '700' },
   popupKnop: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center' },
   popupKnopTekst: { fontSize: 18 },
   lijst: { gap: 10 },

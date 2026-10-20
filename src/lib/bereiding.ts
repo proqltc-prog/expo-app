@@ -4,6 +4,7 @@ import { RECEPTENBANK } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { bereidingVoorDbRecept, type DbRecept } from '@/lib/planner/db';
+import { verdeelFrigo, type Dekking, type FrigoItem } from '@/lib/frigo';
 import type { Weekplan } from '@/lib/planner/types';
 
 /**
@@ -51,4 +52,13 @@ export function ingredientenVoor(plan: Weekplan | null, receptId: string): Berei
   const dag = plan?.dagen.find((d) => d.recept.id === receptId);
   if (!dag) return [];
   return dag.recept.ingredienten.map(({ naam, hoeveelheid, eenheid }) => ({ naam, hoeveelheid, eenheid }));
+}
+
+/** Een ingrediënt met de dekking uit de frigo: geheel, deels of niet (WEEK-147). */
+export type BereidingIngredientMetFrigo = BereidingIngredient & { dekking: Dekking['gedekt'] };
+
+/** Koppelt aan elk ingrediënt wat er al in de frigo ligt (WEEK-147). Zelfde volgorde als de ingrediënten. */
+export function ingredientenMetFrigo(ingredienten: readonly BereidingIngredient[], frigo: readonly FrigoItem[]): BereidingIngredientMetFrigo[] {
+  const dekking = verdeelFrigo(ingredienten, frigo);
+  return ingredienten.map((ing, i) => ({ ...ing, dekking: dekking[i]?.gedekt ?? 'niet' }));
 }

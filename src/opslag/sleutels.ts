@@ -17,6 +17,8 @@ export const SLEUTEL = {
   gezin: 'gezin:v1',
   /** Aantal scans vandaag op dit toestel (WEEK-34). */
   scans: 'scans:v1',
+  /** Winkels van eerdere zoekopdrachten per postcode (WEEK-148): enkel lokaal, niet in de gezinssynchronisatie. */
+  winkelCache: 'winkelcache:v1',
   /** Synchronisatietoestand per soort/document (zie src/opslag/sync.ts). */
   sync: 'sync:v1',
 } as const;

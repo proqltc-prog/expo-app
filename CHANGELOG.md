@@ -13,6 +13,17 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 **Jira:** [WEEK-149](https://proqltc-1791495894841.atlassian.net/browse/WEEK-149) · **Confluence:** [WEEK-149 Scan: na 10 gratis scans enkel het reclamefilmpje](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12222466)
 
 - Na de 10 gratis scans van de dag toont de scanpagina enkel de knop voor het beloonde filmpje. De aftelling tot middernacht is verwijderd.
+## [0.88.1] – 2026-10-20
+
+**Jira:** [WEEK-148](https://proqltc-1791495894841.atlassian.net/browse/WEEK-148) · **Confluence:** [WEEK-148 Winkels: resultaat per postcode bewaard en knop Opnieuw proberen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288020)
+
+- Winkels die al gezocht zijn, staan meteen klaar, ook na een herstart van de app. Een verouderd resultaat wordt op de achtergrond ververst.
+- Bij een fout bij het zoeken komt de knop 'Opnieuw proberen'.
+## [0.88.0] – 2026-10-20
+
+**Jira:** [WEEK-147](https://proqltc-1791495894841.atlassian.net/browse/WEEK-147) · **Confluence:** [WEEK-147 Bereiding: vinkje bij ingrediënten die al in de frigo staan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12189715)
+
+- Op de bereidingspagina staat een vinkje naast ingrediënten die al volledig in de frigo liggen, en de tekst 'Deels in de frigo' bij gedeeltelijk aanwezige ingrediënten.
 
 ## [0.87.0] – 2026-10-20
 
