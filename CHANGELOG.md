@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.88.0] – 2026-10-20
+
+**Jira:** [WEEK-147](https://proqltc-1791495894841.atlassian.net/browse/WEEK-147) · **Confluence:** [WEEK-147 Bereiding: vinkje bij ingrediënten die al in de frigo staan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12189715)
+
+- Op de bereidingspagina staat een vinkje naast ingrediënten die al volledig in de frigo liggen, en de tekst 'Deels in de frigo' bij gedeeltelijk aanwezige ingrediënten.
+
 ## [0.87.0] – 2026-10-20
 
 **Jira:** [WEEK-146](https://proqltc-1791495894841.atlassian.net/browse/WEEK-146) · **Confluence:** [WEEK-146 Bereiding toont de ingrediënten van het gerecht](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288002)

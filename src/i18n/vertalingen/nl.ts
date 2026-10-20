@@ -18,6 +18,8 @@ export const nl = {
   'bereiding.sluit': 'Sluit bereiding',
   'bereiding.geen': 'Voor dit recept zijn geen stappen bekend.',
   'bereiding.ingredienten': 'Ingrediënten',
+  'bereiding.inFrigo': 'In de frigo',
+  'bereiding.deelsInFrigo': 'Deels in de frigo',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
