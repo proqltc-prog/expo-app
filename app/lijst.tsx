@@ -236,7 +236,7 @@ export default function Lijst() {
                       {section.soort === 'categorie' && (
                         <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} />
                       )}
-                      <Text style={s.kopInRij}>{section.title}</Text>
+                      <Text style={[s.kopInRij, s.titelKrimp]} numberOfLines={2}>{section.title}</Text>
                       <Text style={s.groepTeller}>{section.regels.length}</Text>
                       <Ionicons name={(uitgeklapt.has(section.sleutel) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={KLEUR} />
                     </Pressable>
@@ -327,7 +327,9 @@ const s = StyleSheet.create({
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   sectieRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 14, marginBottom: 4 },
   sectieTitel: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  groepTeller: { color: '#6b7a72', fontWeight: '700', fontSize: 13 },
+  groepTeller: { color: '#6b7a72', fontWeight: '700', fontSize: 13, flexShrink: 0 },
+  // WEEK-132: een lange titel breekt af en schuift de teller en het selectievakje niet opzij.
+  titelKrimp: { flexShrink: 1 },
   kopInRij: { fontWeight: '700', fontSize: 14, color: '#444' },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: ORANJE, alignItems: 'center', justifyContent: 'center' },
