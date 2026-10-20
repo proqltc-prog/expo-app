@@ -376,3 +376,15 @@ describe('bevestigen zet enkel de ontbrekende ingrediënten op de lijst (WEEK-10
     if (alles.length > 1) assert.ok(lijst.some((i) => i.naam === alles[1].naam));
   });
 });
+
+describe('bevestigen zet geen vaste items op de lijst (WEEK-131)', () => {
+  test('zonder vaste items komen enkel de ingrediënten van het plan op de lijst', () => {
+    const lijst = voegPlanToe([], dagen, 'nl', undefined, undefined, false);
+    assert.equal(lijst.filter((i) => i.recept).length, 4);
+    assert.equal(lijst.filter((i) => !i.recept).length, 0);
+  });
+  test('regressie: met vaste items (plan aanmaken) blijft het gedrag zoals het was', () => {
+    const lijst = voegPlanToe([], dagen, 'nl');
+    assert.equal(lijst.filter((i) => !i.recept).length, AANTAL_VAST - 1);
+  });
+});

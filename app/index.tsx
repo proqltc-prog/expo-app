@@ -307,7 +307,9 @@ export default function Weekplanning() {
         bevestigdeDagen(bewaard),
         taal,
         (items) => trekFrigoAf(items, frigo),
-        planSleutel(bewaard)
+        planSleutel(bewaard),
+        // WEEK-131: bij het bevestigen komen enkel de ingrediënten van het recept op de lijst, geen vaste items.
+        false
       )
     );
   };
