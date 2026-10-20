@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.4] – 2026-10-20
+
+**Jira:** [WEEK-134](https://proqltc-1791495894841.atlassian.net/browse/WEEK-134) · **Confluence:** [WEEK-134 Boodschappenlijst: gekookt recept verdwijnt van de lijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11501569)
+
+- Op de boodschappenlijst staan enkel de ingrediënten van bevestigde recepten die nog niet gekookt zijn.
+- Een gekookt recept verdwijnt van de lijst; ontkook je het, dan komt het terug.
+
 ## [0.86.3] – 2026-10-20
 
 **Jira:** [WEEK-133](https://proqltc-1791495894841.atlassian.net/browse/WEEK-133) · **Confluence:** [WEEK-133 Weekmenu start: opnieuw beginnen of weekplan tonen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11436033)

@@ -388,3 +388,32 @@ describe('bevestigen zet geen vaste items op de lijst (WEEK-131)', () => {
     assert.equal(lijst.filter((i) => !i.recept).length, AANTAL_VAST - 1);
   });
 });
+
+describe('gekookt recept verdwijnt van de lijst (WEEK-134)', () => {
+  const ing = (naam: string) => ({ naam, hoeveelheid: 100, eenheid: 'g', afdeling: 'droge-voeding' as const });
+  const recept = (naam: string, ingredienten: string[]) => ({
+    id: naam,
+    naam,
+    soort: 'vegetarisch' as const,
+    minuten: 20,
+    stijlen: ['italiaans' as const],
+    ingredienten: ingredienten.map(ing),
+  });
+  const dag = (d: 'maandag' | 'dinsdag', r: ReturnType<typeof recept>) => ({ dag: d, recept: r, bevestigd: true });
+
+  test('na het koken van recept 1 blijven alleen de ingrediënten van recept 2 op de lijst', () => {
+    const r1 = recept('Pasta', ['pasta', 'tomaat']);
+    const r2 = recept('Soep', ['wortel', 'ui']);
+    const metBeide = voegPlanToe([], [dag('maandag', r1), dag('dinsdag', r2)], 'nl', undefined, 'p1', false);
+    assert.ok(metBeide.some((i) => i.naam === 'pasta'));
+    const naKoken = voegPlanToe(metBeide, [dag('dinsdag', r2)], 'nl', undefined, 'p1', false);
+    assert.deepEqual(naKoken.map((i) => i.naam).sort(), ['ui', 'wortel']);
+  });
+
+  test('regressie: bij het bevestigen van een tweede recept komen de vaste items nog steeds niet op de lijst', () => {
+    const r1 = recept('Pasta', ['pasta']);
+    const lijst = voegPlanToe([], [dag('maandag', r1)], 'nl', undefined, 'p1', false);
+    assert.ok(lijst.every((i) => i.recept || i.categorie === 'avondeten' || !i.categorie.startsWith('brood')));
+    assert.equal(lijst.filter((i) => i.categorie !== 'avondeten' && !i.recept).length, 0);
+  });
+});
