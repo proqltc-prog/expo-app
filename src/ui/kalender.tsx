@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { dagenTussen, maandCellen, maandKop, kortDatum, weekKoppen, MAX_PLANDAGEN } from '@/lib/planner/datums';
+import { dagenTussen, geldigeBegin, maandCellen, maandKop, kortDatum, weekKoppen, MAX_PLANDAGEN } from '@/lib/planner/datums';
 import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
@@ -22,10 +22,12 @@ function beginMaand(iso: string): { jaar: number; maand: number } {
 
 export function Kalender({ vandaag, begin, onBevestig, onSluit }: Props) {
   const { t, taal } = useTaal();
-  const start = begin?.van ?? vandaag;
+  // WEEK-150: een bewaarde periode in het verleden wordt niet voorgeselecteerd.
+  const geldig = geldigeBegin(begin, vandaag);
+  const start = geldig.van ?? vandaag;
   const [{ jaar, maand }, setMaand] = useState(beginMaand(start));
-  const [van, setVan] = useState<string | undefined>(begin?.van);
-  const [tot, setTot] = useState<string | undefined>(begin?.tot);
+  const [van, setVan] = useState<string | undefined>(geldig.van);
+  const [tot, setTot] = useState<string | undefined>(geldig.tot);
 
   const eersteMaand = beginMaand(vandaag);
   const kanTerug = jaar * 12 + maand > eersteMaand.jaar * 12 + eersteMaand.maand;
@@ -53,7 +55,7 @@ export function Kalender({ vandaag, begin, onBevestig, onSluit }: Props) {
   };
 
   const bevestig = () => {
-    if (!van) return;
+    if (!van || van < vandaag) return;
     onBevestig(van, tot ?? van);
   };
 

@@ -132,3 +132,14 @@ export function maandCellen(jaar: number, maand: number): (string | null)[] {
 export function maandKop(jaar: number, maand: number, taal: Taal): string {
   return `${MAANDEN_KORT[taal][maand]} ${jaar}`;
 }
+
+/**
+ * De bewaarde periode die de kalender voorselecteert (WEEK-150): enkel de dagen vanaf vandaag.
+ * Een startdag in het verleden valt weg; de laatste dag blijft enkel als hij na de startdag ligt.
+ */
+export function geldigeBegin(begin: { van?: string; tot?: string } | undefined, vandaag: string): { van?: string; tot?: string } {
+  const van = begin?.van && begin.van >= vandaag ? begin.van : undefined;
+  if (!van) return {};
+  const tot = begin?.tot && begin.tot >= van ? begin.tot : undefined;
+  return tot ? { van, tot } : { van };
+}
