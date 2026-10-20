@@ -13,6 +13,11 @@ export function winkelSleutel(postcode: string, gemeente: string): string {
   return `${postcode.trim()}|${gemeente.trim()}`;
 }
 
+/** WEEK-152: een lege lijst is geen bruikbaar resultaat; die bewaren we niet, en oude lege items worden genegeerd. */
+export function isBewaardWaard(item: WinkelCacheItem): boolean {
+  return item.winkels.length > 0;
+}
+
 /** Zet het resultaat vooraan; een eerder resultaat voor dezelfde postcode wordt vervangen. */
 export function bewaarInCache(cache: readonly WinkelCacheItem[], item: WinkelCacheItem, max: number = WINKEL_CACHE_MAX): WinkelCacheItem[] {
   return [item, ...cache.filter((c) => c.sleutel !== item.sleutel)].slice(0, max);
@@ -32,8 +37,9 @@ export function isVers(item: WinkelCacheItem, nu: Date, maxUur: number = WINKEL_
 /** Leest de opgeslagen cache veilig: wat niet klopt, wordt overgeslagen. */
 export function leesWinkelCache(ruw: unknown): WinkelCacheItem[] {
   if (!Array.isArray(ruw)) return [];
-  return ruw.filter(
-    (c): c is WinkelCacheItem =>
-      !!c && typeof c === 'object' && typeof (c as WinkelCacheItem).sleutel === 'string' && typeof (c as WinkelCacheItem).opgehaaldOp === 'string' && Array.isArray((c as WinkelCacheItem).winkels),
-  );
+  return ruw.filter((c): c is WinkelCacheItem => {
+    if (!c || typeof c !== 'object') return false;
+    const item = c as WinkelCacheItem;
+    return typeof item.sleutel === 'string' && typeof item.opgehaaldOp === 'string' && Array.isArray(item.winkels) && isBewaardWaard(item);
+  });
 }

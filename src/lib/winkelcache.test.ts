@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bewaarInCache, isVers, leesWinkelCache, winkelSleutel, WINKEL_CACHE_MAX, zoekInCache, type WinkelCacheItem } from '@/lib/winkelcache';
+import { bewaarInCache, isBewaardWaard, isVers, leesWinkelCache, winkelSleutel, WINKEL_CACHE_MAX, zoekInCache, type WinkelCacheItem } from '@/lib/winkelcache';
 import type { Winkel } from '@/lib/winkels';
 
 const winkel = { naam: 'Lidl' } as unknown as Winkel;
@@ -48,5 +48,15 @@ describe('winkelcache (WEEK-148)', () => {
   test('lezen van niets of een niet-lijst geeft een lege cache (regressie)', () => {
     assert.deepEqual(leesWinkelCache(null), []);
     assert.deepEqual(leesWinkelCache({ geen: 'lijst' }), []);
+  });
+
+  test('een lege lijst wordt niet als bruikbaar resultaat beschouwd (WEEK-152)', () => {
+    assert.equal(isBewaardWaard({ sleutel: 'x', winkels: [], opgehaaldOp: '2026-10-20T10:00:00Z' }), false);
+    assert.equal(isBewaardWaard(item('x')), true);
+  });
+
+  test('oude lege items op het toestel worden bij het lezen genegeerd (WEEK-152)', () => {
+    const uit = leesWinkelCache([{ sleutel: 'leeg', winkels: [], opgehaaldOp: '2026-10-20T10:00:00Z' }, item('gevuld')]);
+    assert.deepEqual(uit.map((c) => c.sleutel), ['gevuld']);
   });
 });

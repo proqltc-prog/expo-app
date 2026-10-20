@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.89.3] – 2026-10-20
+
+**Jira:** [WEEK-152](https://proqltc-1791495894841.atlassian.net/browse/WEEK-152) · **Confluence:** [WEEK-152 Winkels: geen resultaten meer door time-out](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12091394)
+
+- De winkelzoeker geeft weer winkels binnen 10 km rond de postcode uit het gezinsprofiel. De server-timeout is 20 seconden, en een time-out wordt als fout gemeld in plaats van als lege lijst.
+- Lege resultaten worden niet meer bewaard.
+
 ## [0.89.0] – 2026-10-20
 
 **Jira:** [WEEK-149](https://proqltc-1791495894841.atlassian.net/browse/WEEK-149) · **Confluence:** [WEEK-149 Scan: na 10 gratis scans enkel het reclamefilmpje](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12222466)

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwQuery, bouwStraalQuery, foutReden, leesWinkels, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, OVERPASS_SERVER_TIMEOUT_S, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
+import { bouwQuery, bouwStraalQuery, foutReden, leesWinkels, overpassFout, WINKEL_TAGS, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, OVERPASS_SERVER_TIMEOUT_S, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
 
 describe('winkels in de buurt: query (WEEK-53)', () => {
   test('geldige Belgische postcode geeft een query op postcode en op gemeente', () => {
@@ -145,5 +145,38 @@ describe('wachttijd van de winkelzoeker (WEEK-127)', () => {
   });
   test('regressie: de zoekopdracht vraagt nog steeds de server-timeout die bij de wachttijd hoort', () => {
     assert.ok(bouwStraalQuery({ lat: 50.9, lon: 4.2 }).includes(`[timeout:${OVERPASS_SERVER_TIMEOUT_S}]`));
+  });
+});
+
+describe('overpassFout (WEEK-152)', () => {
+  test('een time-out (remark, lege elementen) is een fout, geen leeg resultaat', () => {
+    const uit = overpassFout({ elements: [], remark: 'runtime error: Query timed out in "query" at line 1 after 12 seconds.' });
+    assert.ok(uit?.includes('timed out'));
+  });
+
+  test('een geldig antwoord zonder winkels is geen fout', () => {
+    assert.equal(overpassFout({ elements: [] }), undefined);
+  });
+
+  test('een antwoord met winkels is geen fout', () => {
+    assert.equal(overpassFout({ elements: [{ tags: { name: 'Lidl', shop: 'supermarket' } }] }), undefined);
+  });
+
+  test('een leeg of onbekend antwoord is een fout', () => {
+    assert.ok(overpassFout(null));
+    assert.ok(overpassFout({ geen: 'elementen' }));
+  });
+
+  test('de server-timeout blijft binnen de wachttijd van de app (regressie)', () => {
+    assert.ok(OVERPASS_TIMEOUT_MS > OVERPASS_SERVER_TIMEOUT_S * 1000);
+    assert.equal(OVERPASS_SERVER_TIMEOUT_S, 20);
+  });
+});
+
+describe('winkeltypes in de zoekopdracht (WEEK-152)', () => {
+  test('enkel supermarkten, slagers, bakkers en groenteboeren worden opgevraagd', () => {
+    const q = bouwStraalQuery({ lat: 50.9, lon: 4.2 });
+    for (const tag of ['supermarket', 'butcher', 'bakery', 'greengrocer']) assert.ok(q.includes(tag), `mist ${tag}`);
+    assert.deepEqual(Object.keys(WINKEL_TAGS).sort(), ['bakery', 'butcher', 'greengrocer', 'supermarket']);
   });
 });
