@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.6] – 2026-10-20
+
+**Jira:** [WEEK-136](https://proqltc-1791495894841.atlassian.net/browse/WEEK-136) · **Confluence:** [WEEK-136 Boodschappenlijst: geen vaste items bij een nieuw weekplan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11599873)
+
+- Bij het genereren van een nieuw weekplan komen brood & beleg, fruit en huishouden niet meer op de boodschappenlijst.
+- Vaste items die al op de lijst stonden, verdwijnen bij een nieuw weekplan.
+
 ## [0.86.5] – 2026-10-20
 
 **Jira:** [WEEK-135](https://proqltc-1791495894841.atlassian.net/browse/WEEK-135) · **Confluence:** [WEEK-135 Frigo en lijst na koken van alle recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11534337)
