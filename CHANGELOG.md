@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.3] – 2026-10-20
+
+**Jira:** [WEEK-133](https://proqltc-1791495894841.atlassian.net/browse/WEEK-133) · **Confluence:** [WEEK-133 Weekmenu start: opnieuw beginnen of weekplan tonen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11436033)
+
+- De weekplanner start bij Periode als er nog geen weekplan is, of als alle recepten van het weekplan gekookt zijn.
+- In alle andere gevallen opent de planner het weekplan, ook als er nog niets bevestigd is.
+
 ## [0.86.2] – 2026-10-20
 
 **Jira:** [WEEK-132](https://proqltc-1791495894841.atlassian.net/browse/WEEK-132) · **Confluence:** [WEEK-132 Groepsteller bij lange titel op lijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11370497)

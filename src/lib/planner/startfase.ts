@@ -1,16 +1,16 @@
-import { alleBevestigdeGekookt, heeftBevestigdPlan } from '@/lib/planner/dagBevestigen';
 import type { Weekplan } from '@/lib/planner/types';
 
 export type StartFase = 'periode' | 'plan';
 
 /**
- * Waar de weekplanner begint (WEEK-100, WEEK-101, WEEK-125).
- * Enkel een plan met minstens één bevestigde dag, waarvan nog niet alle bevestigde dagen gekookt zijn, opent op het plan.
- * In alle andere gevallen (geen plan, geen bevestigde dag, of alle bevestigde dagen gekookt) start de gebruiker bij Periode.
+ * Waar de weekplanner begint (WEEK-100, WEEK-101, WEEK-133).
+ * Zonder weekplan, of als alle recepten van het weekplan gekookt zijn, start de gebruiker bij Periode.
+ * In alle andere gevallen opent de planner op het weekplan, ook als er nog niets bevestigd is.
  */
 export function startFase(plan: Weekplan | null): StartFase {
-  if (!plan || !heeftBevestigdPlan(plan)) return 'periode';
-  return alleBevestigdeGekookt(plan) ? 'periode' : 'plan';
+  if (!plan || plan.dagen.length === 0) return 'periode';
+  const alleGekookt = plan.dagen.every((d) => d.gedaan);
+  return alleGekookt ? 'periode' : 'plan';
 }
 
 // Onthoudt dat de gebruiker van de gezinssamenstelling kwam; bij terugkomst start de planner dan opnieuw (WEEK-100).
