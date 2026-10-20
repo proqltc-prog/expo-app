@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.14] – 2026-10-20
+
+**Jira:** [WEEK-144](https://proqltc-1791495894841.atlassian.net/browse/WEEK-144) · **Confluence:** [WEEK-144 Recepten op de lijst in kalendervolgorde](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12189697)
+
+- Op de lijst (weergave 'Per recept') staan de recepten in de volgorde van het weekplan, dus in de kalender, en niet meer op vaste weekdag.
+
 ## [0.86.13] – 2026-10-20
 
 **Jira:** [WEEK-143](https://proqltc-1791495894841.atlassian.net/browse/WEEK-143) · **Confluence:** [WEEK-143 Weekmenu: bevestigingspopup enkel bij zichtbare bevestigde recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12124161)
