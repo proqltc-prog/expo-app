@@ -17,6 +17,8 @@ export const es: Vertalingen = {
   'bereiding.sluit': 'Cerrar preparación',
   'bereiding.geen': 'No hay pasos disponibles para esta receta.',
   'bereiding.ingredienten': 'Ingredientes',
+  'bereiding.inFrigo': 'En la nevera',
+  'bereiding.deelsInFrigo': 'Parcialmente en la nevera',
 
   'tab.menu': 'Menú',
   'tab.menu.titel': 'Menú semanal',
