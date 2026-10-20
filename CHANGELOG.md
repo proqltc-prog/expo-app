@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.88.1] – 2026-10-20
+
+**Jira:** [WEEK-148](https://proqltc-1791495894841.atlassian.net/browse/WEEK-148) · **Confluence:** [WEEK-148 Winkels: resultaat per postcode bewaard en knop Opnieuw proberen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288020)
+
+- Winkels die al gezocht zijn, staan meteen klaar, ook na een herstart van de app. Een verouderd resultaat wordt op de achtergrond ververst.
+- Bij een fout bij het zoeken komt de knop 'Opnieuw proberen'.
+
 ## [0.87.0] – 2026-10-20
 
 **Jira:** [WEEK-146](https://proqltc-1791495894841.atlassian.net/browse/WEEK-146) · **Confluence:** [WEEK-146 Bereiding toont de ingrediënten van het gerecht](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12288002)

@@ -1,4 +1,8 @@
 // Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
+// Bewaart de resultaten per postcode op dit toestel (WEEK-148).
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { bewaarInCache, leesWinkelCache, WinkelCacheItem } from '@/lib/winkelcache';
+import { SLEUTEL } from '@/opslag/sleutels';
 import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
 import { eersteGeslaagd, metTimeout } from '@/lib/netwerk';
 import { bouwQuery, bouwStraalQuery, leesWinkels, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
@@ -56,4 +60,24 @@ export async function zoekPlaats(postcode: string): Promise<{ gemeente: string; 
   const antwoord = await fetch(url, { headers: NOMINATIM_HEADERS, signal: wacht.signal }).finally(() => wacht.klaar());
   if (!antwoord.ok) throw new Error(`Nominatim ${antwoord.status}`);
   return leesPlaats(await antwoord.json());
+}
+
+/** Het bewaarde resultaat van eerdere zoekopdrachten. Bij een leesfout: leeg, de zoeker vraagt dan gewoon opnieuw. */
+export async function laadWinkelCache(): Promise<WinkelCacheItem[]> {
+  try {
+    const ruw = await AsyncStorage.getItem(SLEUTEL.winkelCache);
+    return leesWinkelCache(ruw ? JSON.parse(ruw) : null);
+  } catch {
+    return [];
+  }
+}
+
+/** Bewaart het resultaat voor deze postcode. Mislukt het bewaren, dan merkt de gebruiker niets: de volgende zoekopdracht vult het opnieuw. */
+export async function bewaarWinkelCache(item: WinkelCacheItem): Promise<void> {
+  try {
+    const huidig = await laadWinkelCache();
+    await AsyncStorage.setItem(SLEUTEL.winkelCache, JSON.stringify(bewaarInCache(huidig, item)));
+  } catch {
+    // Bewaren mag het zoeken niet breken.
+  }
 }
