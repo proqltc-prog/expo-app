@@ -565,20 +565,8 @@ export default function Weekplanning() {
                         <Text style={bevestigd ? s.statusAan : s.statusWacht}>{t(bevestigd ? 'planning.bevestigd' : 'planning.nogTeBevestigen')}</Text>
                       )}
                     </View>
-                    <View style={s.naamRij}>
-                      <Text style={[s.naam, s.naamTekst]}>{recept.naam}</Text>
-                      {heeftBereiding && (
-                        <Pressable
-                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: recept.naam, minuten: String(recept.minuten) } })}
-                          accessibilityRole="button"
-                          accessibilityLabel={t('bereiding.icoon')}
-                          hitSlop={8}
-                          style={s.bereidingKnop}
-                        >
-                          <Ionicons name="book-outline" size={20} color={PETROL} />
-                        </Pressable>
-                      )}
-                    </View>
+                    {/* WEEK-151: de titel krijgt de volle breedte; het boekje staat op de rij met het label. */}
+                    <Text style={s.naam}>{recept.naam}</Text>
                     {!gedaan && uitFrigo && uitFrigo.length > 0 && (
                       <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
                     )}
@@ -599,6 +587,17 @@ export default function Weekplanning() {
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
+                      {heeftBereiding && (
+                        <Pressable
+                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: recept.naam, minuten: String(recept.minuten) } })}
+                          accessibilityRole="button"
+                          accessibilityLabel={t('bereiding.icoon')}
+                          hitSlop={8}
+                          style={s.bereidingKnop}
+                        >
+                          <Ionicons name="book-outline" size={20} color={PETROL} />
+                        </Pressable>
+                      )}
                     </View>
                     {/* WEEK-114: de knop Gekookt op een eigen regel, links uitgelijnd, zodat hij nooit buiten de kaart valt. */}
                     {bevestigd && (
@@ -694,8 +693,6 @@ const s = StyleSheet.create({
   kaartKop: { flexDirection: 'column', alignItems: 'flex-start', gap: 2 },
   naam: { fontSize: 17, fontWeight: '700', marginTop: 2, color: INKT },
   bevestigdTekst: { color: PETROL, fontWeight: '700', fontSize: 13, marginTop: 4 },
-  naamRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  naamTekst: { flex: 1 },
   bereidingKnop: { width: 40, height: 40, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
   rij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-start', gap: 8, marginTop: 8 },
   gedaanRij: { flexDirection: 'row', justifyContent: 'flex-start', marginTop: 6 },

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bereikDatums, dagenTussen, isGeldigeIso, isoVan, kortDatum, plandagenVoorDatums, weekdagVan } from '@/lib/planner/datums';
+import { bereikDatums, dagenTussen, isGeldigeIso, isoVan, kortDatum, plandagenVoorDatums, weekdagVan, geldigeBegin } from '@/lib/planner/datums';
 
 describe('datums', () => {
   test('isoVan geeft de lokale datum als YYYY-MM-DD', () => {
@@ -102,5 +102,23 @@ describe('plan met gekozen datums', () => {
     const k = normaliseerKeuzes({ datums: ['2026-10-21', '2026-10-19', '2026-10-19', 'x'], uitgesloten: ['2026-10-21'] });
     assert.deepEqual(k.datums, ['2026-10-19', '2026-10-21']);
     assert.deepEqual(k.uitgesloten, ['2026-10-21']);
+  });
+});
+
+describe('geldigeBegin (WEEK-150)', () => {
+  test('een periode vanaf vandaag blijft zoals ze is', () => {
+    assert.deepEqual(geldigeBegin({ van: '2026-10-20', tot: '2026-10-25' }, '2026-10-20'), { van: '2026-10-20', tot: '2026-10-25' });
+  });
+
+  test('een startdag in het verleden wordt weggelaten, met de bijbehorende laatste dag', () => {
+    assert.deepEqual(geldigeBegin({ van: '2026-10-19', tot: '2026-10-25' }, '2026-10-20'), {});
+  });
+
+  test('een laatste dag vóór de startdag wordt weggelaten (regressie)', () => {
+    assert.deepEqual(geldigeBegin({ van: '2026-10-21', tot: '2026-10-20' }, '2026-10-20'), { van: '2026-10-21' });
+  });
+
+  test('zonder bewaarde periode is er niets voorgeselecteerd', () => {
+    assert.deepEqual(geldigeBegin(undefined, '2026-10-20'), {});
   });
 });
