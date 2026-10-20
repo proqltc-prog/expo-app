@@ -14,6 +14,11 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 - Winkels die al gezocht zijn, staan meteen klaar, ook na een herstart van de app. Een verouderd resultaat wordt op de achtergrond ververst.
 - Bij een fout bij het zoeken komt de knop 'Opnieuw proberen'.
+## [0.88.0] – 2026-10-20
+
+**Jira:** [WEEK-147](https://proqltc-1791495894841.atlassian.net/browse/WEEK-147) · **Confluence:** [WEEK-147 Bereiding: vinkje bij ingrediënten die al in de frigo staan](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12189715)
+
+- Op de bereidingspagina staat een vinkje naast ingrediënten die al volledig in de frigo liggen, en de tekst 'Deels in de frigo' bij gedeeltelijk aanwezige ingrediënten.
 
 ## [0.87.0] – 2026-10-20
 

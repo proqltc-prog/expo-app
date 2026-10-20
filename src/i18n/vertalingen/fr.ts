@@ -17,6 +17,8 @@ export const fr: Vertalingen = {
   'bereiding.sluit': 'Fermer la préparation',
   'bereiding.geen': 'Aucune étape n’est disponible pour cette recette.',
   'bereiding.ingredienten': 'Ingrédients',
+  'bereiding.inFrigo': 'Dans le frigo',
+  'bereiding.deelsInFrigo': 'Partiellement dans le frigo',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Menu de la semaine',

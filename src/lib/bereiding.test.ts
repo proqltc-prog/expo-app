@@ -1,10 +1,11 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bereidingVoor, ingredientenVoor, toonBereidingsIcoon } from '@/lib/bereiding';
+import { bereidingVoor, ingredientenMetFrigo, ingredientenVoor, toonBereidingsIcoon } from '@/lib/bereiding';
 import { BEREIDINGEN } from '@/data/bereidingen';
 import { RECEPTENBANK } from '@/data/receptenbank';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import type { Weekplan } from '@/lib/planner/types';
+import type { FrigoItem } from '@/lib/frigo';
 
 const eigen: EigenRecept = {
   id: 'eigen:abc',
@@ -98,5 +99,35 @@ describe('ingredientenVoor (WEEK-146)', () => {
   test('een gerecht dat niet in het plan staat, of geen plan, geeft een lege lijst', () => {
     assert.deepEqual(ingredientenVoor(plan, 'db-999'), []);
     assert.deepEqual(ingredientenVoor(null, 'db-1'), []);
+  });
+});
+
+describe('ingredientenMetFrigo (WEEK-147)', () => {
+  const ingredienten = [
+    { naam: 'Pasta', hoeveelheid: 400, eenheid: 'g' },
+    { naam: 'Tomaat', hoeveelheid: 3, eenheid: 'stuk' },
+    { naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk' },
+  ];
+  const frigo = [
+    { id: '1', naam: 'pasta', hoeveelheid: 500, eenheid: 'g', afdeling: 'droogwaren', toegevoegdOp: '2026-10-01T10:00:00Z' },
+    { id: '2', naam: 'Tomaat', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: '2026-10-01T10:00:00Z' },
+  ] as unknown as FrigoItem[];
+
+  test('geheel gedekt, deels gedekt en niet in de frigo worden onderscheiden', () => {
+    assert.deepEqual(
+      ingredientenMetFrigo(ingredienten, frigo).map((i) => i.dekking),
+      ['geheel', 'deels', 'niet'],
+    );
+  });
+
+  test('behoudt naam, hoeveelheid en eenheid van het ingrediënt', () => {
+    assert.deepEqual(ingredientenMetFrigo(ingredienten, frigo)[0], { naam: 'Pasta', hoeveelheid: 400, eenheid: 'g', dekking: 'geheel' });
+  });
+
+  test('zonder frigo is niets gedekt (regressie)', () => {
+    assert.deepEqual(
+      ingredientenMetFrigo(ingredienten, []).map((i) => i.dekking),
+      ['niet', 'niet', 'niet'],
+    );
   });
 });

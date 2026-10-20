@@ -4,10 +4,12 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { hoeveelheidTekst } from '@/i18n';
-import { bereidingVoor, ingredientenVoor } from '@/lib/bereiding';
+import { bereidingVoor, ingredientenMetFrigo, ingredientenVoor } from '@/lib/bereiding';
+import type { FrigoItem } from '@/lib/frigo';
 import { EigenRecept } from '@/lib/eigenrecepten';
 import type { DbRecept } from '@/lib/planner/db';
 import type { Weekplan } from '@/lib/planner/types';
+import { laadFrigo } from '@/opslag/frigo';
 import { laadPlan } from '@/opslag/plan';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
@@ -29,20 +31,23 @@ export default function Bereiding() {
   const [geladen, setGeladen] = useState(false);
   // WEEK-146: de ingrediënten komen uit het weekplan, met de hoeveelheden al voor het gezin.
   const [plan, setPlan] = useState<Weekplan | null>(null);
+  // WEEK-147: wat er al in de frigo ligt, wordt bij elk ingrediënt getoond.
+  const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[]), laadPlan().catch(() => null)]).then(([lijst, dbLijst, huidigPlan]) => {
+    Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[]), laadPlan().catch(() => null), laadFrigo().catch(() => [] as FrigoItem[])]).then(([lijst, dbLijst, huidigPlan, frigoLijst]) => {
       setEigen(lijst);
       setDb(dbLijst);
       setPlan(huidigPlan);
+      setFrigo(frigoLijst);
       setGeladen(true);
     });
   }, []);
 
   const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);
   const laatste = stappen.length - 1;
-  const ingredienten = useMemo(() => ingredientenVoor(plan, id ?? ''), [plan, id]);
+  const ingredienten = useMemo(() => ingredientenMetFrigo(ingredientenVoor(plan, id ?? ''), frigo), [plan, id, frigo]);
 
   if (geladen && stappen.length === 0) {
     return (
@@ -79,6 +84,13 @@ export default function Bereiding() {
             {ingredienten.map((ing, n) => (
               <View key={n} style={s.ingRij}>
                 <Text style={s.ingNaam}>{ing.naam}</Text>
+                {ing.dekking === 'geheel' ? (
+                  <View style={s.ingFrigo} accessibilityLabel={t('bereiding.inFrigo')}>
+                    <Ionicons name="checkmark-circle" size={16} color={PETROL} />
+                  </View>
+                ) : ing.dekking === 'deels' ? (
+                  <Text style={s.ingDeels}>{t('bereiding.deelsInFrigo')}</Text>
+                ) : null}
                 <Text style={s.ingHoeveelheid}>{hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
               </View>
             ))}
@@ -139,6 +151,8 @@ const s = StyleSheet.create({
   ingKop: { fontSize: 13, fontWeight: '800', color: PETROL, letterSpacing: 0.5, marginBottom: 4 },
   ingRij: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: LIJN, paddingVertical: 7 },
   ingNaam: { flex: 1, minWidth: 0, fontSize: 15, color: INKT },
+  ingFrigo: { marginLeft: 8 },
+  ingDeels: { marginLeft: 8, fontSize: 11, fontWeight: '700', color: MUTED },
   ingHoeveelheid: { fontSize: 15, fontWeight: '700', color: MUTED, marginLeft: 12 },
   lijst: { gap: 12 },
   stap: { flexDirection: 'row', gap: 14, backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, borderRadius: 18, padding: 14 },
