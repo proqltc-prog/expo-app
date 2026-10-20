@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.86.13] – 2026-10-20
+
+**Jira:** [WEEK-143](https://proqltc-1791495894841.atlassian.net/browse/WEEK-143) · **Confluence:** [WEEK-143 Weekmenu: bevestigingspopup enkel bij zichtbare bevestigde recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12124161)
+
+- De popup 'Er zijn al bevestigde dagen' bij een nieuw weekmenu verschijnt enkel als er bevestigde recepten zichtbaar zijn.
+
 ## [0.86.12] – 2026-10-20
 
 **Jira:** [WEEK-142](https://proqltc-1791495894841.atlassian.net/browse/WEEK-142) · **Confluence:** [WEEK-142 Android terugknop op het weekmenu sluit de app](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/11763714)

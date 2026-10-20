@@ -43,6 +43,15 @@ export function zichtbaarWeekmenu(plan: Weekplan | null): Weekplan | null {
   return plan.dagen.every((d) => d.gedaan) ? null : plan;
 }
 
+/**
+ * WEEK-143: vraagt een nieuw weekmenu eerst om bevestiging? Enkel als er op het zichtbare weekmenu
+ * een bevestigd recept staat. Gekookte of verborgen recepten tellen niet mee.
+ */
+export function vraagtBevestigingVoorNieuwPlan(plan: Weekplan | null): boolean {
+  const zichtbaar = zichtbaarWeekmenu(plan);
+  return !!zichtbaar && heeftBevestigdPlan(zichtbaar);
+}
+
 /** Is er minstens één dag bevestigd? Dan vraagt een nieuw weekplan eerst een bevestiging van de reset. */
 export function heeftBevestigdPlan(plan: Weekplan): boolean {
   return plan.dagen.some((d) => d.bevestigd);
