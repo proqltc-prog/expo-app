@@ -33,7 +33,7 @@ import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -300,17 +300,15 @@ export default function Weekplanning() {
     );
     if (!bewaard) return;
     setPlan(bewaard);
+    await zetLijstBijPlan(bewaard);
+  };
+
+  // WEEK-134: de lijst bevat enkel de ingrediënten van bevestigde recepten die nog niet gekookt zijn.
+  // WEEK-131: bij het bevestigen komen geen vaste items op de lijst.
+  const zetLijstBijPlan = async (p: Weekplan) => {
     const frigo = await laadFrigo();
     await wijzigLijst((bestaand) =>
-      voegPlanToe(
-        bestaand,
-        bevestigdeDagen(bewaard),
-        taal,
-        (items) => trekFrigoAf(items, frigo),
-        planSleutel(bewaard),
-        // WEEK-131: bij het bevestigen komen enkel de ingrediënten van het recept op de lijst, geen vaste items.
-        false
-      )
+      voegPlanToe(bestaand, openBevestigdeDagen(p), taal, (items) => trekFrigoAf(items, frigo), planSleutel(p), false)
     );
   };
 
@@ -322,7 +320,11 @@ export default function Weekplanning() {
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
       const nieuw = await wijzigPlanEnFrigo((huidig, frigo) => wisselGedaan(huidig, frigo, index, verwacht));
-      if (nieuw) setPlan(nieuw);
+      if (nieuw) {
+        setPlan(nieuw);
+        // WEEK-134: een gekookt recept verdwijnt van de lijst.
+        await zetLijstBijPlan(nieuw);
+      }
       // WEEK-125: is het laatste bevestigde recept gekookt, dan toont de planner weer de periode-kalender.
       if (nieuw && alleBevestigdeGekookt(nieuw)) setFase('periode');
     } finally {

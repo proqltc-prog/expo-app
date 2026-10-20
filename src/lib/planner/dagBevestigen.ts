@@ -19,6 +19,14 @@ export function bevestigdeDagen(plan: Weekplan): PlanDag[] {
   return plan.dagen.filter((d) => d.bevestigd);
 }
 
+/**
+ * De bevestigde dagen die nog niet gekookt zijn: enkel die horen op de boodschappenlijst (WEEK-134).
+ * Gekookte recepten zijn al uit de frigo gehaald en verdwijnen van de lijst.
+ */
+export function openBevestigdeDagen(plan: Weekplan): PlanDag[] {
+  return plan.dagen.filter((d) => d.bevestigd && !d.gedaan);
+}
+
 /** Is er minstens één dag bevestigd? Dan vraagt een nieuw weekplan eerst een bevestiging van de reset. */
 export function heeftBevestigdPlan(plan: Weekplan): boolean {
   return plan.dagen.some((d) => d.bevestigd);

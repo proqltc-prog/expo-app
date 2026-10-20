@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -97,5 +97,21 @@ describe('alleBevestigdeGekookt (WEEK-125)', () => {
   });
   test('regressie: één bevestigde dag nog niet gekookt, is nee', () => {
     assert.equal(alleBevestigdeGekookt(plan([dag({ bevestigd: true, gedaan: true }), dag({ bevestigd: true })])), false);
+  });
+});
+
+describe('alleen niet-gekookte bevestigde dagen op de lijst (WEEK-134)', () => {
+  test('een gekookte bevestigde dag hoort niet meer bij de lijst', () => {
+    const p = plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })]);
+    assert.deepEqual(openBevestigdeDagen(p).map((d) => d.dag), ['dinsdag']);
+  });
+
+  test('regressie: bevestigdeDagen houdt gekookte dagen nog wel vast voor de planner', () => {
+    const p = plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })]);
+    assert.equal(bevestigdeDagen(p).length, 2);
+  });
+
+  test('een niet-bevestigde dag komt nooit op de lijst', () => {
+    assert.deepEqual(openBevestigdeDagen(plan([dag({ dag: 'maandag' })])), []);
   });
 });
