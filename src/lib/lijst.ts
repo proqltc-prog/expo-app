@@ -4,6 +4,7 @@ import { VAST_AFDELING, VASTE_ITEMS } from '@/data/vasteItems';
 import { Sleutel, Taal, vertaal } from '@/i18n';
 import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { DagCode, PlanDag, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
+import { dagenInTaal } from '@/lib/planner/vertaal';
 
 // Pure logica voor de boodschappenlijst (zonder opslag), zodat ze los testbaar is.
 // Opslag op het toestel staat in src/opslag/lijst.ts.
@@ -66,7 +67,8 @@ export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): Lijst
   const items: LijstItem[] = [];
   for (const { dag, recept } of dagen) {
     for (const ing of recept.ingredienten) {
-      const id = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${klein(ing.naam)}-${ing.eenheid}`;
+      // WEEK-154: het id volgt de vaste code (niet de taalafhankelijke naam), zodat afvinken en frigo blijven kloppen na een taalwissel.
+      const id = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${klein(ing.code ?? ing.naam)}-${ing.eenheid}`;
       const bestaand = items.find((i) => i.id === id);
       if (bestaand) {
         bestaand.hoeveelheid = Math.round(((bestaand.hoeveelheid ?? 0) + ing.hoeveelheid) * 100) / 100;
@@ -85,6 +87,22 @@ export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): Lijst
     }
   }
   return items;
+}
+
+/**
+ * Zet de namen van de weekmenu-items op de gekozen taal (WEEK-154). Hoeveelheden, afvinkstatus en frigo blijven
+ * ongewijzigd; geeft dezelfde lijst terug als er niets verandert.
+ */
+export function hernoemLijst(items: readonly LijstItem[], dagen: readonly PlanDag[], taal: Taal, sleutel?: string): LijstItem[] {
+  const namen = new Map(itemsUitPlan(dagenInTaal(dagen, taal), sleutel).map((i) => [i.id, i.naam]));
+  let veranderd = false;
+  const nieuw = items.map((i) => {
+    const naam = i.recept ? namen.get(i.id) : undefined;
+    if (naam === undefined || naam === i.naam) return i;
+    veranderd = true;
+    return { ...i, naam };
+  });
+  return veranderd ? nieuw : (items as LijstItem[]);
 }
 
 /** De vaste items (ontbijt, school, huishouden) in de taal van de gebruiker. */
@@ -120,7 +138,7 @@ export function voegPlanToe(
   metVasteItems: boolean = true
 ): LijstItem[] {
   const oud = new Map(bestaand.map((i) => [i.id, i]));
-  const volledig = itemsUitPlan(dagen, sleutel);
+  const volledig = itemsUitPlan(dagenInTaal(dagen, taal), sleutel);
   const receptNamen = new Set(volledig.map((i) => klein(i.naam)));
   const uitPlan = aanpassing(volledig).map((i) => {
     const was = oud.get(i.id);

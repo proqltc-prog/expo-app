@@ -6,6 +6,7 @@ import type { EigenRecept } from '@/lib/eigenrecepten';
 import { bereidingVoorDbRecept, type DbRecept } from '@/lib/planner/db';
 import { verdeelFrigo, type Dekking, type FrigoItem } from '@/lib/frigo';
 import type { Weekplan } from '@/lib/planner/types';
+import { ingredientenInTaal } from '@/lib/planner/vertaal';
 
 /**
  * De bereidingsstappen van een maaltijd, of null als er geen bekend zijn.
@@ -48,10 +49,11 @@ export type BereidingIngredient = { naam: string; hoeveelheid: number; eenheid: 
  * De ingrediënten van een gerecht uit het weekplan, in de volgorde van het recept (WEEK-146).
  * Het plan bevat de hoeveelheden al voor het gezin, dus die tonen we zoals ze zijn. Staat het gerecht niet in het plan, dan is de lijst leeg.
  */
-export function ingredientenVoor(plan: Weekplan | null, receptId: string): BereidingIngredient[] {
+export function ingredientenVoor(plan: Weekplan | null, receptId: string, taal: Taal = 'nl'): BereidingIngredient[] {
   const dag = plan?.dagen.find((d) => d.recept.id === receptId);
   if (!dag) return [];
-  return dag.recept.ingredienten.map(({ naam, hoeveelheid, eenheid }) => ({ naam, hoeveelheid, eenheid }));
+  // WEEK-154: de namen in de gekozen taal; hoeveelheden blijven zoals ze zijn.
+  return ingredientenInTaal(dag.recept, taal).map(({ naam, hoeveelheid, eenheid }) => ({ naam, hoeveelheid, eenheid }));
 }
 
 /** Een ingrediënt met de dekking uit de frigo: geheel, deels of niet (WEEK-147). */

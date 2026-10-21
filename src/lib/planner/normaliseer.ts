@@ -4,7 +4,7 @@ import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
 import { MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
 import { normaliseerMomenten } from './moment';
-import { isTaal } from '@/i18n';
+import { isTaal, type Taal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { normaliseerVermijd } from './vermijden';
 import { normaliseerPeriode, PERIODE_STANDAARD } from './periode';
@@ -16,13 +16,27 @@ const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
 const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const tekst = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 
+/** Vertalingen van een plan-item; onbekende talen en lege teksten vallen weg (WEEK-154). */
+function normaliseerVertalingen(ruw: unknown): Partial<Record<Taal, string>> | undefined {
+  if (!isObject(ruw)) return undefined;
+  const uit: Partial<Record<Taal, string>> = {};
+  for (const [taal, waarde] of Object.entries(ruw)) {
+    if (isTaal(taal) && tekst(waarde)) uit[taal] = tekst(waarde);
+  }
+  return Object.keys(uit).length ? uit : undefined;
+}
+
 export function normaliseerIngredient(ruw: unknown): PlanIngredient | null {
   if (!isObject(ruw)) return null;
   const naam = tekst(ruw.naam);
   const hoeveelheid = typeof ruw.hoeveelheid === 'number' && Number.isFinite(ruw.hoeveelheid) && ruw.hoeveelheid >= 0 ? ruw.hoeveelheid : 0;
   if (!naam) return null;
   const afdeling: Afdeling = AFDELINGEN.includes(ruw.afdeling as Afdeling) ? (ruw.afdeling as Afdeling) : 'droge-voeding';
-  return { naam, hoeveelheid, eenheid: tekst(ruw.eenheid), afdeling };
+  const ingredient: PlanIngredient = { naam, hoeveelheid, eenheid: tekst(ruw.eenheid), afdeling };
+  if (tekst(ruw.code)) ingredient.code = tekst(ruw.code);
+  const namen = normaliseerVertalingen(ruw.namen);
+  if (namen) ingredient.namen = namen;
+  return ingredient;
 }
 
 export function normaliseerRecept(ruw: unknown): PlanRecept | null {
@@ -35,7 +49,7 @@ export function normaliseerRecept(ruw: unknown): PlanRecept | null {
   if (!ingredienten.length) return null;
   const minuten = typeof ruw.minuten === 'number' && ruw.minuten > 0 && ruw.minuten < 24 * 60 ? Math.round(ruw.minuten) : 30;
   const stijlen = Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [];
-  return {
+  const recept: PlanRecept = {
     id: tekst(ruw.id) || naam.toLowerCase().replace(/\s+/g, '-'),
     naam,
     soort: ruw.soort as Soort,
@@ -44,6 +58,9 @@ export function normaliseerRecept(ruw: unknown): PlanRecept | null {
     basis: typeof ruw.basis === 'string' ? (ruw.basis as PlanRecept['basis']) : undefined,
     ingredienten,
   };
+  const titels = normaliseerVertalingen(ruw.titels);
+  if (titels) recept.titels = titels;
+  return recept;
 }
 
 /** Leest een bewaard weekplan in; geeft null als het onbruikbaar is. */

@@ -7,6 +7,7 @@ import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe } from '@/lib/lijst';
 import { planLokaal } from '@/lib/planner/lokaal';
+import { inTaal } from '@/lib/planner/vertaal';
 import { resetDagLokaal } from '@/lib/planner/reset';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
 import { laadDbRecepten } from '@/opslag/receptenbank';
@@ -566,7 +567,7 @@ export default function Weekplanning() {
                       )}
                     </View>
                     {/* WEEK-151: de titel krijgt de volle breedte; het boekje staat op de rij met het label. */}
-                    <Text style={s.naam}>{recept.naam}</Text>
+                    <Text style={s.naam}>{inTaal(recept, taal).naam}</Text>
                     {!gedaan && uitFrigo && uitFrigo.length > 0 && (
                       <Text style={s.uitFrigo}>{t('planning.uitFrigo', { namen: uitFrigo.join(', ') })}</Text>
                     )}
@@ -589,7 +590,7 @@ export default function Weekplanning() {
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
                       {heeftBereiding && (
                         <Pressable
-                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: recept.naam, minuten: String(recept.minuten) } })}
+                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
                           accessibilityRole="button"
                           accessibilityLabel={t('bereiding.icoon')}
                           hitSlop={8}
@@ -608,7 +609,7 @@ export default function Weekplanning() {
                         disabled={bezigGedaan !== null}
                         accessibilityRole="checkbox"
                         accessibilityState={{ checked: !!gedaan }}
-                        accessibilityLabel={t('planning.gedaanLabel', { recept: recept.naam })}
+                        accessibilityLabel={t('planning.gedaanLabel', { recept: inTaal(recept, taal).naam })}
                         hitSlop={6}
                       >
                         <Ionicons name={gedaan ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={gedaan ? '#fff' : PETROL} />

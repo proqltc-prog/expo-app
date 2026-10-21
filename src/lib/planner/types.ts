@@ -24,6 +24,10 @@ export type PlanIngredient = {
   /** g, ml, stuk, teentje — of een vrije eenheid uit de AI. */
   eenheid: string;
   afdeling: Afdeling;
+  /** Vaste code uit de ingrediëntenlijst of de database (WEEK-154): de stabiele sleutel, los van de taal. */
+  code?: string;
+  /** De naam in elke taal, vastgelegd bij het maken van het plan (WEEK-154). */
+  namen?: Partial<Record<Taal, string>>;
 };
 
 /** Een recept zoals het in een weekplan staat: namen al in de taal van de gebruiker, hoeveelheden voor het hele gezin. */
@@ -36,6 +40,8 @@ export type PlanRecept = {
   stijlen: StijlCode[];
   basis?: Basis;
   ingredienten: PlanIngredient[];
+  /** De titel in elke taal, vastgelegd bij het maken van het plan (WEEK-154). Ontbreekt bij oude plannen. */
+  titels?: Partial<Record<Taal, string>>;
 };
 
 export type PlanDag = {
