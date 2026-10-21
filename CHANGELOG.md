@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.90.1] – 2026-10-21
+
+**WEEK-155** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-155) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12976129)
+
+- Vaste items (brood en beleg, fruit, huishouden, school) zijn verwijderd uit de app: een nieuw weekplan zet ze niet meer op de lijst, en oude kopieën worden bij het inlezen weggelaten.
+
 ## [0.90.0] – 2026-10-21
 
 **WEEK-154** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-154) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12943361)

@@ -1,8 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { trekFrigoAf } from '@/lib/frigo';
-import { alleenHuidigPlan, aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, telRegels, vasteItems, vinkAf, voegPlanToe } from '@/lib/lijst';
-import { VASTE_ITEMS } from '@/data/vasteItems';
+import { alleenHuidigPlan, aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, telRegels, vinkAf, voegPlanToe } from '@/lib/lijst';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
 const recept = (naam: string, ingredienten: PlanRecept['ingredienten']): PlanRecept => ({
@@ -20,8 +19,6 @@ const dagen: PlanDag[] = [
   ]) },
 ];
 
-const AANTAL_VAST = VASTE_ITEMS.flatMap((c) => c.items).length;
-
 describe('itemsUitPlan', () => {
   test('één item per ingrediënt per recept, gekoppeld aan dag en recept', () => {
     const items = itemsUitPlan(dagen);
@@ -33,28 +30,26 @@ describe('itemsUitPlan', () => {
   });
 });
 
-describe('schoolitems staan niet standaard op de lijst (WEEK-123)', () => {
-  test('een nieuw weekplan zet geen koekjes of drinkbrikjes op de lijst', () => {
+describe('vaste items bestaan niet meer (WEEK-155)', () => {
+  test('een nieuw weekplan zet geen vaste items op de lijst', () => {
     const lijst = voegPlanToe([], dagen, 'nl');
-    assert.equal(lijst.some((i) => i.categorie === 'school'), false);
-    assert.equal(lijst.some((i) => i.naam === 'koekjes' || i.naam === 'drinkbrikjes'), false);
-    assert.equal(vasteItems('nl').some((i) => i.categorie === 'school'), false);
+    assert.equal(lijst.filter((i) => !i.recept).length, 0);
   });
-  test('regressie: ontbijt-, fruit- en huishoudelijke vaste items blijven op de lijst', () => {
-    const lijst = voegPlanToe([], dagen, 'nl');
-    assert.ok(lijst.some((i) => i.categorie === 'brood-beleg'));
-    assert.ok(lijst.some((i) => i.categorie === 'fruit'));
-    assert.ok(lijst.some((i) => i.categorie === 'huishouden'));
+  test('oude vaste items uit een opgeslagen lijst worden bij het inlezen weggelaten', () => {
+    const oud = [
+      { id: 'brood-beleg-brood', naam: 'brood', categorie: 'brood-beleg', afgevinkt: false },
+      { id: 'school-koekjes', naam: 'koekjes', categorie: 'school', afgevinkt: false },
+      { id: 'extra-9', naam: 'Zout', categorie: 'extra', afgevinkt: false },
+    ];
+    assert.deepEqual(normaliseerLijst(oud).map((i) => i.id), ['extra-9']);
   });
 });
 
 describe('voegPlanToe (WEEK-15)', () => {
-  test('zet alle ingrediënten van het plan en de vaste items op een lege lijst', () => {
+  test('zet alle ingrediënten van het plan op een lege lijst', () => {
     const lijst = voegPlanToe([], dagen, 'nl');
     assert.equal(lijst.filter((i) => i.recept).length, 4);
-    // "brood" zit in een recept, dus het vaste item brood komt er niet apart bij
-    assert.equal(lijst.filter((i) => !i.recept).length, AANTAL_VAST - 1);
-    assert.equal(lijst.filter((i) => i.naam === 'brood').length, 1);
+    assert.equal(lijst.filter((i) => !i.recept).length, 0);
   });
 
   test('opnieuw overzetten geeft geen dubbels en behoudt vinkjes', () => {
@@ -71,8 +66,6 @@ describe('voegPlanToe (WEEK-15)', () => {
     const lijst = voegPlanToe(eerst, ander, 'nl');
     assert.deepEqual(lijst.filter((i) => i.recept).map((i) => i.naam), ['prei']);
     assert.ok(!lijst.some((i) => i.naam.toLowerCase() === 'pasta'));
-    // brood zit niet meer in een recept: nu komt het vaste item terug
-    assert.ok(lijst.some((i) => i.id === 'brood-beleg-brood'));
   });
 
   test('zelf toegevoegde en gescande items blijven staan, met hun vinkje', () => {
@@ -85,13 +78,13 @@ describe('voegPlanToe (WEEK-15)', () => {
     assert.ok(lijst.some((i) => i.id === 'scan-1' && i.afgevinkt));
   });
 
-  test('een afgevinkt vast item blijft afgevinkt en komt er niet nog eens bij', () => {
+  test('een afgevinkt ingrediënt blijft afgevinkt en komt er niet nog eens bij', () => {
     const eerst = voegPlanToe([], dagen, 'nl');
-    const appels = eerst.find((i) => i.id === 'fruit-appels')!;
-    const lijst = voegPlanToe(vinkAf(eerst, [appels.id], true), dagen, 'nl');
-    const alleAppels = lijst.filter((i) => i.id === 'fruit-appels');
-    assert.equal(alleAppels.length, 1);
-    assert.equal(alleAppels[0].afgevinkt, true);
+    const ui = eerst.find((i) => i.recept)!;
+    const lijst = voegPlanToe(vinkAf(eerst, [ui.id], true), dagen, 'nl');
+    const alleUi = lijst.filter((i) => i.id === ui.id);
+    assert.equal(alleUi.length, 1);
+    assert.equal(alleUi[0].afgevinkt, true);
   });
 
   test('items uit een oudere versie zonder receptkoppeling worden vervangen', () => {
@@ -100,10 +93,6 @@ describe('voegPlanToe (WEEK-15)', () => {
     assert.ok(!lijst.some((i) => i.naam === 'rijst'));
   });
 
-  test('vaste items in de taal van de gebruiker', () => {
-    assert.ok(voegPlanToe([], [], 'fr').some((i) => i.categorie === 'fruit' && i.naam === 'pommes'));
-    assert.ok(vasteItems('de').some((i) => i.naam === 'Zahnpasta'));
-  });
 });
 
 describe('samenvoegen', () => {
@@ -182,13 +171,10 @@ describe('weergaven (WEEK-16)', () => {
     assert.equal(namen[namen.length - 1], 'overig');
     const overig = perAfdeling(metEigen()).at(-1)!;
     assert.ok(overig.regels.some((r) => r.naam === 'kaarsjes'));
-    assert.ok(overig.regels.some((r) => r.naam === 'tandpasta'));
   });
 
-  test('vaste items liggen in de juiste afdeling, ook als ze uit een oudere versie komen', async () => {
+  test('een item zonder afdeling komt onder overig', async () => {
     const { afdelingVan } = await import('@/lib/lijst');
-    assert.equal(afdelingVan({ id: 'fruit-appels', naam: 'appels', categorie: 'fruit', afgevinkt: false }), 'groenten-fruit');
-    assert.equal(afdelingVan({ id: 'huishouden-wc-papier', naam: 'wc-papier', categorie: 'huishouden', afgevinkt: false }), 'overig');
     assert.equal(afdelingVan({ id: 'extra-9', naam: 'x', categorie: 'extra', afgevinkt: false }), 'overig');
   });
 
@@ -377,38 +363,6 @@ describe('bevestigen zet enkel de ontbrekende ingrediënten op de lijst (WEEK-10
   });
 });
 
-describe('een nieuw weekplan zet geen vaste items op de lijst (WEEK-136)', () => {
-  test('met metVasteItems false komen brood & beleg, fruit en huishouden niet op de lijst', () => {
-    const lijst = voegPlanToe([], dagen, 'nl', undefined, 'nieuw', false);
-    assert.equal(lijst.some((i) => i.categorie === 'brood-beleg' || i.categorie === 'fruit' || i.categorie === 'huishouden'), false);
-    assert.equal(lijst.filter((i) => i.recept).length, 4);
-  });
-  test('vaste items die al op de lijst staan, verdwijnen bij een nieuw weekplan', () => {
-    const eerst = voegPlanToe([], dagen, 'nl', undefined, 'oud');
-    assert.ok(eerst.some((i) => i.categorie === 'fruit'));
-    const opnieuw = voegPlanToe(eerst, [], 'nl', undefined, 'nieuw', false);
-    assert.equal(opnieuw.some((i) => i.categorie === 'brood-beleg' || i.categorie === 'fruit' || i.categorie === 'huishouden'), false);
-  });
-  test('regressie: vaste items die zelf toegevoegd of afgevinkt zijn, blijven bij bevestigen gewoon bewaard', () => {
-    const eerst = voegPlanToe([], dagen, 'nl', undefined, 'oud');
-    const fruit = eerst.find((i) => i.categorie === 'fruit')!;
-    const afgevinkt = vinkAf(eerst, [fruit.id], true);
-    const opnieuw = voegPlanToe(afgevinkt, dagen, 'nl', undefined, 'oud');
-    assert.equal(opnieuw.some((i) => i.id === fruit.id && i.afgevinkt), true);
-  });
-});
-
-describe('bevestigen zet geen vaste items op de lijst (WEEK-131)', () => {
-  test('zonder vaste items komen enkel de ingrediënten van het plan op de lijst', () => {
-    const lijst = voegPlanToe([], dagen, 'nl', undefined, undefined, false);
-    assert.equal(lijst.filter((i) => i.recept).length, 4);
-    assert.equal(lijst.filter((i) => !i.recept).length, 0);
-  });
-  test('regressie: met vaste items (plan aanmaken) blijft het gedrag zoals het was', () => {
-    const lijst = voegPlanToe([], dagen, 'nl');
-    assert.equal(lijst.filter((i) => !i.recept).length, AANTAL_VAST - 1);
-  });
-});
 
 describe('gekookt recept verdwijnt van de lijst (WEEK-134)', () => {
   const ing = (naam: string) => ({ naam, hoeveelheid: 100, eenheid: 'g', afdeling: 'droge-voeding' as const });
@@ -425,15 +379,15 @@ describe('gekookt recept verdwijnt van de lijst (WEEK-134)', () => {
   test('na het koken van recept 1 blijven alleen de ingrediënten van recept 2 op de lijst', () => {
     const r1 = recept('Pasta', ['pasta', 'tomaat']);
     const r2 = recept('Soep', ['wortel', 'ui']);
-    const metBeide = voegPlanToe([], [dag('maandag', r1), dag('dinsdag', r2)], 'nl', undefined, 'p1', false);
+    const metBeide = voegPlanToe([], [dag('maandag', r1), dag('dinsdag', r2)], 'nl', undefined, 'p1');
     assert.ok(metBeide.some((i) => i.naam === 'pasta'));
-    const naKoken = voegPlanToe(metBeide, [dag('dinsdag', r2)], 'nl', undefined, 'p1', false);
+    const naKoken = voegPlanToe(metBeide, [dag('dinsdag', r2)], 'nl', undefined, 'p1');
     assert.deepEqual(naKoken.map((i) => i.naam).sort(), ['ui', 'wortel']);
   });
 
   test('regressie: bij het bevestigen van een tweede recept komen de vaste items nog steeds niet op de lijst', () => {
     const r1 = recept('Pasta', ['pasta']);
-    const lijst = voegPlanToe([], [dag('maandag', r1)], 'nl', undefined, 'p1', false);
+    const lijst = voegPlanToe([], [dag('maandag', r1)], 'nl', undefined, 'p1');
     assert.ok(lijst.every((i) => i.recept || i.categorie === 'avondeten' || !i.categorie.startsWith('brood')));
     assert.equal(lijst.filter((i) => i.categorie !== 'avondeten' && !i.recept).length, 0);
   });

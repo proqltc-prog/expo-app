@@ -1,7 +1,6 @@
 import type { Afdeling } from '@/data/ingredienten';
 import { AFDELINGEN } from '@/data/ingredienten';
-import { VAST_AFDELING, VASTE_ITEMS } from '@/data/vasteItems';
-import { Sleutel, Taal, vertaal } from '@/i18n';
+import { Sleutel, Taal } from '@/i18n';
 import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { DagCode, PlanDag, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
 import { dagenInTaal } from '@/lib/planner/vertaal';
@@ -105,41 +104,24 @@ export function hernoemLijst(items: readonly LijstItem[], dagen: readonly PlanDa
   return veranderd ? nieuw : (items as LijstItem[]);
 }
 
-/** De vaste items (ontbijt, school, huishouden) in de taal van de gebruiker. */
-export function vasteItems(taal: Taal): LijstItem[] {
-  return VASTE_ITEMS.flatMap(({ categorie, items: codes }) =>
-    codes.map((code) => ({
-      id: `${categorie}-${code}`,
-      naam: vertaal(taal, `item.${code}` as Sleutel),
-      categorie,
-      afgevinkt: false,
-      ...(VAST_AFDELING[code] ? { afdeling: VAST_AFDELING[code] } : {}),
-    }))
-  );
-}
-
 /**
  * Zet de recepten van een goedgekeurd weekplan op de boodschappenlijst (WEEK-15).
  * - Items van een vorig weekplan worden vervangen door die van dit plan.
  * - Zelf toegevoegde en gescande items blijven staan, net als vaste items.
  * - Wie hetzelfde plan opnieuw overzet, krijgt geen dubbels en verliest zijn vinkjes niet.
- * - Een vast item dat ook in een recept zit (bv. brood), komt er niet nog eens apart bij.
  * - `aanpassing` past de items uit het plan aan vóór ze op de lijst komen
  *   (bv. aftrekken wat al in de frigo ligt, WEEK-12).
- * - `metVasteItems` (WEEK-131): bij het bevestigen van één recept komen de vaste items (brood, fruit, huishouden)
- *   niet op de lijst, want die horen niet bij het recept.
+ * Vaste items (ontbijt, school, huishouden) bestaan niet meer (WEEK-155).
  */
 export function voegPlanToe(
   bestaand: readonly LijstItem[],
   dagen: readonly PlanDag[],
   taal: Taal,
   aanpassing: (items: LijstItem[]) => LijstItem[] = (i) => i,
-  sleutel?: string,
-  metVasteItems: boolean = true
+  sleutel?: string
 ): LijstItem[] {
   const oud = new Map(bestaand.map((i) => [i.id, i]));
   const volledig = itemsUitPlan(dagenInTaal(dagen, taal), sleutel);
-  const receptNamen = new Set(volledig.map((i) => klein(i.naam)));
   const uitPlan = aanpassing(volledig).map((i) => {
     const was = oud.get(i.id);
     return was?.afgevinkt ? { ...i, afgevinkt: true, ...(was.afgevinktDoor ? { afgevinktDoor: was.afgevinktDoor } : {}) } : i;
@@ -149,21 +131,9 @@ export function voegPlanToe(
     (i) =>
       !i.recept &&
       // items van een weekmenu uit een oudere versie (zonder recept-koppeling) horen bij het vorige plan
-      i.categorie !== 'avondeten' &&
-      !(isVastItemId(i.id) && receptNamen.has(klein(i.naam))) &&
-      // WEEK-136: zonder vaste items (nieuw weekplan, bevestigen) verdwijnen ook de vaste items die al op de lijst staan
-      (metVasteItems || !isVastItemId(i.id))
+      i.categorie !== 'avondeten'
   );
-  const aanwezig = new Set([...behouden.map((i) => i.id), ...behouden.map((i) => klein(i.naam))]);
-  const ontbrekendVast = metVasteItems
-    ? vasteItems(taal).filter((v) => !aanwezig.has(v.id) && !aanwezig.has(klein(v.naam)) && !receptNamen.has(klein(v.naam)))
-    : [];
-  return [...uitPlan, ...behouden, ...ontbrekendVast];
-}
-
-const VASTE_IDS = new Set(VASTE_ITEMS.flatMap(({ categorie, items }) => items.map((c) => `${categorie}-${c}`)));
-function isVastItemId(id: string): boolean {
-  return VASTE_IDS.has(id);
+  return [...uitPlan, ...behouden];
 }
 
 /**
@@ -248,11 +218,9 @@ export type LijstSectie =
   | { sleutel: string; soort: 'categorie'; categorie: string; regels: LijstRegel[] }
   | { sleutel: string; soort: 'afdeling'; afdeling: string; regels: LijstRegel[] };
 
-/** Afdeling van een item; vaste items uit een oudere versie krijgen ze via hun id. */
+/** Afdeling van een item; zonder afdeling komt het onder 'overig'. */
 export function afdelingVan(i: LijstItem): string {
-  if (i.afdeling) return i.afdeling;
-  const code = VASTE_ITEMS.flatMap(({ categorie, items }) => items.map((c) => [`${categorie}-${c}`, c] as const)).find(([id]) => id === i.id)?.[1];
-  return (code && VAST_AFDELING[code]) || 'overig';
+  return i.afdeling ?? 'overig';
 }
 
 /**
@@ -364,7 +332,20 @@ export function leesLijstItem(ruw: unknown): LijstItem | null {
 }
 
 /** Leest een bewaarde lijst veilig in; onbruikbare items worden overgeslagen. */
+/**
+ * De vaste items die vroeger op de lijst kwamen (WEEK-155 verwijderd). Ze worden bij het inlezen weggelaten,
+ * zodat een toestel met een oude kopie ze niet opnieuw naar de database stuurt. Kan weg als alle toestellen bijgewerkt zijn.
+ */
+const VERWIJDERDE_VASTE_IDS = new Set([
+  'brood-beleg-brood', 'brood-beleg-boter', 'brood-beleg-kaas', 'brood-beleg-hesp', 'brood-beleg-choco',
+  'fruit-appels', 'fruit-bananen', 'fruit-mandarijnen',
+  'huishouden-wc-papier', 'huishouden-tandpasta',
+  'school-koekjes', 'school-drinkbrikjes',
+]);
+
 export function normaliseerLijst(ruw: unknown): LijstItem[] {
-  return Array.isArray(ruw) ? ruw.map(leesLijstItem).filter((i): i is LijstItem => i !== null) : [];
+  return Array.isArray(ruw)
+    ? ruw.map(leesLijstItem).filter((i): i is LijstItem => i !== null && !VERWIJDERDE_VASTE_IDS.has(i.id))
+    : [];
 }
 

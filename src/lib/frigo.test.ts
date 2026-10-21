@@ -15,7 +15,7 @@ const pastaZo = item('recept-zondag-pasta-g', 'pasta', { hoeveelheid: 300, eenhe
 const pastaMa = item('recept-maandag-pasta-g', 'pasta', { hoeveelheid: 200, eenheid: 'g', afdeling: 'droge-voeding', recept: { dag: 'maandag', naam: 'Pasta tonijn' } });
 const ui = item('recept-zondag-ui-stuk', 'ui', { hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit', recept: { dag: 'zondag', naam: 'Pasta pesto' } });
 const wcPapier = item('huishouden-wc-papier', 'wc-papier', { categorie: 'huishouden' });
-const appels = item('fruit-appels', 'appels', { categorie: 'fruit' });
+const appels = item('eigen-appels', 'appels', { categorie: 'fruit', afdeling: 'groenten-fruit' });
 
 describe('hoortInFrigo', () => {
   test('voeding wel, huishoudproducten niet', () => {
@@ -43,7 +43,7 @@ describe('pasFrigoAan (WEEK-18)', () => {
     });
   });
 
-  test('vaste items krijgen hun afdeling; items zonder afdeling komen onder "overig"', () => {
+  test('items houden hun afdeling; zonder afdeling komen ze onder "overig"', () => {
     const frigo = pasFrigoAan([], [appels, item('extra-1', 'chips', { categorie: 'extra' })], true, nu);
     assert.deepEqual(frigo.map((f) => f.afdeling), ['groenten-fruit', 'overig']);
   });

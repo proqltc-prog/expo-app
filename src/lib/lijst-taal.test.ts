@@ -37,7 +37,7 @@ describe('itemsUitPlan met vaste codes', () => {
 
 describe('voegPlanToe in de gekozen taal', () => {
   test('nieuwe items krijgen de ingrediëntnaam in de gekozen taal', () => {
-    const [item] = voegPlanToe([], dagen, 'fr', undefined, 'x', false);
+    const [item] = voegPlanToe([], dagen, 'fr', undefined, 'x');
     assert.equal(item.naam, 'champignons de Paris');
     assert.equal(item.recept?.naam, 'Risotto met champignons', 'de opgeslagen recept-naam blijft de sleutel');
   });
