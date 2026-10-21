@@ -29,7 +29,7 @@ const plan = (dagen: PlanDag[]): Weekplan => ({
 
 /** Zoals app/index.tsx: lijst opnieuw opbouwen uit de open bevestigde dagen, met de frigo van dat moment. */
 function lijstVoor(p: Weekplan, frigo: FrigoItem[], lijst: ReturnType<typeof voegPlanToe>) {
-  return voegPlanToe(lijst, openBevestigdeDagen(p), 'nl', (items) => trekFrigoAf(items, frigo), planSleutel(p), false);
+  return voegPlanToe(lijst, openBevestigdeDagen(p), 'nl', (items) => trekFrigoAf(items, frigo), planSleutel(p));
 }
 
 describe('koken werkt de lijst bij (WEEK-135)', () => {

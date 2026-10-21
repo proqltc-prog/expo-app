@@ -252,8 +252,7 @@ export default function Weekplanning() {
       }
       if (resetLijst && plan) {
         const oud = plan;
-        // WEEK-136: een nieuw weekplan zet geen vaste items (brood & beleg, fruit, huishouden) op de lijst.
-        await wijzigLijst((items) => voegPlanToe(items, [], taal, undefined, planSleutel(oud), false));
+        await wijzigLijst((items) => voegPlanToe(items, [], taal, undefined, planSleutel(oud)));
       }
       setPlan(nieuw);
       setFase('plan');
@@ -309,11 +308,10 @@ export default function Weekplanning() {
   };
 
   // WEEK-134: de lijst bevat enkel de ingrediënten van bevestigde recepten die nog niet gekookt zijn.
-  // WEEK-131: bij het bevestigen komen geen vaste items op de lijst.
   const zetLijstBijPlan = async (p: Weekplan) => {
     const frigo = await laadFrigo();
     await wijzigLijst((bestaand) =>
-      voegPlanToe(bestaand, openBevestigdeDagen(p), taal, (items) => trekFrigoAf(items, frigo), planSleutel(p), false)
+      voegPlanToe(bestaand, openBevestigdeDagen(p), taal, (items) => trekFrigoAf(items, frigo), planSleutel(p))
     );
   };
 

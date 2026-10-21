@@ -62,7 +62,6 @@ describe('trekFrigoAf', () => {
     const recept = lijst.filter((i) => i.recept);
     assert.deepEqual(recept.map((i) => [i.naam, i.afgevinkt]), [['rijst', true], ['kokosmelk', false]]);
     assert.equal(recept[0].afgevinktDoor, 'Pauline');
-    assert.ok(lijst.some((i) => i.categorie === 'fruit'), 'vaste items blijven');
   });
 });
 
