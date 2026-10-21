@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.90.0] – 2026-10-21
+
+**WEEK-154** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-154) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12943361)
+
+- Taalwissel: weekmenu-recepten, ingrediënten op de lijst en de bereidingspagina volgen de gekozen taal. Nieuwe plannen bewaren de vaste code en de namen in alle talen; de weergave kiest de taal.
+- Bestaande plannen met een recept uit de database houden hun oorspronkelijke tekst tot het plan opnieuw gemaakt wordt.
+
 ## [0.89.4] – 2026-10-20
 
 **WEEK-153** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-153) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12615681)

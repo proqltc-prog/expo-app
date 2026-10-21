@@ -63,6 +63,7 @@ export function naarPlanRecept(r: BankRecept, taal: Taal, porties: number): Plan
       hoeveelheid: rondAf(hoeveelheid * porties, eenheid),
       eenheid,
       afdeling: afdelingVan(code),
+      code,
     })),
   };
 }

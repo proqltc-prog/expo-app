@@ -75,6 +75,9 @@ export function naarPlanRecept(r: DbRecept, taal: Taal, gezin: Gezin): PlanRecep
     hoeveelheid: geschaaldeHoeveelheid(i.hoeveelheid, gezin, i.eenheid),
     eenheid: i.eenheid,
     afdeling: afdelingVoorCategorie(i.categorie),
+    // WEEK-154: de vaste code en alle namen, zodat het plan later in een andere taal getoond kan worden.
+    code: i.code,
+    namen: i.namen,
   }));
   return {
     id: `db-${r.id}`,
@@ -84,6 +87,7 @@ export function naarPlanRecept(r: DbRecept, taal: Taal, gezin: Gezin): PlanRecep
     stijlen: [r.stijl],
     basis: r.basis ?? undefined,
     ingredienten,
+    titels: r.titels,
   };
 }
 

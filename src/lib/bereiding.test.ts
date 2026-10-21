@@ -131,3 +131,15 @@ describe('ingredientenMetFrigo (WEEK-147)', () => {
     );
   });
 });
+
+describe('ingredientenVoor in de gekozen taal (WEEK-154)', () => {
+  test('de ingrediënten krijgen de naam in de gekozen taal en behouden hun hoeveelheid', () => {
+    const plan = {
+      gemaaktOp: '2026-10-20T10:00:00Z',
+      dagen: [{ dag: 'zondag', recept: { id: 'db-7', naam: 'Pasta', soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [{ naam: 'Tomaat', hoeveelheid: 3, eenheid: 'stuk', afdeling: 'groenten-fruit', code: 'tomaat', namen: { nl: 'Tomaat', fr: 'Tomate' } }] } }],
+    } as unknown as Parameters<typeof ingredientenVoor>[0];
+    assert.deepEqual(ingredientenVoor(plan, 'db-7', 'fr'), [{ naam: 'Tomate', hoeveelheid: 3, eenheid: 'stuk' }]);
+    assert.deepEqual(ingredientenVoor(plan, 'db-7'), [{ naam: 'Tomaat', hoeveelheid: 3, eenheid: 'stuk' }]);
+  });
+});
+

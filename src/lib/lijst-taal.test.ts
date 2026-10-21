@@ -1,0 +1,66 @@
+import { describe, test } from 'node:test';
+import assert from 'node:assert/strict';
+import { hernoemLijst, itemsUitPlan, LijstItem, voegPlanToe } from '@/lib/lijst';
+import type { PlanDag } from '@/lib/planner/types';
+
+/** Een databankrecept op maandag, met vaste codes en namen per taal (WEEK-154). */
+const dagen: PlanDag[] = [
+  {
+    dag: 'maandag',
+    recept: {
+      id: 'db-42',
+      naam: 'Risotto met champignons',
+      soort: 'vegetarisch',
+      minuten: 30,
+      stijlen: [],
+      titels: { nl: 'Risotto met champignons', fr: 'Risotto aux champignons' },
+      ingredienten: [
+        { naam: 'champignons', hoeveelheid: 300, eenheid: 'g', afdeling: 'groenten-fruit', code: 'champignons', namen: { nl: 'champignons', fr: 'champignons de Paris' } },
+      ],
+    },
+  },
+];
+
+describe('itemsUitPlan met vaste codes', () => {
+  test('het id volgt de code, niet de taalafhankelijke naam', () => {
+    const [nl] = itemsUitPlan(dagen, 'x');
+    const [fr] = itemsUitPlan([{ ...dagen[0], recept: { ...dagen[0].recept, ingredienten: [{ ...dagen[0].recept.ingredienten[0], naam: 'champignons de Paris' }] } }], 'x');
+    assert.equal(nl.id, fr.id);
+    assert.equal(nl.id, 'recept-x-maandag-champignons-g');
+  });
+
+  test('oude plannen zonder code houden het id op basis van de naam', () => {
+    const oud: PlanDag[] = [{ dag: 'maandag', recept: { ...dagen[0].recept, ingredienten: [{ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' }] } }];
+    assert.equal(itemsUitPlan(oud)[0].id, 'recept-maandag-ui-stuk');
+  });
+});
+
+describe('voegPlanToe in de gekozen taal', () => {
+  test('nieuwe items krijgen de ingrediëntnaam in de gekozen taal', () => {
+    const [item] = voegPlanToe([], dagen, 'fr', undefined, 'x', false);
+    assert.equal(item.naam, 'champignons de Paris');
+    assert.equal(item.recept?.naam, 'Risotto met champignons', 'de opgeslagen recept-naam blijft de sleutel');
+  });
+});
+
+describe('hernoemLijst', () => {
+  const nl = itemsUitPlan(dagen, 'x');
+  const afgevinkt: LijstItem[] = nl.map((i) => ({ ...i, afgevinkt: true, hoeveelheid: 250 }));
+
+  test('zet de namen op de nieuwe taal en behoudt afvinkstatus en hoeveelheid', () => {
+    const [item] = hernoemLijst(afgevinkt, dagen, 'fr', 'x');
+    assert.equal(item.naam, 'champignons de Paris');
+    assert.equal(item.afgevinkt, true);
+    assert.equal(item.hoeveelheid, 250);
+  });
+
+  test('geeft dezelfde lijst terug als de namen al kloppen', () => {
+    assert.equal(hernoemLijst(nl, dagen, 'nl', 'x'), nl);
+  });
+
+  test('raakt items van andere bronnen (vaste items, zonder recept) niet aan', () => {
+    const vast: LijstItem = { id: 'fruit-appel', naam: 'Appel', categorie: 'fruit', afgevinkt: false };
+    const [, andere] = hernoemLijst([...nl, vast], dagen, 'fr', 'x');
+    assert.deepEqual(andere, vast);
+  });
+});

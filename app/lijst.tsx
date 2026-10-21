@@ -1,7 +1,8 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { alleenHuidigPlan, LijstItem, LijstRegel, LijstSectie, secties as maakSecties, sectieKeuze, telRegels, vinkAf, Weergave } from '@/lib/lijst';
+import { alleenHuidigPlan, hernoemLijst, LijstItem, LijstRegel, LijstSectie, planSleutel, secties as maakSecties, sectieKeuze, telRegels, vinkAf, Weergave } from '@/lib/lijst';
+import { inTaal } from '@/lib/planner/vertaal';
 import { FrigoItem } from '@/lib/frigo';
 import type { DagCode, Weekplan } from '@/lib/planner/types';
 import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
@@ -138,8 +139,17 @@ export default function Lijst() {
     if (afgevinkt) await wijzigPlan((plan) => werkOntbrekendBij(plan, frigoNieuw));
   };
 
+  // WEEK-154: de titel van een weekmenu-recept volgt de gekozen taal; de opgeslagen naam blijft de sleutel.
+  useEffect(() => {
+    if (!plan) return;
+    void wijzigLijst((huidig) => hernoemLijst(huidig, plan.dagen, taal, planSleutel(plan)));
+  }, [plan, taal]);
+
   const titel = (sectie: LijstSectie) => {
-    if (sectie.soort === 'recept') return t('lijst.receptTitel', { dag: t(dagSleutel(sectie.dag)), recept: sectie.recept });
+    if (sectie.soort === 'recept') {
+      const recept = plan?.dagen.find((d) => d.dag === sectie.dag && d.recept.naam === sectie.recept)?.recept;
+      return t('lijst.receptTitel', { dag: t(dagSleutel(sectie.dag)), recept: recept ? inTaal(recept, taal).naam : sectie.recept });
+    }
     if (sectie.soort === 'afdeling') return t(`afdeling.${sectie.afdeling}` as Sleutel);
     return categorieNaam(taal, sectie.categorie);
   };
@@ -149,8 +159,8 @@ export default function Lijst() {
   const dagVolgorde = useMemo(() => plan?.dagen.map((d) => d.dag), [plan]);
   const data = useMemo(
     () => maakSecties(zichtbaar, weergave, dagVolgorde).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
-    // titel() gebruikt de taal; daarom staat taal in de afhankelijkheden
-    [zichtbaar, weergave, dagVolgorde, taal, uitgeklapt]
+    // titel() gebruikt de taal en het plan; daarom staan die in de afhankelijkheden
+    [zichtbaar, weergave, dagVolgorde, taal, plan, uitgeklapt]
   );
 
   // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.

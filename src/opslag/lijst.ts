@@ -19,7 +19,10 @@ export async function laadLijst(): Promise<LijstItem[]> {
  */
 export function wijzigLijst(wijziging: (items: LijstItem[]) => LijstItem[]): Promise<LijstItem[]> {
   return naElkaar(async () => {
-    const nieuw = wijziging(await laadLijst());
+    const huidig = await laadLijst();
+    const nieuw = wijziging(huidig);
+    // Ongewijzigd: niets opslaan of delen (WEEK-154, bv. een taalwissel die geen namen verandert).
+    if (nieuw === huidig) return nieuw;
     await AsyncStorage.setItem(SLEUTEL.lijst, JSON.stringify(nieuw));
     await registreerItems('lijst', nieuw);
     return nieuw;

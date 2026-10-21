@@ -1,0 +1,29 @@
+import { describe, test } from 'node:test';
+import assert from 'node:assert/strict';
+import { normaliseerIngredient, normaliseerRecept } from '@/lib/planner/normaliseer';
+
+describe('normaliseer met vertalingen (WEEK-154)', () => {
+  test('bewaart de vaste code, de namen per taal en de titels', () => {
+    const recept = normaliseerRecept({
+      id: 'db-1',
+      naam: 'Risotto',
+      soort: 'vegetarisch',
+      minuten: 30,
+      ingredienten: [{ naam: 'Champignons', hoeveelheid: 300, eenheid: 'g', afdeling: 'groenten-fruit', code: 'champignons', namen: { nl: 'Champignons', fr: 'Champignons de Paris' } }],
+      titels: { nl: 'Risotto', fr: 'Risotto aux champignons' },
+    });
+    assert.equal(recept?.titels?.fr, 'Risotto aux champignons');
+    assert.equal(recept?.ingredienten[0].code, 'champignons');
+    assert.equal(recept?.ingredienten[0].namen?.fr, 'Champignons de Paris');
+  });
+
+  test('onbekende talen en lege teksten vallen weg', () => {
+    const ingredient = normaliseerIngredient({ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit', namen: { xx: 'Onzin', fr: '  ', de: 'Zwiebel' } });
+    assert.deepEqual(ingredient?.namen, { de: 'Zwiebel' });
+  });
+
+  test('een oud plan zonder vertalingen krijgt geen nieuwe velden', () => {
+    const ingredient = normaliseerIngredient({ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' });
+    assert.deepEqual(ingredient, { naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' });
+  });
+});

@@ -47,7 +47,7 @@ export default function Bereiding() {
 
   const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);
   const laatste = stappen.length - 1;
-  const ingredienten = useMemo(() => ingredientenMetFrigo(ingredientenVoor(plan, id ?? ''), frigo), [plan, id, frigo]);
+  const ingredienten = useMemo(() => ingredientenMetFrigo(ingredientenVoor(plan, id ?? '', taal), frigo), [plan, id, taal, frigo]);
 
   if (geladen && stappen.length === 0) {
     return (
