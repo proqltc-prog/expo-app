@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.91.0] – 2026-10-23
+
+**WEEK-156** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-156) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14024705)
+
+- Seizoensrecepten: de planner kiest per dag recepten van het seizoen van die dag (lente, zomer, herfst, winter). Seizoensrecepten krijgen voorrang; anders vallen we terug op recepten van het hele jaar. Zonder gekozen datums verandert er niets.
+- Databank: nieuwe kolom `seizoenen` op de recepten; recepten met seizoensgroenten of -fruit zijn ingevuld op basis van hun ingrediënten.
+
 ## [0.90.1] – 2026-10-21
 
 **WEEK-155** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-155) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12976129)
