@@ -1,7 +1,7 @@
 // Het weekplan veilig bijwerken als er intussen iets veranderde (WEEK-28).
 // Schermen werken met een kopie van het plan; tegen de tijd dat een actie klaar is (bv. een reset met AI),
 // kan het bewaarde plan al aangepast zijn door een ander scherm of een ander gezinslid.
-import { frigoBron, type FrigoItem } from '@/lib/frigo';
+import type { FrigoItem } from '@/lib/frigo';
 import { zetGedaan } from './gedaan';
 import type { PlanDag, Weekplan } from './types';
 
@@ -36,19 +36,7 @@ export function wisselGedaan(
   verwacht: { gemaaktOp: string; receptNaam: string }
 ): { plan: Weekplan; frigo: FrigoItem[] } {
   if (!zelfdeDag(plan, index, verwacht)) return { plan, frigo: [...frigo] };
-  const resultaat = zetGedaan(plan, index, !plan.dagen[index].gedaan, frigo);
-  if (!resultaat.plan.dagen.every((d) => d.gedaan)) return resultaat;
-  return leegLijstProducten(resultaat.plan, index, resultaat.frigo);
-}
-
-/**
- * WEEK-141: zijn alle recepten van het plan gekookt, dan gaan de producten van de lijst uit de frigo.
- * Die producten worden bij de laatste dag bewaard, zodat ontkoken ze weer terugzet.
- * Losse producten blijven staan.
- */
-function leegLijstProducten(plan: Weekplan, index: number, frigo: FrigoItem[]): { plan: Weekplan; frigo: FrigoItem[] } {
-  const vanLijst = frigo.filter((f) => frigoBron(f) === 'planner');
-  if (!vanLijst.length) return { plan, frigo };
-  const dagen = plan.dagen.map((d, i) => (i === index ? { ...d, verbruikt: [...(d.verbruikt ?? []), ...vanLijst] } : d));
-  return { plan: { ...plan, dagen }, frigo: frigo.filter((f) => frigoBron(f) !== 'planner') };
+  // WEEK-159: enkel de ingrediënten van dít recept gaan uit de frigo (zetGedaan). Restjes van andere
+  // recepten of van gekochte voorraad blijven staan; er is geen week-brede leegmaak meer (WEEK-141 vervallen).
+  return zetGedaan(plan, index, !plan.dagen[index].gedaan, frigo);
 }

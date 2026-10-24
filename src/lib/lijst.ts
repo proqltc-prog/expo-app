@@ -18,6 +18,8 @@ export type LijstItem = {
   eenheid?: string;
   /** Winkelafdeling, voor de weergave per categorie in de winkel. */
   afdeling?: Afdeling;
+  /** Vaste ingrediëntcode (taalonafhankelijk); enkel voor items uit de weekplanning (WEEK-159). */
+  code?: string;
   /** Het recept waar dit ingrediënt bij hoort (enkel voor items uit de weekplanning). */
   recept?: { dag: DagCode; naam: string };
   /** Naam van het gezinslid dat het item zelf toevoegde (gedeelde lijst, WEEK-17). */
@@ -48,6 +50,11 @@ export type LijstRegel = {
 
 const klein = (t: string) => t.trim().toLocaleLowerCase();
 
+/** De voornaam uit een volledige naam ("Maarten De Ridder" → "Maarten"), voor "gekocht door …" (WEEK-159). */
+export function voornaam(naam: string): string {
+  return naam.trim().split(/\s+/)[0] ?? '';
+}
+
 /**
  * Sleutel van een weekplan (uit het tijdstip waarop het gemaakt werd), zodat lijstitems van verschillende
  * weken nooit dezelfde id krijgen (WEEK-29). Hetzelfde plan geeft altijd dezelfde sleutel.
@@ -58,16 +65,17 @@ export function planSleutel(plan: { gemaaktOp: string }): string {
 }
 
 /**
- * Eén item per ingrediënt per recept, zodat de lijst later ook per recept getoond kan worden.
- * Staat hetzelfde ingrediënt (naam + eenheid) twee keer in één recept, dan wordt het samengeteld (WEEK-29).
- * `sleutel`: zie planSleutel(); zonder sleutel het oude id-formaat.
+ * Eén item per ingrediënt per recept, zodat de lijst per recept getoond kan worden.
+ * Staat hetzelfde ingrediënt (code + eenheid) twee keer in één recept, dan wordt het samengeteld (WEEK-29).
+ * Het id bevat het recept zelf (WEEK-159): twee recepten op dezelfde dag die een ingrediënt delen, krijgen elk
+ * hun eigen regel met de juiste hoeveelheid. `sleutel`: zie planSleutel().
  */
 export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): LijstItem[] {
   const items: LijstItem[] = [];
   for (const { dag, recept } of dagen) {
     for (const ing of recept.ingredienten) {
       // WEEK-154: het id volgt de vaste code (niet de taalafhankelijke naam), zodat afvinken en frigo blijven kloppen na een taalwissel.
-      const id = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${klein(ing.code ?? ing.naam)}-${ing.eenheid}`;
+      const id = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${recept.id}-${klein(ing.code ?? ing.naam)}-${ing.eenheid}`;
       const bestaand = items.find((i) => i.id === id);
       if (bestaand) {
         bestaand.hoeveelheid = Math.round(((bestaand.hoeveelheid ?? 0) + ing.hoeveelheid) * 100) / 100;
@@ -81,6 +89,7 @@ export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): Lijst
         hoeveelheid: ing.hoeveelheid,
         eenheid: ing.eenheid,
         afdeling: ing.afdeling,
+        ...(ing.code ? { code: ing.code } : {}),
         recept: { dag, naam: recept.naam },
       });
     }
@@ -325,6 +334,7 @@ export function leesLijstItem(ruw: unknown): LijstItem | null {
     ...(hoeveelheid !== undefined ? { hoeveelheid } : {}),
     ...(typeof ruw.eenheid === 'string' ? { eenheid: ruw.eenheid } : {}),
     ...(typeof ruw.afdeling === 'string' && (AFDELINGEN as string[]).includes(ruw.afdeling) ? { afdeling: ruw.afdeling as Afdeling } : {}),
+    ...(typeof ruw.code === 'string' && ruw.code ? { code: ruw.code } : {}),
     ...(recept ? { recept } : {}),
     ...(typeof ruw.door === 'string' && ruw.door ? { door: ruw.door } : {}),
     ...(ruw.afgevinkt === true && typeof ruw.afgevinktDoor === 'string' && ruw.afgevinktDoor ? { afgevinktDoor: ruw.afgevinktDoor } : {}),

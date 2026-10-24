@@ -26,12 +26,12 @@ describe('itemsUitPlan met vaste codes', () => {
     const [nl] = itemsUitPlan(dagen, 'x');
     const [fr] = itemsUitPlan([{ ...dagen[0], recept: { ...dagen[0].recept, ingredienten: [{ ...dagen[0].recept.ingredienten[0], naam: 'champignons de Paris' }] } }], 'x');
     assert.equal(nl.id, fr.id);
-    assert.equal(nl.id, 'recept-x-maandag-champignons-g');
+    assert.equal(nl.id, 'recept-x-maandag-db-42-champignons-g');
   });
 
   test('oude plannen zonder code houden het id op basis van de naam', () => {
     const oud: PlanDag[] = [{ dag: 'maandag', recept: { ...dagen[0].recept, ingredienten: [{ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' }] } }];
-    assert.equal(itemsUitPlan(oud)[0].id, 'recept-maandag-ui-stuk');
+    assert.equal(itemsUitPlan(oud)[0].id, 'recept-maandag-db-42-ui-stuk');
   });
 });
 

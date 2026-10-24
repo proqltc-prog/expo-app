@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.90.3] – 2026-10-24
+
+**WEEK-159** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-159) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14680065)
+
+- Recepten die een ingrediënt delen op dezelfde dag krijgen elk een eigen regel met de juiste hoeveelheid. Per categorie blijft het één regel met de som.
+- Gekookt zetten verwijdert enkel de ingrediënten van dat recept uit de boodschappenlijst én uit de frigo. Restjes blijven staan.
+- Gekochte frigo-producten worden na een taalwissel nog steeds aan het juiste recept gekoppeld (via de vaste ingrediëntcode).
+- "Gekocht door" en "toegevoegd door" tonen de voornaam.
+
 ## [0.90.2] – 2026-10-24
 
 **WEEK-158** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-158) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14581761)

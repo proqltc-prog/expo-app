@@ -29,6 +29,8 @@ export type FrigoItem = {
   houdbaarTot?: string;
   /** Soort item (WEEK-71). Ontbreekt in oude data: afgeleid via frigoBron(). */
   bron?: FrigoBron;
+  /** Vaste ingrediëntcode van een product uit de weekplanning (WEEK-159); taalonafhankelijk. */
+  code?: string;
 };
 
 /** Het soort van een item. Oude items zonder soort: uit de boodschappenlijst = planner, de rest = los. */
@@ -79,6 +81,7 @@ export function frigoItemUitLijst(item: LijstItem, nu: Date): FrigoItem {
     toegevoegdOp: nu.toISOString(),
     lijstId: item.id,
     bron: 'planner',
+    ...(item.code ? { code: item.code } : {}),
   };
 }
 
@@ -222,6 +225,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
       toegevoegdOp,
       ...(typeof r.lijstId === 'string' ? { lijstId: r.lijstId } : {}),
       ...(r.bron === 'planner' || r.bron === 'los' ? { bron: r.bron } : {}),
+      ...(typeof r.code === 'string' && r.code ? { code: r.code } : {}),
       ...(product ? { product } : {}),
       ...(houdbaarTot ? { houdbaarTot } : {}),
     }];
@@ -233,11 +237,15 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
 const rond = (n: number) => Math.round(n * 100) / 100;
 
 /** Wat een recept nodig heeft; dezelfde vorm als een ingrediënt in het weekplan. */
-export type Benodigd = { naam: string; hoeveelheid?: number; eenheid?: string };
+export type Benodigd = { naam: string; hoeveelheid?: number; eenheid?: string; code?: string };
 
-/** Hoort dit product bij dit ingrediënt? Zelfde naam (hoofdletters maken niet uit) en, als beide een eenheid hebben, dezelfde eenheid. */
+/**
+ * Hoort dit product bij dit ingrediënt? Heeft beide een vaste code, dan telt die (taalonafhankelijk, WEEK-159).
+ * Anders dezelfde naam (hoofdletters maken niet uit). Als beide een eenheid hebben, moet die ook gelijk zijn.
+ */
 export function pastBij(f: FrigoItem, ing: Benodigd): boolean {
-  return klein(f.naam) === klein(ing.naam) && (!f.eenheid || !ing.eenheid || f.eenheid === ing.eenheid);
+  const zelfde = f.code && ing.code ? f.code === ing.code : klein(f.naam) === klein(ing.naam);
+  return zelfde && (!f.eenheid || !ing.eenheid || f.eenheid === ing.eenheid);
 }
 
 /**
