@@ -241,6 +241,14 @@ export function pastBij(f: FrigoItem, ing: Benodigd): boolean {
 }
 
 /**
+ * Enkel de producten van de planner (van de lijst of uit de catalogus) tellen mee voor recepten van de weekplanner.
+ * Losse producten worden nooit voor een recept gebruikt: die beheert de gebruiker zelf (WEEK-158).
+ */
+export function receptFrigo(frigo: readonly FrigoItem[]): FrigoItem[] {
+  return frigo.filter((f) => frigoBron(f) === 'planner');
+}
+
+/**
  * Haalt de ingrediënten van een gekookt recept uit de frigo, de oudste producten eerst.
  * - Met gekende hoeveelheden wordt enkel afgetrokken wat het recept nodig heeft.
  * - Is de hoeveelheid van het product of van het recept niet gekend, dan gaat het hele (oudste) product eruit.
@@ -310,7 +318,7 @@ export type Dekking = { gedekt: 'geheel' | 'deels' | 'niet'; rest?: number };
  * Geeft per behoefte terug of ze geheel, deels of niet gedekt is, en wat er nog gekocht moet worden.
  */
 export function verdeelFrigo(behoeften: readonly Benodigd[], frigo: readonly FrigoItem[]): Dekking[] {
-  const voorraad = frigo.map((f) => ({ ...f }));
+  const voorraad = receptFrigo(frigo).map((f) => ({ ...f }));
   return behoeften.map((b): Dekking => {
     const passend = voorraad.filter((f) => pastBij(f, b));
     if (!passend.length) return { gedekt: 'niet', ...(b.hoeveelheid !== undefined ? { rest: b.hoeveelheid } : {}) };

@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.90.2] – 2026-10-24
+
+**WEEK-158** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-158) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14581761)
+
+- Losse frigo-producten (die je zelf toevoegt) tellen niet meer mee voor recepten van de weekplanner: ze trekken niets af van de boodschappenlijst en geven geen \"uit de frigo\" of ingrediënt-status. Enkel producten van de planner worden gebruikt.
+
 ## [0.90.1] – 2026-10-21
 
 **WEEK-155** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-155) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12976129)

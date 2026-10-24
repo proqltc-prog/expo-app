@@ -12,7 +12,7 @@ import { Profiel, standaardProfiel } from '@/lib/profiel';
 const NU = new Date('2026-10-10T12:00:00Z');
 const dagenGeleden = (n: number) => new Date(NU.getTime() - n * 24 * 3600 * 1000).toISOString();
 const f = (naam: string, hoeveelheid: number | undefined, eenheid: string | undefined, dagen: number, extra: Partial<FrigoItem> = {}): FrigoItem => ({
-  id: `${naam}-${dagen}`, naam, afdeling: 'groenten-fruit', toegevoegdOp: dagenGeleden(dagen),
+  id: `${naam}-${dagen}`, naam, afdeling: 'groenten-fruit', toegevoegdOp: dagenGeleden(dagen), bron: 'planner',
   ...(hoeveelheid !== undefined ? { hoeveelheid } : {}), ...(eenheid ? { eenheid } : {}), ...extra,
 });
 const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };

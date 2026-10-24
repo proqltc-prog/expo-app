@@ -1,7 +1,7 @@
 // Receptstatussen (WEEK-13): gepland, ingrediënt ontbreekt, gedaan.
 // Een ingrediënt "ontbreekt" als de gebruiker het met de hand uit de frigo haalde (op, weggegooid)
 // en er niets meer van in de frigo is. Opnieuw gekocht (in de frigo) = niet meer ontbrekend.
-import type { FrigoItem } from '@/lib/frigo';
+import { FrigoItem, receptFrigo } from '@/lib/frigo';
 import type { PlanDag, Weekplan } from './types';
 
 export type ReceptStatus = 'gepland' | 'ontbreekt' | 'gedaan';
@@ -13,7 +13,8 @@ export function receptStatus(d: PlanDag): ReceptStatus {
   return d.ontbreekt?.length ? 'ontbreekt' : 'gepland';
 }
 
-const zitInFrigo = (frigo: readonly FrigoItem[], naam: string) => frigo.some((f) => klein(f.naam) === klein(naam));
+// Enkel planner-producten tellen mee voor recepten; losse producten niet (WEEK-158).
+const zitInFrigo = (frigo: readonly FrigoItem[], naam: string) => receptFrigo(frigo).some((f) => klein(f.naam) === klein(naam));
 
 function vervangDagen(plan: Weekplan, dagen: PlanDag[]): Weekplan {
   return dagen.every((d, i) => d === plan.dagen[i]) ? plan : { ...plan, dagen };
@@ -26,7 +27,7 @@ function vervangDagen(plan: Weekplan, dagen: PlanDag[]): Weekplan {
  * Geeft hetzelfde plan-object terug als er niets verandert.
  */
 export function markeerOntbrekend(plan: Weekplan, verwijderd: readonly FrigoItem[], frigoNa: readonly FrigoItem[]): Weekplan {
-  const weg = [...new Set(verwijderd.map((v) => klein(v.naam)))].filter((n) => !zitInFrigo(frigoNa, n));
+  const weg = [...new Set(receptFrigo(verwijderd).map((v) => klein(v.naam)))].filter((n) => !zitInFrigo(frigoNa, n));
   if (!weg.length) return plan;
   const dagen = plan.dagen.map((d): PlanDag => {
     if (d.gedaan) return d;

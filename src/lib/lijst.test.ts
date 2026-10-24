@@ -355,7 +355,7 @@ describe('bevestigen zet enkel de ontbrekende ingrediënten op de lijst (WEEK-10
     const dag = dagen[0];
     const alles = itemsUitPlan([dag]);
     const eerste = alles[0];
-    const frigo = [{ id: 'x', naam: eerste.naam, afdeling: eerste.afdeling ?? 'groenten-fruit', toegevoegdOp: new Date().toISOString(), hoeveelheid: 99999, eenheid: eerste.eenheid }];
+    const frigo = [{ id: 'x', naam: eerste.naam, afdeling: eerste.afdeling ?? 'groenten-fruit', toegevoegdOp: new Date().toISOString(), hoeveelheid: 99999, eenheid: eerste.eenheid, bron: 'planner' }];
     const lijst = voegPlanToe([], [dag], 'nl', (items) => trekFrigoAf(items, frigo as never));
     assert.ok(!lijst.some((i) => i.naam === eerste.naam));
     // De overige ingrediënten van het gerecht staan er wél op.
