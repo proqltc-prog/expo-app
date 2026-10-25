@@ -1,6 +1,6 @@
 // Virtuele frigo (WEEK-4): wat het gezin in huis heeft. Pure logica, zonder opslag.
 // Opslag op het toestel staat in src/opslag/frigo.ts.
-import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum } from '@/lib/houdbaarheid';
@@ -268,6 +268,26 @@ function codeVan(x: { naam: string; code?: string }): string | undefined {
 }
 
 /**
+ * Factor om de hoeveelheid van het ingrediënt naar de eenheid van het product om te rekenen (WEEK-161).
+ * Zoals omrekenFactor, maar ook stuk ↔ gram/kg via het gemiddelde stukgewicht. Zo koppelt een product in gram
+ * (bv. van vóór de omschakeling naar stuk) toch aan een recept op stuk. Undefined als het niet te herleiden is.
+ */
+export function omrekenVoor(ing: Benodigd, f: FrigoItem): number | undefined {
+  const direct = omrekenFactor(ing.eenheid, f.eenheid);
+  if (direct !== undefined) return direct;
+  const gewicht = gewichtPerStuk(codeVan(ing) ?? codeVan(f) ?? '');
+  const basisVan = (eenheid: string | undefined): { familie: string; basis: number } | undefined => {
+    if (eenheid === 'stuk') return gewicht !== undefined ? { familie: 'gewicht', basis: gewicht } : undefined;
+    const o = eenheid ? OMREKENING[eenheid] : undefined;
+    return o ? { familie: o.familie, basis: o.basis } : undefined;
+  };
+  const van = basisVan(ing.eenheid);
+  const naar = basisVan(f.eenheid);
+  if (!van || !naar || van.familie !== naar.familie) return undefined;
+  return van.basis / naar.basis;
+}
+
+/**
  * Hoort dit product bij dit ingrediënt? Heeft beide een code, dan telt die (taalonafhankelijk, WEEK-159/160).
  * Zonder code: dezelfde naam (hoofdletters maken niet uit). Eenheden moeten te herleiden zijn (zie omrekenFactor).
  */
@@ -275,7 +295,7 @@ export function pastBij(f: FrigoItem, ing: Benodigd): boolean {
   const cf = codeVan(f);
   const ci = codeVan(ing);
   const zelfde = cf && ci ? cf === ci : klein(f.naam) === klein(ing.naam);
-  return zelfde && omrekenFactor(ing.eenheid, f.eenheid) !== undefined;
+  return zelfde && omrekenVoor(ing, f) !== undefined;
 }
 
 /**
@@ -313,7 +333,7 @@ export function verbruik(frigo: readonly FrigoItem[], ingredienten: readonly Ben
         verbruikt.push({ ...f });
         break;
       }
-      const factor = omrekenFactor(ing.eenheid, f.eenheid) ?? 1;
+      const factor = omrekenVoor(ing, f) ?? 1;
       const neem = rond(Math.min(nodig * factor, f.hoeveelheid));
       verbruikt.push({ ...f, hoeveelheid: neem });
       f.hoeveelheid = rond(f.hoeveelheid - neem);
@@ -373,7 +393,7 @@ export function verdeelFrigo(behoeften: readonly Benodigd[], frigo: readonly Fri
     // `nodig` in de eenheid van het ingrediënt; per product omgerekend naar de eenheid van het product (WEEK-160).
     let nodig = b.hoeveelheid;
     for (const f of passend) {
-      const factor = omrekenFactor(b.eenheid, f.eenheid) ?? 1;
+      const factor = omrekenVoor(b, f) ?? 1;
       const neem = Math.min(nodig * factor, f.hoeveelheid ?? 0);
       f.hoeveelheid = rond((f.hoeveelheid ?? 0) - neem);
       nodig = rond(nodig - neem / factor);

@@ -47,10 +47,16 @@ describe('verbruik met omrekening (WEEK-160)', () => {
     assert.equal(herstel(frigo, verbruikt)[0].hoeveelheid, 1);
   });
 
-  test('stuk tegen gram past niet: er wordt niets verbruikt', () => {
-    const { frigo, verbruikt } = verbruik([f('u', 'ui', 2, 'stuk')], [{ naam: 'ui', hoeveelheid: 200, eenheid: 'g' }]);
+  test('stuk tegen gram zonder bekend stukgewicht past niet: er wordt niets verbruikt', () => {
+    const { frigo, verbruikt } = verbruik([f('r', 'rijst', 2, 'stuk')], [{ naam: 'rijst', hoeveelheid: 200, eenheid: 'g' }]);
     assert.equal(verbruikt.length, 0);
     assert.equal(frigo[0].hoeveelheid, 2);
+  });
+
+  test('stuk tegen gram met bekend stukgewicht: 2 ui (150 g per stuk) tegen 200 g, 100 g blijft over (WEEK-161)', () => {
+    const { frigo, verbruikt } = verbruik([f('u', 'ui', 2, 'stuk')], [{ naam: 'ui', hoeveelheid: 200, eenheid: 'g' }]);
+    assert.equal(verbruikt[0].hoeveelheid, 1.33);
+    assert.equal(frigo[0].hoeveelheid, 0.67);
   });
 
   test('verdeelFrigo rekent mee: 1 kg dekt een behoefte van 500 g', () => {

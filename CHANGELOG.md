@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.90.5] – 2026-10-25
+
+**WEEK-161** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-161)
+
+- Groenten en fruit die je per stuk koopt (ui, tomaat, wortel, paprika, sla, prei, courgette, citroen, sjalot…) staan op stuk, in de databank, in de frigo en in de recepten. Hoeveelheden in recepten zijn omgerekend met een gemiddeld stukgewicht, afgerond op een halve stuk.
+- Oude frigo-items in gram koppelen aan recepten op stuk via het gemiddelde stukgewicht.
+
 ## [0.90.4] – 2026-10-25
 
 **WEEK-160** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-160) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14843905)

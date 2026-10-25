@@ -204,10 +204,12 @@ describe('verbruik (WEEK-19)', () => {
     assert.deepEqual(zelfZonder.frigo, []);
   });
 
-  test('een andere eenheid of naam past niet; zonder eenheid past wel', () => {
-    const frigo = [f('g', 'ui', 200, 'g', OUD), f('ander', 'prei', 1, 'stuk', OUD)];
-    assert.equal(verbruik(frigo, [{ naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt.length, 0);
+  test('een andere naam past niet; zonder eenheid past wel; stuk tegen gram past via het stukgewicht (WEEK-161)', () => {
+    const frigo = [f('g', 'ui', 300, 'g', OUD), f('ander', 'prei', 1, 'stuk', OUD)];
+    // 1 stuk ui = 150 g (het gemiddelde stukgewicht), dus er gaat 150 g af.
+    assert.equal(verbruik(frigo, [{ naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt[0].hoeveelheid, 150);
     assert.equal(verbruik(frigo, [{ naam: 'UI', hoeveelheid: 50 }]).verbruikt[0].hoeveelheid, 50);
+    assert.equal(verbruik([f('x', 'pasta', 500, 'g', OUD)], [{ naam: 'pasta', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt.length, 0, 'pasta heeft geen stukgewicht');
   });
 
   test('ingrediënten die niet in de frigo zitten, veranderen niets', () => {

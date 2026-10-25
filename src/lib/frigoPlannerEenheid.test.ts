@@ -19,7 +19,9 @@ describe('vaste eenheid per ingrediënt (WEEK-160)', () => {
     assert.equal(eenheidVan('olijfolie'), 'ml');
     assert.equal(eenheidVan('rijst'), 'g', 'rijst heeft geen databankcode: gram');
     assert.equal(eenheidVan('pasta'), 'g');
-    assert.equal(eenheidVan('tomaten'), 'g', 'tomaat staat in de databank op gram; de recepten gebruiken gram');
+    assert.equal(eenheidVan('tomaten'), 'stuk', 'tomaat is een telbaar groente-item (WEEK-161)');
+    assert.equal(eenheidVan('tomaten'), eenheidVan('tomaat'), 'catalogus-code en databankcode geven dezelfde eenheid');
+    assert.equal(eenheidVan('tomatenblokjes'), 'g', 'tomatenblokjes uit blik blijven op gram');
   });
 });
 

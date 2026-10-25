@@ -184,11 +184,33 @@ const VASTE_EENHEID: Readonly<Record<string, 'stuk' | 'teentje' | 'ml'>> = {
   kip_heel: 'stuk', laurier: 'stuk', lasagnebladen: 'stuk', limoen: 'stuk', nori: 'stuk', peer: 'stuk', rode_chili: 'stuk',
   rookworst: 'stuk', sinaasappel: 'stuk', tortilla_wrap: 'stuk',
   knoflook: 'teentje',
+  // Groenten en fruit die je per stuk koopt (WEEK-161). Het gewicht per stuk staat in GEWICHT_PER_STUK.
+  ui: 'stuk', rode_ui: 'stuk', tomaat: 'stuk', wortel: 'stuk', paprika: 'stuk', prei: 'stuk', sla: 'stuk', courgette: 'stuk',
+  aubergine: 'stuk', komkommer: 'stuk', bloemkool: 'stuk', broccoli: 'stuk', witlof: 'stuk', spitskool: 'stuk', witte_kool: 'stuk',
+  knolselderij: 'stuk', koolraap: 'stuk', pastinaak: 'stuk', selderij: 'stuk', citroen: 'stuk', sjalot: 'stuk', mango: 'stuk',
+  pruimen: 'stuk', andijvie: 'stuk', paksoi: 'stuk', ananas: 'stuk',
   agavesiroop: 'ml', amandelmelk: 'ml', appelazijn: 'ml', bier: 'ml', groentebouillon: 'ml', haverdrink: 'ml', ijswater: 'ml',
   kippenbouillon: 'ml', ketjap: 'ml', kokosmelk: 'ml', kokoswater: 'ml', melk: 'ml', mirin: 'ml', oestersaus: 'ml', olijfolie: 'ml',
   rijstazijn: 'ml', rode_wijn: 'ml', room: 'ml', sake: 'ml', sesamolie: 'ml', sinaasappelsap: 'ml', sojasaus: 'ml', teriyakisaus: 'ml',
   vanille: 'ml', vissaus: 'ml', vleesfond: 'ml', water: 'ml', witte_wijn: 'ml', zonnebloemolie: 'ml',
 };
+
+/**
+ * Gemiddeld gewicht in gram van één stuk (WEEK-161). Zo kan een product in gram in de frigo
+ * (bv. van vóór de omschakeling) toch met een recept op stuk koppelen. Benaderingen, geen exacte waarden.
+ */
+const GEWICHT_PER_STUK: Readonly<Record<string, number>> = {
+  ui: 150, rode_ui: 150, tomaat: 120, wortel: 80, paprika: 150, prei: 200, sla: 300, courgette: 200, aubergine: 300,
+  komkommer: 300, bloemkool: 600, broccoli: 300, witlof: 150, spitskool: 1000, witte_kool: 1200, knolselderij: 500,
+  koolraap: 300, pastinaak: 150, selderij: 150, citroen: 100, sjalot: 30, mango: 350, pruimen: 60, andijvie: 400,
+  paksoi: 400, ananas: 1000, eieren: 60, appel: 150, banaan: 120, kiwi: 80, avocado: 170, sinaasappel: 180, limoen: 60, peer: 170,
+};
+
+/** Gemiddeld gewicht van één stuk in gram, van een catalogus- of databankcode. Undefined als het niet bekend is. */
+export function gewichtPerStuk(code: string): number | undefined {
+  const db = dbCodeVan(code);
+  return db ? GEWICHT_PER_STUK[db] : undefined;
+}
 
 /** De eenheid waarin een catalogus-ingrediënt in de frigo en in recepten staat (WEEK-160). Geen databankcode: gram. */
 export function eenheidVan(code: string): string {

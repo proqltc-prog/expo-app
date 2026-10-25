@@ -33,8 +33,13 @@ describe('verdeelFrigo (WEEK-12)', () => {
     assert.deepEqual(verdeelFrigo([{ naam: 'Pasta', hoeveelheid: 300, eenheid: 'g' }, { naam: 'pasta', hoeveelheid: 200, eenheid: 'g' }], [f('pasta', undefined, undefined, 1)]),
       [{ gedekt: 'geheel' }, { gedekt: 'geheel' }]);
   });
-  test('een andere eenheid dekt niets', () => {
-    assert.deepEqual(verdeelFrigo([{ naam: 'ui', hoeveelheid: 2, eenheid: 'stuk' }], [f('ui', 500, 'g', 1)]), [{ gedekt: 'niet', rest: 2 }]);
+  test('een eenheid die niet te herleiden is, dekt niets', () => {
+    // Rijst heeft geen stukgewicht: 2 stuk rijst kan niet met 500 g gedekt worden (WEEK-161).
+    assert.deepEqual(verdeelFrigo([{ naam: 'rijst', hoeveelheid: 2, eenheid: 'stuk' }], [f('rijst', 500, 'g', 1)]), [{ gedekt: 'niet', rest: 2 }]);
+  });
+
+  test('stuk tegen gram dekt via het stukgewicht: 2 stuk ui (300 g) is gedekt door 500 g (WEEK-161)', () => {
+    assert.deepEqual(verdeelFrigo([{ naam: 'ui', hoeveelheid: 2, eenheid: 'stuk' }], [f('ui', 500, 'g', 1)]), [{ gedekt: 'geheel' }]);
   });
 });
 

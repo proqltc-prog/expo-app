@@ -47,8 +47,13 @@ describe('markeerOntbrekend op code en eenheid (WEEK-160)', () => {
     assert.equal(markeerOntbrekend(plan, verwijderd, frigoNa), plan);
   });
 
-  test('een verwijderd product met een eenheid die niet past, markeert niets', () => {
-    assert.equal(markeerOntbrekend(plan, [f('x', 'tomaat', 2, 'stuk')], []), plan);
+  test('een verwijderd product met een eenheid die niet te herleiden is (ml tegen gram), markeert niets', () => {
+    assert.equal(markeerOntbrekend(plan, [f('x', 'tomaat', 2, 'ml')], []), plan);
+  });
+
+  test('een verwijderd stuk-product (120 g per stuk) telt mee tegen het recept in gram (WEEK-161)', () => {
+    const na = markeerOntbrekend(plan, [f('x', 'tomaat', 2, 'stuk')], []);
+    assert.deepEqual(na.dagen[0].ontbreekt, ['tomaat']);
   });
 });
 
