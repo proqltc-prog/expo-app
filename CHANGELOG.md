@@ -19,6 +19,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Het eerste recept van een gedeeld ingrediënt houdt zijn id: vinkjes en frigo-koppelingen blijven geldig bij het overzetten van het plan.
 - Recepten met dezelfde naam op één dag blijven apart op de lijst.
 - Catalogus-ingrediënten zonder databankequivalent (pasta, kaas, rijst…) koppelen weer op naam, ook als het recept een databankcode heeft.
+- Producten uit de zoekfunctie van de planner-frigo krijgen de databankcode en de vaste eenheid: stuk (eieren, appel…), teentje (knoflook), ml (olijfolie, melk…) of g (rijst, pasta…). Je kan er optioneel een hoeveelheid bij geven.
 
 ## [0.90.3] – 2026-10-24
 

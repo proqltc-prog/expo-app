@@ -103,7 +103,7 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
 }
 
 /** Extra gegevens bij zelf toevoegen (WEEK-35). */
-export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string; bron?: FrigoBron };
+export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string; bron?: FrigoBron; code?: string };
 
 /** Eenheden die je kan kiezen bij zelf toevoegen. */
 export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
@@ -117,7 +117,8 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
   if (!n) return [...frigo];
   const h = extra.hoeveelheid;
   const hoeveelheid = typeof h === 'number' && Number.isFinite(h) && h > 0 ? Math.round(h * 100) / 100 : undefined;
-  const eenheid = hoeveelheid !== undefined && extra.eenheid?.trim() ? extra.eenheid.trim() : undefined;
+  // Een eenheid hoort bij een hoeveelheid, of bij een planner-product met vaste code (WEEK-160: ook zonder hoeveelheid).
+  const eenheid = (hoeveelheid !== undefined || extra.code) && extra.eenheid?.trim() ? extra.eenheid.trim() : undefined;
   const afdeling = extra.afdeling && (extra.afdeling === 'overig' || isAfdeling(extra.afdeling)) ? extra.afdeling : 'overig';
   return [
     ...frigo,
@@ -129,6 +130,7 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
       afdeling,
       toegevoegdOp: nu.toISOString(),
       bron: extra.bron ?? 'los',
+      ...(extra.code ? { code: extra.code } : {}),
       ...(extra.product ? { product: extra.product } : {}),
       ...(isoDatum(extra.houdbaarTot) ? { houdbaarTot: extra.houdbaarTot } : {}),
     },

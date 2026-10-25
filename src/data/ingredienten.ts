@@ -175,6 +175,27 @@ export function dbCodeVan(code: string): string | undefined {
   return naarDbCode(code);
 }
 
+/**
+ * De vaste eenheid per databankcode (WEEK-160), overgenomen uit de databank. Alles wat hier niet staat, is gram.
+ * Tellingen: stuk (appel, eieren, tortilla…) en teentje (knoflook). Vloeistoffen: ml.
+ */
+const VASTE_EENHEID: Readonly<Record<string, 'stuk' | 'teentje' | 'ml'>> = {
+  appel: 'stuk', avocado: 'stuk', banaan: 'stuk', bouillonblokje: 'stuk', citroengras: 'stuk', eieren: 'stuk', kiwi: 'stuk',
+  kip_heel: 'stuk', laurier: 'stuk', lasagnebladen: 'stuk', limoen: 'stuk', nori: 'stuk', peer: 'stuk', rode_chili: 'stuk',
+  rookworst: 'stuk', sinaasappel: 'stuk', tortilla_wrap: 'stuk',
+  knoflook: 'teentje',
+  agavesiroop: 'ml', amandelmelk: 'ml', appelazijn: 'ml', bier: 'ml', groentebouillon: 'ml', haverdrink: 'ml', ijswater: 'ml',
+  kippenbouillon: 'ml', ketjap: 'ml', kokosmelk: 'ml', kokoswater: 'ml', melk: 'ml', mirin: 'ml', oestersaus: 'ml', olijfolie: 'ml',
+  rijstazijn: 'ml', rode_wijn: 'ml', room: 'ml', sake: 'ml', sesamolie: 'ml', sinaasappelsap: 'ml', sojasaus: 'ml', teriyakisaus: 'ml',
+  vanille: 'ml', vissaus: 'ml', vleesfond: 'ml', water: 'ml', witte_wijn: 'ml', zonnebloemolie: 'ml',
+};
+
+/** De eenheid waarin een catalogus-ingrediënt in de frigo en in recepten staat (WEEK-160). Geen databankcode: gram. */
+export function eenheidVan(code: string): string {
+  const db = dbCodeVan(code);
+  return (db && VASTE_EENHEID[db]) ?? 'g';
+}
+
 const normaliseerNaam = (t: string) =>
   t.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/\s+/g, ' ').trim();
 
