@@ -1,6 +1,6 @@
 // Virtuele frigo (WEEK-4): wat het gezin in huis heeft. Pure logica, zonder opslag.
 // Opslag op het toestel staat in src/opslag/frigo.ts.
-import { AFDELINGEN, Afdeling, dbCodeVanNaam, naarDbCode } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum } from '@/lib/houdbaarheid';
@@ -262,7 +262,7 @@ export function omrekenFactor(van: string | undefined, naar: string | undefined)
 
 /** De databankcode van een frigo-item of ingrediënt: de eigen code, anders afgeleid van de naam in een taal (WEEK-160). */
 function codeVan(x: { naam: string; code?: string }): string | undefined {
-  return x.code ? naarDbCode(x.code) : dbCodeVanNaam(x.naam);
+  return x.code ? dbCodeVan(x.code) : dbCodeVanNaam(x.naam);
 }
 
 /**

@@ -148,6 +148,33 @@ export function naarDbCode(code: string): string {
   return CATALOGUS_NAAR_DB[code] ?? code;
 }
 
+/**
+ * Catalogus-ingrediënten zonder databankequivalent (WEEK-160). Die hebben geen betrouwbare databankcode:
+ * ze koppelen op naam, net als vroeger. Een code uit deze lijst mag nooit tegen een databankcode vergeleken worden,
+ * want dan zou "pasta" niet meer matchen met het recept-ingrediënt "pasta" met code pasta_penne.
+ */
+const ZONDER_DB_EQUIVALENT: ReadonlySet<string> = new Set([
+  'pasta',
+  'macaroni',
+  'noedels',
+  'rijst',
+  'bouillon',
+  'krieltjes',
+  'soepgroenten',
+  'wokgroenten',
+  'vissticks',
+  'kaas',
+  'kabeljauw',
+  'scampi',
+  'fruit',
+]);
+
+/** De databankcode van een code, of undefined als er geen betrouwbare databankcode is (WEEK-160). */
+export function dbCodeVan(code: string): string | undefined {
+  if (ZONDER_DB_EQUIVALENT.has(code)) return undefined;
+  return naarDbCode(code);
+}
+
 const normaliseerNaam = (t: string) =>
   t.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/\s+/g, ' ').trim();
 
@@ -160,7 +187,7 @@ export function dbCodeVanNaam(naam: string): string | undefined {
   const n = normaliseerNaam(naam);
   if (!n) return undefined;
   for (const code of INGREDIENT_CODES) {
-    if (VOLGORDE.some((taal) => normaliseerNaam(ingredientNaam(code, taal)) === n)) return naarDbCode(code);
+    if (VOLGORDE.some((taal) => normaliseerNaam(ingredientNaam(code, taal)) === n)) return dbCodeVan(code);
   }
   return undefined;
 }
