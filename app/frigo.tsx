@@ -10,7 +10,7 @@ import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
-import { aantalSheet, CatalogusItem, inCatalogus, koppelBronnen, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
+import { aantalSheet, CatalogusItem, inCatalogus, koppelBronnen, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekReceptenbank } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { eenheidVan } from '@/data/ingredienten';
@@ -162,7 +162,8 @@ export default function Frigo() {
   // Accentkleur van de actieve sheet: petrol voor planner-frigo, oranje voor losse producten (WEEK-75).
   const thema = sheetThema(sheet);
   // De ingrediënt-knoppen verschijnen enkel bij een zoekopdracht; de lijst eronder volstaat (WEEK-96).
-  const resultaten = useMemo(() => (sheet === 'planner' && zoek.trim() ? zoekCatalogus(zoek, taal) : []), [zoek, sheet, taal]);
+  // WEEK-162: in de planner-frigo enkel ingrediënten die de receptenbank kent. Losse producten blijven vrij.
+  const resultaten = useMemo(() => (sheet === 'planner' && zoek.trim() ? zoekReceptenbank(zoek, taal) : []), [zoek, sheet, taal]);
   const alInPlanner = (naam: string) => inCatalogus(naam) !== undefined && sheets(frigo).planner.some((f) => f.naam.toLowerCase() === naam.toLowerCase());
 
   const kop = (

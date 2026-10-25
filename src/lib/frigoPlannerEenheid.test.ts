@@ -40,11 +40,8 @@ describe('voegPlannerToe met code, eenheid en hoeveelheid (WEEK-160)', () => {
     assert.equal(f.hoeveelheid, undefined);
   });
 
-  test('pasta heeft geen databankcode en is in gram', () => {
-    const [f] = voegPlannerToe([], vanCatalogus('pasta'), nu, 500);
-    assert.equal(f.code, undefined);
-    assert.equal(f.eenheid, 'g');
-    assert.equal(f.hoeveelheid, 500);
+  test('pasta heeft geen receptenbank-code: het komt niet in de planner-frigo (WEEK-162)', () => {
+    assert.deepEqual(voegPlannerToe([], vanCatalogus('pasta'), nu, 500), []);
   });
 
   test('een tweede keer toevoegen van hetzelfde product verandert niets', () => {
