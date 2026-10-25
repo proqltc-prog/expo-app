@@ -195,8 +195,13 @@ describe('verbruik (WEEK-19)', () => {
     const { frigo, verbruikt } = verbruik([zelf, f('b', 'pasta', 500, 'g', NIEUW)], [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
     assert.deepEqual(frigo.map((x) => x.id), ['b']);
     assert.deepEqual(verbruikt, [zelf]);
+    // WEEK-160: het recept heeft geen hoeveelheid; een product met gekende hoeveelheid blijft staan (we weten niet wat er nodig is).
     const zonderHoeveelheid = verbruik([f('a', 'look', 3, 'teentje', OUD)], [{ naam: 'look' }]);
-    assert.deepEqual(zonderHoeveelheid.frigo, []);
+    assert.deepEqual(zonderHoeveelheid.frigo.map((x) => x.id), ['a']);
+    assert.equal(zonderHoeveelheid.verbruikt.length, 0);
+    // Een product zonder hoeveelheid gaat wel helemaal eruit, ook als het recept geen hoeveelheid heeft.
+    const zelfZonder = verbruik([f('z', 'look', undefined, undefined, OUD)], [{ naam: 'look' }]);
+    assert.deepEqual(zelfZonder.frigo, []);
   });
 
   test('een andere eenheid of naam past niet; zonder eenheid past wel', () => {

@@ -118,3 +118,49 @@ export function ingredientNaam(code: IngredientCode, taal: Taal): string {
 }
 
 export const INGREDIENT_CODES = Object.keys(TABEL) as IngredientCode[];
+
+/**
+ * De catalogus en de databank van recepten gebruiken voor sommige ingrediënten een andere code (WEEK-160).
+ * Deze tabel zet de catalogus-code om naar de databankcode; alle andere codes blijven gelijk.
+ */
+const CATALOGUS_NAAR_DB: Readonly<Record<string, string>> = {
+  tomaten: 'tomaat',
+  tomatenblokjes: 'tomaat_blokjes',
+  aardappelen: 'aardappel',
+  wortelen: 'wortel',
+  look: 'knoflook',
+  parmezaan: 'kaas_parmezaan',
+  zalmfilet: 'zalm',
+  kippendijen: 'kipdijen',
+  worsten: 'worst',
+  tortillas: 'tortilla_wrap',
+  mais: 'maïs',
+  tonijn: 'tonijn_blik',
+  erwten: 'doperwten',
+  'bruin-bier': 'bier',
+  'rode-linzen': 'linzen',
+  spaghetti: 'pasta_spaghetti',
+  lasagnevellen: 'lasagnebladen',
+};
+
+/** Zet een catalogus-code om naar de databankcode (idempotent voor codes die al een databankcode zijn). */
+export function naarDbCode(code: string): string {
+  return CATALOGUS_NAAR_DB[code] ?? code;
+}
+
+const normaliseerNaam = (t: string) =>
+  t.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+/**
+ * De databankcode van een ingrediënt op basis van zijn naam in een van de talen (WEEK-160).
+ * Zo koppelt een frigo-product dat in een andere taal is ingegeven toch aan het juiste recept-ingrediënt.
+ * Onbekende naam: undefined.
+ */
+export function dbCodeVanNaam(naam: string): string | undefined {
+  const n = normaliseerNaam(naam);
+  if (!n) return undefined;
+  for (const code of INGREDIENT_CODES) {
+    if (VOLGORDE.some((taal) => normaliseerNaam(ingredientNaam(code, taal)) === n)) return naarDbCode(code);
+  }
+  return undefined;
+}

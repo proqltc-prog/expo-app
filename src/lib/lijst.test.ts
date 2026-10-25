@@ -23,7 +23,7 @@ describe('itemsUitPlan', () => {
   test('één item per ingrediënt per recept, gekoppeld aan dag en recept', () => {
     const items = itemsUitPlan(dagen);
     assert.equal(items.length, 4);
-    assert.deepEqual(items[0].recept, { dag: 'zondag', naam: 'Pasta pesto' });
+    assert.deepEqual(items[0].recept, { dag: 'zondag', naam: 'Pasta pesto', id: 'Pasta pesto' });
     assert.equal(items[0].afdeling, 'droge-voeding');
     assert.ok(items.every((i) => i.categorie === 'avondeten' && !i.afgevinkt));
     assert.equal(new Set(items.map((i) => i.id)).size, items.length);

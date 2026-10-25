@@ -20,8 +20,8 @@ export type LijstItem = {
   afdeling?: Afdeling;
   /** Vaste ingrediëntcode (taalonafhankelijk); enkel voor items uit de weekplanning (WEEK-159). */
   code?: string;
-  /** Het recept waar dit ingrediënt bij hoort (enkel voor items uit de weekplanning). */
-  recept?: { dag: DagCode; naam: string };
+  /** Het recept waar dit ingrediënt bij hoort (enkel voor items uit de weekplanning). `id` is de databank- of receptenbankcode (WEEK-160). */
+  recept?: { dag: DagCode; naam: string; id?: string };
   /** Naam van het gezinslid dat het item zelf toevoegde (gedeelde lijst, WEEK-17). */
   door?: string;
   /** Naam van het gezinslid dat het item afvinkte (gedeelde lijst, WEEK-17). */
@@ -64,18 +64,27 @@ export function planSleutel(plan: { gemaaktOp: string }): string {
   return Number.isNaN(t) ? klein(plan.gemaaktOp).replace(/[^a-z0-9]+/g, '') || 'plan' : t.toString(36);
 }
 
+/** Het id zonder het recept erachter (zie itemsUitPlan): de basis van een gedeeld ingrediënt. */
+function basisId(i: LijstItem): string {
+  const suffix = i.recept?.id ? `-${i.recept.id}` : '';
+  return suffix && i.id.endsWith(suffix) ? i.id.slice(0, -suffix.length) : i.id;
+}
+
 /**
  * Eén item per ingrediënt per recept, zodat de lijst per recept getoond kan worden.
  * Staat hetzelfde ingrediënt (code + eenheid) twee keer in één recept, dan wordt het samengeteld (WEEK-29).
- * Het id bevat het recept zelf (WEEK-159): twee recepten op dezelfde dag die een ingrediënt delen, krijgen elk
- * hun eigen regel met de juiste hoeveelheid. `sleutel`: zie planSleutel().
+ * Recepten op dezelfde dag die een ingrediënt delen, krijgen elk hun eigen regel met de juiste hoeveelheid (WEEK-159).
+ * Het eerste recept houdt het id zonder recept (zoals vroeger), zodat vinkjes en frigo-koppelingen blijven kloppen (WEEK-160).
+ * `sleutel`: zie planSleutel().
  */
 export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): LijstItem[] {
   const items: LijstItem[] = [];
   for (const { dag, recept } of dagen) {
     for (const ing of recept.ingredienten) {
       // WEEK-154: het id volgt de vaste code (niet de taalafhankelijke naam), zodat afvinken en frigo blijven kloppen na een taalwissel.
-      const id = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${recept.id}-${klein(ing.code ?? ing.naam)}-${ing.eenheid}`;
+      const basis = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${klein(ing.code ?? ing.naam)}-${ing.eenheid}`;
+      const eerste = items.find((i) => i.id === basis);
+      const id = !eerste || eerste.recept?.id === recept.id ? basis : `${basis}-${recept.id}`;
       const bestaand = items.find((i) => i.id === id);
       if (bestaand) {
         bestaand.hoeveelheid = Math.round(((bestaand.hoeveelheid ?? 0) + ing.hoeveelheid) * 100) / 100;
@@ -90,7 +99,7 @@ export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): Lijst
         eenheid: ing.eenheid,
         afdeling: ing.afdeling,
         ...(ing.code ? { code: ing.code } : {}),
-        recept: { dag, naam: recept.naam },
+        recept: { dag, naam: recept.naam, id: recept.id },
       });
     }
   }
@@ -132,7 +141,8 @@ export function voegPlanToe(
   const oud = new Map(bestaand.map((i) => [i.id, i]));
   const volledig = itemsUitPlan(dagenInTaal(dagen, taal), sleutel);
   const uitPlan = aanpassing(volledig).map((i) => {
-    const was = oud.get(i.id);
+    // Een tweede recept met een gedeeld ingrediënt erft de vinkstatus van het basis-item (WEEK-160).
+    const was = oud.get(i.id) ?? oud.get(basisId(i));
     return was?.afgevinkt ? { ...i, afgevinkt: true, ...(was.afgevinktDoor ? { afgevinktDoor: was.afgevinktDoor } : {}) } : i;
   });
 
@@ -242,7 +252,8 @@ export function perRecept(items: readonly LijstItem[], dagVolgorde: readonly Dag
   const overige = new Map<string, LijstItem[]>();
   for (const i of items) {
     if (i.recept) {
-      const sleutel = `${i.recept.dag}|${i.recept.naam}`;
+      // Op recept-id (WEEK-160), zodat twee recepten met dezelfde naam op één dag niet samenvallen.
+      const sleutel = `${i.recept.dag}|${i.recept.id ?? i.recept.naam}`;
       const groep = recepten.get(sleutel) ?? { dag: i.recept.dag, recept: i.recept.naam, items: [] };
       groep.items.push(i);
       recepten.set(sleutel, groep);
@@ -323,7 +334,7 @@ const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v =
 export function leesLijstItem(ruw: unknown): LijstItem | null {
   if (!isObject(ruw) || typeof ruw.id !== 'string' || !ruw.id || typeof ruw.naam !== 'string' || !ruw.naam.trim()) return null;
   const recept = isObject(ruw.recept) && WEEKDAGEN.includes(ruw.recept.dag as DagCode) && typeof ruw.recept.naam === 'string'
-    ? { dag: ruw.recept.dag as DagCode, naam: ruw.recept.naam }
+    ? { dag: ruw.recept.dag as DagCode, naam: ruw.recept.naam, ...(typeof ruw.recept.id === 'string' && ruw.recept.id ? { id: ruw.recept.id } : {}) }
     : undefined;
   const hoeveelheid = typeof ruw.hoeveelheid === 'number' && Number.isFinite(ruw.hoeveelheid) && ruw.hoeveelheid >= 0 ? ruw.hoeveelheid : undefined;
   return {

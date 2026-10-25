@@ -1,6 +1,6 @@
 // Virtuele frigo (WEEK-4): wat het gezin in huis heeft. Pure logica, zonder opslag.
 // Opslag op het toestel staat in src/opslag/frigo.ts.
-import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, dbCodeVanNaam, naarDbCode } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum } from '@/lib/houdbaarheid';
@@ -239,13 +239,41 @@ const rond = (n: number) => Math.round(n * 100) / 100;
 /** Wat een recept nodig heeft; dezelfde vorm als een ingrediënt in het weekplan. */
 export type Benodigd = { naam: string; hoeveelheid?: number; eenheid?: string; code?: string };
 
+/** Massa- en volume-eenheden die onderling om te rekenen zijn (WEEK-160). Stuk of teentje kan niet zonder gewicht. */
+const OMREKENING: Readonly<Record<string, { familie: 'gewicht' | 'volume'; basis: number }>> = {
+  g: { familie: 'gewicht', basis: 1 },
+  kg: { familie: 'gewicht', basis: 1000 },
+  ml: { familie: 'volume', basis: 1 },
+  l: { familie: 'volume', basis: 1000 },
+};
+
 /**
- * Hoort dit product bij dit ingrediënt? Heeft beide een vaste code, dan telt die (taalonafhankelijk, WEEK-159).
- * Anders dezelfde naam (hoofdletters maken niet uit). Als beide een eenheid hebben, moet die ook gelijk zijn.
+ * Hoeveel keer een hoeveelheid in `van` moet vermenigvuldigd om in `naar` te komen (WEEK-160).
+ * Zonder eenheid aan één kant, of gelijke eenheden: 1. Binnen dezelfde familie (g/kg, ml/l): de omrekening.
+ * Anders undefined: zo'n product telt niet mee (bv. stuk tegen gram, we kennen het gewicht per stuk niet).
+ */
+export function omrekenFactor(van: string | undefined, naar: string | undefined): number | undefined {
+  if (!van || !naar || van === naar) return 1;
+  const a = OMREKENING[van];
+  const b = OMREKENING[naar];
+  if (!a || !b || a.familie !== b.familie) return undefined;
+  return a.basis / b.basis;
+}
+
+/** De databankcode van een frigo-item of ingrediënt: de eigen code, anders afgeleid van de naam in een taal (WEEK-160). */
+function codeVan(x: { naam: string; code?: string }): string | undefined {
+  return x.code ? naarDbCode(x.code) : dbCodeVanNaam(x.naam);
+}
+
+/**
+ * Hoort dit product bij dit ingrediënt? Heeft beide een code, dan telt die (taalonafhankelijk, WEEK-159/160).
+ * Zonder code: dezelfde naam (hoofdletters maken niet uit). Eenheden moeten te herleiden zijn (zie omrekenFactor).
  */
 export function pastBij(f: FrigoItem, ing: Benodigd): boolean {
-  const zelfde = f.code && ing.code ? f.code === ing.code : klein(f.naam) === klein(ing.naam);
-  return zelfde && (!f.eenheid || !ing.eenheid || f.eenheid === ing.eenheid);
+  const cf = codeVan(f);
+  const ci = codeVan(ing);
+  const zelfde = cf && ci ? cf === ci : klein(f.naam) === klein(ing.naam);
+  return zelfde && omrekenFactor(ing.eenheid, f.eenheid) !== undefined;
 }
 
 /**
@@ -258,28 +286,37 @@ export function receptFrigo(frigo: readonly FrigoItem[]): FrigoItem[] {
 
 /**
  * Haalt de ingrediënten van een gekookt recept uit de frigo, de oudste producten eerst.
- * - Met gekende hoeveelheden wordt enkel afgetrokken wat het recept nodig heeft.
- * - Is de hoeveelheid van het product of van het recept niet gekend, dan gaat het hele (oudste) product eruit.
+ * - Met gekende hoeveelheden wordt enkel afgetrokken wat het recept nodig heeft, omgerekend naar de eenheid van het product (WEEK-160).
+ * - Heeft het product een hoeveelheid maar het recept niet, dan blijft dat product staan (we weten niet hoeveel het nodig heeft).
+ * - Heeft het product geen hoeveelheid, dan gaat het hele (oudste) product eruit.
  * Geeft de nieuwe frigo terug en wat er verbruikt werd (om het ongedaan te kunnen maken).
  */
 export function verbruik(frigo: readonly FrigoItem[], ingredienten: readonly Benodigd[]): { frigo: FrigoItem[]; verbruikt: FrigoItem[] } {
   let rest = frigo.map((f) => ({ ...f }));
   const verbruikt: FrigoItem[] = [];
   for (const ing of ingredienten) {
+    // Hoeveelheid van het recept, in de eenheid van het ingrediënt.
     let nodig = ing.hoeveelheid !== undefined && ing.hoeveelheid > 0 ? ing.hoeveelheid : undefined;
     // Losse producten (WEEK-71) tellen niet mee: die beheert de gebruiker zelf.
     const kandidaten = rest.filter((f) => frigoBron(f) === 'planner' && pastBij(f, ing)).sort((a, b) => a.toegevoegdOp.localeCompare(b.toegevoegdOp));
     for (const f of kandidaten) {
-      if (nodig === undefined || f.hoeveelheid === undefined) {
+      if (nodig === undefined) {
+        if (f.hoeveelheid !== undefined) continue;
         rest = rest.filter((r) => r !== f);
         verbruikt.push({ ...f });
         break;
       }
-      const neem = rond(Math.min(nodig, f.hoeveelheid));
+      if (f.hoeveelheid === undefined) {
+        rest = rest.filter((r) => r !== f);
+        verbruikt.push({ ...f });
+        break;
+      }
+      const factor = omrekenFactor(ing.eenheid, f.eenheid) ?? 1;
+      const neem = rond(Math.min(nodig * factor, f.hoeveelheid));
       verbruikt.push({ ...f, hoeveelheid: neem });
       f.hoeveelheid = rond(f.hoeveelheid - neem);
       if (f.hoeveelheid <= 0) rest = rest.filter((r) => r !== f);
-      nodig = rond(nodig - neem);
+      nodig = rond(nodig - neem / factor);
       if (nodig <= 0) break;
     }
   }
@@ -331,11 +368,13 @@ export function verdeelFrigo(behoeften: readonly Benodigd[], frigo: readonly Fri
     const passend = voorraad.filter((f) => pastBij(f, b));
     if (!passend.length) return { gedekt: 'niet', ...(b.hoeveelheid !== undefined ? { rest: b.hoeveelheid } : {}) };
     if (b.hoeveelheid === undefined || passend.some((f) => f.hoeveelheid === undefined)) return { gedekt: 'geheel' };
+    // `nodig` in de eenheid van het ingrediënt; per product omgerekend naar de eenheid van het product (WEEK-160).
     let nodig = b.hoeveelheid;
     for (const f of passend) {
-      const neem = Math.min(nodig, f.hoeveelheid ?? 0);
+      const factor = omrekenFactor(b.eenheid, f.eenheid) ?? 1;
+      const neem = Math.min(nodig * factor, f.hoeveelheid ?? 0);
       f.hoeveelheid = rond((f.hoeveelheid ?? 0) - neem);
-      nodig = rond(nodig - neem);
+      nodig = rond(nodig - neem / factor);
       if (nodig <= 0) break;
     }
     if (nodig <= 0) return { gedekt: 'geheel' };

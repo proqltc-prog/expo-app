@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.90.4] – 2026-10-25
+
+**WEEK-160** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-160) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14843905)
+
+- Ontbreekt-markers en "in frigo" volgen dezelfde koppeling als het verbruik: op code, ook over talen heen.
+- Ingrediënten uit de catalogus koppelen aan de databankcode; afwijkende catalogus-codes worden omgezet.
+- Eenheden binnen dezelfde familie (g/kg, ml/l) worden omgerekend. Stuk tegen gram past niet, dus er wordt niets verbruikt.
+- Een recept zonder hoeveelheid haalt geen hoeveelheid af van een product met een gekende hoeveelheid.
+- Het eerste recept van een gedeeld ingrediënt houdt zijn id: vinkjes en frigo-koppelingen blijven geldig bij het overzetten van het plan.
+- Recepten met dezelfde naam op één dag blijven apart op de lijst.
+
 ## [0.90.3] – 2026-10-24
 
 **WEEK-159** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-159) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14680065)
