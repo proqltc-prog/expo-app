@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.92.0] – 2026-11-01
+
+**WEEK-163** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-163)
+
+- Bij de eerste start wordt na de taalkeuze de voornaam gevraagd (max. 20 tekens, enkel letters; een spatie, koppelteken of apostrof mag tussen de letters).
+- De voornaam wordt meegegeven bij het aansluiten bij een gezin, in plaats van een lege naam. Zo zien de andere leden wie iets gekocht of toegevoegd heeft.
+- In het gezinsscherm is de voornaam aan te passen, ook als je al lid bent. De wijziging gaat naar het gezin.
 ## [0.91.5] – 2026-10-25
 
 **WEEK-162** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-162)
@@ -15,7 +22,6 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - De planner-frigo bevat enkel ingrediënten die de receptenbank kent. Generieke items zonder equivalent (pasta, kaas, rijst, fruit, bouillon…) zijn niet meer zoekbaar in de planner-frigo; ze kunnen wel als losse product worden toegevoegd.
 - Losse producten worden nooit door de weekplanner gebruikt (ongewijzigd).
 
-## [0.90.5] – 2026-10-25
 ## [0.91.4] – 2026-10-25
 
 **WEEK-161** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-161)
