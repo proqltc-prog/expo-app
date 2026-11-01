@@ -8,7 +8,7 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
-## [0.90.6] – 2026-10-25
+## [0.91.5] – 2026-10-25
 
 **WEEK-162** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-162)
 
@@ -16,13 +16,14 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Losse producten worden nooit door de weekplanner gebruikt (ongewijzigd).
 
 ## [0.90.5] – 2026-10-25
+## [0.91.4] – 2026-10-25
 
 **WEEK-161** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-161)
 
 - Groenten en fruit die je per stuk koopt (ui, tomaat, wortel, paprika, sla, prei, courgette, citroen, sjalot…) staan op stuk, in de databank, in de frigo en in de recepten. Hoeveelheden in recepten zijn omgerekend met een gemiddeld stukgewicht, afgerond op een halve stuk.
 - Oude frigo-items in gram koppelen aan recepten op stuk via het gemiddelde stukgewicht.
 
-## [0.90.4] – 2026-10-25
+## [0.91.3] – 2026-10-25
 
 **WEEK-160** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-160) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14843905)
 
@@ -35,7 +36,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Catalogus-ingrediënten zonder databankequivalent (pasta, kaas, rijst…) koppelen weer op naam, ook als het recept een databankcode heeft.
 - Producten uit de zoekfunctie van de planner-frigo krijgen de databankcode en de vaste eenheid: stuk (eieren, appel…), teentje (knoflook), ml (olijfolie, melk…) of g (rijst, pasta…). Je kan er optioneel een hoeveelheid bij geven.
 
-## [0.90.3] – 2026-10-24
+## [0.91.2] – 2026-10-24
 
 **WEEK-159** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-159) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14680065)
 
@@ -44,11 +45,17 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Gekochte frigo-producten worden na een taalwissel nog steeds aan het juiste recept gekoppeld (via de vaste ingrediëntcode).
 - "Gekocht door" en "toegevoegd door" tonen de voornaam.
 
-## [0.90.2] – 2026-10-24
+## [0.91.1] – 2026-10-24
 
 **WEEK-158** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-158) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14581761)
 
 - Losse frigo-producten (die je zelf toevoegt) tellen niet meer mee voor recepten van de weekplanner: ze trekken niets af van de boodschappenlijst en geven geen \"uit de frigo\" of ingrediënt-status. Enkel producten van de planner worden gebruikt.
+## [0.91.0] – 2026-10-23
+
+**WEEK-156** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-156) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14024705)
+
+- Seizoensrecepten: de planner kiest per dag recepten van het seizoen van die dag (lente, zomer, herfst, winter). Seizoensrecepten krijgen voorrang; anders vallen we terug op recepten van het hele jaar. Zonder gekozen datums verandert er niets.
+- Databank: nieuwe kolom `seizoenen` op de recepten; recepten met seizoensgroenten of -fruit zijn ingevuld op basis van hun ingrediënten.
 
 ## [0.90.1] – 2026-10-21
 
