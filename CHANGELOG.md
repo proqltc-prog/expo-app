@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.92.0] – 2026-11-01
+
+**WEEK-167** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-167)
+
+- Nieuw: de app is ook als webversie beschikbaar, zodat je ze op een iPhone kan gebruiken via Safari ("Zet op beginscherm"). Zonder Apple Developer-account is een native iPhone-installatie niet mogelijk.
+- Op de webversie zijn er geen advertentiefilmpjes; de scanner geeft dan geen extra scans.
+- Een workflow bouwt de webversie en publiceert ze op GitHub Pages bij elke merge naar main.
+
 ## [0.90.1] – 2026-10-21
 
 **WEEK-155** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-155) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12976129)
