@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.91.0] – 2026-11-01
+
+**WEEK-163** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-163)
+
+- Bij de eerste start wordt na de taalkeuze de voornaam gevraagd (max. 20 tekens, enkel letters; een spatie, koppelteken of apostrof mag tussen de letters).
+- De voornaam wordt meegegeven bij het aansluiten bij een gezin, in plaats van een lege naam. Zo zien de andere leden wie iets gekocht of toegevoegd heeft.
+- In het gezinsscherm is de voornaam aan te passen, ook als je al lid bent. De wijziging gaat naar het gezin.
+
 ## [0.90.1] – 2026-10-21
 
 **WEEK-155** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-155) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/12976129)

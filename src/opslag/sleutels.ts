@@ -14,6 +14,8 @@ export const SLEUTEL = {
   welkom: 'welkom:v1',
   /** Taal van de app op dit toestel (WEEK-80): niet in het gezin en niet op andere toestellen. */
   taal: 'taal:v1',
+  /** Voornaam van de gebruiker op dit toestel (WEEK-163): wordt bij aansluiten meegestuurd naar het gezin. */
+  voornaam: 'voornaam:v1',
   gezin: 'gezin:v1',
   /** Aantal scans vandaag op dit toestel (WEEK-34). */
   scans: 'scans:v1',

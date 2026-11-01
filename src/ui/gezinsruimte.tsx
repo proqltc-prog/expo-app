@@ -5,6 +5,8 @@ import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, TextInput
 import { leesGezinFout, leesGezinscode, toonGezinscode } from '@/lib/sync';
 import { anderenLeden, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { wijsPlanBeheerderAan } from '@/opslag/plan';
+import { laadVoornaam, zetVoornaam } from '@/opslag/voornaam';
+import { valideerVoornaam, VoornaamFout } from '@/lib/voornaam';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import {
   bijWijziging,
@@ -22,15 +24,15 @@ import {
   verlaatGezin,
   verlaatMetOpvolger,
   wordLid,
+  zetLidNaam,
 } from '@/opslag/sync';
 import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
 
-// WEEK-104: de naam wordt niet meer gevraagd; een nieuw gezin krijgt een standaardnaam.
+// WEEK-104: het gezin krijgt een standaardnaam. De voornaam van het lid komt van het toestel (WEEK-163).
 const GEZINSNAAM_STANDAARD = 'Gezin';
-const LIDNAAM_STANDAARD = '';
 
 export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const { t } = useTaal();
@@ -44,6 +46,35 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const [beheerderId, setBeheerderId] = useState<string | undefined>(undefined);
   const [mijnId, setMijnId] = useState<string | undefined>(undefined);
   const [kiesOpvolger, setKiesOpvolger] = useState(false);
+  // Voornaam van dit toestel (WEEK-163): zichtbaar bij "gekocht door" en "toegevoegd door".
+  const [voornaam, setVoornaam] = useState('');
+  const [voornaamInvoer, setVoornaamInvoer] = useState('');
+  const [voornaamFout, setVoornaamFout] = useState<VoornaamFout | null>(null);
+  const [voornaamOpgeslagen, setVoornaamOpgeslagen] = useState(false);
+
+  useEffect(() => {
+    laadVoornaam().then((n) => {
+      setVoornaam(n);
+      setVoornaamInvoer(n);
+    });
+  }, []);
+
+  const bewaarVoornaam = () =>
+    voerUit(async () => {
+      const r = valideerVoornaam(voornaamInvoer);
+      if (!r.ok) {
+        setVoornaamFout(r.fout);
+        setVoornaamOpgeslagen(false);
+        return;
+      }
+      setVoornaamFout(null);
+      // Eerst het toestel, dan het gezin. Lukt het gezin niet, dan blijft de nieuwe naam op dit toestel staan.
+      await zetVoornaam(r.naam);
+      setVoornaam(r.naam);
+      setVoornaamInvoer(r.naam);
+      await zetLidNaam(r.naam);
+      setVoornaamOpgeslagen(true);
+    });
 
   const vernieuw = useCallback(async () => {
     const g = await laadGezin();
@@ -84,7 +115,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
 
   const maak = () =>
     voerUit(async () => {
-      await maakGezin(GEZINSNAAM_STANDAARD, LIDNAAM_STANDAARD);
+      await maakGezin(GEZINSNAAM_STANDAARD, await laadVoornaam());
       // Wie het gezin maakt, is ook beheerder van het weekplan (WEEK-65).
       const id = await ikId();
       if (id) await wijsPlanBeheerderAan(id);
@@ -96,7 +127,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
       setFout(t('gezin.fout.code'));
       return;
     }
-    voerUit(() => wordLid(gelezen, LIDNAAM_STANDAARD));
+    voerUit(async () => wordLid(gelezen, await laadVoornaam()));
   };
 
   const deel = () => gezin && Share.share({ message: t('gezin.deelTekst', { code: toonGezinscode(gezin.code) }) });
@@ -162,6 +193,29 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
     <>
       {kopTonen && <Text style={s.kop}>{t('gezin.titel')}</Text>}
       <View style={s.kaart}>
+        <Text style={s.uitleg}>{t('naam.uitleg')}</Text>
+        <Text style={s.label}>{t('naam.kop')}</Text>
+        <View style={s.rij}>
+          <TextInput
+            style={[s.veld, s.naamVeld, voornaamFout && s.veldFout]}
+            value={voornaamInvoer}
+            onChangeText={(tekst) => {
+              setVoornaamInvoer(tekst);
+              setVoornaamFout(null);
+              setVoornaamOpgeslagen(false);
+            }}
+            placeholder={t('welkom.naamVeld')}
+            accessibilityLabel={t('naam.kop')}
+            maxLength={25}
+            autoCapitalize="words"
+            autoCorrect={false}
+          />
+          <Pressable style={[s.knopKlein, (bezig || voornaamInvoer.trim() === voornaam) && s.uit]} onPress={bewaarVoornaam} disabled={bezig || voornaamInvoer.trim() === voornaam}>
+            <Text style={s.knopKleinTekst}>{t('naam.opslaan')}</Text>
+          </Pressable>
+        </View>
+        {voornaamFout && <Text style={s.fout} accessibilityRole="alert">{t(`naam.fout.${voornaamFout}` as 'naam.fout.leeg')}</Text>}
+        {voornaamOpgeslagen && !voornaamFout && <Text style={s.status}>{t('naam.opgeslagen')}</Text>}
         {!gezin ? (
           <>
             <Text style={s.uitleg}>{t('gezin.uitleg')}</Text>
@@ -250,6 +304,8 @@ const s = StyleSheet.create({
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5', gap: 10 },
   uitleg: { color: '#555' },
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
+  naamVeld: { flex: 1, fontSize: 16, color: '#1d2420' },
+  veldFout: { borderColor: '#B3261E' },
   codeVeld: { flex: 1, letterSpacing: 2, fontWeight: '600', color: '#1d2420' },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
