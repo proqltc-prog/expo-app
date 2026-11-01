@@ -2,6 +2,7 @@
 // Pure logica: geen netwerk. Het ophalen zit in src/opslag/receptenbank.ts.
 // Hoeveelheden in de database gelden voor 1 volwassene; hier worden ze geschaald naar het gezin (WEEK-67).
 import type { Afdeling } from '@/data/ingredienten';
+import { SEIZOENEN, type Seizoen } from '@/data/seizoenen';
 import type { Basis, Moment, Soort, StijlCode } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
@@ -31,6 +32,8 @@ export type DbRecept = {
   ingredienten: DbIngredient[];
   /** Bereidingsstappen per taal (WEEK-121). Ontbreekt het veld, dan zijn er geen stappen. */
   bereidingen?: Partial<Record<Taal, string[]>>;
+  /** Seizoenen waarin het recept past (WEEK-156). Leeg of ontbrekend betekent het hele jaar. */
+  seizoenen?: Seizoen[];
 };
 
 const TALEN: Taal[] = ['nl', 'fr', 'en'];
@@ -111,7 +114,14 @@ export function leesDbRecept(ruw: unknown): DbRecept | undefined {
     titels: vertalingen,
     ingredienten,
     bereidingen: leesBereidingen(r.recept_bereidingen),
+    seizoenen: leesSeizoenen(r.seizoenen),
   };
+}
+
+/** Leest de seizoenenlijst uit de databank; onbekende waarden vallen weg (WEEK-156). */
+export function leesSeizoenen(ruw: unknown): Seizoen[] {
+  if (!Array.isArray(ruw)) return [];
+  return SEIZOENEN.filter((s) => ruw.includes(s));
 }
 
 /** De bereidingsstappen van een DB-recept in de gevraagde taal (WEEK-121). Terugval: nl, dan de eerste beschikbare taal. */
