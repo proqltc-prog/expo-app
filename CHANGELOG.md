@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.93.0] – 2026-11-01
+
+**WEEK-167** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-167)
+
+- Nieuw: de app is ook als webversie beschikbaar, zodat je ze op een iPhone kan gebruiken via Safari ("Zet op beginscherm"). Zonder Apple Developer-account is een native iPhone-installatie niet mogelijk.
+- Op de webversie zijn er geen advertentiefilmpjes; de scanner geeft dan geen extra scans.
+- Een workflow bouwt de webversie en publiceert ze op GitHub Pages bij elke merge naar main.
+
 ## [0.92.0] – 2026-11-01
 
 **WEEK-163** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-163)
@@ -15,6 +23,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij de eerste start wordt na de taalkeuze de voornaam gevraagd (max. 20 tekens, enkel letters; een spatie, koppelteken of apostrof mag tussen de letters).
 - De voornaam wordt meegegeven bij het aansluiten bij een gezin, in plaats van een lege naam. Zo zien de andere leden wie iets gekocht of toegevoegd heeft.
 - In het gezinsscherm is de voornaam aan te passen, ook als je al lid bent. De wijziging gaat naar het gezin.
+
 ## [0.91.5] – 2026-10-25
 
 **WEEK-162** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-162)

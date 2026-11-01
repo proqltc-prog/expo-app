@@ -1,0 +1,56 @@
+name: Webversie
+
+# Bouwt de app voor de browser en publiceert ze op GitHub Pages (WEEK-167).
+# Op elke pull request: enkel bouwen, zo blijft een kapotte webbuild zichtbaar vóór de merge.
+# Op push naar main: bouwen en publiceren.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  bouw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Afhankelijkheden installeren
+        run: npm install --no-audit --no-fund
+
+      - name: Webbuild maken
+        run: npx expo export --platform web --output-dir dist
+
+      - name: Bestanden voor GitHub Pages klaarzetten
+        run: |
+          # Zonder .nojekyll negeert GitHub Pages mappen die met een underscore beginnen.
+          touch dist/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push'
+        with:
+          path: dist
+
+  publiceer:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: bouw
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.uitrol.outputs.page_url }}
+    steps:
+      - id: uitrol
+        uses: actions/deploy-pages@v4
