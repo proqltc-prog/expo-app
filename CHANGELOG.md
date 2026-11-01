@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.91.5] – 2026-10-25
+
+**WEEK-162** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-162)
+
+- De planner-frigo bevat enkel ingrediënten die de receptenbank kent. Generieke items zonder equivalent (pasta, kaas, rijst, fruit, bouillon…) zijn niet meer zoekbaar in de planner-frigo; ze kunnen wel als losse product worden toegevoegd.
+- Losse producten worden nooit door de weekplanner gebruikt (ongewijzigd).
+
+## [0.90.5] – 2026-10-25
 ## [0.91.4] – 2026-10-25
 
 **WEEK-161** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-161)
