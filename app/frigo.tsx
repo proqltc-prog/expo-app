@@ -13,6 +13,7 @@ import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { aantalSheet, CatalogusItem, inCatalogus, koppelBronnen, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
+import { eenheidVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
@@ -72,6 +73,8 @@ export default function Frigo() {
   const [nieuw, setNieuw] = useState('');
   const [details, setDetails] = useState(false);
   const [hoeveelheid, setHoeveelheid] = useState('');
+  // Hoeveelheid voor een product uit de zoekfunctie van de planner-frigo (WEEK-160).
+  const [zoekHoeveelheid, setZoekHoeveelheid] = useState('');
   const [eenheid, setEenheid] = useState<(typeof ZELF_EENHEDEN)[number]>('g');
   const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>('overig');
   // Welk product de details open heeft staan (WEEK-49); één tegelijk.
@@ -112,8 +115,11 @@ export default function Frigo() {
   };
 
   // Uit de catalogus: telt mee bij het weekmenu. Staat het er al in, dan gebeurt er niets.
+  // Met hoeveelheid (WEEK-160): de eenheid volgt het ingrediënt (stuk, teentje, ml of g). Leeg = het hele product.
   const voegCatalogusToe = async (item: CatalogusItem) => {
-    setFrigo(await wijzigFrigo((f) => voegPlannerToe(f, item, new Date())));
+    const h = leesHoeveelheid(zoekHoeveelheid);
+    setZoekHoeveelheid('');
+    setFrigo(await wijzigFrigo((f) => voegPlannerToe(f, item, new Date(), h)));
   };
 
   // Op of weggegooid (WEEK-19). Geplande recepten die het product nodig hebben, krijgen "ingrediënt ontbreekt" (WEEK-13).
@@ -167,12 +173,13 @@ export default function Frigo() {
           <TextInput style={s.zoekVeld} placeholder={t('frigo.zoekIngredient')} value={zoek} onChangeText={setZoek} accessibilityLabel={t('frigo.zoekIngredient')} />
           {zoek.trim() ? (
             <View style={s.resultaten}>
+              <TextInput style={s.zoekVeld} placeholder={t('frigo.hoeveelheid')} value={zoekHoeveelheid} onChangeText={setZoekHoeveelheid} keyboardType="decimal-pad" accessibilityLabel={t('frigo.hoeveelheid')} />
               {resultaten.length === 0 && <Text style={s.leegTekst}>{t('frigo.geenIngredient')}</Text>}
               {resultaten.map((item) => {
                 const erin = alInPlanner(item.naam);
                 return (
                   <Pressable key={item.code} style={[s.chip, erin && s.chipAan]} onPress={() => voegCatalogusToe(item)} disabled={erin} accessibilityRole="button" accessibilityState={{ disabled: erin }}>
-                    <Text style={[s.chipTekst, erin && s.chipTekstAan]}>{erin ? `✓ ${item.naam}` : item.naam}</Text>
+                    <Text style={[s.chipTekst, erin && s.chipTekstAan]}>{`${erin ? '✓ ' : ''}${item.naam} · ${eenheidVan(item.code)}`}</Text>
                   </Pressable>
                 );
               })}

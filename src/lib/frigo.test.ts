@@ -195,14 +195,21 @@ describe('verbruik (WEEK-19)', () => {
     const { frigo, verbruikt } = verbruik([zelf, f('b', 'pasta', 500, 'g', NIEUW)], [{ naam: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
     assert.deepEqual(frigo.map((x) => x.id), ['b']);
     assert.deepEqual(verbruikt, [zelf]);
+    // WEEK-160: het recept heeft geen hoeveelheid; een product met gekende hoeveelheid blijft staan (we weten niet wat er nodig is).
     const zonderHoeveelheid = verbruik([f('a', 'look', 3, 'teentje', OUD)], [{ naam: 'look' }]);
-    assert.deepEqual(zonderHoeveelheid.frigo, []);
+    assert.deepEqual(zonderHoeveelheid.frigo.map((x) => x.id), ['a']);
+    assert.equal(zonderHoeveelheid.verbruikt.length, 0);
+    // Een product zonder hoeveelheid gaat wel helemaal eruit, ook als het recept geen hoeveelheid heeft.
+    const zelfZonder = verbruik([f('z', 'look', undefined, undefined, OUD)], [{ naam: 'look' }]);
+    assert.deepEqual(zelfZonder.frigo, []);
   });
 
-  test('een andere eenheid of naam past niet; zonder eenheid past wel', () => {
-    const frigo = [f('g', 'ui', 200, 'g', OUD), f('ander', 'prei', 1, 'stuk', OUD)];
-    assert.equal(verbruik(frigo, [{ naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt.length, 0);
+  test('een andere naam past niet; zonder eenheid past wel; stuk tegen gram past via het stukgewicht (WEEK-161)', () => {
+    const frigo = [f('g', 'ui', 300, 'g', OUD), f('ander', 'prei', 1, 'stuk', OUD)];
+    // 1 stuk ui = 150 g (het gemiddelde stukgewicht), dus er gaat 150 g af.
+    assert.equal(verbruik(frigo, [{ naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt[0].hoeveelheid, 150);
     assert.equal(verbruik(frigo, [{ naam: 'UI', hoeveelheid: 50 }]).verbruikt[0].hoeveelheid, 50);
+    assert.equal(verbruik([f('x', 'pasta', 500, 'g', OUD)], [{ naam: 'pasta', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt.length, 0, 'pasta heeft geen stukgewicht');
   });
 
   test('ingrediënten die niet in de frigo zitten, veranderen niets', () => {

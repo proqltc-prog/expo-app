@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { alleenHuidigPlan, hernoemLijst, LijstItem, LijstRegel, LijstSectie, planSleutel, secties as maakSecties, sectieKeuze, telRegels, vinkAf, Weergave } from '@/lib/lijst';
+import { alleenHuidigPlan, hernoemLijst, LijstItem, LijstRegel, LijstSectie, planSleutel, secties as maakSecties, sectieKeuze, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
 import { inTaal } from '@/lib/planner/vertaal';
 import { FrigoItem } from '@/lib/frigo';
 import type { DagCode, Weekplan } from '@/lib/planner/types';
@@ -285,9 +285,9 @@ export default function Lijst() {
                   {weergave === 'categorie' && item.recepten.length > 0 && (
                     <Text style={s.recepten} numberOfLines={1}>{item.recepten.join(' · ')}</Text>
                   )}
-                  {gezin && item.door && !item.afgevinkt && <Text style={s.recepten}>{t('lijst.door', { naam: item.door })}</Text>}
+                  {gezin && item.door && !item.afgevinkt && <Text style={s.recepten}>{t('lijst.door', { naam: voornaam(item.door) })}</Text>}
                   {gezin && item.afgevinkt && item.afgevinktDoor.length > 0 && (
-                    <Text style={s.gekocht}>{t('lijst.gekochtDoor', { naam: item.afgevinktDoor.join(', ') })}</Text>
+                    <Text style={s.gekocht}>{t('lijst.gekochtDoor', { naam: item.afgevinktDoor.map(voornaam).join(', ') })}</Text>
                   )}
                 </View>
                 {item.hoeveelheid ? (

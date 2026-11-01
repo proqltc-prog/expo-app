@@ -3,7 +3,7 @@
     "name": "Famenu",
     "slug": "famenu",
     "scheme": "famenu",
-    "version": "0.91.0",
+    "version": "0.91.4",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {

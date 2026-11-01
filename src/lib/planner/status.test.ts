@@ -19,7 +19,7 @@ const plan: Weekplan = {
   ],
   kooktijden: [], stijlen: [], taal: 'nl', porties: 3, bron: 'lokaal', gemaaktOp: '2026-10-10T10:00:00.000Z',
 };
-const f = (id: string, naam: string): FrigoItem => ({ id, naam, afdeling: 'droge-voeding', toegevoegdOp: '2026-10-09T10:00:00.000Z' });
+const f = (id: string, naam: string): FrigoItem => ({ id, naam, afdeling: 'droge-voeding', toegevoegdOp: '2026-10-09T10:00:00.000Z', bron: 'planner' });
 
 describe('receptStatus (WEEK-13)', () => {
   test('gepland, ingrediënt ontbreekt, gedaan', () => {

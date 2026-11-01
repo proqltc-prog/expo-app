@@ -8,6 +8,40 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.91.4] – 2026-10-25
+
+**WEEK-161** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-161)
+
+- Groenten en fruit die je per stuk koopt (ui, tomaat, wortel, paprika, sla, prei, courgette, citroen, sjalot…) staan op stuk, in de databank, in de frigo en in de recepten. Hoeveelheden in recepten zijn omgerekend met een gemiddeld stukgewicht, afgerond op een halve stuk.
+- Oude frigo-items in gram koppelen aan recepten op stuk via het gemiddelde stukgewicht.
+
+## [0.91.3] – 2026-10-25
+
+**WEEK-160** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-160) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14843905)
+
+- Ontbreekt-markers en "in frigo" volgen dezelfde koppeling als het verbruik: op code, ook over talen heen.
+- Ingrediënten uit de catalogus koppelen aan de databankcode; afwijkende catalogus-codes worden omgezet.
+- Eenheden binnen dezelfde familie (g/kg, ml/l) worden omgerekend. Stuk tegen gram past niet, dus er wordt niets verbruikt.
+- Een recept zonder hoeveelheid haalt geen hoeveelheid af van een product met een gekende hoeveelheid.
+- Het eerste recept van een gedeeld ingrediënt houdt zijn id: vinkjes en frigo-koppelingen blijven geldig bij het overzetten van het plan.
+- Recepten met dezelfde naam op één dag blijven apart op de lijst.
+- Catalogus-ingrediënten zonder databankequivalent (pasta, kaas, rijst…) koppelen weer op naam, ook als het recept een databankcode heeft.
+- Producten uit de zoekfunctie van de planner-frigo krijgen de databankcode en de vaste eenheid: stuk (eieren, appel…), teentje (knoflook), ml (olijfolie, melk…) of g (rijst, pasta…). Je kan er optioneel een hoeveelheid bij geven.
+
+## [0.91.2] – 2026-10-24
+
+**WEEK-159** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-159) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14680065)
+
+- Recepten die een ingrediënt delen op dezelfde dag krijgen elk een eigen regel met de juiste hoeveelheid. Per categorie blijft het één regel met de som.
+- Gekookt zetten verwijdert enkel de ingrediënten van dat recept uit de boodschappenlijst én uit de frigo. Restjes blijven staan.
+- Gekochte frigo-producten worden na een taalwissel nog steeds aan het juiste recept gekoppeld (via de vaste ingrediëntcode).
+- "Gekocht door" en "toegevoegd door" tonen de voornaam.
+
+## [0.91.1] – 2026-10-24
+
+**WEEK-158** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-158) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14581761)
+
+- Losse frigo-producten (die je zelf toevoegt) tellen niet meer mee voor recepten van de weekplanner: ze trekken niets af van de boodschappenlijst en geven geen \"uit de frigo\" of ingrediënt-status. Enkel producten van de planner worden gebruikt.
 ## [0.91.0] – 2026-10-23
 
 **WEEK-156** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-156) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/14024705)
