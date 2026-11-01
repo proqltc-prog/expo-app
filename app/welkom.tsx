@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { TALEN, Taal, vertaal } from '@/i18n';
 import { zetWelkomGezien } from '@/opslag/welkom';
+import { zetVoornaam } from '@/opslag/voornaam';
+import { valideerVoornaam, VoornaamFout, MAX_VOORNAAM } from '@/lib/voornaam';
 import { ROUTE_NA_WELKOM } from '@/lib/welkom';
 import { useTaal } from '@/ui/taal';
 
@@ -17,12 +19,26 @@ const MIST = '#EEF1EC';
 /** Welkomstscherm (WEEK-79, visual WEEK-82): eerst het welkomstbeeld, dan de taalkeuze; daarna de gezinsruimte. */
 export default function Welkom() {
   const { t, taal, zetVoorkeur } = useTaal();
-  const [stap, setStap] = useState<'welkom' | 'taal'>('welkom');
+  const [stap, setStap] = useState<'welkom' | 'taal' | 'naam'>('welkom');
   const [gekozen, setGekozen] = useState<Taal>(taal);
+  // WEEK-163: de voornaam wordt na de taalkeuze gevraagd, vóór het gezin.
+  const [voornaamInvoer, setVoornaamInvoer] = useState('');
+  const [naamFout, setNaamFout] = useState<VoornaamFout | null>(null);
 
-  const doorgaan = async () => {
+  const naarNaam = () => {
     // Enkel op dit toestel (WEEK-80): de taal gaat niet naar het gezin of naar andere toestellen.
     zetVoorkeur(gekozen);
+    setStap('naam');
+  };
+
+  const doorgaan = async () => {
+    const r = valideerVoornaam(voornaamInvoer);
+    if (!r.ok) {
+      setNaamFout(r.fout);
+      return;
+    }
+    setNaamFout(null);
+    await zetVoornaam(r.naam);
     await zetWelkomGezien();
     router.replace(ROUTE_NA_WELKOM);
   };
@@ -50,6 +66,42 @@ export default function Welkom() {
             <Text style={s.knopTekst}>{t('welkom.knop')}</Text>
           </Pressable>
           <Text style={s.stap}>{t('welkom.stap')}</Text>
+        </View>
+      </ScrollView>
+    );
+  }
+
+  if (stap === 'naam') {
+    return (
+      <ScrollView contentContainerStyle={s.taalContainer}>
+        <View style={s.taalKop}>
+          <Image source={require('../assets/icon.png')} style={s.logoKlein} accessibilityElementsHidden importantForAccessibility="no" />
+          <Text style={s.titel}>{vertaal(gekozen, 'welkom.naamTitel')}</Text>
+          <Text style={s.tekst}>{vertaal(gekozen, 'welkom.naamTekst')}</Text>
+        </View>
+        <View style={s.veldBlok}>
+          <TextInput
+            style={[s.veld, naamFout && s.veldFout]}
+            value={voornaamInvoer}
+            onChangeText={(tekst) => {
+              setVoornaamInvoer(tekst);
+              setNaamFout(null);
+            }}
+            placeholder={vertaal(gekozen, 'welkom.naamVeld')}
+            accessibilityLabel={vertaal(gekozen, 'welkom.naamVeld')}
+            maxLength={MAX_VOORNAAM + 5}
+            autoCapitalize="words"
+            autoCorrect={false}
+            returnKeyType="done"
+            onSubmitEditing={doorgaan}
+          />
+          {naamFout && <Text style={s.fout} accessibilityRole="alert">{vertaal(gekozen, `naam.fout.${naamFout}` as 'naam.fout.leeg')}</Text>}
+        </View>
+        <View style={s.onderaan}>
+          <Pressable style={s.knop} onPress={doorgaan} accessibilityRole="button">
+            <Text style={s.knopTekst}>{vertaal(gekozen, 'welkom.doorgaan')}</Text>
+          </Pressable>
+          {stapIndicator(2)}
         </View>
       </ScrollView>
     );
@@ -86,7 +138,7 @@ export default function Welkom() {
       </View>
 
       <View style={s.onderaan}>
-        <Pressable style={s.knop} onPress={doorgaan} accessibilityRole="button">
+        <Pressable style={s.knop} onPress={naarNaam} accessibilityRole="button">
           <Text style={s.knopTekst}>{vertaal(gekozen, 'welkom.doorgaan')}</Text>
         </Pressable>
         {stapIndicator(1)}
@@ -123,5 +175,9 @@ const s = StyleSheet.create({
   codeTekstActief: { color: '#fff' },
   keuzeTekst: { flex: 1, fontSize: 17, fontWeight: '600', color: INKT },
   keuzeTekstActief: { fontWeight: '700' },
+  veldBlok: { gap: 8 },
+  veld: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, fontSize: 17, color: INKT },
+  veldFout: { borderColor: '#B3261E' },
+  fout: { fontSize: 13, color: '#B3261E', lineHeight: 18 },
   vinkje: { width: 26, height: 26, borderRadius: 999, backgroundColor: KLEUR, color: '#fff', textAlign: 'center', lineHeight: 26, fontWeight: '700' },
 });

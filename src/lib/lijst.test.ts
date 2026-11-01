@@ -23,7 +23,7 @@ describe('itemsUitPlan', () => {
   test('één item per ingrediënt per recept, gekoppeld aan dag en recept', () => {
     const items = itemsUitPlan(dagen);
     assert.equal(items.length, 4);
-    assert.deepEqual(items[0].recept, { dag: 'zondag', naam: 'Pasta pesto' });
+    assert.deepEqual(items[0].recept, { dag: 'zondag', naam: 'Pasta pesto', id: 'Pasta pesto' });
     assert.equal(items[0].afdeling, 'droge-voeding');
     assert.ok(items.every((i) => i.categorie === 'avondeten' && !i.afgevinkt));
     assert.equal(new Set(items.map((i) => i.id)).size, items.length);
@@ -355,7 +355,7 @@ describe('bevestigen zet enkel de ontbrekende ingrediënten op de lijst (WEEK-10
     const dag = dagen[0];
     const alles = itemsUitPlan([dag]);
     const eerste = alles[0];
-    const frigo = [{ id: 'x', naam: eerste.naam, afdeling: eerste.afdeling ?? 'groenten-fruit', toegevoegdOp: new Date().toISOString(), hoeveelheid: 99999, eenheid: eerste.eenheid }];
+    const frigo = [{ id: 'x', naam: eerste.naam, afdeling: eerste.afdeling ?? 'groenten-fruit', toegevoegdOp: new Date().toISOString(), hoeveelheid: 99999, eenheid: eerste.eenheid, bron: 'planner' }];
     const lijst = voegPlanToe([], [dag], 'nl', (items) => trekFrigoAf(items, frigo as never));
     assert.ok(!lijst.some((i) => i.naam === eerste.naam));
     // De overige ingrediënten van het gerecht staan er wél op.

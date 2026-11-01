@@ -7,7 +7,7 @@ import { supabase } from '@/opslag/supabase';
 // Let op: nu worden alle goedgekeurde recepten in één keer opgehaald. Bij duizenden recepten
 // moet het zoeken op de server gefilterd en per pagina gelezen worden (volgende stap van WEEK-68).
 const SELECTIE =
-  'id, porties, kooktijd_min, moment, stijl, soort, basis, ' +
+  'id, porties, kooktijd_min, moment, stijl, soort, basis, seizoenen, ' +
   'recept_vertalingen(taal, titel), ' +
   'recept_bereidingen(taal, stappen), ' +
   'recept_ingredienten(hoeveelheid, eenheid, optioneel, ingredienten(code, categorie, ingredient_vertalingen(taal, naam)))';

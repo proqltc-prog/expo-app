@@ -2,7 +2,7 @@
 import { ingredientNaam } from '@/data/ingredienten';
 import type { BankRecept } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
-import { FrigoItem, verdeelFrigo } from '@/lib/frigo';
+import { FrigoItem, receptFrigo, verdeelFrigo } from '@/lib/frigo';
 import type { PlanDag } from './types';
 
 const klein = (t: string) => t.trim().toLocaleLowerCase();
@@ -21,7 +21,7 @@ export function frigoScoreNamen(namen: readonly string[], frigo: readonly FrigoI
   let score = 0;
   for (const ruweNaam of namen) {
     const naam = klein(ruweNaam);
-    const passend = frigo.filter((f) => klein(f.naam) === naam);
+    const passend = receptFrigo(frigo).filter((f) => klein(f.naam) === naam);
     if (!passend.length) continue;
     const oudste = Math.min(...passend.map((f) => Date.parse(f.toegevoegdOp)).filter((t) => !Number.isNaN(t)));
     const dagen = Number.isFinite(oudste) ? Math.max(0, (nu.getTime() - oudste) / DAG_MS) : 0;

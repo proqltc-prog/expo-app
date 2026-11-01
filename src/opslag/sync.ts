@@ -573,6 +573,23 @@ export async function wordLid(code: string, lidNaam: string): Promise<Gezin> {
   return gezin;
 }
 
+/**
+ * Wijzigt de voornaam van dit toestel binnen het gezin (WEEK-163). Enkel de eigen naam; de database staat niets anders toe.
+ * Zonder gezin is er niets te wijzigen op de server: de naam blijft dan op het toestel.
+ */
+export async function zetLidNaam(naam: string): Promise<void> {
+  const sb = supabase();
+  if (!sb) return;
+  await zorgVoorSessie();
+  const { data: sessie } = await sb.auth.getSession();
+  const uid = sessie.session?.user.id;
+  if (!uid) return;
+  const { error } = await sb.from('gezinsleden').update({ naam }).eq('gebruiker_id', uid);
+  if (error) throw new Error(error.message);
+  const gezin = await laadGezin();
+  if (gezin) await bewaarGezin({ ...gezin, ...(naam ? { ikNaam: naam } : { ikNaam: undefined }) });
+}
+
 /** Verlaat de gezinsruimte. De gegevens blijven op dit toestel staan. */
 export async function verlaatGezin(): Promise<void> {
   const sb = supabase();

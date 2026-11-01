@@ -69,25 +69,29 @@ describe('alle recepten gekookt: producten van de lijst uit de frigo (WEEK-141)'
     assert.equal(wisselGedaan(p, frigo, 0, w141Verwacht(p, 0)).frigo.length, 2);
   });
 
-  test('alle recepten gekookt: de producten van de lijst gaan uit de frigo', () => {
+  // WEEK-159: de week-brede leegmaak is vervallen. Enkel de ingrediënten van het gekookte recept gaan uit de frigo;
+  // restjes van gekochte voorraad blijven staan.
+  test('alle recepten gekookt: enkel de ingrediënten van de recepten gaan uit de frigo, restjes blijven (WEEK-159)', () => {
     const p = w141Plan([w141Dag('maandag', r1), w141Dag('dinsdag', r2)]);
     const frigo = [w141Product('c', 'champignons', 1200, 'planner'), w141Product('p', 'parmezaan', 310, 'planner')];
     const eerst = wisselGedaan(p, frigo, 0, w141Verwacht(p, 0));
     const laatste = wisselGedaan(eerst.plan, eerst.frigo, 1, w141Verwacht(eerst.plan, 1));
-    assert.deepEqual(laatste.frigo.filter((f) => f.bron === 'planner'), []);
+    assert.deepEqual(laatste.frigo.map((f) => [f.naam, f.hoeveelheid]), [['champignons', 900], ['parmezaan', 260]]);
+    assert.deepEqual(laatste.plan.dagen.map((d) => d.verbruikt === undefined), [false, false]);
   });
 
   test('losse producten blijven staan als alle recepten gekookt zijn', () => {
     const p = w141Plan([w141Dag('maandag', r1)]);
     const frigo = [w141Product('c', 'champignons', 1200, 'planner'), w141Product('los', 'rijst', 500, 'los')];
-    assert.deepEqual(wisselGedaan(p, frigo, 0, w141Verwacht(p, 0)).frigo.map((f) => f.id), ['los']);
+    // WEEK-159: het gekookte deel (300 g) is verbruikt, de restjes van de planner-producten en het los product blijven.
+    assert.deepEqual(wisselGedaan(p, frigo, 0, w141Verwacht(p, 0)).frigo.map((f) => f.id), ['c', 'los']);
   });
 
-  test('ontkoken na alle recepten: de producten van de lijst komen weer terug', () => {
+  test('ontkoken na koken: het verbruikte deel komt weer terug in de frigo (WEEK-159)', () => {
     const p = w141Plan([w141Dag('maandag', r1)]);
     const gekookt = wisselGedaan(p, [w141Product('c', 'champignons', 1200, 'planner')], 0, w141Verwacht(p, 0));
-    assert.equal(gekookt.frigo.length, 0);
+    assert.deepEqual(gekookt.frigo.map((f) => f.hoeveelheid), [900]);
     const teruggezet = wisselGedaan(gekookt.plan, gekookt.frigo, 0, w141Verwacht(gekookt.plan, 0));
-    assert.equal(teruggezet.frigo.filter((f) => f.naam === 'champignons').length, 1);
+    assert.equal(teruggezet.frigo.reduce((som, f) => som + (f.hoeveelheid ?? 0), 0), 1200);
   });
 });
