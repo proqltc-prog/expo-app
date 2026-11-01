@@ -1,6 +1,6 @@
 // Virtuele frigo (WEEK-4): wat het gezin in huis heeft. Pure logica, zonder opslag.
 // Opslag op het toestel staat in src/opslag/frigo.ts.
-import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum } from '@/lib/houdbaarheid';
@@ -29,6 +29,8 @@ export type FrigoItem = {
   houdbaarTot?: string;
   /** Soort item (WEEK-71). Ontbreekt in oude data: afgeleid via frigoBron(). */
   bron?: FrigoBron;
+  /** Vaste ingrediëntcode van een product uit de weekplanning (WEEK-159); taalonafhankelijk. */
+  code?: string;
 };
 
 /** Het soort van een item. Oude items zonder soort: uit de boodschappenlijst = planner, de rest = los. */
@@ -79,6 +81,7 @@ export function frigoItemUitLijst(item: LijstItem, nu: Date): FrigoItem {
     toegevoegdOp: nu.toISOString(),
     lijstId: item.id,
     bron: 'planner',
+    ...(item.code ? { code: item.code } : {}),
   };
 }
 
@@ -100,7 +103,7 @@ export function pasFrigoAan(frigo: readonly FrigoItem[], items: readonly LijstIt
 }
 
 /** Extra gegevens bij zelf toevoegen (WEEK-35). */
-export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string; bron?: FrigoBron };
+export type ZelfExtra = { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling | 'overig'; product?: Product; houdbaarTot?: string; bron?: FrigoBron; code?: string };
 
 /** Eenheden die je kan kiezen bij zelf toevoegen. */
 export const ZELF_EENHEDEN = ['g', 'ml', 'stuk'] as const;
@@ -114,7 +117,8 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
   if (!n) return [...frigo];
   const h = extra.hoeveelheid;
   const hoeveelheid = typeof h === 'number' && Number.isFinite(h) && h > 0 ? Math.round(h * 100) / 100 : undefined;
-  const eenheid = hoeveelheid !== undefined && extra.eenheid?.trim() ? extra.eenheid.trim() : undefined;
+  // Een eenheid hoort bij een hoeveelheid, of bij een planner-product met vaste code (WEEK-160: ook zonder hoeveelheid).
+  const eenheid = (hoeveelheid !== undefined || extra.code) && extra.eenheid?.trim() ? extra.eenheid.trim() : undefined;
   const afdeling = extra.afdeling && (extra.afdeling === 'overig' || isAfdeling(extra.afdeling)) ? extra.afdeling : 'overig';
   return [
     ...frigo,
@@ -126,6 +130,7 @@ export function voegZelfToe(frigo: readonly FrigoItem[], naam: string, nu: Date,
       afdeling,
       toegevoegdOp: nu.toISOString(),
       bron: extra.bron ?? 'los',
+      ...(extra.code ? { code: extra.code } : {}),
       ...(extra.product ? { product: extra.product } : {}),
       ...(isoDatum(extra.houdbaarTot) ? { houdbaarTot: extra.houdbaarTot } : {}),
     },
@@ -222,6 +227,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
       toegevoegdOp,
       ...(typeof r.lijstId === 'string' ? { lijstId: r.lijstId } : {}),
       ...(r.bron === 'planner' || r.bron === 'los' ? { bron: r.bron } : {}),
+      ...(typeof r.code === 'string' && r.code ? { code: r.code } : {}),
       ...(product ? { product } : {}),
       ...(houdbaarTot ? { houdbaarTot } : {}),
     }];
@@ -233,37 +239,106 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
 const rond = (n: number) => Math.round(n * 100) / 100;
 
 /** Wat een recept nodig heeft; dezelfde vorm als een ingrediënt in het weekplan. */
-export type Benodigd = { naam: string; hoeveelheid?: number; eenheid?: string };
+export type Benodigd = { naam: string; hoeveelheid?: number; eenheid?: string; code?: string };
 
-/** Hoort dit product bij dit ingrediënt? Zelfde naam (hoofdletters maken niet uit) en, als beide een eenheid hebben, dezelfde eenheid. */
+/** Massa- en volume-eenheden die onderling om te rekenen zijn (WEEK-160). Stuk of teentje kan niet zonder gewicht. */
+const OMREKENING: Readonly<Record<string, { familie: 'gewicht' | 'volume'; basis: number }>> = {
+  g: { familie: 'gewicht', basis: 1 },
+  kg: { familie: 'gewicht', basis: 1000 },
+  ml: { familie: 'volume', basis: 1 },
+  l: { familie: 'volume', basis: 1000 },
+};
+
+/**
+ * Hoeveel keer een hoeveelheid in `van` moet vermenigvuldigd om in `naar` te komen (WEEK-160).
+ * Zonder eenheid aan één kant, of gelijke eenheden: 1. Binnen dezelfde familie (g/kg, ml/l): de omrekening.
+ * Anders undefined: zo'n product telt niet mee (bv. stuk tegen gram, we kennen het gewicht per stuk niet).
+ */
+export function omrekenFactor(van: string | undefined, naar: string | undefined): number | undefined {
+  if (!van || !naar || van === naar) return 1;
+  const a = OMREKENING[van];
+  const b = OMREKENING[naar];
+  if (!a || !b || a.familie !== b.familie) return undefined;
+  return a.basis / b.basis;
+}
+
+/** De databankcode van een frigo-item of ingrediënt: de eigen code, anders afgeleid van de naam in een taal (WEEK-160). */
+function codeVan(x: { naam: string; code?: string }): string | undefined {
+  return x.code ? dbCodeVan(x.code) : dbCodeVanNaam(x.naam);
+}
+
+/**
+ * Factor om de hoeveelheid van het ingrediënt naar de eenheid van het product om te rekenen (WEEK-161).
+ * Zoals omrekenFactor, maar ook stuk ↔ gram/kg via het gemiddelde stukgewicht. Zo koppelt een product in gram
+ * (bv. van vóór de omschakeling naar stuk) toch aan een recept op stuk. Undefined als het niet te herleiden is.
+ */
+export function omrekenVoor(ing: Benodigd, f: FrigoItem): number | undefined {
+  const direct = omrekenFactor(ing.eenheid, f.eenheid);
+  if (direct !== undefined) return direct;
+  const gewicht = gewichtPerStuk(codeVan(ing) ?? codeVan(f) ?? '');
+  const basisVan = (eenheid: string | undefined): { familie: string; basis: number } | undefined => {
+    if (eenheid === 'stuk') return gewicht !== undefined ? { familie: 'gewicht', basis: gewicht } : undefined;
+    const o = eenheid ? OMREKENING[eenheid] : undefined;
+    return o ? { familie: o.familie, basis: o.basis } : undefined;
+  };
+  const van = basisVan(ing.eenheid);
+  const naar = basisVan(f.eenheid);
+  if (!van || !naar || van.familie !== naar.familie) return undefined;
+  return van.basis / naar.basis;
+}
+
+/**
+ * Hoort dit product bij dit ingrediënt? Heeft beide een code, dan telt die (taalonafhankelijk, WEEK-159/160).
+ * Zonder code: dezelfde naam (hoofdletters maken niet uit). Eenheden moeten te herleiden zijn (zie omrekenFactor).
+ */
 export function pastBij(f: FrigoItem, ing: Benodigd): boolean {
-  return klein(f.naam) === klein(ing.naam) && (!f.eenheid || !ing.eenheid || f.eenheid === ing.eenheid);
+  const cf = codeVan(f);
+  const ci = codeVan(ing);
+  const zelfde = cf && ci ? cf === ci : klein(f.naam) === klein(ing.naam);
+  return zelfde && omrekenVoor(ing, f) !== undefined;
+}
+
+/**
+ * Enkel de producten van de planner (van de lijst of uit de catalogus) tellen mee voor recepten van de weekplanner.
+ * Losse producten worden nooit voor een recept gebruikt: die beheert de gebruiker zelf (WEEK-158).
+ */
+export function receptFrigo(frigo: readonly FrigoItem[]): FrigoItem[] {
+  return frigo.filter((f) => frigoBron(f) === 'planner');
 }
 
 /**
  * Haalt de ingrediënten van een gekookt recept uit de frigo, de oudste producten eerst.
- * - Met gekende hoeveelheden wordt enkel afgetrokken wat het recept nodig heeft.
- * - Is de hoeveelheid van het product of van het recept niet gekend, dan gaat het hele (oudste) product eruit.
+ * - Met gekende hoeveelheden wordt enkel afgetrokken wat het recept nodig heeft, omgerekend naar de eenheid van het product (WEEK-160).
+ * - Heeft het product een hoeveelheid maar het recept niet, dan blijft dat product staan (we weten niet hoeveel het nodig heeft).
+ * - Heeft het product geen hoeveelheid, dan gaat het hele (oudste) product eruit.
  * Geeft de nieuwe frigo terug en wat er verbruikt werd (om het ongedaan te kunnen maken).
  */
 export function verbruik(frigo: readonly FrigoItem[], ingredienten: readonly Benodigd[]): { frigo: FrigoItem[]; verbruikt: FrigoItem[] } {
   let rest = frigo.map((f) => ({ ...f }));
   const verbruikt: FrigoItem[] = [];
   for (const ing of ingredienten) {
+    // Hoeveelheid van het recept, in de eenheid van het ingrediënt.
     let nodig = ing.hoeveelheid !== undefined && ing.hoeveelheid > 0 ? ing.hoeveelheid : undefined;
     // Losse producten (WEEK-71) tellen niet mee: die beheert de gebruiker zelf.
     const kandidaten = rest.filter((f) => frigoBron(f) === 'planner' && pastBij(f, ing)).sort((a, b) => a.toegevoegdOp.localeCompare(b.toegevoegdOp));
     for (const f of kandidaten) {
-      if (nodig === undefined || f.hoeveelheid === undefined) {
+      if (nodig === undefined) {
+        if (f.hoeveelheid !== undefined) continue;
         rest = rest.filter((r) => r !== f);
         verbruikt.push({ ...f });
         break;
       }
-      const neem = rond(Math.min(nodig, f.hoeveelheid));
+      if (f.hoeveelheid === undefined) {
+        rest = rest.filter((r) => r !== f);
+        verbruikt.push({ ...f });
+        break;
+      }
+      const factor = omrekenVoor(ing, f) ?? 1;
+      const neem = rond(Math.min(nodig * factor, f.hoeveelheid));
       verbruikt.push({ ...f, hoeveelheid: neem });
       f.hoeveelheid = rond(f.hoeveelheid - neem);
       if (f.hoeveelheid <= 0) rest = rest.filter((r) => r !== f);
-      nodig = rond(nodig - neem);
+      nodig = rond(nodig - neem / factor);
       if (nodig <= 0) break;
     }
   }
@@ -310,16 +385,18 @@ export type Dekking = { gedekt: 'geheel' | 'deels' | 'niet'; rest?: number };
  * Geeft per behoefte terug of ze geheel, deels of niet gedekt is, en wat er nog gekocht moet worden.
  */
 export function verdeelFrigo(behoeften: readonly Benodigd[], frigo: readonly FrigoItem[]): Dekking[] {
-  const voorraad = frigo.map((f) => ({ ...f }));
+  const voorraad = receptFrigo(frigo).map((f) => ({ ...f }));
   return behoeften.map((b): Dekking => {
     const passend = voorraad.filter((f) => pastBij(f, b));
     if (!passend.length) return { gedekt: 'niet', ...(b.hoeveelheid !== undefined ? { rest: b.hoeveelheid } : {}) };
     if (b.hoeveelheid === undefined || passend.some((f) => f.hoeveelheid === undefined)) return { gedekt: 'geheel' };
+    // `nodig` in de eenheid van het ingrediënt; per product omgerekend naar de eenheid van het product (WEEK-160).
     let nodig = b.hoeveelheid;
     for (const f of passend) {
-      const neem = Math.min(nodig, f.hoeveelheid ?? 0);
+      const factor = omrekenVoor(b, f) ?? 1;
+      const neem = Math.min(nodig * factor, f.hoeveelheid ?? 0);
       f.hoeveelheid = rond((f.hoeveelheid ?? 0) - neem);
-      nodig = rond(nodig - neem);
+      nodig = rond(nodig - neem / factor);
       if (nodig <= 0) break;
     }
     if (nodig <= 0) return { gedekt: 'geheel' };

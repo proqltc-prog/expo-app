@@ -109,8 +109,8 @@ describe('ingredientenMetFrigo (WEEK-147)', () => {
     { naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk' },
   ];
   const frigo = [
-    { id: '1', naam: 'pasta', hoeveelheid: 500, eenheid: 'g', afdeling: 'droogwaren', toegevoegdOp: '2026-10-01T10:00:00Z' },
-    { id: '2', naam: 'Tomaat', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: '2026-10-01T10:00:00Z' },
+    { id: '1', naam: 'pasta', hoeveelheid: 500, eenheid: 'g', afdeling: 'droogwaren', toegevoegdOp: '2026-10-01T10:00:00Z', bron: 'planner' },
+    { id: '2', naam: 'Tomaat', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: '2026-10-01T10:00:00Z', bron: 'planner' },
   ] as unknown as FrigoItem[];
 
   test('geheel gedekt, deels gedekt en niet in de frigo worden onderscheiden', () => {
