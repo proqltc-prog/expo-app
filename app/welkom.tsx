@@ -3,6 +3,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { router } from 'expo-router';
 import { KEUZE_TALEN, Taal, vertaal } from '@/i18n';
 import { zetWelkomGezien } from '@/opslag/welkom';
+import { koppel } from '@/opslag/aanmelden';
 import { zetVoornaam } from '@/opslag/voornaam';
 import { valideerVoornaam, VoornaamFout, MAX_VOORNAAM } from '@/lib/voornaam';
 import { ROUTE_NA_WELKOM } from '@/lib/welkom';
@@ -19,11 +20,14 @@ const MIST = '#EEF1EC';
 /** Welkomstscherm (WEEK-79, visual WEEK-82): eerst het welkomstbeeld, dan de taalkeuze; daarna de gezinsruimte. */
 export default function Welkom() {
   const { t, taal, zetVoorkeur } = useTaal();
-  const [stap, setStap] = useState<'welkom' | 'taal' | 'naam'>('welkom');
+  const [stap, setStap] = useState<'welkom' | 'taal' | 'naam' | 'account'>('welkom');
   const [gekozen, setGekozen] = useState<Taal>(taal);
   // WEEK-163: de voornaam wordt na de taalkeuze gevraagd, vóór het gezin.
   const [voornaamInvoer, setVoornaamInvoer] = useState('');
   const [naamFout, setNaamFout] = useState<VoornaamFout | null>(null);
+  // WEEK-174: de startkeuze (Google of verder zonder account).
+  const [bezig, setBezig] = useState(false);
+  const [aanmeldFout, setAanmeldFout] = useState(false);
 
   const naarNaam = () => {
     // Enkel op dit toestel (WEEK-80): de taal gaat niet naar het gezin of naar andere toestellen.
@@ -39,13 +43,33 @@ export default function Welkom() {
     }
     setNaamFout(null);
     await zetVoornaam(r.naam);
+    setStap('account');
+  };
+
+  // WEEK-174: met Google koppelen, of verder zonder account. Daarna is het welkomstscherm eenmalig klaar.
+  const metGoogle = async () => {
+    setAanmeldFout(false);
+    setBezig(true);
+    // Eerst markeren: bij de terugkeer van Google mag het welkomstscherm niet opnieuw verschijnen.
+    await zetWelkomGezien();
+    try {
+      await koppel('google');
+      router.replace(ROUTE_NA_WELKOM);
+    } catch {
+      setAanmeldFout(true);
+    } finally {
+      setBezig(false);
+    }
+  };
+
+  const verderZonder = async () => {
     await zetWelkomGezien();
     router.replace(ROUTE_NA_WELKOM);
   };
 
   const stapIndicator = (actief: number) => (
     <View style={s.stippen} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      {[0, 1, 2].map((i) => (
+      {[0, 1, 2, 3].map((i) => (
         <View key={i} style={[s.stip, i === actief && s.stipActief]} />
       ))}
     </View>
@@ -66,6 +90,32 @@ export default function Welkom() {
             <Text style={s.knopTekst}>{t('welkom.knop')}</Text>
           </Pressable>
           <Text style={s.stap}>{t('welkom.stap')}</Text>
+        </View>
+      </ScrollView>
+    );
+  }
+
+  if (stap === 'account') {
+    return (
+      <ScrollView contentContainerStyle={s.taalContainer}>
+        <View style={s.taalKop}>
+          <Image source={require('../assets/icon.png')} style={s.logoKlein} accessibilityElementsHidden importantForAccessibility="no" />
+          <Text style={s.titel}>{vertaal(gekozen, 'welkom.accountTitel')}</Text>
+          <Text style={s.tekst}>{vertaal(gekozen, 'welkom.accountTekst')}</Text>
+        </View>
+        {aanmeldFout && (
+          <Text style={s.fout} accessibilityRole="alert">
+            {vertaal(gekozen, 'aanmelden.fout')}
+          </Text>
+        )}
+        <View style={s.onderaan}>
+          <Pressable style={[s.knop, bezig && s.uit]} onPress={metGoogle} disabled={bezig} accessibilityRole="button">
+            <Text style={s.knopTekst}>{vertaal(gekozen, 'welkom.accountGoogle')}</Text>
+          </Pressable>
+          <Pressable style={[s.knopZacht, bezig && s.uit]} onPress={verderZonder} disabled={bezig} accessibilityRole="button">
+            <Text style={s.knopZachtTekst}>{vertaal(gekozen, 'welkom.accountVerder')}</Text>
+          </Pressable>
+          {stapIndicator(3)}
         </View>
       </ScrollView>
     );
@@ -160,6 +210,9 @@ const s = StyleSheet.create({
   stipActief: { width: 26, backgroundColor: KLEUR },
   knop: { backgroundColor: KLEUR, borderRadius: 16, paddingVertical: 17, alignItems: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 17 },
+  knopZacht: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 16, paddingVertical: 16, alignItems: 'center' },
+  knopZachtTekst: { color: KLEUR, fontWeight: '700', fontSize: 17 },
+  uit: { opacity: 0.6 },
   stap: { fontSize: 12, color: MUTED, textAlign: 'center' },
   taalContainer: { flexGrow: 1, padding: 24, paddingTop: 64, paddingBottom: 32, backgroundColor: PAPIER, gap: 20 },
   taalKop: { gap: 8 },

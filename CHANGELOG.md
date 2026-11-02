@@ -8,6 +8,21 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.98.0] – 2026-11-02
+
+**Jira:** [WEEK-174](https://proqltc-1791495894841.atlassian.net/browse/WEEK-174) · **Confluence:** [WEEK-174 Startkeuze](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18382907)
+
+- Bij het eerste starten kies je zelf: aanmelden met Google, of verder zonder account. Het Google-blok op het gezinsscherm is weg.
+
+**Jira:** [WEEK-175](https://proqltc-1791495894841.atlassian.net/browse/WEEK-175) · **Confluence:** [WEEK-175 Winkelzoeker via Google Maps](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18874369)
+
+- De winkelsuggestie opent Google Maps met de postcode uit het profiel, in plaats van de niet-werkende winkeldatabank. De Supabase-functie 'winkels' is uit de repository verwijderd.
+
+**Jira:** [WEEK-176](https://proqltc-1791495894841.atlassian.net/browse/WEEK-176) · **Confluence:** [WEEK-176 Gezinsruimte verlaten en icoonknoppen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18710559)
+
+- 'Gezinsruimte verlaten' staat bovenaan en is voor elk lid zichtbaar. Bevestigingen gebeuren in de pagina zelf, en kleine knoppen zijn icoontjes.
+- Frigo: de scan-knop is een camerasymbool. Lijst: de weergave-pillen mogen onder elkaar op een smal scherm.
+
 ## [0.97.0] – 2026-11-02
 
 **Jira:** [WEEK-170](https://proqltc-1791495894841.atlassian.net/browse/WEEK-170) · **Confluence:** [WEEK-170 Planner: melding en pijltje](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18677761)

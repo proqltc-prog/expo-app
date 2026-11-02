@@ -25,6 +25,23 @@ export function googleMapsUrl(w: Winkel): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(zoekterm)}`;
 }
 
+/** Zoekwoord per winkeltype voor Google Maps (WEEK-175). */
+const ZOEKWOORD: Record<WinkelSoort, string> = {
+  supermarkt: 'supermarkt',
+  slager: 'slager',
+  bakker: 'bakker',
+  groenteboer: 'groenteboer',
+};
+
+/**
+ * Google Maps zoeken naar een winkeltype bij de postcode en gemeente van de gebruiker (WEEK-175).
+ * Geen eigen winkeldatabank nodig: Google Maps toont de winkels zelf.
+ */
+export function googleZoekUrl(soort: WinkelSoort, postcode: string, gemeente: string): string {
+  const plaats = [postcode, gemeente, 'België'].map((d) => d.trim()).filter(Boolean).join(' ');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${ZOEKWOORD[soort]} ${plaats}`)}`;
+}
+
 /** Openingsuren als losse regels. Leeg of onbekend geeft een lege lijst. */
 export function openingsurenRegels(ruw?: string): string[] {
   if (!ruw || !ruw.trim()) return [];

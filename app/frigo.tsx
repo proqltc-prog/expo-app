@@ -205,8 +205,14 @@ export default function Frigo() {
               <Text style={s.plusTekst}>+</Text>
             </Pressable>
             {/* Scannen vanaf de frigo (WEEK-47): aangekochte producten direct als los product in de frigo zetten. */}
-            <Pressable style={[s.scan, { borderColor: thema.accent }]} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button">
-              <Text style={[s.scanTekst, { color: thema.accent }]}>{t('frigo.scan')}</Text>
+            {/* WEEK-176: een camera-icoon in plaats van de tekst, zodat de rij op een smal scherm past. */}
+            <Pressable
+              style={[s.scan, { borderColor: thema.accent }]}
+              onPress={() => router.navigate('/scan?van=frigo')}
+              accessibilityRole="button"
+              accessibilityLabel={t('frigo.scan')}
+            >
+              <Ionicons name="camera-outline" size={22} color={thema.accent} />
             </Pressable>
           </View>
           <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
@@ -373,11 +379,10 @@ const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
   uitleg: { color: MUTED, marginTop: 12 },
   invoer: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  veld: { flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
-  plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  veld: { flex: 1, minWidth: 0, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
+  plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
-  scan: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
-  scanTekst: { color: KLEUR, fontWeight: '700' },
+  scan: { width: 44, height: 44, flexShrink: 0, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   teller: { color: MUTED, marginVertical: 10, fontWeight: '600' },
   detailsLink: { color: KLEUR, fontWeight: '600', marginTop: 8 },
   details: { gap: 8, marginTop: 8 },

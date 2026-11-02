@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { Winkel } from '@/lib/winkels';
-import { adresRegel, googleMapsUrl, openingsurenRegels, SOORT_EMOJI } from '@/lib/winkelweergave';
+import { adresRegel, googleMapsUrl, googleZoekUrl, openingsurenRegels, SOORT_EMOJI } from '@/lib/winkelweergave';
 import { leesWinkels } from '@/lib/winkels';
 
 const w = (wijziging: Partial<Winkel> = {}): Winkel => ({
@@ -77,5 +77,15 @@ describe('leesWinkels: adres en uren uit OpenStreetMap (WEEK-70)', () => {
     assert.equal(eerste.openingsuren, 'Mo-Sa 08:00-20:00');
     assert.equal(tweede.straat, undefined);
     assert.equal(tweede.openingsuren, undefined);
+  });
+});
+
+describe('googleZoekUrl (WEEK-175)', () => {
+  test('zoekt het winkeltype bij de postcode en gemeente, in België', () => {
+    const url = googleZoekUrl('slager', '1760', 'Roosdaal');
+    assert.equal(url, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('slager 1760 Roosdaal België'));
+  });
+  test('zonder gemeente blijft de postcode over', () => {
+    assert.match(googleZoekUrl('bakker', '2000', ''), /bakker%202000%20Belgi/);
   });
 });

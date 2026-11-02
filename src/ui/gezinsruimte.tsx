@@ -1,7 +1,10 @@
 // Blok "Gezinsruimte" op het tabblad Gezin (WEEK-8): een gezinsruimte maken, lid worden met een code,
 // de code delen, de leden zien en de gezinsruimte verlaten.
+// WEEK-174: het Google-blok is hier weg; aanmelden gebeurt bij het starten van de app.
+// WEEK-176: verlaten staat bovenaan en is altijd zichtbaar; bevestigen gebeurt in de pagina zelf
+// (een Alert doet op het web niets), en de kleine knoppen zijn icoontjes met een toegankelijkheidslabel.
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Linking, Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { leesGezinFout, leesGezinscode, toonGezinscode } from '@/lib/sync';
 import { anderenLeden, APP_LINK, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
@@ -9,8 +12,6 @@ import { wijsPlanBeheerderAan } from '@/opslag/plan';
 import { laadVoornaam, zetVoornaam } from '@/opslag/voornaam';
 import { valideerVoornaam, VoornaamFout } from '@/lib/voornaam';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
-import { isAnoniem, koppel } from '@/opslag/aanmelden';
-import { aanbiedingen, Aanbieder } from '@/lib/aanmelden';
 import {
   bijWijziging,
   Gezin,
@@ -33,9 +34,13 @@ import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#2e7d4f';
+const GEVAAR = '#c62828';
 
 // WEEK-104: het gezin krijgt een standaardnaam. De voornaam van het lid komt van het toestel (WEEK-163).
 const GEZINSNAAM_STANDAARD = 'Gezin';
+
+/** Een actie die eerst bevestigd moet worden, in de pagina zelf (WEEK-176). */
+type Bevestiging = { actie: 'verlaat' } | { actie: 'heffOp' } | { actie: 'opvolger'; lid: GezinsLid } | { actie: 'beheerder'; lid: GezinsLid };
 
 export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const { t } = useTaal();
@@ -50,20 +55,12 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const [beheerderId, setBeheerderId] = useState<string | undefined>(undefined);
   const [mijnId, setMijnId] = useState<string | undefined>(undefined);
   const [kiesOpvolger, setKiesOpvolger] = useState(false);
+  const [bevestig, setBevestig] = useState<Bevestiging | null>(null);
   // Voornaam van dit toestel (WEEK-163): zichtbaar bij "gekocht door" en "toegevoegd door".
   const [voornaam, setVoornaam] = useState('');
   const [voornaamInvoer, setVoornaamInvoer] = useState('');
   const [voornaamFout, setVoornaamFout] = useState<VoornaamFout | null>(null);
   const [voornaamOpgeslagen, setVoornaamOpgeslagen] = useState(false);
-  // Aanmelden (WEEK-166): null = nog niet bekend.
-  const [anoniem, setAnoniem] = useState<boolean | null>(null);
-  const [aanmeldFout, setAanmeldFout] = useState(false);
-  const [aanmeldBezig, setAanmeldBezig] = useState(false);
-
-  // Aanmelden (WEEK-166): is het toestel nog anoniem?
-  useEffect(() => {
-    void isAnoniem().then(setAnoniem);
-  }, []);
 
   useEffect(() => {
     laadVoornaam().then((n) => {
@@ -148,59 +145,60 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const beheerder = ikBeheerder(beheerderId, mijnId);
   const beheerderNaamTekst = leden.find((l) => l.id === beheerderId)?.naam;
 
+  // WEEK-176: verlaten kan altijd, ook voor een niet-beheerder. Een beheerder met andere leden kiest eerst een opvolger (WEEK-65).
   const verlaat = () => {
-    // Een beheerder met andere leden kiest eerst een opvolger (WEEK-65).
     if (vraagtOpvolgerBijVertrek(beheerder, leden, mijnId)) {
       setKiesOpvolger(true);
       return;
     }
-    Alert.alert(t('gezin.verlaat'), t('gezin.verlaatVraag'), [
-      { text: t('gezin.annuleren'), style: 'cancel' },
-      { text: t('gezin.verlaat'), style: 'destructive', onPress: () => voerUit(verlaatGezin) },
-    ]);
+    setBevestig({ actie: 'verlaat' });
   };
 
-  const maakLidBeheerder = (lid: GezinsLid) =>
-    Alert.alert(t('gezin.maakBeheerder'), t('gezin.maakBeheerderVraag', { naam: lid.naam || t('gezin.naamloos') }), [
-      { text: t('gezin.annuleren'), style: 'cancel' },
-      {
-        text: t('gezin.maakBeheerder'),
-        onPress: () =>
-          voerUit(async () => {
-            await maakBeheerder(lid.id);
-            // Nog steeds beheerder van het plan, dus dit mag (WEEK-65).
-            await wijsPlanBeheerderAan(lid.id);
-          }),
-      },
-    ]);
+  const naamVan = (lid: GezinsLid) => lid.naam || t('gezin.naamloos');
 
-  const naarOpvolger = (lid: GezinsLid) =>
-    Alert.alert(t('gezin.verlaat'), t('gezin.verlaatOpvolgerVraag', { naam: lid.naam || t('gezin.naamloos') }), [
-      { text: t('gezin.annuleren'), style: 'cancel' },
-      {
-        text: t('gezin.verlaat'),
-        style: 'destructive',
-        onPress: () => {
-          setKiesOpvolger(false);
-          voerUit(async () => {
-            // Eerst het plan overdragen: daarna mag ik het niet meer wijzigen.
-            await wijsPlanBeheerderAan(lid.id);
-            try {
-              await verlaatMetOpvolger(lid.id);
-            } catch (e) {
-              if (mijnId) await wijsPlanBeheerderAan(mijnId);
-              throw e;
-            }
-          });
-        },
-      },
-    ]);
+  const bevestigVraag = bevestig
+    ? (() => {
+        switch (bevestig.actie) {
+          case 'verlaat':
+            return { tekst: t('gezin.verlaatVraag'), knop: t('gezin.verlaat') };
+          case 'heffOp':
+            return { tekst: t('gezin.heffOpVraag'), knop: t('gezin.heffOp') };
+          case 'opvolger':
+            return { tekst: t('gezin.verlaatOpvolgerVraag', { naam: naamVan(bevestig.lid) }), knop: t('gezin.verlaat') };
+          case 'beheerder':
+            return { tekst: t('gezin.maakBeheerderVraag', { naam: naamVan(bevestig.lid) }), knop: t('gezin.maakBeheerder') };
+        }
+      })()
+    : null;
 
-  const heffOp = () =>
-    Alert.alert(t('gezin.heffOp'), t('gezin.heffOpVraag'), [
-      { text: t('gezin.annuleren'), style: 'cancel' },
-      { text: t('gezin.heffOp'), style: 'destructive', onPress: () => voerUit(heffGezinOp) },
-    ]);
+  const bevestigDoe = () => {
+    const b = bevestig;
+    setBevestig(null);
+    if (!b) return;
+    if (b.actie === 'verlaat') {
+      void voerUit(verlaatGezin);
+    } else if (b.actie === 'heffOp') {
+      void voerUit(heffGezinOp);
+    } else if (b.actie === 'beheerder') {
+      void voerUit(async () => {
+        await maakBeheerder(b.lid.id);
+        // Nog steeds beheerder van het plan, dus dit mag (WEEK-65).
+        await wijsPlanBeheerderAan(b.lid.id);
+      });
+    } else {
+      setKiesOpvolger(false);
+      void voerUit(async () => {
+        // Eerst het plan overdragen: daarna mag ik het niet meer wijzigen.
+        await wijsPlanBeheerderAan(b.lid.id);
+        try {
+          await verlaatMetOpvolger(b.lid.id);
+        } catch (e) {
+          if (mijnId) await wijsPlanBeheerderAan(mijnId);
+          throw e;
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -223,45 +221,18 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
             autoCapitalize="words"
             autoCorrect={false}
           />
-          <Pressable style={[s.knopKlein, (bezig || voornaamInvoer.trim() === voornaam) && s.uit]} onPress={bewaarVoornaam} disabled={bezig || voornaamInvoer.trim() === voornaam}>
-            <Text style={s.knopKleinTekst}>{t('naam.opslaan')}</Text>
+          <Pressable
+            style={[s.icoonKnop, (bezig || voornaamInvoer.trim() === voornaam) && s.uit]}
+            onPress={bewaarVoornaam}
+            disabled={bezig || voornaamInvoer.trim() === voornaam}
+            accessibilityRole="button"
+            accessibilityLabel={t('naam.opslaan')}
+          >
+            <Ionicons name="checkmark" size={24} color={KLEUR} />
           </Pressable>
         </View>
         {voornaamFout && <Text style={s.fout} accessibilityRole="alert">{t(`naam.fout.${voornaamFout}` as 'naam.fout.leeg')}</Text>}
         {voornaamOpgeslagen && !voornaamFout && <Text style={s.status}>{t('naam.opgeslagen')}</Text>}
-        {anoniem !== null && (
-          <>
-            <Text style={s.label}>{t('aanmelden.kop')}</Text>
-            {aanbiedingen(anoniem).length > 0 ? (
-              <>
-                <Text style={s.uitleg}>{t('aanmelden.uitleg')}</Text>
-                {aanbiedingen(anoniem).map((aanbieder: Aanbieder) => (
-                  <Pressable
-                    key={aanbieder}
-                    style={[s.knop, aanmeldBezig && s.uit]}
-                    disabled={aanmeldBezig}
-                    onPress={async () => {
-                      setAanmeldBezig(true);
-                      setAanmeldFout(false);
-                      try {
-                        await koppel(aanbieder);
-                      } catch {
-                        setAanmeldFout(true);
-                      } finally {
-                        setAanmeldBezig(false);
-                      }
-                    }}
-                  >
-                    <Text style={s.knopTekst}>{t('aanmelden.google')}</Text>
-                  </Pressable>
-                ))}
-                {aanmeldFout && <Text style={s.fout} accessibilityRole="alert">{t('aanmelden.fout')}</Text>}
-              </>
-            ) : (
-              <Text style={s.status}>{t('aanmelden.gekoppeld')}</Text>
-            )}
-          </>
-        )}
         {!gezin ? (
           <>
             <Text style={s.uitleg}>{t('gezin.uitleg')}</Text>
@@ -280,8 +251,14 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 autoCorrect={false}
                 maxLength={8}
               />
-              <Pressable style={[s.knopKlein, bezig && s.uit]} onPress={sluitAan} disabled={bezig}>
-                <Text style={s.knopKleinTekst}>{t('gezin.wordLid')}</Text>
+              <Pressable
+                style={[s.icoonKnop, bezig && s.uit]}
+                onPress={sluitAan}
+                disabled={bezig}
+                accessibilityRole="button"
+                accessibilityLabel={t('gezin.wordLid')}
+              >
+                <Ionicons name="enter-outline" size={24} color={KLEUR} />
               </Pressable>
             </View>
           </>
@@ -289,9 +266,66 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
           <>
             <Text style={s.gedeeld}>{t('gezin.gedeeldMet', { naam: gezin.naam })}</Text>
             <Text style={[s.status, status === 'offline' && s.statusOffline]}>{t(`gezin.status.${status}` as Sleutel)}</Text>
+
+            {/* WEEK-176: verlaten staat bovenaan, zodat het altijd bereikbaar is voor elk lid. */}
+            {kiesOpvolger ? (
+              <View style={s.bevestig}>
+                <Text style={s.uitleg}>{t('gezin.kiesOpvolger')}</Text>
+                <View style={s.kiesRij}>
+                  {anderenLeden(leden, mijnId).map((l) => (
+                    <Pressable
+                      key={l.id}
+                      style={s.knopKlein}
+                      onPress={() => {
+                        setKiesOpvolger(false);
+                        setBevestig({ actie: 'opvolger', lid: l });
+                      }}
+                      disabled={bezig}
+                      accessibilityRole="button"
+                    >
+                      <Text style={s.knopKleinTekst}>{naamVan(l)}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+                <Pressable onPress={() => setKiesOpvolger(false)} accessibilityRole="button" style={s.annuleerKnop}>
+                  <Text style={s.uitleg}>{t('gezin.annuleren')}</Text>
+                </Pressable>
+              </View>
+            ) : bevestigVraag ? (
+              <View style={s.bevestig}>
+                <Text style={s.uitleg}>{bevestigVraag.tekst}</Text>
+                <View style={s.kiesRij}>
+                  <Pressable style={[s.knopGevaar, bezig && s.uit]} onPress={bevestigDoe} disabled={bezig} accessibilityRole="button">
+                    <Text style={s.knopGevaarTekst}>{bevestigVraag.knop}</Text>
+                  </Pressable>
+                  <Pressable style={s.knopKlein} onPress={() => setBevestig(null)} accessibilityRole="button">
+                    <Text style={s.knopKleinTekst}>{t('gezin.annuleren')}</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <Pressable
+                onPress={verlaat}
+                disabled={bezig}
+                style={[s.actieKnop, bezig && s.uit]}
+                accessibilityRole="button"
+                accessibilityLabel={t('gezin.verlaat')}
+              >
+                <Ionicons name="log-out-outline" size={22} color={GEVAAR} />
+                <Text style={s.verlaatTekst}>{t('gezin.verlaat')}</Text>
+              </Pressable>
+            )}
+            {fout && <Text style={s.fout} accessibilityRole="alert">{fout}</Text>}
+
             <View style={s.rij}>
-              <Text style={[s.label, { flex: 1 }]}>{t('gezin.code')}</Text>
-              <Pressable onPress={() => setUitlegOpen((o) => !o)} accessibilityRole="button" accessibilityLabel={t('gezin.infoKnop')} accessibilityState={{ expanded: uitlegOpen }} hitSlop={8}>
+              <Text style={[s.label, { flex: 1, minWidth: 0 }]}>{t('gezin.code')}</Text>
+              <Pressable
+                onPress={() => setUitlegOpen((o) => !o)}
+                accessibilityRole="button"
+                accessibilityLabel={t('gezin.infoKnop')}
+                accessibilityState={{ expanded: uitlegOpen }}
+                hitSlop={8}
+              >
                 <Ionicons name={uitlegOpen ? 'information-circle' : 'information-circle-outline'} size={22} color={KLEUR} />
               </Pressable>
             </View>
@@ -304,55 +338,43 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
               </View>
             )}
             <View style={s.rij}>
-              <Text style={s.code} selectable>{toonGezinscode(gezin.code)}</Text>
-              <Pressable style={s.knopKlein} onPress={deel}>
-                <Text style={s.knopKleinTekst}>{t('gezin.deel')}</Text>
+              <Text style={s.code} selectable numberOfLines={1} adjustsFontSizeToFit>
+                {toonGezinscode(gezin.code)}
+              </Text>
+              <Pressable style={s.icoonKnop} onPress={deel} accessibilityRole="button" accessibilityLabel={t('gezin.deel')}>
+                <Ionicons name="share-social-outline" size={22} color={KLEUR} />
               </Pressable>
             </View>
             {beheerderNaamTekst && <Text style={s.label}>{t('gezin.beheerder', { naam: beheerderNaamTekst })}</Text>}
             {leden.length > 0 && (
               <>
                 <Text style={s.label}>{t('gezin.leden')}</Text>
-                {leden.map((l) => {
-                  const naamLid = l.naam || t('gezin.naamloos');
-                  return (
-                    <View key={l.id} style={s.rij}>
-                      <Text style={[s.lid, { flex: 1 }]}>• {l.ikZelf ? t('gezin.jij', { naam: naamLid }) : naamLid}</Text>
-                      {beheerder && !l.ikZelf && (
-                        <Pressable style={s.knopKlein} onPress={() => maakLidBeheerder(l)} disabled={bezig}>
-                          <Text style={s.knopKleinTekst}>{t('gezin.maakBeheerder')}</Text>
-                        </Pressable>
-                      )}
-                    </View>
-                  );
-                })}
-              </>
-            )}
-            {kiesOpvolger ? (
-              <>
-                <Text style={s.uitleg}>{t('gezin.kiesOpvolger')}</Text>
-                {anderenLeden(leden, mijnId).map((l) => (
-                  <Pressable key={l.id} style={s.knopKlein} onPress={() => naarOpvolger(l)} disabled={bezig}>
-                    <Text style={s.knopKleinTekst}>{l.naam || t('gezin.naamloos')}</Text>
-                  </Pressable>
+                {leden.map((l) => (
+                  <View key={l.id} style={s.rij}>
+                    <Text style={[s.lid, s.lidNaam]}>• {l.ikZelf ? t('gezin.jij', { naam: naamVan(l) }) : naamVan(l)}</Text>
+                    {beheerder && !l.ikZelf && (
+                      <Pressable
+                        style={s.icoonKnop}
+                        onPress={() => setBevestig({ actie: 'beheerder', lid: l })}
+                        disabled={bezig}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('gezin.maakBeheerder')}
+                      >
+                        <Ionicons name="shield-checkmark-outline" size={22} color={KLEUR} />
+                      </Pressable>
+                    )}
+                  </View>
                 ))}
-                <Pressable onPress={() => setKiesOpvolger(false)} style={s.verlaat}>
-                  <Text style={s.uitleg}>{t('gezin.annuleren')}</Text>
-                </Pressable>
               </>
-            ) : (
-              <Pressable onPress={verlaat} disabled={bezig} style={s.verlaat}>
-                {bezig ? <ActivityIndicator color="#c62828" /> : <Text style={s.verlaatTekst}>{t('gezin.verlaat')}</Text>}
-              </Pressable>
             )}
-            {beheerder && (
-              <Pressable onPress={heffOp} disabled={bezig} style={s.verlaat}>
+            {beheerder && !kiesOpvolger && !bevestig && (
+              <Pressable onPress={() => setBevestig({ actie: 'heffOp' })} disabled={bezig} style={s.actieKnop} accessibilityRole="button" accessibilityLabel={t('gezin.heffOp')}>
+                <Ionicons name="trash-outline" size={22} color={GEVAAR} />
                 <Text style={s.verlaatTekst}>{t('gezin.heffOp')}</Text>
               </Pressable>
             )}
           </>
         )}
-        {fout && <Text style={s.fout}>{fout}</Text>}
       </View>
     </>
   );
@@ -363,14 +385,19 @@ const s = StyleSheet.create({
   kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5', gap: 10 },
   uitleg: { color: '#555' },
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
-  naamVeld: { flex: 1, fontSize: 16, color: '#1d2420' },
+  naamVeld: { flex: 1, minWidth: 0, fontSize: 16, color: '#1d2420' },
   veldFout: { borderColor: '#B3261E' },
-  codeVeld: { flex: 1, letterSpacing: 2, fontWeight: '600', color: '#1d2420' },
+  codeVeld: { flex: 1, minWidth: 0, letterSpacing: 2, fontWeight: '600', color: '#1d2420' },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  kiesRij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
   knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  // Icoonknop: vaste vorm, zodat hij nooit wordt afgesneden (WEEK-176).
+  icoonKnop: { width: 44, height: 44, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   knopKlein: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   knopKleinTekst: { color: KLEUR, fontWeight: '700' },
+  knopGevaar: { backgroundColor: GEVAAR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
+  knopGevaarTekst: { color: '#fff', fontWeight: '700' },
   uit: { opacity: 0.6 },
   gedeeld: { fontSize: 16, fontWeight: '600' },
   status: { color: KLEUR, fontSize: 13 },
@@ -379,9 +406,13 @@ const s = StyleSheet.create({
   gezinsUitleg: { borderWidth: 1, borderColor: KLEUR, borderRadius: 10, padding: 12, gap: 10 },
   uitlegTekst: { color: '#1d2420', fontSize: 14, lineHeight: 20 },
   uitlegKnop: { alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
-  code: { flex: 1, fontSize: 26, fontWeight: '700', letterSpacing: 4, color: '#1f5c3a' },
+  code: { flex: 1, minWidth: 0, fontSize: 24, fontWeight: '700', letterSpacing: 3, color: '#1f5c3a' },
   lid: { fontSize: 15 },
-  verlaat: { alignItems: 'center', padding: 8 },
-  verlaatTekst: { color: '#c62828', fontWeight: '600' },
-  fout: { color: '#c62828' },
+  lidNaam: { flex: 1, minWidth: 0 },
+  // Verlaten en opheffen: volle breedte, icoon + tekst, altijd goed zichtbaar.
+  actieKnop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, minHeight: 48, borderWidth: 1, borderColor: '#f1c4c4', borderRadius: 10, paddingHorizontal: 12 },
+  verlaatTekst: { color: GEVAAR, fontWeight: '600', flexShrink: 1 },
+  annuleerKnop: { alignItems: 'center', padding: 8 },
+  bevestig: { gap: 10, borderWidth: 1, borderColor: '#f1c4c4', borderRadius: 10, padding: 12 },
+  fout: { color: GEVAAR },
 });
