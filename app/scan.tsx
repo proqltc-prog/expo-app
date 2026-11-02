@@ -18,7 +18,7 @@ import { additiefWeergave } from '@/data/additieven';
 import { wijzigPlan } from '@/opslag/plan';
 import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
-import { PaginaIntro } from '@/ui/paginaIntro';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 import { Ionicons } from '@expo/vector-icons';
 import { scanTerug } from '@/lib/scanBestemming';
 
@@ -38,7 +38,19 @@ type Status =
   | { soort: 'niet-gevonden'; barcode: string }
   | { soort: 'fout' };
 
+// WEEK-177: de uitleg zit in de koptekst; de popup hangt in de wrapper, zodat elke weergave hem kan tonen.
 export default function Scan() {
+  const { t } = useTaal();
+  const { popup } = usePaginaInfo({ tekst: t('pagina.scanInfo'), kleur: '#2e7d4f', infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
+  return (
+    <>
+      <ScanInhoud />
+      {popup}
+    </>
+  );
+}
+
+function ScanInhoud() {
   const { t, taal } = useTaal();
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
@@ -177,7 +189,13 @@ export default function Scan() {
           barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
           onBarcodeScanned={opScan}
         />
-        {/* WEEK-102: de scan sluiten. WEEK-120: enkel bij scannen vanuit de lijst of de frigo. */}
+        <View style={s.overlay} pointerEvents="none">
+          <View style={s.kader} />
+          <Text style={s.hint}>{t('scan.richt')}</Text>
+          <Text style={s.hint}>{t('scan.resterend', { n: rest })}</Text>
+        </View>
+        {/* WEEK-102: de scan sluiten. WEEK-120: enkel bij scannen vanuit de lijst of de frigo.
+            WEEK-177: staat ná de overlay, zodat de overlay de knop niet meer afdekt. */}
         {scanTerug(van) !== undefined && (
           <Pressable
             onPress={annuleer}
@@ -189,14 +207,6 @@ export default function Scan() {
             <Ionicons name="close" size={26} color="#fff" />
           </Pressable>
         )}
-        <View style={s.introBoven}>
-          <PaginaIntro intro={t('pagina.scanIntro')} info={t('pagina.scanInfo')} kleur="#fff" infoLabel={t('pagina.infoKnop')} donker />
-        </View>
-        <View style={s.overlay}>
-          <View style={s.kader} />
-          <Text style={s.hint}>{t('scan.richt')}</Text>
-          <Text style={s.hint}>{t('scan.resterend', { n: rest })}</Text>
-        </View>
       </View>
     );
   }
@@ -337,7 +347,6 @@ const s = StyleSheet.create({
   knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  introBoven: { position: 'absolute', top: 56, left: 16, right: 16 },
   annuleer: { position: 'absolute', top: 16, right: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
   kader: { width: 260, height: 150, borderWidth: 3, borderColor: '#fff', borderRadius: 16 },
   hint: { color: '#fff', marginTop: 16, fontWeight: '600', textShadowColor: '#000', textShadowRadius: 4 },

@@ -436,11 +436,8 @@ export const nl = {
   'frigo.geenIngredient': 'Geen ingrediënt gevonden.',
   'frigo.alIngevoegd': 'Al in de frigo',
   'pagina.infoKnop': 'Uitleg over deze pagina',
-  'pagina.lijstIntro': 'Hier staan de boodschappen die nog gekocht moeten worden.',
-  'pagina.lijstInfo': 'Tik op een product om het af te vinken. Wissel tussen per recept en per categorie. Tik op een kop om een groep in of uit te klappen. Met de scanknop voeg je een product toe.',
-  'pagina.frigoIntro': 'Hier houd je bij wat er in huis is.',
-  'pagina.frigoInfo': 'Voeg ingrediënten toe met het zoekveld of de plusknop. Bij details geef je de hoeveelheid en eenheid op. De planner gebruikt eerst wat al het langst in huis is.',
-  'pagina.scanIntro': 'Richt de camera op de barcode van een product.',
+  'pagina.lijstInfo': 'Boodschappen: tik op een product om het af te vinken. Wissel tussen per recept en per categorie. Tik op een kop om een groep in of uit te klappen.\n\nWinkels: voor elk winkeltype op je lijst opent Google Maps bij jou in de buurt, met de postcode uit je profiel.',
+  'pagina.frigoInfo': 'Recepten: wat er in huis is voor de recepten van de week. Zoek een ingrediënt en geef de hoeveelheid op. De planner gebruikt eerst wat het langst in huis is.\n\nLosse producten: wat je buiten de recepten om hebt. Die tellen niet mee voor de recepten van de week. Je beheert ze zelf; de app verwijdert niets automatisch.',
   'pagina.scanInfo': 'De app zoekt het product op en toont de voedingswaarden en een oordeel. Je hebt per dag een beperkt aantal gratis scans.',
   'gezin.infoKnop': "Uitleg over de gezinscode",
   'gezin.infoTekst': "Met deze code voegt iemand zich bij jouw gezinsruimte: kies in de app ‘Lid worden’ en vul de code in. Open de app via {link}.",
@@ -452,6 +449,7 @@ export const nl = {
   'welkom.accountTekst': 'Met een Google-account blijven je gezinsgegevens bewaard als je van toestel wisselt. Dat kan ook later, in het gezinsscherm.',
   'welkom.accountGoogle': 'Aanmelden met Google',
   'welkom.accountVerder': 'Verder zonder account',
+  'pagina.sluiten': 'Sluiten',
 } as const;
 
 export type Sleutel = keyof typeof nl;

@@ -15,7 +15,7 @@ import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { eenheidVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
-import { PaginaIntro } from '@/ui/paginaIntro';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -67,6 +67,8 @@ function ProductDetails({ product: p }: { product: Product }) {
 
 export default function Frigo() {
   const { t, tn, taal } = useTaal();
+  // WEEK-177: uitleg via een infoknop rechtsboven in de koptekst; de tekst beschrijft beide sheets.
+  const { popup } = usePaginaInfo({ tekst: t('pagina.frigoInfo'), kleur: KLEUR, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   // De twee sheets (WEEK-71 deel 2): planner-frigo en losse producten.
   const [sheet, setSheet] = useState<'planner' | 'los'>('planner');
@@ -169,7 +171,6 @@ export default function Frigo() {
 
   const kop = (
     <View>
-      <PaginaIntro intro={t('pagina.frigoIntro')} info={t('pagina.frigoInfo')} kleur={KLEUR} infoLabel={t('pagina.infoKnop')} />
       {sheet === 'planner' ? (
         <>
           <Text style={s.uitleg}>{t('frigo.plannerUitleg')}</Text>
@@ -251,6 +252,7 @@ export default function Frigo() {
 
   return (
     <View style={s.scherm}>
+      {popup}
       {/* Tabbladen bovenaan: altijd zichtbaar, ook als de lijst scrolt. */}
       {/* Schakelaar met een verhoogd actief vlak; de kleurstreep eronder hoort bij de actieve sheet (WEEK-75). */}
       {/* Subtiele paginatitel boven de sheets (WEEK-96). */}
