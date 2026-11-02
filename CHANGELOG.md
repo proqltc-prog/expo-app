@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.100.0] – 2026-11-02
+
+**Jira:** [WEEK-179](https://proqltc-1791495894841.atlassian.net/browse/WEEK-179) · **Confluence:** [WEEK-179 Testrecepten en vier talen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18841602)
+
+- Vijf nieuwe recepten in de receptenbank (risotto, zalm met citroenboter, gevulde courgette, kipfilet met citroen, cacio e pepe), zodat de melding "te weinig recepten" niet meer verschijnt. Snelle recepten duren maximaal 30 minuten, uitgebreidere maximaal 45.
+- Recepten en bereidingen bestaan enkel in Nederlands, Frans, Duits en Engels, de vier talen van de app.
+- De optie "Taal van het toestel" is verwijderd uit het profielscherm. Zonder keuze volgt de app de taal van het toestel, of Engels als die niet ondersteund wordt.
+
 ## [0.99.1] – 2026-11-02
 
 **Jira:** [WEEK-178](https://proqltc-1791495894841.atlassian.net/browse/WEEK-178) · **Confluence:** [WEEK-178 Lijst-koppen uitlijnen en info bij losse producten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18350125)

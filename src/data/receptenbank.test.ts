@@ -2,7 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { RECEPTENBANK, STIJLEN } from '@/data/receptenbank';
 import { AFDELINGEN, afdelingVan, INGREDIENT_CODES, ingredientNaam, isIngredient } from '@/data/ingredienten';
-import { TALEN } from '@/i18n';
+import { KEUZE_TALEN, TALEN } from '@/i18n';
 
 describe('receptenbank', () => {
   test('ids zijn uniek', () => {
@@ -12,7 +12,7 @@ describe('receptenbank', () => {
 
   test('elk recept heeft een naam in elke taal, ingrediënten en een kooktijd', () => {
     for (const r of RECEPTENBANK) {
-      assert.equal(r.namen.length, TALEN.length, r.id);
+      assert.equal(r.namen.length, KEUZE_TALEN.length, r.id);
       r.namen.forEach((n) => assert.ok(n.trim(), `${r.id}: lege naam`));
       assert.ok(r.ingredienten.length >= 3, `${r.id}: te weinig ingrediënten`);
       assert.ok(r.minuten > 0 && r.minuten <= 240, r.id);

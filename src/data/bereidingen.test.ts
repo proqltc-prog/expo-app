@@ -1,8 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BEREIDINGEN } from '@/data/bereidingen';
+import { BEREIDING_TALEN, BEREIDINGEN } from '@/data/bereidingen';
 import { RECEPTENBANK } from '@/data/receptenbank';
-import { TALEN } from '@/i18n';
 
 describe('bereidingen van de receptenbank (WEEK-81)', () => {
   test('elk recept uit de receptenbank heeft bereidingsstappen', () => {
@@ -11,12 +10,12 @@ describe('bereidingen van de receptenbank (WEEK-81)', () => {
     }
   });
 
-  test('elk recept heeft stappen in alle zes talen, en dat aantal is gelijk', () => {
+  test('elk recept heeft stappen in de vier talen van de app, en dat aantal is gelijk', () => {
     for (const r of RECEPTENBANK) {
       const per = BEREIDINGEN[r.id];
       const aantal = per.nl.length;
       assert.ok(aantal >= 2, `${r.id}: te weinig stappen`);
-      for (const taal of TALEN) {
+      for (const taal of BEREIDING_TALEN) {
         assert.equal(per[taal].length, aantal, `${r.id} (${taal}): ander aantal stappen`);
         for (const stap of per[taal]) assert.ok(stap.trim().length > 0, `${r.id} (${taal}): lege stap`);
       }

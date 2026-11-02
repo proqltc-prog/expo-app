@@ -14,6 +14,11 @@ export type Taal = (typeof TALEN)[number];
 /** WEEK-169: talen die de gebruiker in de app kan kiezen. Es en pt blijven in de code maar worden niet aangeboden. */
 export const KEUZE_TALEN: readonly Taal[] = ['nl', 'fr', 'de', 'en'];
 
+/** Valt een taal buiten de vier ondersteunde talen terug op de terugvaltaal. */
+export function keuzeTaal(taal: Taal): Taal {
+  return KEUZE_TALEN.includes(taal) ? taal : TERUGVALTAAL;
+}
+
 /** Taal als de toesteltaal niet ondersteund wordt. */
 export const TERUGVALTAAL: Taal = 'en';
 

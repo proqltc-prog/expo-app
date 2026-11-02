@@ -64,10 +64,10 @@ describe('resetDagLokaal', () => {
   });
 
   test('recept in de taal van het plan en voor hetzelfde aantal porties', () => {
-    const voor = plan({ taal: 'es' });
+    const voor = plan({ taal: 'en' });
     const na = resetDagLokaal(voor, 1, 8);
     const bank = RECEPTENBANK.find((r) => r.id === na.dagen[1].recept.id)!;
-    assert.equal(na.dagen[1].recept.naam, bank.namen[4]);
+    assert.equal(na.dagen[1].recept.naam, bank.namen[3]);
     assert.equal(na.porties, voor.porties);
   });
 
