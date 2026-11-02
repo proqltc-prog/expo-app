@@ -8,6 +8,8 @@ import { wijsPlanBeheerderAan } from '@/opslag/plan';
 import { laadVoornaam, zetVoornaam } from '@/opslag/voornaam';
 import { valideerVoornaam, VoornaamFout } from '@/lib/voornaam';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
+import { isAnoniem, koppel } from '@/opslag/aanmelden';
+import { aanbiedingen, Aanbieder } from '@/lib/aanmelden';
 import {
   bijWijziging,
   Gezin,
@@ -51,6 +53,15 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const [voornaamInvoer, setVoornaamInvoer] = useState('');
   const [voornaamFout, setVoornaamFout] = useState<VoornaamFout | null>(null);
   const [voornaamOpgeslagen, setVoornaamOpgeslagen] = useState(false);
+  // Aanmelden (WEEK-166): null = nog niet bekend.
+  const [anoniem, setAnoniem] = useState<boolean | null>(null);
+  const [aanmeldFout, setAanmeldFout] = useState(false);
+  const [aanmeldBezig, setAanmeldBezig] = useState(false);
+
+  // Aanmelden (WEEK-166): is het toestel nog anoniem?
+  useEffect(() => {
+    void isAnoniem().then(setAnoniem);
+  }, []);
 
   useEffect(() => {
     laadVoornaam().then((n) => {
@@ -216,6 +227,39 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
         </View>
         {voornaamFout && <Text style={s.fout} accessibilityRole="alert">{t(`naam.fout.${voornaamFout}` as 'naam.fout.leeg')}</Text>}
         {voornaamOpgeslagen && !voornaamFout && <Text style={s.status}>{t('naam.opgeslagen')}</Text>}
+        {anoniem !== null && (
+          <>
+            <Text style={s.label}>{t('aanmelden.kop')}</Text>
+            {aanbiedingen(anoniem).length > 0 ? (
+              <>
+                <Text style={s.uitleg}>{t('aanmelden.uitleg')}</Text>
+                {aanbiedingen(anoniem).map((aanbieder: Aanbieder) => (
+                  <Pressable
+                    key={aanbieder}
+                    style={[s.knop, aanmeldBezig && s.uit]}
+                    disabled={aanmeldBezig}
+                    onPress={async () => {
+                      setAanmeldBezig(true);
+                      setAanmeldFout(false);
+                      try {
+                        await koppel(aanbieder);
+                      } catch {
+                        setAanmeldFout(true);
+                      } finally {
+                        setAanmeldBezig(false);
+                      }
+                    }}
+                  >
+                    <Text style={s.knopTekst}>{t('aanmelden.google')}</Text>
+                  </Pressable>
+                ))}
+                {aanmeldFout && <Text style={s.fout} accessibilityRole="alert">{t('aanmelden.fout')}</Text>}
+              </>
+            ) : (
+              <Text style={s.status}>{t('aanmelden.gekoppeld')}</Text>
+            )}
+          </>
+        )}
         {!gezin ? (
           <>
             <Text style={s.uitleg}>{t('gezin.uitleg')}</Text>

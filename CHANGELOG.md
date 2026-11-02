@@ -8,11 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
-## [0.94.1] – 2026-11-02
+## [0.95.0] – 2026-11-02
 
 **Jira:** [WEEK-165](https://proqltc-1791495894841.atlassian.net/browse/WEEK-165) · **Confluence:** [WEEK-165 Aantal ingrediënten op de tweede regel bij een lange titel](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18120705)
 
-- Bij een recept met een titel over twee regels staat het aantal ingrediënten nu op de tweede regel, in plaats van naast de titel te verspringen.
+- Bij een recept met een titel over twee regels staat het aantal ingrediënten nu op de tweede regel, in plaats van te verspringen.
+
+**Jira:** [WEEK-166](https://proqltc-1791495894841.atlassian.net/browse/WEEK-166) · **Confluence:** [WEEK-166 Aanmelden met Google door de anonieme account te koppelen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18186241)
+
+- Aanmelden met Google: de anonieme account wordt gekoppeld, zodat de gezinsgegevens op een nieuw toestel blijven. Te vinden in het gezinsscherm.
+- Apple volgt later, na de aanvraag van een Apple Developer-account.
 
 ## [0.94.0] – 2026-11-02
 

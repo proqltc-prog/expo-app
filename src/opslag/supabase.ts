@@ -1,7 +1,7 @@
 // Verbinding met Supabase (gezinsruimte, WEEK-8). Elk toestel meldt zich anoniem aan;
 // de sessie wordt op het toestel bewaard en automatisch vernieuwd.
 import 'react-native-url-polyfill/auto';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SUPABASE } from '@/config';
@@ -13,7 +13,7 @@ export function supabase(): SupabaseClient | null {
   if (!SUPABASE.url || !SUPABASE.sleutel) return null;
   if (!client) {
     client = createClient(SUPABASE.url, SUPABASE.sleutel, {
-      auth: { storage: AsyncStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
+      auth: { storage: AsyncStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: Platform.OS === 'web' },
     });
     // Tokens enkel vernieuwen terwijl de app open is (aanbevolen door Supabase voor React Native).
     AppState.addEventListener('change', (staat) => {
