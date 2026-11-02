@@ -8,6 +8,24 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.97.0] – 2026-11-02
+
+**Jira:** [WEEK-170](https://proqltc-1791495894841.atlassian.net/browse/WEEK-170) · **Confluence:** [WEEK-170 Planner: melding en pijltje](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18677761)
+
+- Het pijltje om een dag te vervangen geeft nooit meer hetzelfde recept terug als er een ander recept is.
+
+**Jira:** [WEEK-171](https://proqltc-1791495894841.atlassian.net/browse/WEEK-171) · **Confluence:** [WEEK-171 Magasins: winkels zoeken via eigen functie](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18710529)
+
+- Winkels in de buurt worden opgezocht via een Supabase-functie met cache. Er worden hoogstens 10 dichtstbijzijnde winkels getoond.
+
+**Jira:** [WEEK-172](https://proqltc-1791495894841.atlassian.net/browse/WEEK-172) · **Confluence:** [WEEK-172 Paginaintro en info-venster](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18382867)
+
+- Boven de lijst, de frigo en de scan staat een korte zin. Rechtsboven opent een infoknop een venster met uitleg (nl, fr, de, en).
+
+**Jira:** [WEEK-173](https://proqltc-1791495894841.atlassian.net/browse/WEEK-173) · **Confluence:** [WEEK-173 Gezinscode: deelicoon met link](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18546701)
+
+- Naast de gezinscode op het gezinsscherm staat een infoknop met de code-uitleg en een link naar de app (webversie, tot de Play-app bestaat).
+
 ## [0.96.0] – 2026-11-02
 
 **Jira:** [WEEK-168](https://proqltc-1791495894841.atlassian.net/browse/WEEK-168) · **Confluence:** [WEEK-168 Gezinsprofiel alleen door de beheerder, duidelijkere naamvraag](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18350081)

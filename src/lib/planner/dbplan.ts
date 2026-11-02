@@ -153,15 +153,17 @@ export function vervangDbDag(plan: Weekplan, index: number, pool: DbPoolRecept[]
   const doel = plan.dagen[index];
   if (!doel) return plan;
   const gebruikt = new Set(plan.dagen.map((d) => d.recept.id));
+  // WEEK-170: het huidige recept wordt nooit teruggegeven; anders doet de pijl niets als de pool klein is.
+  const kandidaten = zonderVermeden(pool, plan.vermijd).filter((k) => k.recept.id !== doel.recept.id);
   const keuze = kiesVoorSeizoen(
-    zonderVermeden(pool, plan.vermijd),
+    kandidaten,
     doel.moment ?? 'avond',
     { kooktijden: plan.kooktijden, stijlen: plan.stijlen },
     gebruikt,
     toeval(seed),
     seizoenVan(doel.datum),
   );
-  if (!keuze || keuze.recept.id === doel.recept.id) return plan;
+  if (!keuze) return plan;
   const dagen = plan.dagen.map((d, i) => (i === index ? { ...d, recept: keuze.recept, gedaan: undefined, verbruikt: undefined, ontbreekt: undefined, uitFrigo: undefined } : d));
   return { ...plan, dagen };
 }

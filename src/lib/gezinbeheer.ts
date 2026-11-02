@@ -26,3 +26,9 @@ export function vraagtOpvolgerBijVertrek(isBeheerder: boolean, leden: GezinLid[]
 export function magGezinsprofielWijzigen(gezinAanwezig: boolean, beheerderId: string | undefined, mijnId: string | undefined): boolean {
   return !gezinAanwezig || ikBeheerder(beheerderId, mijnId);
 }
+
+/**
+ * Waar iemand de app vindt om lid te worden met de gezinscode (WEEK-173).
+ * Tot de Google Play-app bestaat (WEEK-37) is dat de webversie; daarna wordt dit de Play-link.
+ */
+export const APP_LINK = 'https://proqltc-prog.github.io/expo-app/';

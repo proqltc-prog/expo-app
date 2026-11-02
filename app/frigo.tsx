@@ -15,6 +15,7 @@ import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { eenheidVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
+import { PaginaIntro } from '@/ui/paginaIntro';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -168,6 +169,7 @@ export default function Frigo() {
 
   const kop = (
     <View>
+      <PaginaIntro intro={t('pagina.frigoIntro')} info={t('pagina.frigoInfo')} kleur={KLEUR} infoLabel={t('pagina.infoKnop')} />
       {sheet === 'planner' ? (
         <>
           <Text style={s.uitleg}>{t('frigo.plannerUitleg')}</Text>

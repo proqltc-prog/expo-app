@@ -21,6 +21,7 @@ import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from 
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { LijstZoek } from '@/ui/lijstZoek';
 import { SectieKop } from '@/ui/sectieKop';
+import { PaginaIntro } from '@/ui/paginaIntro';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -233,6 +234,7 @@ export default function Lijst() {
             })}
           </View>
 
+          <PaginaIntro intro={t('pagina.lijstIntro')} info={t('pagina.lijstInfo')} kleur={ORANJE} infoLabel={t('pagina.infoKnop')} />
           {gezin && (
             <Text style={[s.gedeeld, status === 'offline' && s.offline]}>
               {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
