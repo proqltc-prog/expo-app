@@ -18,3 +18,11 @@ export function anderenLeden<T extends GezinLid>(leden: T[], mijnId: string | un
 export function vraagtOpvolgerBijVertrek(isBeheerder: boolean, leden: GezinLid[], mijnId: string | undefined): boolean {
   return isBeheerder && anderenLeden(leden, mijnId).length > 0;
 }
+
+/**
+ * Mag dit toestel het gezinsprofiel (samenstelling, adres, ...) wijzigen? (WEEK-168)
+ * Zonder gezinsruimte is iedereen "beheerder" van zijn eigen profiel. Met een gezin enkel de beheerder.
+ */
+export function magGezinsprofielWijzigen(gezinAanwezig: boolean, beheerderId: string | undefined, mijnId: string | undefined): boolean {
+  return !gezinAanwezig || ikBeheerder(beheerderId, mijnId);
+}

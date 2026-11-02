@@ -318,6 +318,7 @@ export const es: Vertalingen = {
   'profiel.kinderHint': '0 a 12 años',
   'profiel.samen': 'En total {personen}',
   'profiel.adres': 'Dirección',
+  'profiel.alleenBeheerder': "Solo el administrador del espacio familiar puede cambiar estos datos.",
   'profiel.plaatsNietGevonden': 'No se encontró el municipio o no hay conexión. Escribe el municipio y el país tú mismo.',
   'profiel.plaatsVoorstel': 'El municipio y el país se proponen automáticamente según tu código postal.',
   'profiel.winkelsTitel': '¿Para qué es el código postal?',

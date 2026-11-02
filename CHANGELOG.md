@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.96.0] – 2026-11-02
+
+**Jira:** [WEEK-168](https://proqltc-1791495894841.atlassian.net/browse/WEEK-168) · **Confluence:** [WEEK-168 Gezinsprofiel alleen door de beheerder, duidelijkere naamvraag](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18350081)
+
+- Het gezinsprofiel (samenstelling en adres) kan enkel de beheerder wijzigen. Andere leden zien het in grijs.
+- De naamvraag bij de eerste start is eenvoudiger.
+
+**Jira:** [WEEK-169](https://proqltc-1791495894841.atlassian.net/browse/WEEK-169) · **Confluence:** [WEEK-169 Vertalingen: enkel NL, FR, DE en EN, Franse beleefdheidsvorm](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18382849)
+
+- De taalkeuze bevat enkel Nederlands, Frans, Duits en Engels.
+- Franse teksten gebruiken de beleefdheidsvorm (vous), en spelfouten zijn nagekeken.
+- Knoppen zoals Opslaan verschijnen in de gekozen taal.
+
 ## [0.95.0] – 2026-11-02
 
 **Jira:** [WEEK-165](https://proqltc-1791495894841.atlassian.net/browse/WEEK-165) · **Confluence:** [WEEK-165 Aantal ingrediënten op de tweede regel bij een lange titel](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18120705)

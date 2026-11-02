@@ -11,6 +11,9 @@ export type { Sleutel } from './vertalingen/nl';
 export const TALEN = ['nl', 'fr', 'de', 'en', 'es', 'pt'] as const;
 export type Taal = (typeof TALEN)[number];
 
+/** WEEK-169: talen die de gebruiker in de app kan kiezen. Es en pt blijven in de code maar worden niet aangeboden. */
+export const KEUZE_TALEN: readonly Taal[] = ['nl', 'fr', 'de', 'en'];
+
 /** Taal als de toesteltaal niet ondersteund wordt. */
 export const TERUGVALTAAL: Taal = 'en';
 
@@ -59,10 +62,10 @@ export function vertaalAantal(taal: Taal, basis: MeervoudSleutel, n: number, par
  * 3. de terugvaltaal (Engels)
  */
 export function kiesTaal(toesteltalen: readonly string[], voorkeur?: Taal): Taal {
-  if (voorkeur && isTaal(voorkeur)) return voorkeur;
+  if (voorkeur && KEUZE_TALEN.includes(voorkeur)) return voorkeur;
   for (const code of toesteltalen) {
     const basis = code.toLowerCase().split(/[-_]/)[0];
-    if (isTaal(basis)) return basis;
+    if (KEUZE_TALEN.includes(basis as Taal)) return basis as Taal;
   }
   return TERUGVALTAAL;
 }

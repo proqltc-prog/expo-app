@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { anderenLeden, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
+import { anderenLeden, ikBeheerder, magGezinsprofielWijzigen, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { leesGezinFout } from '@/lib/sync';
 
 const leden = [
@@ -39,5 +39,18 @@ describe('foutcodes van het beheer (WEEK-65)', () => {
     assert.equal(leesGezinFout('geen_beheerder'), 'geenBeheerder');
     assert.equal(leesGezinFout('geen_lid'), 'geenLid');
     assert.equal(leesGezinFout('geen_opvolger'), 'geenOpvolger');
+  });
+});
+
+describe('magGezinsprofielWijzigen (WEEK-168)', () => {
+  it('zonder gezinsruimte mag iedereen het eigen profiel wijzigen', () => {
+    assert.equal(magGezinsprofielWijzigen(false, undefined, 'ik'), true);
+  });
+  it('met een gezin enkel de beheerder', () => {
+    assert.equal(magGezinsprofielWijzigen(true, 'ik', 'ik'), true);
+    assert.equal(magGezinsprofielWijzigen(true, 'partner', 'ik'), false);
+  });
+  it('onbekende beheerder: niet wijzigen', () => {
+    assert.equal(magGezinsprofielWijzigen(true, undefined, 'ik'), false);
   });
 });

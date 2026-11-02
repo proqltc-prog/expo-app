@@ -318,6 +318,7 @@ export const pt: Vertalingen = {
   'profiel.kinderHint': '0 a 12 anos',
   'profiel.samen': 'No total {personen}',
   'profiel.adres': 'Morada',
+  'profiel.alleenBeheerder': "Só o administrador do espaço familiar pode alterar estes dados.",
   'profiel.plaatsNietGevonden': 'Nenhum município encontrado ou sem ligação. Preencha o município e o país você mesmo.',
   'profiel.plaatsVoorstel': 'O município e o país são sugeridos automaticamente com base no teu código postal.',
   'profiel.winkelsTitel': 'Para que serve o código postal?',
