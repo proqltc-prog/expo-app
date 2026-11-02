@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.101.0] – 2026-11-02
+
+**Jira:** [WEEK-181](https://proqltc-1791495894841.atlassian.net/browse/WEEK-181) · **Confluence:** [WEEK-181 Losse producten bewerken via popup](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18546729)
+
+- Een los product toevoegen vraagt enkel een naam. Het komt bovenaan onder "Overig".
+- Per los product een potloodje dat een popup opent om hoeveelheid, eenheid, categorie en houdbaarheid te wijzigen.
+- Binnen elke categorie staat alles alfabetisch; bij gelijke naam eerst het product met de oudste houdbaarheid.
+- De dubbele uitleg onder de kop van de losse producten is weg; die staat in de infoknop.
+- Een hoeveelheid boven 9999 of een ongeldige datum geeft een foutmelding in de popup.
+
 ## [0.100.0] – 2026-11-02
 
 **Jira:** [WEEK-179](https://proqltc-1791495894841.atlassian.net/browse/WEEK-179) · **Confluence:** [WEEK-179 Testrecepten en vier talen](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18841602)
