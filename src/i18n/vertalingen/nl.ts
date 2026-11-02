@@ -215,7 +215,6 @@ export const nl = {
   'frigo.toevoegen': 'Iets toevoegen dat al in huis is…',
   'frigo.sinds': 'sinds {datum}',
   'frigo.verwijder': '{naam} uit de frigo halen',
-  'frigo.details': 'Hoeveelheid en afdeling',
   'frigo.hoeveelheid': 'Hoeveelheid',
   'frigo.stuks': 'stuks',
 
@@ -431,7 +430,6 @@ export const nl = {
   'frigo.sheetPlanner': 'Recepten',
   'frigo.sheetLos': 'Losse producten',
   'frigo.plannerUitleg': 'Ingrediënten uit de lijst van de app. Deze tellen mee bij het weekmenu: bij “Gekookt” gaan ze uit de frigo.',
-  'frigo.losUitleg': 'Losse producten tellen niet mee bij het weekmenu. Je beheert ze zelf en verwijdert ze zelf; de app ruimt niets automatisch op.',
   'frigo.zoekIngredient': 'Zoek een ingrediënt…',
   'frigo.geenIngredient': 'Geen ingrediënt gevonden.',
   'frigo.alIngevoegd': 'Al in de frigo',
@@ -450,7 +448,16 @@ export const nl = {
   'welkom.accountGoogle': 'Aanmelden met Google',
   'welkom.accountVerder': 'Verder zonder account',
   'pagina.sluiten': 'Sluiten',
-  'frigo.losHoeveelheid': 'Hoeveelheid en rayon zijn enkel ter info. Losse producten tellen niet mee in de berekening van de recepten.',
+  'eenheid.stuk_1': "{n} stuk",
+  'eenheid.stuk_n': "{n} stuks",
+  'frigo.algemeen': "Algemeen",
+  'frigo.wijzig': "{naam} wijzigen",
+  'frigo.wijzigTitel': "Product wijzigen",
+  'frigo.eenheid': "Eenheid",
+  'frigo.categorie': "Categorie",
+  'frigo.annuleren': "Annuleren",
+  'frigo.opslaan': "Opslaan",
+  'frigo.hoeveelheidFout': "Geef een getal groter dan 0 en hoogstens 100.000.",
 } as const;
 
 export type Sleutel = keyof typeof nl;

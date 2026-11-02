@@ -5,6 +5,7 @@ import {
   dagSleutel,
   datumKort,
   hoeveelheidTekst,
+  losHoeveelheidTekst,
   getal,
   isTaal,
   kiesTaal,
@@ -158,6 +159,20 @@ describe('hoeveelheidTekst', () => {
     assert.equal(hoeveelheidTekst('nl', undefined, 'g'), '');
     assert.equal(hoeveelheidTekst('nl', 0, 'g'), '');
     assert.equal(hoeveelheidTekst('de', 2, 'EL'), '2 EL');
+  });
+});
+
+describe('losHoeveelheidTekst (WEEK-180)', () => {
+  test('stuks voluit in de taal, in enkelvoud en meervoud', () => {
+    assert.equal(losHoeveelheidTekst('nl', 2, 'stuk'), '2 stuks');
+    assert.equal(losHoeveelheidTekst('nl', 1, 'stuk'), '1 stuk');
+    assert.equal(losHoeveelheidTekst('fr', 3, 'stuk'), '3 pièces');
+    assert.equal(losHoeveelheidTekst('en', 1.5, undefined), '1.5 pieces');
+  });
+  test('gram en ml zoals overal; geen hoeveelheid geeft lege tekst', () => {
+    assert.equal(losHoeveelheidTekst('nl', 250, 'g'), '250 g');
+    assert.equal(losHoeveelheidTekst('nl', 1500, 'ml'), '1.500 ml');
+    assert.equal(losHoeveelheidTekst('nl', undefined, 'g'), '');
   });
 });
 

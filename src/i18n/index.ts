@@ -115,6 +115,13 @@ export function hoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, ee
   return `${n} ${eenheid}`;
 }
 
+/** Hoeveelheid van een los product in de frigo (WEEK-180): "2 stuks" in plaats van "2 ×"; verder zoals hoeveelheidTekst. */
+export function losHoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, eenheid: string | undefined): string {
+  if (hoeveelheid === undefined || hoeveelheid <= 0) return '';
+  if (!eenheid || eenheid === 'stuk') return vulIn(vertaal(taal, hoeveelheid === 1 ? 'eenheid.stuk_1' : 'eenheid.stuk_n'), { n: getal(taal, hoeveelheid, 2) });
+  return hoeveelheidTekst(taal, hoeveelheid, eenheid);
+}
+
 /** Korte datum volgens de taal, bv. "10 okt." (nl) of "10 Oct" (en). Ongeldige datum geeft lege tekst. */
 export function datumKort(taal: Taal, iso: string): string {
   const d = new Date(iso);

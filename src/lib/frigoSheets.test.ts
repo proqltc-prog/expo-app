@@ -180,3 +180,94 @@ describe('teller per sheet (WEEK-96)', () => {
     assert.equal(SHEET_ICOON.los, 'cube-outline');
   });
 });
+
+// ── WEEK-180: losse producten wijzigen, rubriek Algemeen en sortering ──
+import { geldigeLosHoeveelheid, LOS_RUBRIEKEN, losSecties, MAX_LOS_HOEVEELHEID, wijzigLos } from '@/lib/frigoSheets';
+import { frigoSecties } from '@/lib/frigo';
+
+const los = (naam: string, extra: Partial<FrigoItem> = {}, id = naam): FrigoItem => ({ id, naam, afdeling: 'overig', toegevoegdOp: '2026-11-01T10:00:00.000Z', bron: 'los', ...extra });
+
+describe('losse producten wijzigen (WEEK-180)', () => {
+  test('een nieuw los product (enkel een naam) komt in de rubriek Algemeen (overig)', () => {
+    const f = voegLosToe([], 'Test', nu);
+    assert.equal(f[0].afdeling, 'overig');
+    assert.equal(f[0].hoeveelheid, undefined);
+    assert.equal(losSecties(f)[0].afdeling, 'overig');
+  });
+
+  test('hoeveelheid, eenheid, rubriek en houdbaarheid worden bewaard', () => {
+    const na = wijzigLos([los('Test')], 'Test', { hoeveelheid: 2, eenheid: 'stuk', afdeling: 'diepvries', houdbaarTot: '2026-12-01' });
+    assert.deepEqual(
+      { h: na[0].hoeveelheid, e: na[0].eenheid, a: na[0].afdeling, d: na[0].houdbaarTot },
+      { h: 2, e: 'stuk', a: 'diepvries', d: '2026-12-01' }
+    );
+  });
+
+  test('zonder hoeveelheid vallen hoeveelheid en eenheid weg; een lege datum wist de houdbaarheid', () => {
+    const voor = [los('Kaas', { hoeveelheid: 300, eenheid: 'g', houdbaarTot: '2026-11-10', afdeling: 'zuivel-eieren' })];
+    const na = wijzigLos(voor, 'Kaas', { afdeling: 'zuivel-eieren' });
+    assert.equal(na[0].hoeveelheid, undefined);
+    assert.equal(na[0].eenheid, undefined);
+    assert.equal(na[0].houdbaarTot, undefined);
+    assert.equal(na[0].afdeling, 'zuivel-eieren');
+  });
+
+  test('te grote, nul- of negatieve hoeveelheden worden niet bewaard (geen 211.000.100 meer)', () => {
+    assert.equal(geldigeLosHoeveelheid(211000100), false);
+    assert.equal(geldigeLosHoeveelheid(0), false);
+    assert.equal(geldigeLosHoeveelheid(-1), false);
+    assert.equal(geldigeLosHoeveelheid(MAX_LOS_HOEVEELHEID), true);
+    assert.equal(wijzigLos([los('Test')], 'Test', { hoeveelheid: 211000100, eenheid: 'stuk', afdeling: 'overig' })[0].hoeveelheid, undefined);
+  });
+
+  test('onbekende eenheid wordt stuk, onbekende rubriek wordt Algemeen, ongeldige datum valt weg', () => {
+    const na = wijzigLos([los('Test')], 'Test', { hoeveelheid: 1.234, eenheid: 'kg', afdeling: 'onzin' as never, houdbaarTot: '2026-02-31' });
+    assert.equal(na[0].hoeveelheid, 1.23);
+    assert.equal(na[0].eenheid, 'stuk');
+    assert.equal(na[0].afdeling, 'overig');
+    assert.equal(na[0].houdbaarTot, undefined);
+  });
+
+  test('regressie: planner-producten en andere producten blijven ongewijzigd', () => {
+    const planner = los('Ui', { bron: 'planner', hoeveelheid: 3, eenheid: 'stuk', afdeling: 'groenten-fruit' });
+    const ander = los('Melk', { hoeveelheid: 1, eenheid: 'ml' });
+    const voor = [planner, ander, los('Test')];
+    const na = wijzigLos(voor, 'Ui', { hoeveelheid: 9, eenheid: 'g', afdeling: 'diepvries' });
+    assert.deepEqual(na, voor);
+    const na2 = wijzigLos(voor, 'Test', { hoeveelheid: 2, eenheid: 'stuk', afdeling: 'diepvries' });
+    assert.deepEqual(na2[0], planner);
+    assert.deepEqual(na2[1], ander);
+  });
+});
+
+describe('losse producten ordenen (WEEK-180)', () => {
+  test('Algemeen staat bovenaan, daarna de winkelafdelingen in winkelvolgorde', () => {
+    assert.equal(LOS_RUBRIEKEN[0], 'overig');
+    const secties = losSecties([los('Erwten', { afdeling: 'diepvries' }), los('Zeep'), los('Appel', { afdeling: 'groenten-fruit' })]);
+    assert.deepEqual(secties.map((s) => s.afdeling), ['overig', 'groenten-fruit', 'diepvries']);
+  });
+
+  test('binnen een rubriek alfabetisch, daarna houdbaarheid (oudste datum eerst, zonder datum achteraan)', () => {
+    const items = [
+      los('yoghurt', {}, 'y1'),
+      los('Melk', { houdbaarTot: '2026-11-20' }, 'm1'),
+      los('Melk', { houdbaarTot: '2026-11-05' }, 'm2'),
+      los('melk', {}, 'm3'),
+      los('Appel', {}, 'a1'),
+    ];
+    assert.deepEqual(losSecties(items)[0].regels.map((r) => r.sleutel), ['a1', 'm2', 'm1', 'm3', 'y1']);
+  });
+
+  test('elk los product is een eigen regel met zijn eigen hoeveelheid en houdbaarheid', () => {
+    const regels = losSecties([los('Melk', { hoeveelheid: 1, eenheid: 'stuk', houdbaarTot: '2026-11-05' }, 'm1'), los('Melk', { hoeveelheid: 2, eenheid: 'stuk' }, 'm2')])[0].regels;
+    assert.equal(regels.length, 2);
+    assert.deepEqual(regels.map((r) => [r.ids, r.hoeveelheid, r.houdbaarTot]), [[['m1'], 1, '2026-11-05'], [['m2'], 2, undefined]]);
+  });
+
+  test('regressie: de recepten-frigo blijft samentellen per naam, met overig achteraan', () => {
+    const p = (naam: string, afdeling: FrigoItem['afdeling'], id: string): FrigoItem => ({ id, naam, afdeling, toegevoegdOp: '2026-11-01T10:00:00.000Z', bron: 'planner', hoeveelheid: 1, eenheid: 'stuk' });
+    const secties = frigoSecties([p('Ui', 'overig', '1'), p('Ui', 'overig', '2'), p('Wortel', 'groenten-fruit', '3')]);
+    assert.deepEqual(secties.map((s) => s.afdeling), ['groenten-fruit', 'overig']);
+    assert.equal(secties[1].regels[0].hoeveelheid, 2);
+  });
+});

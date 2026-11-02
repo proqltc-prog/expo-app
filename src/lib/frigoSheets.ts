@@ -2,10 +2,11 @@
 // - Planner-frigo: ingrediënten uit de catalogus (zoekbaar). Enkel deze tellen mee bij het weekmenu.
 // - Losse producten: vrije invoer en scanner. Tellen niet mee bij het weekmenu; de gebruiker beheert ze zelf.
 // De app verwijdert nooit automatisch iets uit een van beide sheets.
-import { afdelingVan, dbCodeVan, eenheidVan, ingredientNaam, INGREDIENT_CODES, IngredientCode } from '@/data/ingredienten';
+import { AFDELINGEN, afdelingVan, dbCodeVan, eenheidVan, ingredientNaam, INGREDIENT_CODES, IngredientCode } from '@/data/ingredienten';
 import type { Afdeling } from '@/data/ingredienten';
 import { TALEN, Taal } from '@/i18n';
-import { aantalProducten, FrigoItem, frigoBron, voegZelfToe, ZelfExtra } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoBron, FrigoSectie, voegZelfToe, ZELF_EENHEDEN, ZelfExtra } from '@/lib/frigo';
+import { isoDatum } from '@/lib/houdbaarheid';
 
 export type CatalogusItem = { code: IngredientCode; naam: string; afdeling: Afdeling };
 
@@ -127,4 +128,76 @@ export function koppelBronnen(frigo: readonly FrigoItem[]): FrigoItem[] {
     const code = inCatalogus(f.naam);
     return { ...f, bron: code !== undefined && inReceptenbank(code) ? 'planner' : 'los' };
   });
+}
+
+// ── Losse producten wijzigen en ordenen (WEEK-180) ──
+
+/** Grootste hoeveelheid die je bij een los product kan ingeven; voorkomt tikfouten zoals 211000100. */
+export const MAX_LOS_HOEVEELHEID = 100000;
+
+/** De rubrieken van de losse producten: eerst "Algemeen" (= zonder categorie, intern "overig"), dan de winkelafdelingen. */
+export const LOS_RUBRIEKEN: readonly (Afdeling | 'overig')[] = ['overig', ...AFDELINGEN];
+
+/** Wat de wijzig-popup bewaart. Leeg veld = weglaten. */
+export type LosWijziging = { hoeveelheid?: number; eenheid?: string; afdeling: Afdeling | 'overig'; houdbaarTot?: string };
+
+/** Is dit een geldige hoeveelheid voor een los product (groter dan 0, hoogstens MAX_LOS_HOEVEELHEID)? */
+export function geldigeLosHoeveelheid(n: number | undefined): n is number {
+  return typeof n === 'number' && Number.isFinite(n) && n > 0 && n <= MAX_LOS_HOEVEELHEID;
+}
+
+/**
+ * Wijzigt één los product (WEEK-180): hoeveelheid, eenheid, rubriek en houdbaarheid.
+ * - Een eenheid hoort bij een hoeveelheid; zonder (geldige) hoeveelheid vallen beide weg.
+ * - Onbekende eenheid wordt "stuk"; onbekende rubriek wordt "overig" (Algemeen).
+ * - Een ongeldige datum wist de houdbaarheid.
+ * Planner-producten en onbekende ids blijven ongewijzigd.
+ */
+export function wijzigLos(frigo: readonly FrigoItem[], id: string, w: LosWijziging): FrigoItem[] {
+  return frigo.map((f) => {
+    if (f.id !== id || frigoBron(f) !== 'los') return { ...f };
+    const kopie: FrigoItem = { ...f };
+    delete kopie.hoeveelheid;
+    delete kopie.eenheid;
+    delete kopie.houdbaarTot;
+    if (geldigeLosHoeveelheid(w.hoeveelheid)) {
+      kopie.hoeveelheid = Math.round(w.hoeveelheid * 100) / 100;
+      kopie.eenheid = (ZELF_EENHEDEN as readonly string[]).includes(w.eenheid ?? '') ? w.eenheid : 'stuk';
+    }
+    kopie.afdeling = LOS_RUBRIEKEN.includes(w.afdeling) ? w.afdeling : 'overig';
+    const datum = isoDatum(w.houdbaarTot);
+    if (datum) kopie.houdbaarTot = datum;
+    return kopie;
+  });
+}
+
+/**
+ * De losse producten op het scherm (WEEK-180): elk product een eigen regel, zodat je het apart kan wijzigen.
+ * Rubriek "Algemeen" (overig) bovenaan, dan de winkelafdelingen. Binnen een rubriek alfabetisch,
+ * daarna op houdbaarheid (oudste datum eerst, zonder datum achteraan), daarna wat het eerst in huis was.
+ */
+export function losSecties(items: readonly FrigoItem[]): FrigoSectie[] {
+  const perRubriek = new Map<Afdeling | 'overig', FrigoItem[]>();
+  for (const f of items) {
+    const rubriek = LOS_RUBRIEKEN.includes(f.afdeling) ? f.afdeling : 'overig';
+    perRubriek.set(rubriek, [...(perRubriek.get(rubriek) ?? []), f]);
+  }
+  const vergelijk = (a: FrigoItem, b: FrigoItem) =>
+    a.naam.localeCompare(b.naam, undefined, { sensitivity: 'base' }) ||
+    (a.houdbaarTot ?? '9999-99-99').localeCompare(b.houdbaarTot ?? '9999-99-99') ||
+    a.toegevoegdOp.localeCompare(b.toegevoegdOp);
+  return LOS_RUBRIEKEN.filter((r) => perRubriek.has(r)).map((afdeling) => ({
+    afdeling,
+    regels: [...(perRubriek.get(afdeling) ?? [])].sort(vergelijk).map((f) => ({
+      sleutel: f.id,
+      naam: f.naam,
+      hoeveelheid: f.hoeveelheid,
+      eenheid: f.eenheid,
+      afdeling,
+      oudsteOp: f.toegevoegdOp,
+      ids: [f.id],
+      ...(f.product ? { product: f.product } : {}),
+      ...(f.houdbaarTot ? { houdbaarTot: f.houdbaarTot } : {}),
+    })),
+  }));
 }
