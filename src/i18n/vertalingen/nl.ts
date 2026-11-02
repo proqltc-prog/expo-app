@@ -450,6 +450,7 @@ export const nl = {
   'welkom.accountGoogle': 'Aanmelden met Google',
   'welkom.accountVerder': 'Verder zonder account',
   'pagina.sluiten': 'Sluiten',
+  'frigo.losHoeveelheid': 'Hoeveelheid en rayon zijn enkel ter info. Losse producten tellen niet mee in de berekening van de recepten.',
 } as const;
 
 export type Sleutel = keyof typeof nl;

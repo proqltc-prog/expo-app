@@ -449,4 +449,5 @@ export const pt: Vertalingen = {
   'welkom.accountGoogle': 'Entrar com Google',
   'welkom.accountVerder': 'Continuar sem conta',
   'pagina.sluiten': 'Fechar',
+  'frigo.losHoeveelheid': 'A quantidade e a secção são apenas informativas. Os produtos avulsos não entram no cálculo das receitas.',
 };

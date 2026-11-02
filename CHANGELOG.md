@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.99.1] – 2026-11-02
+
+**Jira:** [WEEK-178](https://proqltc-1791495894841.atlassian.net/browse/WEEK-178) · **Confluence:** [WEEK-178 Lijst-koppen uitlijnen en info bij losse producten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18350125)
+
+- De titels van receptkoppen op de boodschappenlijst staan op dezelfde lijn als de rubriekkoppen.
+- Bij losse producten staat duidelijk dat hoeveelheid en rayon enkel ter info zijn en niet meetellen voor de recepten.
+
 ## [0.99.0] – 2026-11-02
 
 **Jira:** [WEEK-177](https://proqltc-1791495894841.atlassian.net/browse/WEEK-177) · **Confluence:** [WEEK-177 Pagina-uitleg als popup](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18743308)
