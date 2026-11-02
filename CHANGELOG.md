@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.94.1] – 2026-11-02
+
+**Jira:** [WEEK-165](https://proqltc-1791495894841.atlassian.net/browse/WEEK-165) · **Confluence:** [WEEK-165 Aantal ingrediënten op de tweede regel bij een lange titel](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18120705)
+
+- Bij een recept met een titel over twee regels staat het aantal ingrediënten nu op de tweede regel, in plaats van naast de titel te verspringen.
+
 ## [0.94.0] – 2026-11-02
 
 **Jira:** [WEEK-164](https://proqltc-1791495894841.atlassian.net/browse/WEEK-164) · **Confluence:** [WEEK-164 Lijst-zoekfunctie: sheets Recepten en Losse producten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/17858561)
