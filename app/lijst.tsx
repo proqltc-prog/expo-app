@@ -19,6 +19,7 @@ import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 import { Ionicons } from '@expo/vector-icons';
 import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from '@/lib/lijstIcoon';
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
+import { LijstZoek } from '@/ui/lijstZoek';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -208,6 +209,9 @@ export default function Lijst() {
         </ScrollView>
       ) : (
         <>
+          {/* WEEK-164: zoeken en toevoegen, met de sheets Recepten en Losse producten. */}
+          <LijstZoek lijst={items} wijzig={wijzig} />
+
           {/* Groeperen per recept of per categorie. */}
           <View style={s.groepering} accessibilityRole="tablist">
             {(['categorie', 'recept'] as Weergave[]).map((w) => {

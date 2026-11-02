@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.94.0] – 2026-11-02
+
+**Jira:** [WEEK-164](https://proqltc-1791495894841.atlassian.net/browse/WEEK-164) · **Confluence:** [WEEK-164 Lijst-zoekfunctie: sheets Recepten en Losse producten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/17858561)
+
+- Nieuw zoekveld op de boodschappenlijst, zoals dat van de frigo, met twee sheets.
+- Sheet Recepten: zoeken in de receptenbank. Het ingrediënt krijgt de vaste code, eenheid en afdeling; een optionele hoeveelheid kan meegegeven worden. Staat het al open op de lijst, dan komt er geen dubbele regel.
+- Sheet Losse producten: vrije invoer. Het product komt op de lijst en ook in het tabblad Losse producten van de frigo. Het telt niet mee voor de weekplanner.
+
 ## [0.93.0] – 2026-11-01
 
 **WEEK-167** – [Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-167)

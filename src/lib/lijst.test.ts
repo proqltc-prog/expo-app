@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { trekFrigoAf } from '@/lib/frigo';
-import { alleenHuidigPlan, aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, samenvoegen, sectieKeuze, telRegels, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { alleenHuidigPlan, aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, receptItem, samenvoegen, sectieKeuze, staatOpLijst, telRegels, vinkAf, voegPlanToe } from '@/lib/lijst';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
 const recept = (naam: string, ingredienten: PlanRecept['ingredienten']): PlanRecept => ({
@@ -265,6 +265,62 @@ describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
     assert.deepEqual(eigenItem('  chips ', nu, 'Maarten'), { id: `extra-${nu.getTime()}`, naam: 'chips', categorie: 'extra', afgevinkt: false, door: 'Maarten' });
     assert.deepEqual(eigenItem('chips', nu), { id: `extra-${nu.getTime()}`, naam: 'chips', categorie: 'extra', afgevinkt: false });
     assert.equal(eigenItem('   ', nu, 'Maarten'), null);
+  });
+
+  describe('zoekfunctie op de lijst (WEEK-164)', () => {
+    const nu = new Date('2026-10-26T12:00:00Z');
+    const tomaat = { code: 'tomaten', naam: 'Tomaten', afdeling: 'groenten-fruit' as const, eenheid: 'stuk' };
+
+    test('een receptenbank-ingrediënt komt met code, eenheid, afdeling en categorie extra op de lijst', () => {
+      const [item] = receptItem([], tomaat, nu);
+      assert.equal(item.naam, 'Tomaten');
+      assert.equal(item.code, 'tomaten');
+      assert.equal(item.eenheid, 'stuk');
+      assert.equal(item.afdeling, 'groenten-fruit');
+      assert.equal(item.categorie, 'extra');
+      assert.equal(item.afgevinkt, false);
+      assert.equal(item.hoeveelheid, undefined);
+    });
+
+    test('een optionele hoeveelheid en de naam van wie toevoegde worden meegegeven', () => {
+      const [item] = receptItem([], tomaat, nu, 3, 'Maarten');
+      assert.equal(item.hoeveelheid, 3);
+      assert.equal(item.door, 'Maarten');
+    });
+
+    test('dezelfde code staat al open op de lijst: geen dubbele regel', () => {
+      const een = receptItem([], tomaat, nu);
+      assert.equal(receptItem(een, tomaat, nu).length, 1);
+    });
+
+    test('een afgevinkt item met dezelfde code blokkeert niet: het mag opnieuw', () => {
+      const een = receptItem([], tomaat, nu).map((i) => ({ ...i, afgevinkt: true }));
+      assert.equal(receptItem(een, tomaat, new Date(nu.getTime() + 1000)).length, 2);
+    });
+
+    test('een open weekmenu-item met dezelfde code telt ook als "al op de lijst"', () => {
+      const uitPlan: LijstItem = { id: 'x', naam: 'tomaten', categorie: 'avondeten', afgevinkt: false, code: 'tomaten' };
+      assert.equal(receptItem([uitPlan], tomaat, nu).length, 1);
+      assert.equal(staatOpLijst([uitPlan], 'tomaten'), true);
+    });
+
+    test('staatOpLijst: alleen open items met de code tellen', () => {
+      assert.equal(staatOpLijst([], 'tomaten'), false);
+      assert.equal(staatOpLijst([{ id: 'x', naam: 'Tomaten', categorie: 'extra', afgevinkt: true, code: 'tomaten' }], 'tomaten'), false);
+    });
+
+    test('regressie: een losse product via eigenItem blijft zonder code en afdeling', () => {
+      const item = eigenItem('Zelfgemaakte sambal', nu);
+      assert.equal(item?.code, undefined);
+      assert.equal(item?.afdeling, undefined);
+      assert.equal(item?.categorie, 'extra');
+    });
+
+    test('regressie: een receptenbank-item en een los product tellen samen als twee regels', () => {
+      const met = receptItem([], tomaat, nu);
+      const beide = [...met, eigenItem('Zelfgemaakte sambal', nu)!];
+      assert.equal(samenvoegen(beide).length, 2);
+    });
   });
 
   test('inlezen bewaart afgevinktDoor enkel bij een afgevinkt item', () => {
