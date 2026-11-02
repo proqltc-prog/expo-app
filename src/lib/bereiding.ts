@@ -1,7 +1,7 @@
 // Bereidingsstappen per maaltijd (WEEK-81). Pure logica, zonder opslag of React.
-import { BEREIDINGEN } from '@/data/bereidingen';
+import { BEREIDINGEN, type KeuzeTaal } from '@/data/bereidingen';
 import { RECEPTENBANK } from '@/data/receptenbank';
-import type { Taal } from '@/i18n';
+import { keuzeTaal, type Taal } from '@/i18n';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { bereidingVoorDbRecept, type DbRecept } from '@/lib/planner/db';
 import { verdeelFrigo, type Dekking, type FrigoItem } from '@/lib/frigo';
@@ -30,7 +30,8 @@ export function bereidingVoor(
 
   const bank = RECEPTENBANK.find((r) => r.id === recept.id) ?? RECEPTENBANK.find((r) => r.namen.includes(recept.naam));
   if (!bank) return null;
-  const stappen = BEREIDINGEN[bank.id]?.[taal] ?? BEREIDINGEN[bank.id]?.nl;
+  const sleutel = keuzeTaal(taal) as KeuzeTaal;
+  const stappen = BEREIDINGEN[bank.id]?.[sleutel] ?? BEREIDINGEN[bank.id]?.nl;
   return stappen && stappen.length ? [...stappen] : null;
 }
 

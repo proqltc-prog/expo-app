@@ -124,14 +124,10 @@ export default function ProfielScherm() {
         ))}
       </View>
 
-      {/* Taal (WEEK-126): de taal van dit toestel kiezen; standaard volgt de app de taal van het toestel. */}
+      {/* Taal (WEEK-126, WEEK-179): enkel de vier ondersteunde talen. Zonder keuze gebruikt de app de taal van het toestel. */}
       <Inklapbaar titel={t('profiel.taal')} open={uitgeklapt.has('taal')} onWissel={() => wissel('taal')}>
         <View style={s.kaart}>
           <Text style={s.hint}>{t('profiel.taalHint')}</Text>
-          <Pressable style={s.taalRij} onPress={() => zetVoorkeur(undefined)} accessibilityRole="radio" accessibilityState={{ selected: voorkeur === undefined }}>
-            <Text style={s.label}>{t('profiel.taalToestel')}</Text>
-            {voorkeur === undefined && <Text style={s.vinkje}>✓</Text>}
-          </Pressable>
           {KEUZE_TALEN.map((code) => (
             <Pressable key={code} style={s.taalRij} onPress={() => zetVoorkeur(code)} accessibilityRole="radio" accessibilityState={{ selected: voorkeur === code }}>
               <Text style={s.label}>{vertaal(code, 'taal.naam')}</Text>
