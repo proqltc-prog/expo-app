@@ -107,6 +107,7 @@ export const pt: Vertalingen = {
   'frigo.houdbaarFout': 'Data inválida. Use dd-mm-aaaa.',
   'frigo.bewerkNaam': 'Edit {naam}',
   'frigo.bewerkKop': 'Edit product',
+  'frigo.toevoegenKop': 'Add product',
   'frigo.bewerkEenheid': 'Unit',
   'frigo.bewerkCategorie': 'Category',
   'frigo.bewerkHoudbaar': 'Best before (optional)',
@@ -194,6 +195,7 @@ export const pt: Vertalingen = {
 
   'lijst.toevoegen': 'Adicionar algo…',
   'lijst.scanProduct': 'Digitalizar este produto',
+  'lijst.verwijderNaam': 'Remove {naam} from the list',
   'lijst.teller': 'Faltam {open} de {totaal} por comprar',
   'lijst.leeg': 'Ainda vazia — crie uma lista a partir do menu semanal.',
   'lijst.wissen': 'Apagar itens marcados',

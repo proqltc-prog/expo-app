@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { trekFrigoAf } from '@/lib/frigo';
-import { alleenHuidigPlan, aantalReceptRegels, eigenItem, itemsUitPlan, leesLijstItem, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, receptItem, samenvoegen, sectieKeuze, staatOpLijst, telRegels, vinkAf, voegPlanToe } from '@/lib/lijst';
+import { alleenHuidigPlan, aantalReceptRegels, bewerkLijstItem, eigenItem, itemsUitPlan, leesLijstItem, lijstSheet, magBewerken, opSheet, perAfdeling, perRecept, planSleutel, LijstItem, LijstRegel, normaliseerLijst, receptItem, samenvoegen, sectieKeuze, staatOpLijst, telRegels, vinkAf, voegPlanToe } from '@/lib/lijst';
 import type { PlanDag, PlanRecept } from '@/lib/planner/types';
 
 const recept = (naam: string, ingredienten: PlanRecept['ingredienten']): PlanRecept => ({
@@ -513,3 +513,46 @@ describe('alleen recepten van het huidige plan op de lijst (WEEK-138)', () => {
     assert.deepEqual(alleenHuidigPlan(lijst, andereRecept).map((i) => i.id), ['eigen-appels']);
   });
 });
+
+describe('lijst: tabbladen en bewerken (WEEK-182)', () => {
+  const nu = new Date('2026-11-02T10:00:00Z');
+  const plan: LijstItem = { id: 'p1', naam: 'Ui', categorie: 'avondeten', afgevinkt: false, code: 'ui', recept: { dag: 'maandag', naam: 'Pasta' } };
+  const eigenRecept: LijstItem = { id: 'e1', naam: 'Melk', categorie: 'extra', afgevinkt: false, code: 'melk', eenheid: 'ml', hoeveelheid: 500 };
+  const los: LijstItem = { id: 'l1', naam: 'Chips', categorie: 'extra', afgevinkt: false };
+
+  test('planner-items en zelf gekozen databank-producten horen bij Recepten; de rest bij Losse producten', () => {
+    assert.equal(lijstSheet(plan), 'recept');
+    assert.equal(lijstSheet(eigenRecept), 'recept');
+    assert.equal(lijstSheet(los), 'los');
+    assert.deepEqual(opSheet([plan, eigenRecept, los], 'los').map((i) => i.id), ['l1']);
+    assert.deepEqual(opSheet([plan, eigenRecept, los], 'recept').map((i) => i.id), ['p1', 'e1']);
+  });
+
+  test('wijzigen en verwijderen enkel voor wat de gebruiker zelf toevoegde', () => {
+    assert.equal(magBewerken(plan), false);
+    assert.equal(magBewerken(eigenRecept), true);
+    assert.equal(magBewerken(los), true);
+  });
+
+  test('een databank-product houdt zijn eenheid; enkel de hoeveelheid verandert', () => {
+    const [na] = bewerkLijstItem([eigenRecept], 'e1', { hoeveelheid: 250, eenheid: 'g' });
+    assert.equal(na.hoeveelheid, 250);
+    assert.equal(na.eenheid, 'ml');
+    assert.equal(na.afdeling, undefined);
+  });
+
+  test('een losse product krijgt hoeveelheid, eenheid en afdeling', () => {
+    const [na] = bewerkLijstItem([los], 'l1', { hoeveelheid: 2, eenheid: 'stuk', afdeling: 'droge-voeding' });
+    assert.deepEqual([na.hoeveelheid, na.eenheid, na.afdeling], [2, 'stuk', 'droge-voeding']);
+  });
+
+  test('een planner-item blijft ongewijzigd', () => {
+    assert.deepEqual(bewerkLijstItem([plan], 'p1', { hoeveelheid: 9 }), [plan]);
+  });
+
+  test('eigenItem met hoeveelheid, eenheid en afdeling', () => {
+    const item = eigenItem('Kaas', nu, undefined, { hoeveelheid: 3, eenheid: 'g', afdeling: 'zuivel-eieren' });
+    assert.deepEqual(item, { id: `extra-${nu.getTime()}`, naam: 'Kaas', categorie: 'extra', afgevinkt: false, hoeveelheid: 3, eenheid: 'g', afdeling: 'zuivel-eieren' });
+  });
+});
+

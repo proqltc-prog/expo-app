@@ -108,6 +108,7 @@ export const nl = {
   'frigo.houdbaarFout': 'Ongeldige datum. Gebruik dd-mm-jjjj.',
   'frigo.bewerkNaam': 'Wijzig {naam}',
   'frigo.bewerkKop': 'Product wijzigen',
+  'frigo.toevoegenKop': 'Product toevoegen',
   'frigo.bewerkEenheid': 'Eenheid',
   'frigo.bewerkCategorie': 'Categorie',
   'frigo.bewerkHoudbaar': 'Houdbaar tot (optioneel)',
@@ -195,6 +196,7 @@ export const nl = {
 
   'lijst.toevoegen': 'Iets toevoegen…',
   'lijst.scanProduct': 'Scan dit product',
+  'lijst.verwijderNaam': '{naam} van de lijst halen',
   'lijst.teller': '{open} van {totaal} nog te kopen',
   'lijst.leeg': 'Nog leeg — maak een lijst vanuit het weekmenu.',
   'lijst.wissen': 'Afgevinkte items wissen',

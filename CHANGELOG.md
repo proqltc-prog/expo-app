@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.102.0] – 2026-11-02
+
+**Jira:** [WEEK-182](https://proqltc-1791495894841.atlassian.net/browse/WEEK-182) · **Confluence:** [WEEK-182 Lijst en frigo: tabbladen, zoeken en popup gelijkgetrokken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18645015)
+
+- Bug opgelost: op de boodschappenlijst stonden producten uit recepten ook onder de losse producten. Recepten bevat enkel wat de weekplanner zette en wat je zelf koos uit de productdatabank; Losse producten bevat enkel vrije items.
+- Lijst en frigo hebben dezelfde werkwijze: dezelfde schakelaar, zoekveld en popup.
+- Een los product toevoegen met + opent een popup met hoeveelheid, eenheid en categorie.
+- Recepten: een zoekveld met keuzelijst uit de productdatabank. Enkel de hoeveelheid is in te geven; de eenheid staat vast.
+- Op de lijst kan je enkel eigen items wijzigen (potlood) of verwijderen (kruisje), niet die van de weekplanner.
+- De houdbaarheidsdatum wordt enkel gevraagd en getoond in de frigo.
+
 ## [0.101.0] – 2026-11-02
 
 **Jira:** [WEEK-181](https://proqltc-1791495894841.atlassian.net/browse/WEEK-181) · **Confluence:** [WEEK-181 Losse producten bewerken via popup](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18546729)

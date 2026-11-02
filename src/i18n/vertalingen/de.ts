@@ -107,6 +107,7 @@ export const de: Vertalingen = {
   'frigo.houdbaarFout': 'Ungültiges Datum. Nutze TT-MM-JJJJ.',
   'frigo.bewerkNaam': '{naam} bearbeiten',
   'frigo.bewerkKop': 'Produkt bearbeiten',
+  'frigo.toevoegenKop': 'Produkt hinzufügen',
   'frigo.bewerkEenheid': 'Einheit',
   'frigo.bewerkCategorie': 'Kategorie',
   'frigo.bewerkHoudbaar': 'Haltbar bis (optional)',
@@ -194,6 +195,7 @@ export const de: Vertalingen = {
 
   'lijst.toevoegen': 'Etwas hinzufügen…',
   'lijst.scanProduct': 'Dieses Produkt scannen',
+  'lijst.verwijderNaam': '{naam} von der Liste entfernen',
   'lijst.teller': 'Noch {open} von {totaal} zu kaufen',
   'lijst.leeg': 'Noch leer — erstelle eine Liste aus dem Wochenmenü.',
   'lijst.wissen': 'Abgehakte Artikel löschen',

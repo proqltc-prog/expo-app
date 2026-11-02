@@ -1,9 +1,11 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { alleenHuidigPlan, hernoemLijst, LijstItem, LijstRegel, LijstSectie, planSleutel, secties as maakSecties, sectieKeuze, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
+import { alleenHuidigPlan, bewerkLijstItem, eigenItem, hernoemLijst, LijstItem, LijstRegel, LijstSectie, magBewerken, opSheet, planSleutel, receptItem, secties as maakSecties, sectieKeuze, staatOpLijst, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
+import { eenheidVan } from '@/data/ingredienten';
+import { CatalogusItem, Sheet, sheetThema, voegLosToe } from '@/lib/frigoSheets';
 import { inTaal } from '@/lib/planner/vertaal';
-import { FrigoItem } from '@/lib/frigo';
+import { FrigoItem, LosWijziging } from '@/lib/frigo';
 import type { DagCode, Weekplan } from '@/lib/planner/types';
 import { gerechtDetails, VOEDINGSSTOFFEN } from '@/lib/planner/gerecht';
 import { laadFrigo } from '@/opslag/frigo';
@@ -19,7 +21,9 @@ import { WinkelVoorstel } from '@/ui/winkelvoorstel';
 import { Ionicons } from '@expo/vector-icons';
 import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from '@/lib/lijstIcoon';
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
-import { LijstZoek } from '@/ui/lijstZoek';
+import { LosPopup, PopupOpties } from '@/ui/losPopup';
+import { ProductInvoer } from '@/ui/productInvoer';
+import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 import { SectieKop } from '@/ui/sectieKop';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 
@@ -70,6 +74,11 @@ export default function Lijst() {
   const [hoofd, setHoofd] = useState<Hoofd>('boodschappen');
   const [gezin, setGezin] = useState<Gezin | null>(null);
   const [status, setStatus] = useState<SyncStatus>(syncStatus());
+  // Tabbladen Recepten (weekplanner + gekozen databankproducten) en Losse producten (WEEK-182).
+  const [sheet, setSheet] = useState<Sheet>('planner');
+  // De popup voor een los product: nieuw (bewerkId leeg) of wijzigen van het item met dat id.
+  const [losPopup, setLosPopup] = useState<PopupOpties | null>(null);
+  const [bewerkId, setBewerkId] = useState<string | null>(null);
 
   useEffect(() => {
     laadWeergave().then(setWeergave);
@@ -107,6 +116,63 @@ export default function Lijst() {
     setItems(wijziging);
     wijzigLijst(wijziging).then(setItems);
   };
+
+  // Recepten-tabblad: een product uit de productdatabank met de hoeveelheid; de eenheid is vast (WEEK-182).
+  const voegReceptToe = (item: CatalogusItem, hoeveelheid: number | undefined) => {
+    wijzig((huidig) => receptItem(huidig, { code: item.code, naam: item.naam, afdeling: item.afdeling, eenheid: eenheidVan(item.code) }, new Date(), hoeveelheid, ikNaam));
+  };
+
+  // + bij een losse naam: eerst de popup met hoeveelheid, eenheid en categorie.
+  const openNieuwLos = (naam: string) => {
+    setBewerkId(null);
+    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, afdeling: 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: false });
+  };
+
+  // Potloodje: enkel items die de gebruiker zelf toevoegde. Een databankproduct houdt zijn eenheid.
+  const openBewerk = (regel: LijstRegel) => {
+    const item = items.find((i) => i.id === regel.ids[0]);
+    if (!item) return;
+    setBewerkId(item.id);
+    setLosPopup({
+      sleutel: `bewerk-${item.id}-${Date.now()}`,
+      titel: t('frigo.bewerkKop'),
+      naam: item.naam,
+      hoeveelheid: item.hoeveelheid,
+      eenheid: item.eenheid,
+      afdeling: item.afdeling ?? 'overig',
+      toonEenheid: !item.code,
+      toonCategorie: !item.code,
+      toonHoudbaar: false,
+    });
+  };
+
+  const bewaarLos = (w: LosWijziging) => {
+    const opties = losPopup;
+    const id = bewerkId;
+    setLosPopup(null);
+    setBewerkId(null);
+    if (!opties) return;
+    if (id) {
+      wijzig((huidig) => bewerkLijstItem(huidig, id, { hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling === 'overig' ? undefined : w.afdeling }));
+      return;
+    }
+    const nu = new Date();
+    const extra = { hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling === 'overig' ? undefined : w.afdeling };
+    const item = eigenItem(opties.naam, nu, ikNaam, extra);
+    if (!item) return;
+    wijzig((huidig) => [...huidig, item]);
+    // Zoals vroeger: een los product van de lijst komt ook in de losse producten van de frigo.
+    void wijzigFrigo((f) => voegLosToe(f, item.naam, nu, extra));
+  };
+
+  // Enkel eigen items: alle onderliggende items moeten door de gebruiker zijn toegevoegd.
+  const bewerkbaar = (regel: LijstRegel) =>
+    regel.ids.every((id) => {
+      const i = items.find((x) => x.id === id);
+      return !!i && magBewerken(i);
+    });
+
+  const verwijder = (regel: LijstRegel) => wijzig((huidig) => huidig.filter((i) => !regel.ids.includes(i.id)));
 
   const kiesWeergave = (w: Weergave) => {
     setWeergave(w);
@@ -160,16 +226,19 @@ export default function Lijst() {
   };
 
   const zichtbaar = useMemo(() => alleenHuidigPlan(items, plan), [items, plan]);
+  // Het tabblad bepaalt welke items op het scherm komen; de teller en groepen volgen het tabblad.
+  const sheetLijst = sheet === 'planner' ? 'recept' : 'los';
+  const sheetItems = useMemo(() => opSheet(zichtbaar, sheetLijst), [zichtbaar, sheetLijst]);
   // WEEK-144: receptgroepen in de volgorde van het weekplan, niet op weekdag.
   const dagVolgorde = useMemo(() => plan?.dagen.map((d) => d.dag), [plan]);
   const data = useMemo(
-    () => maakSecties(zichtbaar, weergave, dagVolgorde).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
+    () => maakSecties(sheetItems, weergave, dagVolgorde).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
     // titel() gebruikt de taal en het plan; daarom staan die in de afhankelijkheden
-    [zichtbaar, weergave, dagVolgorde, taal, plan, uitgeklapt]
+    [sheetItems, weergave, dagVolgorde, taal, plan, uitgeklapt]
   );
 
   // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.
-  const { open, totaal } = useMemo(() => telRegels(maakSecties(zichtbaar, weergave, dagVolgorde)), [zichtbaar, weergave, dagVolgorde]);
+  const { open, totaal } = useMemo(() => telRegels(maakSecties(sheetItems, weergave, dagVolgorde)), [sheetItems, weergave, dagVolgorde]);
 
   const hoofdTabs = (['winkels', 'boodschappen'] as const).map((h) => {
     const aan = hoofd === h;
@@ -214,8 +283,30 @@ export default function Lijst() {
         </ScrollView>
       ) : (
         <>
-          {/* WEEK-164: zoeken en toevoegen, met de sheets Recepten en Losse producten. */}
-          <LijstZoek lijst={items} wijzig={wijzig} />
+          {/* WEEK-182: dezelfde werkwijze als de frigo: schakelaar, zoeken of invoer, en de popup voor losse producten. */}
+          <LosPopup
+            opties={losPopup}
+            onSluit={() => {
+              setLosPopup(null);
+              setBewerkId(null);
+            }}
+            onBewaar={bewaarLos}
+          />
+          <SheetSchakelaar
+            sheet={sheet}
+            onKies={setSheet}
+            labels={{ planner: t('frigo.sheetPlanner'), los: t('frigo.sheetLos') }}
+            aantallen={{ planner: opSheet(zichtbaar, 'recept').length, los: opSheet(zichtbaar, 'los').length }}
+          />
+          <View style={[s.streep, { backgroundColor: sheetThema(sheet).accent }]} />
+          <ProductInvoer
+            sheet={sheet}
+            accent={sheetThema(sheet).accent}
+            accentZacht={sheetThema(sheet).accentZacht}
+            staatOp={(code) => staatOpLijst(items, code)}
+            onReceptKies={voegReceptToe}
+            onLosPlus={openNieuwLos}
+          />
 
           {/* Groeperen per recept of per categorie. */}
           <View style={s.groepering} accessibilityRole="tablist">
@@ -299,6 +390,33 @@ export default function Lijst() {
                     {hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}
                   </Text>
                 ) : null}
+                {/* Wijzigen en verwijderen enkel voor eigen items (WEEK-182). Het potlood enkel bij één item. */}
+                {!item.afgevinkt && bewerkbaar(item) && item.ids.length === 1 && (
+                  <Pressable
+                    style={s.actieKnop}
+                    onPress={(e) => {
+                      e.stopPropagation?.();
+                      openBewerk(item);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('frigo.bewerkNaam', { naam: item.naam })}
+                  >
+                    <Ionicons name={'pencil-outline' as IoniconNaam} size={18} color={MUTED} />
+                  </Pressable>
+                )}
+                {bewerkbaar(item) && (
+                  <Pressable
+                    style={s.actieKnop}
+                    onPress={(e) => {
+                      e.stopPropagation?.();
+                      verwijder(item);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('lijst.verwijderNaam', { naam: item.naam })}
+                  >
+                    <Ionicons name={'close' as IoniconNaam} size={18} color={MUTED} />
+                  </Pressable>
+                )}
                 {/* Per product scannen (WEEK-70): het gescande product gaat enkel naar deze regel. */}
                 {!item.afgevinkt && (
                   <Pressable
@@ -345,6 +463,8 @@ const s = StyleSheet.create({
   pilTekstAan: { color: ORANJE },
   scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   scanKnopTekst: { fontSize: 17 },
+  streep: { height: 4, borderRadius: 2, marginTop: 10 },
+  actieKnop: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginLeft: 4 },
   gedeeld: { color: KLEUR, fontSize: 13, marginTop: 10 },
   offline: { color: '#7a5b00' },
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },

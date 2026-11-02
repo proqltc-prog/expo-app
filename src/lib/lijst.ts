@@ -216,10 +216,66 @@ export function sectieKeuze(regels: readonly LijstRegel[]): { afgevinkt: boolean
 }
 
 /** Een item dat de gebruiker zelf toevoegt; in een gedeelde lijst met de naam van wie het toevoegde. */
-export function eigenItem(naam: string, nu: Date, door?: string): LijstItem | null {
+export function eigenItem(naam: string, nu: Date, door?: string, extra: { hoeveelheid?: number; eenheid?: string; afdeling?: Afdeling } = {}): LijstItem | null {
   const n = naam.trim();
   if (!n) return null;
-  return { id: `extra-${nu.getTime()}`, naam: n, categorie: 'extra', afgevinkt: false, ...(door ? { door } : {}) };
+  return {
+    id: `extra-${nu.getTime()}`,
+    naam: n,
+    categorie: 'extra',
+    afgevinkt: false,
+    ...(extra.hoeveelheid !== undefined ? { hoeveelheid: extra.hoeveelheid } : {}),
+    ...(extra.eenheid ? { eenheid: extra.eenheid } : {}),
+    ...(extra.afdeling ? { afdeling: extra.afdeling } : {}),
+    ...(door ? { door } : {}),
+  };
+}
+
+/**
+ * Het tabblad van een item op de boodschappenlijst (WEEK-182).
+ * Recepten: wat de weekplanner zette, en wat je zelf koos uit de productdatabank (met code).
+ * Losse producten: vrije invoer, zonder koppeling aan een recept of de databank.
+ */
+export type LijstSheet = 'recept' | 'los';
+
+export function lijstSheet(i: LijstItem): LijstSheet {
+  return i.recept || i.code ? 'recept' : 'los';
+}
+
+export function opSheet(items: readonly LijstItem[], sheet: LijstSheet): LijstItem[] {
+  return items.filter((i) => lijstSheet(i) === sheet);
+}
+
+/**
+ * Mag de gebruiker dit item wijzigen of verwijderen? Enkel wat hij zelf toevoegde (WEEK-182).
+ * Items uit de weekplanner blijven staan zoals de planner ze zette.
+ */
+export function magBewerken(i: LijstItem): boolean {
+  return !i.recept;
+}
+
+/**
+ * Wijzigt een zelf toegevoegd item. Bij een product uit de databank (met code) blijft de eenheid vast;
+ * enkel de hoeveelheid verandert. Losse producten krijgen hoeveelheid, eenheid en afdeling.
+ */
+export function bewerkLijstItem(
+  items: readonly LijstItem[],
+  id: string,
+  w: { hoeveelheid: number | undefined; eenheid?: string; afdeling?: Afdeling }
+): LijstItem[] {
+  return items.map((i) => {
+    if (i.id !== id || !magBewerken(i)) return i;
+    const kopie: LijstItem = { ...i };
+    delete kopie.hoeveelheid;
+    if (w.hoeveelheid !== undefined) kopie.hoeveelheid = w.hoeveelheid;
+    if (!i.code) {
+      delete kopie.eenheid;
+      delete kopie.afdeling;
+      if (w.eenheid) kopie.eenheid = w.eenheid;
+      if (w.afdeling) kopie.afdeling = w.afdeling;
+    }
+    return kopie;
+  });
 }
 
 /**
