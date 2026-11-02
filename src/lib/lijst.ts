@@ -222,6 +222,38 @@ export function eigenItem(naam: string, nu: Date, door?: string): LijstItem | nu
   return { id: `extra-${nu.getTime()}`, naam: n, categorie: 'extra', afgevinkt: false, ...(door ? { door } : {}) };
 }
 
+/**
+ * Een ingrediënt uit de receptenbank op de lijst zetten (WEEK-164, sheet Recepten).
+ * Het krijgt de vaste code, eenheid en afdeling van het ingrediënt, zodat het later met de frigo en de recepten koppelt.
+ * Staat dezelfde code al open op de lijst, dan verandert er niets: geen dubbele regel.
+ */
+export function receptItem(
+  lijst: readonly LijstItem[],
+  ingredient: { code: string; naam: string; afdeling: Afdeling; eenheid: string },
+  nu: Date,
+  hoeveelheid?: number,
+  door?: string
+): LijstItem[] {
+  if (lijst.some((i) => !i.afgevinkt && i.code === ingredient.code)) return [...lijst];
+  const item: LijstItem = {
+    id: `extra-${ingredient.code}-${nu.getTime()}`,
+    naam: ingredient.naam,
+    categorie: 'extra',
+    afgevinkt: false,
+    afdeling: ingredient.afdeling,
+    code: ingredient.code,
+    eenheid: ingredient.eenheid,
+    ...(hoeveelheid !== undefined ? { hoeveelheid } : {}),
+    ...(door ? { door } : {}),
+  };
+  return [...lijst, item];
+}
+
+/** Staat dit ingrediënt (code) al open op de lijst? Voor het vinkje in de zoekresultaten. */
+export function staatOpLijst(lijst: readonly LijstItem[], code: string): boolean {
+  return lijst.some((i) => !i.afgevinkt && i.code === code);
+}
+
 /** Aantal verschillende ingrediënten uit de recepten (voor de bevestiging na het overzetten). */
 export function aantalReceptRegels(items: readonly LijstItem[]): number {
   return samenvoegen(items.filter((i) => i.recept)).length;
