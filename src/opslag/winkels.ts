@@ -1,45 +1,39 @@
-// Haalt winkels bij OpenStreetMap (Overpass) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
+// Haalt winkels op via de Supabase-functie (OpenStreetMap op de server) en het postcodepunt bij Nominatim. Enkel na een wijziging van de postcode.
 // Bewaart de resultaten per postcode op dit toestel (WEEK-148).
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { bewaarInCache, isBewaardWaard, leesWinkelCache, WinkelCacheItem } from '@/lib/winkelcache';
 import { SLEUTEL } from '@/opslag/sleutels';
 import { bouwPostcodeUrl, leesPlaats, leesPunt, NOMINATIM_HEADERS } from '@/lib/postcodepunt';
 import { eersteGeslaagd, metTimeout } from '@/lib/netwerk';
-import { bouwQuery, bouwStraalQuery, leesWinkels, overpassFout, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
+import { leesServerWinkels, Winkel } from '@/lib/winkels';
+import { SUPABASE } from '@/config';
+
+/** De functie zoekt op de server (tot ~25 s); de app wacht iets langer. */
+const WINKEL_FUNCTIE_TIMEOUT_MS = 30000;
 import type { Positie } from '@/lib/winkelvoorstel';
 
-// Overpass-servers: de tweede is een spiegel. Beide worden tegelijk gevraagd, het eerste bruikbare antwoord wint (WEEK-145).
-const ENDPOINTS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
-
-async function vraag(endpoint: string, query: string, postcode: string): Promise<Winkel[]> {
-  const wacht = metTimeout(OVERPASS_TIMEOUT_MS);
+/**
+ * Winkels in de buurt via de Supabase-functie `winkels` (WEEK-171). De functie vraagt OpenStreetMap op de server,
+ * met een cache en hoogstens 10 winkels. Met het punt van de postcode zoeken we binnen 10 km; zonder punt op postcode en gemeente.
+ * Gooit een fout als de functie niet antwoordt; de winkelzoeker toont dan een melding.
+ */
+export async function zoekWinkels(postcode: string, gemeente: string, punt?: Positie): Promise<Winkel[]> {
+  const sleutel = SUPABASE.sleutel;
+  if (!SUPABASE.url || !sleutel) throw new Error('geen_backend');
+  const wacht = metTimeout(WINKEL_FUNCTIE_TIMEOUT_MS);
   try {
-    const antwoord = await fetch(endpoint, {
+    const antwoord = await fetch(`${SUPABASE.url}/functions/v1/winkels`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `data=${encodeURIComponent(query)}`,
+      headers: { 'Content-Type': 'application/json', apikey: sleutel, Authorization: `Bearer ${sleutel}` },
+      body: JSON.stringify(punt ? { lat: punt.lat, lon: punt.lon } : { postcode, gemeente }),
       signal: wacht.signal,
     });
+    // Dezelfde vorm als eerder, zodat de foutmelding van de winkelzoeker gelijk blijft.
     if (!antwoord.ok) throw new Error(`Overpass ${antwoord.status}`);
-    // WEEK-152: een time-out van de server is een fout, geen leeg resultaat; dan probeert de andere server het.
-    const json: unknown = await antwoord.json();
-    const fout = overpassFout(json);
-    if (fout) throw new Error(fout);
-    return leesWinkels(json, postcode);
+    return leesServerWinkels(await antwoord.json());
   } finally {
     wacht.klaar();
   }
-}
-
-/**
- * Winkels in de buurt. Met het punt van de postcode zoeken we binnen 10 km (WEEK-115); zonder punt
- * de zoekopdracht op postcode en gemeente. Beide servers tegelijk, met een korte wachttijd (WEEK-145):
- * het eerste antwoord telt. Gooit een fout als geen enkele server antwoordt.
- */
-export async function zoekWinkels(postcode: string, gemeente: string, punt?: Positie): Promise<Winkel[]> {
-  const query = punt ? bouwStraalQuery(punt) : bouwQuery(postcode, gemeente);
-  if (!query) return [];
-  return eersteGeslaagd(ENDPOINTS.map((endpoint) => () => vraag(endpoint, query, postcode)));
 }
 
 /** Punt van de postcode (Nominatim). Undefined als de postcode niet gevonden wordt. */

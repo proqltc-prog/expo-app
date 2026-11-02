@@ -119,6 +119,21 @@ describe('vervangDbDag (WEEK-68)', () => {
     const origineel = plan(p, { aantalDagen: 1 })!;
     assert.equal(vervangDbDag(origineel, 0, p, 1).dagen[0].recept.id, 'db-1');
   });
+  test('regressie WEEK-170: de pijl geeft nooit het huidige recept terug als er een ander recept is', () => {
+    const p = pool(dbRecept(1), dbRecept(2));
+    for (let seed = 1; seed <= 30; seed++) {
+      const origineel = plan(p, { aantalDagen: 2, seed })!;
+      const nieuw = vervangDbDag(origineel, 0, p, seed);
+      assert.notEqual(nieuw.dagen[0].recept.id, origineel.dagen[0].recept.id, `seed ${seed}`);
+    }
+  });
+  test('regressie WEEK-170: bij een kleine pool wisselt de pijl naar een recept dat al op een andere dag staat', () => {
+    const p = pool(dbRecept(1), dbRecept(2), dbRecept(3));
+    const origineel = plan(p, { aantalDagen: 2, seed: 4 })!;
+    const nieuw = vervangDbDag(origineel, 0, p, 11);
+    assert.notEqual(nieuw.dagen[0].recept.id, origineel.dagen[0].recept.id);
+    assert.equal(nieuw.dagen[1].recept.id, origineel.dagen[1].recept.id);
+  });
   test('wist de kooktoestand van de vervangen dag', () => {
     const p = pool(dbRecept(1), dbRecept(2));
     const origineel = { ...plan(p, { aantalDagen: 1 })!, dagen: [{ ...plan(p, { aantalDagen: 1 })!.dagen[0], gedaan: true }] };

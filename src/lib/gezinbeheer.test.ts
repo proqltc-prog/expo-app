@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { anderenLeden, ikBeheerder, magGezinsprofielWijzigen, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
+import { anderenLeden, APP_LINK, ikBeheerder, magGezinsprofielWijzigen, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { leesGezinFout } from '@/lib/sync';
 
 const leden = [
@@ -52,5 +52,11 @@ describe('magGezinsprofielWijzigen (WEEK-168)', () => {
   });
   it('onbekende beheerder: niet wijzigen', () => {
     assert.equal(magGezinsprofielWijzigen(true, undefined, 'ik'), false);
+  });
+});
+
+describe('gezinscode-link (WEEK-173)', () => {
+  it('verwijst naar de webversie zolang de Play-app nog niet bestaat', () => {
+    assert.equal(APP_LINK, 'https://proqltc-prog.github.io/expo-app/');
   });
 });

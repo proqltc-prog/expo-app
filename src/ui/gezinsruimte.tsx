@@ -1,9 +1,10 @@
 // Blok "Gezinsruimte" op het tabblad Gezin (WEEK-8): een gezinsruimte maken, lid worden met een code,
 // de code delen, de leden zien en de gezinsruimte verlaten.
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { leesGezinFout, leesGezinscode, toonGezinscode } from '@/lib/sync';
-import { anderenLeden, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
+import { anderenLeden, APP_LINK, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { wijsPlanBeheerderAan } from '@/opslag/plan';
 import { laadVoornaam, zetVoornaam } from '@/opslag/voornaam';
 import { valideerVoornaam, VoornaamFout } from '@/lib/voornaam';
@@ -42,6 +43,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const [leden, setLeden] = useState<GezinsLid[]>([]);
   const [status, setStatus] = useState<SyncStatus>(syncStatus());
   const [code, setCode] = useState('');
+  const [uitlegOpen, setUitlegOpen] = useState(false);
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
   // Beheer (WEEK-65): wie is beheerder van het gezin, wie ben ik, en kiest de beheerder nu een opvolger?
@@ -287,7 +289,20 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
           <>
             <Text style={s.gedeeld}>{t('gezin.gedeeldMet', { naam: gezin.naam })}</Text>
             <Text style={[s.status, status === 'offline' && s.statusOffline]}>{t(`gezin.status.${status}` as Sleutel)}</Text>
-            <Text style={s.label}>{t('gezin.code')}</Text>
+            <View style={s.rij}>
+              <Text style={[s.label, { flex: 1 }]}>{t('gezin.code')}</Text>
+              <Pressable onPress={() => setUitlegOpen((o) => !o)} accessibilityRole="button" accessibilityLabel={t('gezin.infoKnop')} accessibilityState={{ expanded: uitlegOpen }} hitSlop={8}>
+                <Ionicons name={uitlegOpen ? 'information-circle' : 'information-circle-outline'} size={22} color={KLEUR} />
+              </Pressable>
+            </View>
+            {uitlegOpen && (
+              <View style={s.uitleg}>
+                <Text style={s.uitlegTekst}>{t('gezin.infoTekst', { link: APP_LINK })}</Text>
+                <Pressable onPress={() => Linking.openURL(APP_LINK)} accessibilityRole="link" style={s.uitlegKnop}>
+                  <Text style={s.knopKleinTekst}>{t('gezin.openApp')}</Text>
+                </Pressable>
+              </View>
+            )}
             <View style={s.rij}>
               <Text style={s.code} selectable>{toonGezinscode(gezin.code)}</Text>
               <Pressable style={s.knopKlein} onPress={deel}>
@@ -361,6 +376,9 @@ const s = StyleSheet.create({
   status: { color: KLEUR, fontSize: 13 },
   statusOffline: { color: '#7a5b00' },
   label: { color: '#777', fontSize: 13, fontWeight: '600' },
+  uitleg: { borderWidth: 1, borderColor: KLEUR, borderRadius: 10, padding: 12, gap: 10 },
+  uitlegTekst: { color: '#1d2420', fontSize: 14, lineHeight: 20 },
+  uitlegKnop: { alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   code: { flex: 1, fontSize: 26, fontWeight: '700', letterSpacing: 4, color: '#1f5c3a' },
   lid: { fontSize: 15 },
   verlaat: { alignItems: 'center', padding: 8 },
