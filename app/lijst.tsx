@@ -20,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from '@/lib/lijstIcoon';
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { LijstZoek } from '@/ui/lijstZoek';
+import { SectieKop } from '@/ui/sectieKop';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -249,20 +250,15 @@ export default function Lijst() {
                 <View>
                   <View style={s.sectieRij}>
                     {/* Tikken op de titel klapt de groep open of dicht, met de teller van de items (WEEK-124). */}
-                    <Pressable
-                      style={s.sectieTitel}
+                    <SectieKop
+                      icoon={section.soort === 'categorie' ? <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} /> : undefined}
+                      titel={section.title}
+                      aantal={section.regels.length}
+                      open={uitgeklapt.has(section.sleutel)}
+                      kleur={KLEUR}
+                      label={section.title}
                       onPress={() => setUitgeklapt((o) => wisselGroep(o, section.sleutel))}
-                      accessibilityRole="button"
-                      accessibilityState={{ expanded: uitgeklapt.has(section.sleutel) }}
-                      accessibilityLabel={section.title}
-                    >
-                      {section.soort === 'categorie' && (
-                        <Ionicons name={categorieIcoon(section.categorie) as IoniconNaam} size={18} color={KLEUR} />
-                      )}
-                      <Text style={[s.kopInRij, s.titelKrimp]} numberOfLines={2}>{section.title}</Text>
-                      <Text style={s.groepTeller}>{section.regels.length}</Text>
-                      <Ionicons name={(uitgeklapt.has(section.sleutel) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={KLEUR} />
-                    </Pressable>
+                    />
                     {/* Selectievakje (WEEK-111): vinkt alle ingrediënten van deze rubriek of dit recept samen af. */}
                     <Pressable
                       style={[s.vinkje, alles && s.vinkjeAan]}
@@ -349,11 +345,6 @@ const s = StyleSheet.create({
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
   sectieRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 14, marginBottom: 4 },
-  sectieTitel: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  groepTeller: { color: '#6b7a72', fontWeight: '700', fontSize: 13, flexShrink: 0 },
-  // WEEK-132: een lange titel breekt af en schuift de teller en het selectievakje niet opzij.
-  titelKrimp: { flexShrink: 1 },
-  kopInRij: { fontWeight: '700', fontSize: 14, color: '#444' },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
   vinkje: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: ORANJE, alignItems: 'center', justifyContent: 'center' },
   vinkjeAan: { backgroundColor: ORANJE },

@@ -5,6 +5,7 @@ import { router, Tabs, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
+import { luisterNaarTerugkeer } from '@/opslag/aanmelden';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
 import { gaatNaarMenu, sluitAppOp } from '@/lib/terugknop';
@@ -74,6 +75,9 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
 }
 
 export default function Layout() {
+  // Aanmelden (WEEK-166): de terugkeer van Google verwerken.
+  useEffect(() => luisterNaarTerugkeer(), []);
+
   // Gezinsruimte (WEEK-8): bijwerken bij het openen en telkens de app terug op de voorgrond komt.
   useEffect(() => {
     startSync();
