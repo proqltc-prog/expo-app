@@ -21,7 +21,7 @@ import { BOODSCHAPPEN_ICOON, categorieIcoon, SCANNER_ICOON, WINKEL_ICOON } from 
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { LijstZoek } from '@/ui/lijstZoek';
 import { SectieKop } from '@/ui/sectieKop';
-import { PaginaIntro } from '@/ui/paginaIntro';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -57,6 +57,8 @@ function GerechtRegel({ lijst, frigo, dag, recept }: { lijst: LijstItem[]; frigo
 
 export default function Lijst() {
   const { t, taal } = useTaal();
+  // WEEK-177: uitleg via een infoknop rechtsboven in de koptekst; de tekst geldt voor beide tabbladen.
+  const { popup } = usePaginaInfo({ tekst: t('pagina.lijstInfo'), kleur: ORANJE, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const [items, setItems] = useState<LijstItem[]>([]);
   // WEEK-138: enkel recepten van het huidige weekplan horen op de lijst.
   const [plan, setPlan] = useState<Weekplan | null>(null);
@@ -201,6 +203,7 @@ export default function Lijst() {
 
   return (
     <View style={s.scherm}>
+      {popup}
       <View style={s.hoofdSchakelaar} accessibilityRole="tablist">
         {hoofdTabs}
       </View>
@@ -234,7 +237,6 @@ export default function Lijst() {
             })}
           </View>
 
-          <PaginaIntro intro={t('pagina.lijstIntro')} info={t('pagina.lijstInfo')} kleur={ORANJE} infoLabel={t('pagina.infoKnop')} />
           {gezin && (
             <Text style={[s.gedeeld, status === 'offline' && s.offline]}>
               {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}

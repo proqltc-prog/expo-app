@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.99.0] – 2026-11-02
+
+**Jira:** [WEEK-177](https://proqltc-1791495894841.atlassian.net/browse/WEEK-177) · **Confluence:** [WEEK-177 Pagina-uitleg als popup](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18743308)
+
+- De uitleg van de lijst, de frigo en de scanner staat in een infoknop rechtsboven in de koptekst, niet meer als blok op de pagina. De popup sluit je weg.
+- De frigo-uitleg beschrijft Recepten en Losse producten apart; losse producten tellen niet mee voor de recepten.
+- De sluitknop van de scanner reageert weer.
+
 ## [0.98.0] – 2026-11-02
 
 **Jira:** [WEEK-174](https://proqltc-1791495894841.atlassian.net/browse/WEEK-174) · **Confluence:** [WEEK-174 Startkeuze](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18382907)
