@@ -3,7 +3,7 @@ import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'reac
 import { router, useFocusEffect } from 'expo-router';
 import { alleenHuidigPlan, bewerkLijstItem, eigenItem, hernoemLijst, LijstItem, LijstRegel, LijstSectie, magBewerken, opSheet, planSleutel, receptItem, secties as maakSecties, sectieKeuze, staatOpLijst, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
 import { eenheidVan } from '@/data/ingredienten';
-import { CatalogusItem, Sheet, sheetThema, voegLosToe } from '@/lib/frigoSheets';
+import { CatalogusItem, Sheet, sheetThema } from '@/lib/frigoSheets';
 import { inTaal } from '@/lib/planner/vertaal';
 import { FrigoItem, LosWijziging } from '@/lib/frigo';
 import type { DagCode, Weekplan } from '@/lib/planner/types';
@@ -160,9 +160,8 @@ export default function Lijst() {
     const extra = { hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling === 'overig' ? undefined : w.afdeling };
     const item = eigenItem(opties.naam, nu, ikNaam, extra);
     if (!item) return;
+    // Pas bij afvinken gaat het naar de frigo (zie toggle); toevoegen raakt de frigo niet.
     wijzig((huidig) => [...huidig, item]);
-    // Zoals vroeger: een los product van de lijst komt ook in de losse producten van de frigo.
-    void wijzigFrigo((f) => voegLosToe(f, item.naam, nu, extra));
   };
 
   // Enkel eigen items: alle onderliggende items moeten door de gebruiker zijn toegevoegd.
@@ -391,32 +390,34 @@ export default function Lijst() {
                   </Text>
                 ) : null}
                 {/* Wijzigen en verwijderen enkel voor eigen items (WEEK-182). Het potlood enkel bij één item. */}
-                {!item.afgevinkt && bewerkbaar(item) && item.ids.length === 1 && (
-                  <Pressable
-                    style={s.actieKnop}
-                    onPress={(e) => {
-                      e.stopPropagation?.();
-                      openBewerk(item);
-                    }}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('frigo.bewerkNaam', { naam: item.naam })}
-                  >
-                    <Ionicons name={'pencil-outline' as IoniconNaam} size={18} color={MUTED} />
-                  </Pressable>
-                )}
-                {bewerkbaar(item) && (
-                  <Pressable
-                    style={s.actieKnop}
-                    onPress={(e) => {
-                      e.stopPropagation?.();
-                      verwijder(item);
-                    }}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('lijst.verwijderNaam', { naam: item.naam })}
-                  >
-                    <Ionicons name={'close' as IoniconNaam} size={18} color={MUTED} />
-                  </Pressable>
-                )}
+                <View style={s.actieGroep}>
+                  {!item.afgevinkt && bewerkbaar(item) && item.ids.length === 1 && (
+                    <Pressable
+                      style={s.actieKnop}
+                      onPress={(e) => {
+                        e.stopPropagation?.();
+                        openBewerk(item);
+                      }}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('frigo.bewerkNaam', { naam: item.naam })}
+                    >
+                      <Ionicons name={'pencil-outline' as IoniconNaam} size={18} color={MUTED} />
+                    </Pressable>
+                  )}
+                  {bewerkbaar(item) && (
+                    <Pressable
+                      style={s.actieKnop}
+                      onPress={(e) => {
+                        e.stopPropagation?.();
+                        verwijder(item);
+                      }}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('lijst.verwijderNaam', { naam: item.naam })}
+                    >
+                      <Ionicons name={'close' as IoniconNaam} size={18} color={MUTED} />
+                    </Pressable>
+                  )}
+                </View>
                 {/* Per product scannen (WEEK-70): het gescande product gaat enkel naar deze regel. */}
                 {!item.afgevinkt && (
                   <Pressable
@@ -464,7 +465,8 @@ const s = StyleSheet.create({
   scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   scanKnopTekst: { fontSize: 17 },
   streep: { height: 4, borderRadius: 2, marginTop: 10 },
-  actieKnop: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginLeft: 4 },
+  actieGroep: { flexDirection: 'row', alignItems: 'center', gap: 0, flexShrink: 0 },
+  actieKnop: { width: 26, height: 30, alignItems: 'center', justifyContent: 'center' },
   gedeeld: { color: KLEUR, fontSize: 13, marginTop: 10 },
   offline: { color: '#7a5b00' },
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
