@@ -158,15 +158,3 @@ export function foutReden(fout: unknown): FoutReden {
   return 'onbekend';
 }
 
-/**
- * Leest het antwoord van de Supabase-functie `winkels` (WEEK-171). De functie levert al genormaliseerde winkels;
- * hier vallen enkel onbruikbare regels weg en wordt het aantal begrensd op MAX_WINKELS_LIJST.
- */
-export const MAX_WINKELS_LIJST = 10;
-export function leesServerWinkels(ruw: unknown): Winkel[] {
-  const lijst = ruw && typeof ruw === 'object' ? (ruw as { winkels?: unknown }).winkels : undefined;
-  if (!Array.isArray(lijst)) return [];
-  return lijst
-    .filter((w): w is Winkel => !!w && typeof w === 'object' && typeof (w as Winkel).naam === 'string' && typeof (w as Winkel).soort === 'string')
-    .slice(0, MAX_WINKELS_LIJST);
-}

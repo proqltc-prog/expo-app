@@ -335,7 +335,8 @@ const s = StyleSheet.create({
   hoofdTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
   teller: { color: '#666', marginVertical: 10 },
   tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
-  groepering: { flexDirection: 'row', gap: 8, marginTop: 12 },
+  // WEEK-176: de pillen mogen op een smal scherm onder elkaar komen in plaats van af te snijden.
+  groepering: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   pil: { borderRadius: 999, paddingVertical: 7, paddingHorizontal: 13, backgroundColor: '#fff', borderWidth: 1, borderColor: '#E4E8E1' },
   pilAan: { backgroundColor: ORANJE_ZACHT, borderColor: 'transparent' },
   pilTekst: { color: '#17201A', fontWeight: '600', fontSize: 14 },

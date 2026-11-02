@@ -23,7 +23,7 @@ export const nl = {
   'aanmelden.google': 'Koppel Google-account',
   'aanmelden.gekoppeld': 'Je bent aangemeld met een account.',
   'aanmelden.fout': 'Koppelen mislukt. Probeer het opnieuw.',
-  'welkom.stap': 'Stap 1 van 3: taal · gezin · menu',
+  'welkom.stap': 'Stap 1 van 4: taal · naam · account · menu',
   'bereiding.titel': 'Bereiding',
   'bereiding.icoon': 'Bereidingsstappen tonen',
   'bereiding.stap': 'Stap {n} van {m}',
@@ -445,6 +445,13 @@ export const nl = {
   'gezin.infoKnop': "Uitleg over de gezinscode",
   'gezin.infoTekst': "Met deze code voegt iemand zich bij jouw gezinsruimte: kies in de app ‘Lid worden’ en vul de code in. Open de app via {link}.",
   'gezin.openApp': "Open de app",
+  "winkels.zoekGoogle": "Zoek op Google Maps",
+  "winkels.zoekGoogleKort": "Zoek bij jou in de buurt op Google Maps",
+  "winkels.googleUitleg": "Opent Google Maps met de postcode uit je profiel.",
+  'welkom.accountTitel': 'Gegevens bewaren?',
+  'welkom.accountTekst': 'Met een Google-account blijven je gezinsgegevens bewaard als je van toestel wisselt. Dat kan ook later, in het gezinsscherm.',
+  'welkom.accountGoogle': 'Aanmelden met Google',
+  'welkom.accountVerder': 'Verder zonder account',
 } as const;
 
 export type Sleutel = keyof typeof nl;
