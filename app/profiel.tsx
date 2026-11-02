@@ -12,8 +12,10 @@ import {
   valideerProfiel,
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
+import { laadBeheerderId, laadGezin, ikId } from '@/opslag/sync';
+import { magGezinsprofielWijzigen } from '@/lib/gezinbeheer';
 import { zoekPlaats } from '@/opslag/winkels';
-import { Sleutel, TALEN, vertaal } from '@/i18n';
+import { KEUZE_TALEN, Sleutel, vertaal } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
 import { Inklapbaar } from '@/ui/inklapbaar';
@@ -31,14 +33,14 @@ const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   land: undefined,
 };
 
-function Teller({ waarde, min, max, onChange }: { waarde: number; min: number; max: number; onChange: (n: number) => void }) {
+function Teller({ waarde, min, max, onChange, uit = false }: { waarde: number; min: number; max: number; onChange: (n: number) => void; uit?: boolean }) {
   return (
     <View style={s.teller}>
-      <Pressable style={[s.tellerKnop, waarde <= min && s.uit]} disabled={waarde <= min} onPress={() => onChange(waarde - 1)}>
+      <Pressable style={[s.tellerKnop, (waarde <= min || uit) && s.uit]} disabled={uit || waarde <= min} onPress={() => onChange(waarde - 1)}>
         <Text style={s.tellerTekst}>−</Text>
       </Pressable>
       <Text style={s.tellerWaarde}>{waarde}</Text>
-      <Pressable style={[s.tellerKnop, waarde >= max && s.uit]} disabled={waarde >= max} onPress={() => onChange(waarde + 1)}>
+      <Pressable style={[s.tellerKnop, (waarde >= max || uit) && s.uit]} disabled={uit || waarde >= max} onPress={() => onChange(waarde + 1)}>
         <Text style={s.tellerTekst}>+</Text>
       </Pressable>
     </View>
@@ -51,6 +53,8 @@ export default function ProfielScherm() {
   const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   const wissel = (sleutel: string) => setUitgeklapt((o) => wisselGroep(o, sleutel));
   const [profiel, setProfiel] = useState<Profiel>(standaardProfiel());
+  // WEEK-168: enkel de beheerder van het gezin past het gezinsprofiel aan. Tot het geladen is: niet wijzigen.
+  const [mag, setMag] = useState(false);
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
   const [plaatsFout, setPlaatsFout] = useState(false);
   // Enkel het antwoord op de laatst ingevoerde postcode telt.
@@ -62,6 +66,10 @@ export default function ProfielScherm() {
         setProfiel(p);
         setFouten([]);
       });
+      laadGezin()
+        .then(async (gezin) => (gezin ? magGezinsprofielWijzigen(true, await laadBeheerderId(), await ikId()) : true))
+        .catch(() => false)
+        .then(setMag);
       // WEEK-100: bij elk vertrek (knop, menu of bewaren) onthouden zodat de weekplanner opnieuw start.
       return () => onthoudVertrekUitGezinsprofiel();
     }, [])
@@ -124,7 +132,7 @@ export default function ProfielScherm() {
             <Text style={s.label}>{t('profiel.taalToestel')}</Text>
             {voorkeur === undefined && <Text style={s.vinkje}>✓</Text>}
           </Pressable>
-          {TALEN.map((code) => (
+          {KEUZE_TALEN.map((code) => (
             <Pressable key={code} style={s.taalRij} onPress={() => zetVoorkeur(code)} accessibilityRole="radio" accessibilityState={{ selected: voorkeur === code }}>
               <Text style={s.label}>{vertaal(code, 'taal.naam')}</Text>
               {voorkeur === code && <Text style={s.vinkje}>✓</Text>}
@@ -141,16 +149,17 @@ export default function ProfielScherm() {
 
       <Inklapbaar titel={t('profiel.gezin')} open={uitgeklapt.has('gezin')} onWissel={() => wissel('gezin')}>
       <View style={s.kaart}>
+        {!mag && <Text style={s.hint}>{t('profiel.alleenBeheerder')}</Text>}
         <View style={s.rij}>
           <Text style={s.label}>{t('profiel.volwassenen')}</Text>
-          <Teller waarde={profiel.volwassenen} min={1} max={MAX_VOLWASSENEN} onChange={(n) => wijzig({ volwassenen: n })} />
+          <Teller waarde={profiel.volwassenen} min={1} max={MAX_VOLWASSENEN} uit={!mag} onChange={(n) => wijzig({ volwassenen: n })} />
         </View>
         <View style={s.rij}>
           <View>
             <Text style={s.label}>{t('profiel.kinderen')}</Text>
             <Text style={s.hint}>{t('profiel.kinderHint')}</Text>
           </View>
-          <Teller waarde={profiel.kinderen} min={0} max={MAX_KINDEREN} onChange={(n) => wijzig({ kinderen: n })} />
+          <Teller waarde={profiel.kinderen} min={0} max={MAX_KINDEREN} uit={!mag} onChange={(n) => wijzig({ kinderen: n })} />
         </View>
         <Text style={s.totaal}>{t('profiel.samen', { personen: tn('algemeen.personen', aantalPersonen(profiel)) })}</Text>
       </View>
@@ -163,6 +172,7 @@ export default function ProfielScherm() {
 
       <Inklapbaar titel={t('profiel.adres')} open={uitgeklapt.has('adres')} onWissel={() => wissel('adres')}>
       <View style={s.kaart}>
+        {!mag && <Text style={s.hint}>{t('profiel.alleenBeheerder')}</Text>}
         <View style={s.info}>
           <Text style={s.waromKop}>{t('profiel.winkelsTitel')}</Text>
           <Text style={s.hint}>{t('profiel.winkelsTekst')}</Text>
@@ -172,16 +182,16 @@ export default function ProfielScherm() {
         <View style={s.rijVelden}>
           <View style={{ width: 100, gap: 4 }}>
             <Text style={s.label}>{t('profiel.postcode')}</Text>
-            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" />
+            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" editable={mag} />
           </View>
           <View style={{ flex: 1, gap: 4 }}>
             <Text style={s.label}>{t('profiel.gemeente')}</Text>
-            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} />
+            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} editable={mag} />
           </View>
         </View>
         <View style={{ gap: 4 }}>
           <Text style={s.label}>{t('profiel.land')}</Text>
-          <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} />
+          <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} editable={mag} />
         </View>
       </View>
       </Inklapbaar>

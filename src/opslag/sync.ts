@@ -9,6 +9,7 @@
 // - Alle wijzigingen aan de opslag lopen via naElkaar(), zodat niets elkaar overschrijft.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import { ikBeheerder } from '@/lib/gezinbeheer';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
@@ -243,9 +244,11 @@ export async function verstuur(): Promise<void> {
         .flatMap(([soort, rijen]) =>
         voegWachtrijSamen([], rijen).map((r) => ({ gezin_id: gezin.id, soort, id: r.id, data: r.data, verwijderd: r.verwijderd, bijgewerkt_op: r.bijgewerkt_op }))
       );
-      const docRijen = (Object.entries(t.wachtrij.documenten) as [DocumentSleutel, { data: unknown; bijgewerkt_op: string }][]).map(
-        ([sleutel, d]) => ({ gezin_id: gezin.id, sleutel, data: d.data, bijgewerkt_op: d.bijgewerkt_op })
-      );
+      // WEEK-168: enkel de beheerder deelt het gezinsprofiel; de database weigert het voor de andere leden.
+      const magProfiel = ikBeheerder(await laadBeheerderId(), await ikId());
+      const docRijen = (Object.entries(t.wachtrij.documenten) as [DocumentSleutel, { data: unknown; bijgewerkt_op: string }][])
+        .filter(([sleutel]) => sleutel !== 'profiel' || magProfiel)
+        .map(([sleutel, d]) => ({ gezin_id: gezin.id, sleutel, data: d.data, bijgewerkt_op: d.bijgewerkt_op }));
       for (let i = 0; i < itemRijen.length; i += 500) {
         const { error } = await sb.from('gezin_items').upsert(itemRijen.slice(i, i + 500), { onConflict: 'gezin_id,soort,id' });
         if (error) throw error;
@@ -264,6 +267,8 @@ export async function verstuur(): Promise<void> {
         for (const d of docRijen) {
           if (nu.wachtrij.documenten[d.sleutel]?.bijgewerkt_op === d.bijgewerkt_op) delete nu.wachtrij.documenten[d.sleutel];
         }
+        // Een niet-beheerder verstuurt het profiel nooit: een eigen wijziging wordt weggegooid (WEEK-168).
+        if (!magProfiel) delete nu.wachtrij.documenten.profiel;
         await bewaarToestand(nu);
       });
       zetStatus('verbonden');

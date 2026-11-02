@@ -91,7 +91,7 @@ describe('kiesTaal', () => {
   });
   test('neemt de eerste ondersteunde toesteltaal', () => {
     assert.equal(kiesTaal(['fr-BE', 'nl-BE']), 'fr');
-    assert.equal(kiesTaal(['it-IT', 'pt_BR', 'en-US']), 'pt');
+    assert.equal(kiesTaal(['it-IT', 'pt_BR', 'en-US']), 'en');
     assert.equal(kiesTaal(['NL']), 'nl');
   });
   test('valt terug op Engels als geen enkele toesteltaal ondersteund is', () => {
@@ -99,7 +99,8 @@ describe('kiesTaal', () => {
     assert.equal(kiesTaal([]), 'en');
   });
   test('negeert een ongeldige voorkeur', () => {
-    assert.equal(kiesTaal(['es-ES'], 'xx' as never), 'es');
+    assert.equal(kiesTaal(['es-ES'], 'xx' as never), 'en');
+    assert.equal(kiesTaal(['fr-BE'], 'es'), 'fr');
   });
 });
 
@@ -125,7 +126,7 @@ describe('categorieNaam', () => {
     assert.equal(categorieNaam('fr', 'fruit'), 'Fruits');
   });
   test('vertaalt ook oude, Nederlandse categorienamen uit bestaande lijsten', () => {
-    assert.equal(categorieNaam('es', 'Huishouden'), 'Hogar');
+    assert.equal(categorieNaam('de', 'Huishouden'), 'Haushalt');
     assert.equal(categorieNaam('nl', 'Avondeten'), 'Avondeten');
   });
   test('toont onbekende categorieën ongewijzigd', () => {

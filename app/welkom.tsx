@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
-import { TALEN, Taal, vertaal } from '@/i18n';
+import { KEUZE_TALEN, Taal, vertaal } from '@/i18n';
 import { zetWelkomGezien } from '@/opslag/welkom';
 import { zetVoornaam } from '@/opslag/voornaam';
 import { valideerVoornaam, VoornaamFout, MAX_VOORNAAM } from '@/lib/voornaam';
@@ -117,7 +117,7 @@ export default function Welkom() {
       </View>
 
       <View style={s.lijst}>
-        {TALEN.map((code) => {
+        {KEUZE_TALEN.map((code) => {
           const actief = gekozen === code;
           return (
             <Pressable
