@@ -449,4 +449,5 @@ export const de: Vertalingen = {
   'welkom.accountGoogle': 'Mit Google anmelden',
   'welkom.accountVerder': 'Ohne Konto weiter',
   'pagina.sluiten': 'Schließen',
+  'frigo.losHoeveelheid': 'Menge und Abteilung dienen nur der Information. Lose Produkte fließen nicht in die Berechnung der Rezepte ein.',
 };

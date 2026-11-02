@@ -449,4 +449,5 @@ export const fr: Vertalingen = {
   'welkom.accountGoogle': 'Se connecter avec Google',
   'welkom.accountVerder': 'Continuer sans compte',
   'pagina.sluiten': 'Fermer',
+  'frigo.losHoeveelheid': 'La quantité et le rayon sont uniquement indicatifs. Les produits libres ne sont pas pris en compte dans le calcul des recettes.',
 };

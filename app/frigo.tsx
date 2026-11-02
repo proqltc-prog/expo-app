@@ -221,6 +221,7 @@ export default function Frigo() {
           </Pressable>
           {details && (
             <View style={s.details}>
+              {sheet === 'los' && <Text style={s.losUitleg}>{t('frigo.losHoeveelheid')}</Text>}
               <View style={s.rij}>
                 <TextInput
                   style={[s.veld, s.getal]}
@@ -387,6 +388,7 @@ const s = StyleSheet.create({
   scan: { width: 44, height: 44, flexShrink: 0, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   teller: { color: MUTED, marginVertical: 10, fontWeight: '600' },
   detailsLink: { color: KLEUR, fontWeight: '600', marginTop: 8 },
+  losUitleg: { color: MUTED, fontSize: 13 },
   details: { gap: 8, marginTop: 8 },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   getal: { flex: 0, width: 110 },

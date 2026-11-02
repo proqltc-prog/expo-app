@@ -449,4 +449,5 @@ export const en: Vertalingen = {
   'welkom.accountGoogle': 'Sign in with Google',
   'welkom.accountVerder': 'Continue without account',
   'pagina.sluiten': 'Close',
+  'frigo.losHoeveelheid': 'Quantity and section are for information only. Loose products are not used in the recipe calculation.',
 };

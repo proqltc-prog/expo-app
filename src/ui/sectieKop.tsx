@@ -28,7 +28,8 @@ export function SectieKop({
   const [wrapt, setWrapt] = useState(false);
   return (
     <Pressable style={s.rij} onPress={onPress} accessibilityRole="button" accessibilityState={{ expanded: open }} accessibilityLabel={label}>
-      {icoon}
+      {/* WEEK-178: zonder icoon blijft dezelfde ruimte vrij, zodat de titels van alle koppen op één lijn beginnen. */}
+      {icoon ?? <View style={s.leegIcoon} />}
       <View style={s.tekst}>
         <Text style={s.kop} numberOfLines={2} onTextLayout={(e) => setWrapt(e.nativeEvent.lines.length > 1)}>
           {titel}
@@ -47,4 +48,5 @@ const s = StyleSheet.create({
   kop: { fontWeight: '700', fontSize: 14, color: '#444' },
   teller: { color: '#6b7a72', fontWeight: '700', fontSize: 13, flexShrink: 0, marginTop: 2 },
   onzichtbaar: { opacity: 0 },
+  leegIcoon: { width: 18, height: 18 },
 });
