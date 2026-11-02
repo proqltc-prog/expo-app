@@ -3,7 +3,7 @@
 import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
-import { isoDatum } from '@/lib/houdbaarheid';
+import { isoDatum, leesDatum } from '@/lib/houdbaarheid';
 
 /**
  * Soort frigo-item (WEEK-71).
@@ -172,12 +172,23 @@ export function frigoSecties(frigo: readonly FrigoItem[]): FrigoSectie[] {
     if (f.toegevoegdOp < regel.oudsteOp) regel.oudsteOp = f.toegevoegdOp;
     regel.ids.push(f.id);
   }
-  const volgorde: string[] = [...AFDELINGEN, 'overig'];
+  // WEEK-181: "overig" (nog niet ingedeeld) staat bovenaan, daarna de winkelafdelingen.
+  const volgorde: string[] = ['overig', ...AFDELINGEN];
   const perAfdeling = new Map<Afdeling | 'overig', FrigoRegel[]>();
   for (const r of regels.values()) perAfdeling.set(r.afdeling, [...(perAfdeling.get(r.afdeling) ?? []), r]);
   return [...perAfdeling.entries()]
     .sort(([a], [b]) => volgorde.indexOf(a) - volgorde.indexOf(b))
-    .map(([afdeling, rs]) => ({ afdeling, regels: rs.sort((a, b) => a.naam.localeCompare(b.naam)) }));
+    .map(([afdeling, rs]) => ({ afdeling, regels: [...rs].sort(vergelijkRegels) }));
+}
+
+/** WEEK-181: alfabetisch op naam; bij gelijke naam eerst de oudste houdbaarheid (zonder datum achteraan), dan de eenheid. */
+export function vergelijkRegels(a: FrigoRegel, b: FrigoRegel): number {
+  const naam = a.naam.localeCompare(b.naam, 'nl', { sensitivity: 'base' });
+  if (naam) return naam;
+  if (a.houdbaarTot && b.houdbaarTot && a.houdbaarTot !== b.houdbaarTot) return a.houdbaarTot < b.houdbaarTot ? -1 : 1;
+  if (a.houdbaarTot && !b.houdbaarTot) return -1;
+  if (!a.houdbaarTot && b.houdbaarTot) return 1;
+  return (a.eenheid ?? '').localeCompare(b.eenheid ?? '');
 }
 
 /** Aantal verschillende producten in de frigo (zoals op het scherm). */
@@ -367,6 +378,47 @@ export function zetHoudbaarheid(frigo: readonly FrigoItem[], id: string, houdbaa
     if (f.id === id && houdbaarTot) kopie.houdbaarTot = houdbaarTot;
     return kopie;
   });
+}
+
+/** Grootste hoeveelheid die je voor een los product invult (WEEK-181): een getal boven dit is een invoerfout. */
+export const MAX_LOS_HOEVEELHEID = 9999;
+
+/** Wijziging van een los product in de popup (WEEK-181). Undefined betekent: leeg maken. */
+export type LosWijziging = {
+  hoeveelheid: number | undefined;
+  eenheid: string | undefined;
+  afdeling: Afdeling | 'overig';
+  houdbaarTot: string | undefined;
+};
+
+/**
+ * Past de wijziging toe op alle exemplaren van een regel (zelfde naam en eenheid).
+ * De hoeveelheid is het totaal van de regel en staat op het eerste exemplaar; de rest krijgt geen hoeveelheid.
+ */
+export function wijzigLos(frigo: readonly FrigoItem[], ids: readonly string[], w: LosWijziging): FrigoItem[] {
+  return frigo.map((f) => {
+    if (!ids.includes(f.id)) return f;
+    const kopie: FrigoItem = { ...f, afdeling: w.afdeling };
+    delete kopie.hoeveelheid;
+    delete kopie.eenheid;
+    delete kopie.houdbaarTot;
+    if (w.eenheid) kopie.eenheid = w.eenheid;
+    if (w.houdbaarTot) kopie.houdbaarTot = w.houdbaarTot;
+    if (f.id === ids[0] && w.hoeveelheid !== undefined) kopie.hoeveelheid = w.hoeveelheid;
+    return kopie;
+  });
+}
+
+export type LosInvoer = { hoeveelheid: number | undefined; houdbaarTot: string | undefined; fout?: 'hoeveelheid' | 'houdbaar' };
+
+/** Leest de velden van de popup (WEEK-181). Leeg is geldig en betekent "niet ingevuld". */
+export function leesLosInvoer(hoeveelheidTekst: string, houdbaarTekst: string): LosInvoer {
+  const h = leesHoeveelheid(hoeveelheidTekst);
+  if (hoeveelheidTekst.trim() && (h === undefined || h > MAX_LOS_HOEVEELHEID)) return { hoeveelheid: undefined, houdbaarTot: undefined, fout: 'hoeveelheid' };
+  if (!houdbaarTekst.trim()) return { hoeveelheid: h, houdbaarTot: undefined };
+  const iso = leesDatum(houdbaarTekst);
+  if (!iso) return { hoeveelheid: h, houdbaarTot: undefined, fout: 'houdbaar' };
+  return { hoeveelheid: h, houdbaarTot: iso };
 }
 
 /** Haalt producten handmatig uit de frigo (op, weggegooid…). */

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesProduct, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, zetHoudbaarheid } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesLosInvoer, leesProduct, MAX_LOS_HOEVEELHEID, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
 import type { Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
@@ -116,9 +116,9 @@ describe('frigoSecties', () => {
     { id: 'zelf:1', naam: 'Pasta', afdeling: 'droge-voeding', toegevoegdOp: later.toISOString() },
   ];
 
-  test('per afdeling in winkelvolgorde, "overig" achteraan', () => {
+  test('"overig" (nog niet ingedeeld) bovenaan, daarna de afdelingen in winkelvolgorde (WEEK-181)', () => {
     const secties = frigoSecties([...frigo, { id: 'zelf:2', naam: 'chips', afdeling: 'overig', toegevoegdOp: nu.toISOString() }]);
-    assert.deepEqual(secties.map((s) => s.afdeling), ['groenten-fruit', 'droge-voeding', 'overig']);
+    assert.deepEqual(secties.map((s) => s.afdeling), ['overig', 'groenten-fruit', 'droge-voeding']);
   });
 
   test('hetzelfde product met dezelfde eenheid samengeteld, met het oudste tijdstip', () => {
@@ -430,3 +430,67 @@ describe('houdbaarheid op de frigo (WEEK-20)', () => {
     assert.equal(regel.houdbaarTot, undefined);
   });
 });
+
+describe('los product bewerken (WEEK-181)', () => {
+  const nu = new Date('2026-11-02T10:00:00Z');
+  const basis: FrigoItem[] = [
+    { id: 'a', naam: 'Ui', afdeling: 'overig', toegevoegdOp: nu.toISOString(), bron: 'los', hoeveelheid: 2, eenheid: 'stuk' },
+    { id: 'b', naam: 'Ui', afdeling: 'overig', toegevoegdOp: nu.toISOString(), bron: 'los', eenheid: 'stuk' },
+    { id: 'c', naam: 'Melk', afdeling: 'overig', toegevoegdOp: nu.toISOString(), bron: 'los' },
+  ];
+
+  test('wijzigt afdeling, eenheid en houdbaarheid van alle exemplaren van de regel', () => {
+    const na = wijzigLos(basis, ['a', 'b'], { hoeveelheid: 5, eenheid: 'g', afdeling: 'zuivel-eieren', houdbaarTot: '2026-12-01' });
+    assert.deepEqual(na.map((f) => [f.id, f.afdeling, f.eenheid, f.houdbaarTot]), [
+      ['a', 'zuivel-eieren', 'g', '2026-12-01'],
+      ['b', 'zuivel-eieren', 'g', '2026-12-01'],
+      ['c', 'overig', undefined, undefined],
+    ]);
+  });
+
+  test('de hoeveelheid is het totaal van de regel: die staat op het eerste exemplaar', () => {
+    const na = wijzigLos(basis, ['a', 'b'], { hoeveelheid: 5, eenheid: 'stuk', afdeling: 'overig', houdbaarTot: undefined });
+    assert.equal(na[0].hoeveelheid, 5);
+    assert.equal(na[1].hoeveelheid, undefined);
+  });
+
+  test('leeg maken van hoeveelheid, eenheid en houdbaarheid', () => {
+    const na = wijzigLos(basis, ['a'], { hoeveelheid: undefined, eenheid: undefined, afdeling: 'overig', houdbaarTot: undefined });
+    assert.equal(na[0].hoeveelheid, undefined);
+    assert.equal(na[0].eenheid, undefined);
+    assert.equal(na[0].houdbaarTot, undefined);
+  });
+
+  test('de andere producten blijven ongewijzigd', () => {
+    const na = wijzigLos(basis, ['a'], { hoeveelheid: 1, eenheid: 'g', afdeling: 'overig', houdbaarTot: undefined });
+    assert.deepEqual(na[2], basis[2]);
+  });
+
+  test('de invoer: leeg is geldig, een echt getal en een echte datum worden gelezen', () => {
+    assert.deepEqual(leesLosInvoer('', ''), { hoeveelheid: undefined, houdbaarTot: undefined });
+    assert.deepEqual(leesLosInvoer('2,5', '10-12-2026'), { hoeveelheid: 2.5, houdbaarTot: '2026-12-10' });
+  });
+
+  test('een te grote of ongeldige hoeveelheid is een fout (de bug 211.000.100)', () => {
+    assert.equal(MAX_LOS_HOEVEELHEID, 9999);
+    assert.equal(leesLosInvoer('211000100', '').fout, 'hoeveelheid');
+    assert.equal(leesLosInvoer('abc', '').fout, 'hoeveelheid');
+    assert.equal(leesLosInvoer('0', '').fout, 'hoeveelheid');
+  });
+
+  test('een ongeldige datum is een fout; enkel een datum na het invullen is geldig', () => {
+    assert.equal(leesLosInvoer('', '31-02-2026').fout, 'houdbaar');
+    assert.equal(leesLosInvoer('', '2026-12-10').fout, 'houdbaar');
+  });
+
+  test('binnen een categorie alfabetisch, bij gelijke naam eerst de oudste houdbaarheid', () => {
+    const f: FrigoItem[] = [
+      { id: '1', naam: 'Yoghurt', afdeling: 'zuivel-eieren', toegevoegdOp: nu.toISOString(), bron: 'los' },
+      { id: '2', naam: 'Kaas', afdeling: 'zuivel-eieren', toegevoegdOp: nu.toISOString(), bron: 'los', houdbaarTot: '2026-12-20' },
+      { id: '3', naam: 'Kaas', afdeling: 'zuivel-eieren', toegevoegdOp: nu.toISOString(), bron: 'los', houdbaarTot: '2026-11-30', eenheid: 'g' },
+    ];
+    const [sectie] = frigoSecties(f);
+    assert.deepEqual(sectie.regels.map((r) => r.houdbaarTot ?? r.naam), ['2026-11-30', '2026-12-20', 'Yoghurt']);
+  });
+});
+

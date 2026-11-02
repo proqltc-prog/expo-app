@@ -2,10 +2,9 @@ import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, frigoSecties, leesHoeveelheid, verwijderUitFrigo, zetHoudbaarheid, ZELF_EENHEDEN } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, leesHoeveelheid, LosWijziging, verwijderUitFrigo, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
 import { houdbaarStatus, leesDatum } from '@/lib/houdbaarheid';
 import { beoordeel, Oordeel, Product } from '@/lib/openfoodfacts';
-import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
@@ -16,6 +15,7 @@ import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { eenheidVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
+import { LosBewerken } from '@/ui/losBewerken';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -74,12 +74,10 @@ export default function Frigo() {
   const [sheet, setSheet] = useState<'planner' | 'los'>('planner');
   const [zoek, setZoek] = useState('');
   const [nieuw, setNieuw] = useState('');
-  const [details, setDetails] = useState(false);
-  const [hoeveelheid, setHoeveelheid] = useState('');
   // Hoeveelheid voor een product uit de zoekfunctie van de planner-frigo (WEEK-160).
   const [zoekHoeveelheid, setZoekHoeveelheid] = useState('');
-  const [eenheid, setEenheid] = useState<(typeof ZELF_EENHEDEN)[number]>('g');
-  const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>('overig');
+  // Het los product dat in de popup bewerkt wordt (WEEK-181); null = popup dicht.
+  const [bewerk, setBewerk] = useState<FrigoRegel | null>(null);
   // Welk product de details open heeft staan (WEEK-49); één tegelijk.
   const [open, setOpen] = useState<string | null>(null);
   // Welke afdelingen open staan (WEEK-124); standaard is alles ingeklapt.
@@ -112,9 +110,16 @@ export default function Frigo() {
     const naam = nieuw.trim();
     if (!naam) return;
     setNieuw('');
-    const extra = details ? { hoeveelheid: leesHoeveelheid(hoeveelheid), eenheid, afdeling } : {};
-    setHoeveelheid('');
-    setFrigo(await wijzigFrigo((f) => voegLosToe(f, naam, new Date(), extra)));
+    // WEEK-181: enkel de naam; het product komt onder "Overig" en wordt via het potloodje ingedeeld.
+    setFrigo(await wijzigFrigo((f) => voegLosToe(f, naam, new Date())));
+  };
+
+  // Bewaren uit de popup (WEEK-181): wijzigt alle exemplaren van het product.
+  const bewaarLos = async (w: LosWijziging) => {
+    if (!bewerk) return;
+    const ids = bewerk.ids;
+    setBewerk(null);
+    setFrigo(await wijzigFrigo((f) => wijzigLos(f, ids, w)));
   };
 
   // Uit de catalogus: telt mee bij het weekmenu. Staat het er al in, dan gebeurt er niets.
@@ -192,7 +197,6 @@ export default function Frigo() {
         </>
       ) : (
         <>
-          <Text style={s.uitleg}>{t('frigo.losUitleg')}</Text>
           <View style={s.invoer}>
             <TextInput
               style={s.veld}
@@ -216,35 +220,6 @@ export default function Frigo() {
               <Ionicons name="camera-outline" size={22} color={thema.accent} />
             </Pressable>
           </View>
-          <Pressable onPress={() => setDetails((d) => !d)} accessibilityRole="button" accessibilityState={{ expanded: details }}>
-            <Text style={[s.detailsLink, { color: thema.accent }]}>{t('frigo.details')} {details ? '▴' : '▾'}</Text>
-          </Pressable>
-          {details && (
-            <View style={s.details}>
-              {sheet === 'los' && <Text style={s.losUitleg}>{t('frigo.losHoeveelheid')}</Text>}
-              <View style={s.rij}>
-                <TextInput
-                  style={[s.veld, s.getal]}
-                  placeholder={t('frigo.hoeveelheid')}
-                  value={hoeveelheid}
-                  onChangeText={setHoeveelheid}
-                  keyboardType="decimal-pad"
-                />
-                {ZELF_EENHEDEN.map((e) => (
-                  <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityState={{ selected: eenheid === e }}>
-                    <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
-                  </Pressable>
-                ))}
-              </View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rij}>
-                {[...AFDELINGEN, 'overig' as const].map((a) => (
-                  <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityState={{ selected: afdeling === a }}>
-                    <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </View>
-          )}
         </>
       )}
       <Text style={s.teller}>{aantal ? tn('frigo.teller', aantal) : t('frigo.leeg')}</Text>
@@ -254,6 +229,7 @@ export default function Frigo() {
   return (
     <View style={s.scherm}>
       {popup}
+      <LosBewerken regel={bewerk} onSluit={() => setBewerk(null)} onBewaar={bewaarLos} />
       {/* Tabbladen bovenaan: altijd zichtbaar, ook als de lijst scrolt. */}
       {/* Schakelaar met een verhoogd actief vlak; de kleurstreep eronder hoort bij de actieve sheet (WEEK-75). */}
       {/* Subtiele paginatitel boven de sheets (WEEK-96). */}
@@ -311,6 +287,17 @@ export default function Frigo() {
                   })()}
                 </View>
                 {item.hoeveelheid ? <Text style={s.hoeveelheid}>{hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}</Text> : null}
+                {sheet === 'los' && (
+                  <Pressable
+                    style={s.potlood}
+                    onPress={() => setBewerk(item)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('frigo.bewerkNaam', { naam: item.naam })}
+                    hitSlop={8}
+                  >
+                    <Ionicons name="create-outline" size={18} color={ORANJE} />
+                  </Pressable>
+                )}
                 <Pressable
                   style={s.weg}
                   onPress={() => verwijder(item.ids)}
@@ -322,6 +309,8 @@ export default function Frigo() {
                 </Pressable>
               </View>
               {/* Houdbaarheid (WEEK-20): een echte datum invullen of van de verpakking overnemen; geen schatting. */}
+              {/* WEEK-181: bij losse producten wijzig je houdbaarheid via het potloodje, dus hier enkel bij de planner-frigo. */}
+              {sheet === 'planner' && (<>
               <Pressable
                 onPress={() => {
                   setHoudbaarFout(false);
@@ -361,6 +350,7 @@ export default function Frigo() {
                   {houdbaarFout && <Text style={s.fout}>{t('frigo.houdbaarFout')}</Text>}
                 </View>
               )}
+              </>)}
               {/* Details (WEEK-49): openen als het product gescand is, anders scannen om ze toe te voegen. */}
               {item.product ? (
                 <Pressable onPress={() => setOpen(toon ? null : item.sleutel)} accessibilityRole="button" accessibilityState={{ expanded: toon }}>
@@ -387,9 +377,6 @@ const s = StyleSheet.create({
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
   scan: { width: 44, height: 44, flexShrink: 0, borderRadius: 10, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   teller: { color: MUTED, marginVertical: 10, fontWeight: '600' },
-  detailsLink: { color: KLEUR, fontWeight: '600', marginTop: 8 },
-  losUitleg: { color: MUTED, fontSize: 13 },
-  details: { gap: 8, marginTop: 8 },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   getal: { flex: 0, width: 110 },
   chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: '#fff' },
@@ -404,6 +391,7 @@ const s = StyleSheet.create({
   naam: { fontSize: 16, fontWeight: '600', color: INKT },
   sinds: { fontSize: 12, color: MUTED, marginTop: 2 },
   hoeveelheid: { fontSize: 14, color: '#777' },
+  potlood: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: ORANJE_ZACHT },
   weg: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f1f1' },
   wegTekst: { fontSize: 18, color: '#888', fontWeight: '700', lineHeight: 20 },
   rijLink: { color: KLEUR, fontWeight: '600', fontSize: 13, marginBottom: 6 },
