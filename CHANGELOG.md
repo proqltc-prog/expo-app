@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.102.1] – 2026-11-02
+
+**Jira:** [WEEK-183](https://proqltc-1791495894841.atlassian.net/browse/WEEK-183) · **Confluence:** [WEEK-183 Lijst: recepten en losse producten gescheiden, toevoegen raakt de frigo niet](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18415621)
+
+- Recepten en losse producten staan op de lijst strikt gescheiden; ze worden niet meer door elkaar getoond.
+- Een product toevoegen op de lijst zet het niet meer meteen in de frigo. Pas na afvinken op de lijst komt het in de frigo, in het juiste tabblad.
+- De iconen potlood en kruisje staan dichter bij elkaar, zodat de productnaam beter past.
+
 ## [0.102.0] – 2026-11-02
 
 **Jira:** [WEEK-182](https://proqltc-1791495894841.atlassian.net/browse/WEEK-182) · **Confluence:** [WEEK-182 Lijst en frigo: tabbladen, zoeken en popup gelijkgetrokken](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18645015)

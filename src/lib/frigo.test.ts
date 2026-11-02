@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalProducten, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesLosInvoer, leesProduct, MAX_LOS_HOEVEELHEID, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
+import { aantalProducten, frigoItemUitLijst, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesLosInvoer, leesProduct, MAX_LOS_HOEVEELHEID, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
 import type { Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
@@ -494,3 +494,18 @@ describe('los product bewerken (WEEK-181)', () => {
   });
 });
 
+describe('lijst naar frigo bij afvinken (WEEK-182)', () => {
+  const nu = new Date('2026-11-02T10:00:00Z');
+  test('een afgevinkt recept-ingrediënt komt in de planner-frigo', () => {
+    const f = frigoItemUitLijst({ id: 'r1', naam: 'Ui', categorie: 'avondeten', afgevinkt: true, code: 'ui', recept: { dag: 'maandag', naam: 'Pasta' } }, nu);
+    assert.equal(f.bron, 'planner');
+  });
+  test('een afgevinkt los product komt in de losse producten, niet in de planner-frigo', () => {
+    const f = frigoItemUitLijst({ id: 'l1', naam: 'Chips', categorie: 'extra', afgevinkt: true }, nu);
+    assert.equal(f.bron, 'los');
+  });
+  test('een databankproduct zonder recept (uit Recepten gekozen) komt in de planner-frigo', () => {
+    const f = frigoItemUitLijst({ id: 'e1', naam: 'Melk', categorie: 'extra', afgevinkt: true, code: 'melk', eenheid: 'ml' }, nu);
+    assert.equal(f.bron, 'planner');
+  });
+});

@@ -80,7 +80,8 @@ export function frigoItemUitLijst(item: LijstItem, nu: Date): FrigoItem {
     afdeling: isAfdeling(afdeling) ? afdeling : 'overig',
     toegevoegdOp: nu.toISOString(),
     lijstId: item.id,
-    bron: 'planner',
+    // Recepten van de lijst horen bij de planner-frigo; losse producten bij de losse producten (WEEK-182).
+    bron: item.recept || item.code ? 'planner' : 'los',
     ...(item.code ? { code: item.code } : {}),
   };
 }
