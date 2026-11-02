@@ -296,7 +296,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
               </Pressable>
             </View>
             {uitlegOpen && (
-              <View style={s.uitleg}>
+              <View style={s.gezinsUitleg}>
                 <Text style={s.uitlegTekst}>{t('gezin.infoTekst', { link: APP_LINK })}</Text>
                 <Pressable onPress={() => Linking.openURL(APP_LINK)} accessibilityRole="link" style={s.uitlegKnop}>
                   <Text style={s.knopKleinTekst}>{t('gezin.openApp')}</Text>
@@ -376,7 +376,7 @@ const s = StyleSheet.create({
   status: { color: KLEUR, fontSize: 13 },
   statusOffline: { color: '#7a5b00' },
   label: { color: '#777', fontSize: 13, fontWeight: '600' },
-  uitleg: { borderWidth: 1, borderColor: KLEUR, borderRadius: 10, padding: 12, gap: 10 },
+  gezinsUitleg: { borderWidth: 1, borderColor: KLEUR, borderRadius: 10, padding: 12, gap: 10 },
   uitlegTekst: { color: '#1d2420', fontSize: 14, lineHeight: 20 },
   uitlegKnop: { alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   code: { flex: 1, fontSize: 26, fontWeight: '700', letterSpacing: 4, color: '#1f5c3a' },
