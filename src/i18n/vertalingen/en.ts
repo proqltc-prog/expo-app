@@ -107,6 +107,7 @@ export const en: Vertalingen = {
   'frigo.houdbaarFout': 'Invalid date. Use dd-mm-yyyy.',
   'frigo.bewerkNaam': 'Edit {naam}',
   'frigo.bewerkKop': 'Edit product',
+  'frigo.toevoegenKop': 'Add product',
   'frigo.bewerkEenheid': 'Unit',
   'frigo.bewerkCategorie': 'Category',
   'frigo.bewerkHoudbaar': 'Best before (optional)',
@@ -194,6 +195,7 @@ export const en: Vertalingen = {
 
   'lijst.toevoegen': 'Add something…',
   'lijst.scanProduct': 'Scan this product',
+  'lijst.verwijderNaam': 'Remove {naam} from the list',
   'lijst.teller': '{open} of {totaal} still to buy',
   'lijst.leeg': 'Still empty — create a list from the weekly menu.',
   'lijst.wissen': 'Clear checked items',
