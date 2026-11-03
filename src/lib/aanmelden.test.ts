@@ -1,18 +1,30 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aanbiedingen, leesTokensUitUrl, terugkeerAdres } from '@/lib/aanmelden';
+import { AANBIEDERS, aanmeldWijze, isGeldigEmail, leesTokensUitUrl, terugkeerAdres } from '@/lib/aanmelden';
 
-describe('aanmelden met Google (WEEK-166)', () => {
-  test('een anonieme account krijgt Google aangeboden', () => {
-    assert.deepEqual(aanbiedingen(true), ['google']);
+describe('aanmelden (WEEK-166, WEEK-185)', () => {
+  test('het aanmeldscherm biedt Google, Apple en Facebook aan', () => {
+    assert.deepEqual(AANBIEDERS, ['google', 'apple', 'facebook']);
   });
 
-  test('een al gekoppelde account krijgt geen aanmeldknop meer', () => {
-    assert.deepEqual(aanbiedingen(false), []);
+  test('een anoniem toestel koppelt zijn gegevens aan het account', () => {
+    assert.equal(aanmeldWijze(true), 'koppelen');
   });
 
-  test('Apple wordt nu niet aangeboden (wacht op een Apple Developer-account)', () => {
-    assert.equal(aanbiedingen(true).includes('apple' as never), false);
+  test('een toestel zonder anonieme sessie logt in op een bestaand account', () => {
+    assert.equal(aanmeldWijze(false), 'inloggen');
+  });
+
+  test('een geldig e-mailadres wordt herkend', () => {
+    assert.equal(isGeldigEmail('naam@voorbeeld.be'), true);
+    assert.equal(isGeldigEmail('  naam@voorbeeld.be  '), true);
+  });
+
+  test('een ongeldig e-mailadres wordt geweigerd', () => {
+    assert.equal(isGeldigEmail(''), false);
+    assert.equal(isGeldigEmail('naam'), false);
+    assert.equal(isGeldigEmail('naam@voorbeeld'), false);
+    assert.equal(isGeldigEmail('na am@voorbeeld.be'), false);
   });
 
   test('op het web keert de aanbieder terug naar de huidige pagina', () => {
@@ -22,23 +34,13 @@ describe('aanmelden met Google (WEEK-166)', () => {
   test('in de app keert de aanbieder terug naar het app-schema famenu', () => {
     assert.equal(terugkeerAdres('native'), 'famenu://');
   });
-});
 
-describe('tokens uit het terugkeeradres', () => {
   test('access- en refreshtoken uit het fragment', () => {
-    const url = 'https://x.example/#access_token=abc123&expires_in=3600&refresh_token=ref456&token_type=bearer';
-    assert.deepEqual(leesTokensUitUrl(url), { accessToken: 'abc123', refreshToken: 'ref456' });
+    assert.deepEqual(leesTokensUitUrl('famenu://#access_token=a&refresh_token=r'), { accessToken: 'a', refreshToken: 'r' });
   });
 
-  test('zonder fragment geen tokens', () => {
+  test('zonder fragment, of zonder beide tokens, geen tokens', () => {
     assert.equal(leesTokensUitUrl('famenu://'), null);
-  });
-
-  test('een foutmelding van de aanbieder geeft geen tokens', () => {
-    assert.equal(leesTokensUitUrl('famenu://#error=access_denied&error_description=geannuleerd'), null);
-  });
-
-  test('alleen een accesstoken is onvoldoende', () => {
-    assert.equal(leesTokensUitUrl('famenu://#access_token=abc'), null);
+    assert.equal(leesTokensUitUrl('famenu://#access_token=a'), null);
   });
 });

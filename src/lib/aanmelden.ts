@@ -1,12 +1,23 @@
-// Aanmelden met Google of Apple door de anonieme account te koppelen (WEEK-166).
-// Pure logica, zonder React Native of Supabase-imports, zodat ze testbaar is.
+// Aanmelden met Google, Apple, Facebook of e-mail (WEEK-166, WEEK-185). Pure logica, zonder React Native of Supabase-imports.
 
-/** De aanbieders die nu aangeboden worden. Apple volgt helemaal aan het einde (vereist een Apple Developer-account). */
-export type Aanbieder = 'google';
+/** De aanbieders die op het aanmeldscherm staan. Apple en Facebook werken pas als de aanbieder in de backend aanstaat. */
+export type Aanbieder = 'google' | 'apple' | 'facebook';
 
-/** Welke aanmeldknoppen getoond worden: enkel een anonieme account kan gekoppeld worden. */
-export function aanbiedingen(anoniem: boolean): Aanbieder[] {
-  return anoniem ? ['google'] : [];
+export const AANBIEDERS: readonly Aanbieder[] = ['google', 'apple', 'facebook'];
+
+/**
+ * Een anoniem toestel koppelt zijn gegevens aan het nieuwe account, zodat ze bewaard blijven.
+ * Een toestel zonder anonieme sessie logt in op een bestaand account.
+ */
+export type AanmeldWijze = 'koppelen' | 'inloggen';
+
+export function aanmeldWijze(anoniem: boolean): AanmeldWijze {
+  return anoniem ? 'koppelen' : 'inloggen';
+}
+
+/** Een eenvoudige controle op een e-mailadres: één @ en een domein met een punt. */
+export function isGeldigEmail(adres: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adres.trim());
 }
 
 /** Het adres waarnaar de aanbieder terugkeert: op het web de huidige pagina, in de app het app-schema. */

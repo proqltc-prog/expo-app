@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { getLocales } from 'expo-localization';
-import { kiesTaal, MeervoudSleutel, Parameters, Sleutel, Taal, vertaal, vertaalAantal } from '@/i18n';
+import { MeervoudSleutel, Parameters, Sleutel, Taal, vertaal, vertaalAantal } from '@/i18n';
+import { startTaal } from '@/lib/startTaal';
 import { laadTaal, zetTaal } from '@/opslag/taal';
 
 type TaalContext = {
@@ -35,7 +36,8 @@ export function TaalProvider({ children }: { children: ReactNode }) {
     zetTaal(nieuw);
   }, []);
 
-  const taal = useMemo(() => kiesTaal(toesteltalen(), voorkeur), [voorkeur]);
+  // WEEK-185: zonder eigen keuze volgt de taal het toestel: nl en fr blijven, al het andere wordt Engels.
+  const taal = useMemo(() => voorkeur ?? startTaal(toesteltalen()), [voorkeur]);
   const t = useCallback((sleutel: Sleutel, params?: Parameters) => vertaal(taal, sleutel, params), [taal]);
   const tn = useCallback(
     (basis: MeervoudSleutel, n: number, params?: Parameters) => vertaalAantal(taal, basis, n, params),
