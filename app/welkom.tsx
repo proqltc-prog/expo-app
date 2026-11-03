@@ -34,7 +34,7 @@ export default function Welkom() {
   const [mailFout, setMailFout] = useState(false);
   const [mailVerzonden, setMailVerzonden] = useState(false);
 
-  // Eerst markeren: bij de terugkeer van een aanbieder mag het startscherm niet opnieuw verschijnen.
+  // Eenmaal het startscherm verlaten telt als gezien: het komt niet meer terug, ook als de app daarna dicht gaat.
   const klaar = () => zetWelkomGezien();
 
   const metAanbieder = async (aanbieder: Aanbieder) => {
@@ -106,10 +106,10 @@ export default function Welkom() {
           </View>
         </View>
         <View style={s.onderaan}>
-          <Pressable style={s.knop} onPress={() => setStap('uitleg')} accessibilityRole="button">
+          <Pressable style={s.knop} onPress={() => { void klaar(); setStap('uitleg'); }} accessibilityRole="button">
             <Text style={s.knopTekst}>{t('welkom.getStarted')}</Text>
           </Pressable>
-          <Pressable style={s.knopZacht} onPress={() => setStap('aanmelden')} accessibilityRole="button">
+          <Pressable style={s.knopZacht} onPress={() => { void klaar(); setStap('aanmelden'); }} accessibilityRole="button">
             <Text style={s.knopZachtTekst}>{t('welkom.login')}</Text>
           </Pressable>
         </View>
