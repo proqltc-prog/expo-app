@@ -11,22 +11,58 @@ export async function isAnoniem(): Promise<boolean> {
   return data.session?.user?.is_anonymous === true;
 }
 
+function terugkeer(): { web: boolean; redirectTo: string } {
+  const web = Platform.OS === 'web';
+  const pagina = (globalThis as { location?: { origin: string; pathname: string } }).location;
+  return { web, redirectTo: terugkeerAdres(web ? 'web' : 'native', pagina?.origin, pagina?.pathname) };
+}
+
+async function openAanbieder(data: { url?: string } | null | undefined, web: boolean): Promise<void> {
+  // In de app opent de aanbieder in de browser; op het web gaat de pagina zelf naar de aanbieder.
+  if (!web && data?.url) await Linking.openURL(data.url);
+}
+
 /** Koppelt de huidige anonieme account aan de aanbieder. Dezelfde gebruiker blijft behouden, dus de gezinsdata ook. */
 export async function koppel(aanbieder: Aanbieder): Promise<void> {
   const sb = supabase();
   if (!sb) throw new Error('geen_backend');
-  const web = Platform.OS === 'web';
-  const pagina = (globalThis as { location?: { origin: string; pathname: string } }).location;
+  const { web, redirectTo } = terugkeer();
   const { data, error } = await sb.auth.linkIdentity({
     provider: aanbieder,
-    options: {
-      redirectTo: terugkeerAdres(web ? 'web' : 'native', pagina?.origin, pagina?.pathname),
-      skipBrowserRedirect: !web,
-    },
+    options: { redirectTo, skipBrowserRedirect: !web },
   });
   if (error) throw error;
-  // In de app opent de aanbieder in de browser; op het web gaat de pagina zelf naar de aanbieder.
-  if (!web && data?.url) await Linking.openURL(data.url);
+  await openAanbieder(data, web);
+}
+
+/** Meldt aan bij een bestaand account via de aanbieder (WEEK-185). */
+export async function inlogMet(aanbieder: Aanbieder): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('geen_backend');
+  const { web, redirectTo } = terugkeer();
+  const { data, error } = await sb.auth.signInWithOAuth({
+    provider: aanbieder,
+    options: { redirectTo, skipBrowserRedirect: !web },
+  });
+  if (error) throw error;
+  await openAanbieder(data, web);
+}
+
+/**
+ * Aanmelden met e-mail (WEEK-185): een anoniem toestel koppelt het adres aan zijn account,
+ * anders krijgt de gebruiker een link om in te loggen. Geen wachtwoord nodig.
+ */
+export async function stuurAanmeldMail(email: string, anoniem: boolean): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('geen_backend');
+  const { redirectTo } = terugkeer();
+  if (anoniem) {
+    const { error } = await sb.auth.updateUser({ email });
+    if (error) throw error;
+    return;
+  }
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
+  if (error) throw error;
 }
 
 /** Verwerkt een terugkeeradres van de aanbieder: zet de sessie met de nieuwe tokens. Geeft true bij succes. */
