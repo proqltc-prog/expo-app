@@ -89,3 +89,10 @@ describe('googleZoekUrl (WEEK-175)', () => {
     assert.match(googleZoekUrl('bakker', '2000', ''), /bakker%202000%20Belgi/);
   });
 });
+
+describe('googleZoekUrl supermarkt (WEEK-187)', () => {
+  test('de zoekterm noemt levensmiddelen, zodat Google geen garages toont', () => {
+    const url = googleZoekUrl('supermarkt', '1760', 'Roosdaal');
+    assert.match(url, /supermarkt%20levensmiddelen%201760%20Roosdaal%20Belgi/);
+  });
+});

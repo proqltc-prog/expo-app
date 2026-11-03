@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bouwQuery, bouwStraalQuery, foutReden, leesWinkels, overpassFout, WINKEL_TAGS, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, OVERPASS_SERVER_TIMEOUT_S, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
+import { bouwQuery, bouwStraalQuery, foutReden, isVoedingswinkel, leesWinkels, overpassFout, WINKEL_TAGS, rangschik, schoonGemeente, MAX_STRAAL_METERS, MAX_WINKELS, OVERPASS_SERVER_TIMEOUT_S, OVERPASS_TIMEOUT_MS, Winkel } from '@/lib/winkels';
 
 describe('winkels in de buurt: query (WEEK-53)', () => {
   test('geldige Belgische postcode geeft een query op postcode en op gemeente', () => {
@@ -178,5 +178,43 @@ describe('winkeltypes in de zoekopdracht (WEEK-152)', () => {
     const q = bouwStraalQuery({ lat: 50.9, lon: 4.2 });
     for (const tag of ['supermarket', 'butcher', 'bakery', 'greengrocer']) assert.ok(q.includes(tag), `mist ${tag}`);
     assert.deepEqual(Object.keys(WINKEL_TAGS).sort(), ['bakery', 'butcher', 'greengrocer', 'supermarket']);
+  });
+});
+
+describe('isVoedingswinkel (WEEK-187)', () => {
+  test('een supermarkt, slager of bakker blijft staan', () => {
+    assert.equal(isVoedingswinkel('Colruyt', { shop: 'supermarket' }), true);
+    assert.equal(isVoedingswinkel('Slagerij Peeters', { shop: 'butcher' }), true);
+  });
+
+  test('een tankstation of wasstraat met een amenity-tag wordt eruit gehaald', () => {
+    assert.equal(isVoedingswinkel('Carrefour Express', { shop: 'supermarket', amenity: 'fuel' }), false);
+    assert.equal(isVoedingswinkel('Wasstraat', { shop: 'supermarket', amenity: 'car_wash' }), false);
+  });
+
+  test('een naam van een garage of elektrozaak wordt eruit gehaald', () => {
+    assert.equal(isVoedingswinkel('Garage Janssens', { shop: 'supermarket' }), false);
+    assert.equal(isVoedingswinkel('Elektro Dewaele', { shop: 'supermarket' }), false);
+    assert.equal(isVoedingswinkel('MediaMarkt', { shop: 'supermarket' }), false);
+    assert.equal(isVoedingswinkel('Auto Center', { shop: 'supermarket' }), false);
+  });
+
+  test('een naam die alleen toevallig op een woord lijkt, blijft staan', () => {
+    assert.equal(isVoedingswinkel('Totaal Groenten', { shop: 'greengrocer' }), true);
+    assert.equal(isVoedingswinkel('Delhaize', { shop: 'supermarket' }), true);
+  });
+});
+
+describe('leesWinkels filtert garages en elektrozaken (WEEK-187)', () => {
+  test('een garage met een supermarkt-tag komt niet in de lijst', () => {
+    const antwoord = {
+      elements: [
+        { type: 'node', id: 1, lat: 50.8, lon: 4.1, tags: { shop: 'supermarket', name: 'Colruyt', 'addr:postcode': '1760', 'addr:city': 'Roosdaal' } },
+        { type: 'node', id: 2, lat: 50.8, lon: 4.1, tags: { shop: 'supermarket', name: 'Garage Janssens', 'addr:postcode': '1760', 'addr:city': 'Roosdaal' } },
+        { type: 'node', id: 3, lat: 50.8, lon: 4.1, tags: { shop: 'supermarket', amenity: 'fuel', name: 'Q8', 'addr:postcode': '1760', 'addr:city': 'Roosdaal' } },
+      ],
+    };
+    const namen = leesWinkels(antwoord, '1760').map((w) => w.naam);
+    assert.deepEqual(namen, ['Colruyt']);
   });
 });

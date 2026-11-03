@@ -87,6 +87,24 @@ export function overpassFout(ruw: unknown): string | undefined {
   return undefined;
 }
 
+/**
+ * Namen die op een garage, tankstation, wasstraat of elektrozaak wijzen (WEEK-187).
+ * OpenStreetMap heeft soms een tankstation of garage met shop=supermarket getagd; daarom ook op de naam controleren.
+ */
+const GEEN_VOEDING_NAAM = /garage|car ?wash|wasstraat|tankstation|\btank|elektro|electro|media ?markt|fnac|auto|motor|banden|pneu|\besso\b|\bq8\b|\bvulcan\b/i;
+
+/** Heeft een element de tags van een garage, tankstation of wasstraat? */
+const GEEN_VOEDING_TAGS = ['amenity', 'automotive', 'service:vehicle', 'craft'];
+
+/**
+ * Is dit element een winkel met voeding? Garages, tankstations, wasstraten en elektrozaken worden eruit gehaald (WEEK-187).
+ */
+export function isVoedingswinkel(naam: string, tags: Record<string, unknown>): boolean {
+  if (GEEN_VOEDING_TAGS.some((sleutel) => typeof tags[sleutel] === 'string' && tags[sleutel] !== '')) return false;
+  if (GEEN_VOEDING_NAAM.test(naam)) return false;
+  return true;
+}
+
 export function leesWinkels(ruw: unknown, postcode: string): Winkel[] {
   if (!ruw || typeof ruw !== 'object') return [];
   const elementen = (ruw as { elements?: unknown }).elements;
@@ -101,6 +119,7 @@ export function leesWinkels(ruw: unknown, postcode: string): Winkel[] {
     const naam = typeof tags.name === 'string' ? tags.name.trim() : '';
     const soort = typeof tags.shop === 'string' ? WINKEL_TAGS[tags.shop] : undefined;
     if (!naam || !soort) continue;
+    if (!isVoedingswinkel(naam, tags)) continue;
     const postcodeTag = typeof tags['addr:postcode'] === 'string' ? tags['addr:postcode'].trim() : '';
     const stad = typeof tags['addr:city'] === 'string' ? tags['addr:city'].trim() : '';
     const sleutel = `${naam.toLowerCase()}|${postcodeTag}`;
