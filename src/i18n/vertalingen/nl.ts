@@ -155,6 +155,8 @@ export const nl = {
   'recept.eenheid.teentje': 'teentje',
   'recept.niet': 'Recept niet gevonden.',
   'planning.zelfKiezen': 'Zelf kiezen',
+  'planning.allesGezienTitel': 'Geen nieuw gerecht meer',
+  'planning.allesGezienTekst': 'Je hebt alle recepten voor deze week al gezien. Kies zelf een gerecht voor deze dag.',
   'planning.verwijderen': 'Verwijderen',
   'planning.verwijderVraag': 'Dit gerecht uit het weekmenu halen?',
   'planning.verwijderdVanLijst': '{n} ingrediënten ook van de boodschappenlijst gehaald.',

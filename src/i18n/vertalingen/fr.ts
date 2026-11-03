@@ -154,6 +154,8 @@ export const fr: Vertalingen = {
   'recept.eenheid.teentje': 'gousse',
   'recept.niet': 'Recette introuvable.',
   'planning.zelfKiezen': 'Choisir moi-même',
+  'planning.allesGezienTitel': 'Plus de nouveau plat',
+  'planning.allesGezienTekst': 'Vous avez déjà vu toutes les recettes pour cette semaine. Choisissez vous-même un plat pour ce jour.',
   'planning.verwijderen': 'Supprimer',
   'planning.verwijderVraag': 'Retirer ce plat du menu de la semaine ?',
   'planning.verwijderdVanLijst': '{n} ingrédients retirés aussi de la liste de courses.',

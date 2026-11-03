@@ -200,3 +200,14 @@ describe('planUitDatabase: aanvullen kiest korte recepten (WEEK-122)', () => {
     assert.equal(uit.versoepeld, undefined);
   });
 });
+
+describe('vervangDbDag met afgewezen recepten (WEEK-184)', () => {
+  test('een eerder vervangen recept komt niet terug, ook niet op een andere dag', () => {
+    const p = pool(dbRecept(1), dbRecept(2), dbRecept(3), dbRecept(4));
+    for (let seed = 1; seed <= 20; seed++) {
+      const origineel = { ...plan(p, { aantalDagen: 2, seed })!, afgewezen: ['db-3', 'db-4'] };
+      const nieuw = vervangDbDag(origineel, 0, p, seed);
+      assert.ok(!['db-3', 'db-4'].includes(nieuw.dagen[0].recept.id), `seed ${seed}`);
+    }
+  });
+});

@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.103.0] – 2026-11-03
+
+**Jira:** [WEEK-184](https://proqltc-1791495894841.atlassian.net/browse/WEEK-184) · **Confluence:** [WEEK-184 Weekplanner: vervangen recept komt de week niet meer terug](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19136513)
+
+- Een recept dat bij een reset vervangen wordt, komt de rest van de week niet meer terug, ook niet op andere dagen.
+- Is er geen recept meer over, dan krijg je de melding om zelf een gerecht te kiezen.
+- Een nieuw weekmenu begint met een lege lijst van vervangen recepten.
+
 ## [0.102.1] – 2026-11-02
 
 **Jira:** [WEEK-183](https://proqltc-1791495894841.atlassian.net/browse/WEEK-183) · **Confluence:** [WEEK-183 Lijst: recepten en losse producten gescheiden, toevoegen raakt de frigo niet](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/18415621)

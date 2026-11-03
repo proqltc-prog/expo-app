@@ -90,3 +90,33 @@ describe('resetDagLokaal', () => {
   });
 });
 
+
+describe('afgewezen recepten bij reset (WEEK-184)', () => {
+  test('een eerder vervangen recept komt de rest van de week op geen enkele dag meer terug', () => {
+    let huidig = plan();
+    const afgewezen = new Set<string>();
+    for (let stap = 0; stap < 12; stap++) {
+      const index = stap % 7;
+      const oud = huidig.dagen[index].recept.id;
+      afgewezen.add(oud);
+      huidig = { ...huidig, afgewezen: [...afgezenLijst(huidig), oud] };
+      const na = resetDagLokaal(huidig, index, 1000 + stap);
+      if (na === huidig) break;
+      huidig = na;
+      for (const id of afgewezen) {
+        assert.ok(!ids(huidig).includes(id), `stap ${stap}: ${id} kwam terug`);
+      }
+    }
+  });
+
+  test('een recept dat al in de afgewezen lijst staat, wordt nooit gekozen', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const basis = plan();
+      const verboden = RECEPTENBANK.slice(0, 10).map((r) => r.id);
+      const na = kiesVervanging({ ...basis, afgewezen: verboden }, seed % 7, seed);
+      if (na) assert.ok(!verboden.includes(na.id), `seed ${seed}`);
+    }
+  });
+});
+
+const afgezenLijst = (p: Weekplan): string[] => p.afgewezen ?? [];

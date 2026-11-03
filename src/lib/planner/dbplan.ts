@@ -2,6 +2,7 @@
 // Zelfde regels als de lokale planner: momenten, kooktijd en stijl eerst, geen herhaling als dat kan,
 // en stap voor stap versoepelen als er te weinig recepten zijn. Pure logica, zonder netwerk.
 import type { Moment, StijlCode } from '@/data/receptenbank';
+import { isAfgewezen } from './afwijzen';
 import type { Seizoen } from '@/data/seizoenen';
 import type { Taal } from '@/i18n';
 import type { Gezin } from '@/lib/schaal';
@@ -154,7 +155,8 @@ export function vervangDbDag(plan: Weekplan, index: number, pool: DbPoolRecept[]
   if (!doel) return plan;
   const gebruikt = new Set(plan.dagen.map((d) => d.recept.id));
   // WEEK-170: het huidige recept wordt nooit teruggegeven; anders doet de pijl niets als de pool klein is.
-  const kandidaten = zonderVermeden(pool, plan.vermijd).filter((k) => k.recept.id !== doel.recept.id);
+  // WEEK-184: een eerder vervangen recept komt in deze week nergens meer terug.
+  const kandidaten = zonderVermeden(pool, plan.vermijd).filter((k) => k.recept.id !== doel.recept.id && !isAfgewezen(plan, k.recept.id));
   const keuze = kiesVoorSeizoen(
     kandidaten,
     doel.moment ?? 'avond',

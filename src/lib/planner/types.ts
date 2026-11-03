@@ -102,4 +102,6 @@ export type Weekplan = {
   herhaald?: boolean;
   /** Random uit favorieten: minder dagen dan gevraagd, omdat er niet genoeg passende favorieten waren. */
   kort?: boolean;
+  /** Ids van de recepten die bij een reset vervangen zijn; die komen de rest van de week niet meer terug (WEEK-184). */
+  afgewezen?: string[];
 };

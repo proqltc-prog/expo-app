@@ -100,8 +100,14 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
     ...(ruw.herhaald === true ? { herhaald: true } : {}),
     ...(ruw.kort === true ? { kort: true } : {}),
+    ...(normaliseerAfgewezen(ruw.afgewezen).length ? { afgewezen: normaliseerAfgewezen(ruw.afgewezen) } : {}),
     ...(tekst(ruw.beheerder) ? { beheerder: tekst(ruw.beheerder) } : {}),
   };
+}
+
+/** Leest de afgewezen recept-ids van een plan veilig in (WEEK-184); onbruikbare waarden vallen weg. */
+function normaliseerAfgewezen(ruw: unknown): string[] {
+  return Array.isArray(ruw) ? ruw.filter((x): x is string => typeof x === 'string' && x.length > 0) : [];
 }
 
 /** Leest bewaarde keuzes voor kooktijd en stijl veilig in. */
