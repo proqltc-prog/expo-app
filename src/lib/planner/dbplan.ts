@@ -16,6 +16,7 @@ import { dagenVoorVerzoek, plandagenVoorDatums, voegDatumsToe } from '@/lib/plan
 import { seizoenPasst, seizoenVan } from '@/lib/planner/seizoen';
 import type { Vermijd } from '@/data/vermijden';
 import { heeftVermijdNaam } from '@/lib/planner/vermijden';
+import { frigoScoreNamen } from '@/lib/planner/frigovoorrang';
 
 /** Recepten met een vermeden ingrediënt vallen altijd weg, ook bij aanvullen (WEEK-116). */
 export function zonderVermeden(pool: DbPoolRecept[], vermijd: readonly Vermijd[] | undefined): DbPoolRecept[] {
@@ -94,6 +95,7 @@ function kiesVoorPlek(
  * 1. seizoensrecept dat past bij de kooktijd, 2. recept van het hele jaar of het seizoen dat past bij de kooktijd,
  * 3. seizoensrecept ongeacht de kooktijd, 4. recept van het hele jaar of het seizoen ongeacht de kooktijd.
  * Recepten van een ander seizoen komen nooit op de dag. Zonder seizoen (geen datum) gedraagt het zich als voorheen.
+ * Met alleenWensen blijven enkel de stappen 1 en 2 over: de keuze blijft binnen de wensen van de weekplanner.
  */
 function kiesVoorSeizoen(
   pool: DbPoolRecept[],
@@ -102,16 +104,26 @@ function kiesVoorSeizoen(
   gebruikt: Set<string>,
   random: () => number,
   seizoen: Seizoen | undefined,
+  alleenWensen = false,
 ): { recept: PlanRecept; versoepeld: boolean } | undefined {
-  if (!seizoen) return kiesVoorPlek(pool, moment, verzoek, gebruikt, random);
+  if (!seizoen) return kiesVoorPlek(pool, moment, verzoek, gebruikt, random, alleenWensen ? 1 : 3);
   const metSeizoen = pool.filter((k) => k.seizoenen.includes(seizoen));
   const passend = pool.filter((k) => seizoenPasst(k.seizoenen, seizoen));
-  return (
-    kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random, 1) ??
-    kiesVoorPlek(passend, moment, verzoek, gebruikt, random, 1) ??
-    kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random) ??
-    kiesVoorPlek(passend, moment, verzoek, gebruikt, random)
-  );
+  const stappen: (() => { recept: PlanRecept; versoepeld: boolean } | undefined)[] = [
+    () => kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random, 1),
+    () => kiesVoorPlek(passend, moment, verzoek, gebruikt, random, 1),
+  ];
+  if (!alleenWensen) {
+    stappen.push(
+      () => kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random),
+      () => kiesVoorPlek(passend, moment, verzoek, gebruikt, random),
+    );
+  }
+  for (const stap of stappen) {
+    const keuze = stap();
+    if (keuze) return keuze;
+  }
+  return undefined;
 }
 
 /** Stelt een weekplan samen uit de databaserecepten. Geeft undefined als er voor geen enkel gekozen moment recepten zijn. */
@@ -124,9 +136,18 @@ export function planUitDatabase(verzoek: PlanVerzoek, invoer: DbPoolRecept[]): W
   const planDagen: PlanDag[] = [];
   let versoepeld = false;
   const seizoenPerDag = new Map(plandagenVoorDatums(verzoek.datums ?? []).map((p) => [p.dag, seizoenVan(p.datum)]));
+  // WEEK-188: recepten die iets uit de frigo gebruiken, komen eerst (binnen de wensen en het seizoen).
+  // Pas als die er niet zijn, kiest de planner uit de rest van de databank.
+  const frigo = verzoek.frigo ?? [];
+  const frigoPool = frigo.length
+    ? pool.filter((k) => frigoScoreNamen(k.recept.ingredienten.map((i) => i.naam), frigo, new Date()) > 0)
+    : [];
   for (const dag of dagenVoorVerzoek(verzoek, PERIODE_STANDAARD)) {
     for (const moment of momenten) {
-      const keuze = kiesVoorSeizoen(pool, moment, verzoek, gebruikt, random, seizoenPerDag.get(dag));
+      const seizoen = seizoenPerDag.get(dag);
+      const keuze =
+        (frigoPool.length ? kiesVoorSeizoen(frigoPool, moment, verzoek, gebruikt, random, seizoen, true) : undefined) ??
+        kiesVoorSeizoen(pool, moment, verzoek, gebruikt, random, seizoen);
       if (!keuze) continue;
       versoepeld ||= keuze.versoepeld;
       gebruikt.add(keuze.recept.id);

@@ -201,3 +201,45 @@ describe('vervangDbDag met afgewezen recepten (WEEK-184)', () => {
     }
   });
 });
+
+describe('planUitDatabase: frigo eerst, dan de rest van de databank (WEEK-188)', () => {
+  const ui = (id: number, wijziging: Partial<DbRecept> = {}) => dbRecept(id, wijziging);
+  const wortel = (id: number, wijziging: Partial<DbRecept> = {}) =>
+    dbRecept(id, { ingredienten: [{ code: 'wortel', categorie: 'groente', namen: { nl: 'wortel' }, hoeveelheid: 100, eenheid: 'g' }], ...wijziging });
+  // Een product uit een weekplanner-recept (bron 'planner'); losse producten tellen niet mee (WEEK-182).
+  const frigoUi = [{ id: 'f1', naam: 'ui', afdeling: 'overig' as const, toegevoegdOp: new Date().toISOString(), bron: 'planner' as const }];
+
+  test('een recept dat uit de frigo maakt, komt voor een recept zonder frigo-product', () => {
+    const p = pool(wortel(1), ui(2));
+    for (let seed = 1; seed <= 20; seed++) {
+      const uit = plan(p, { aantalDagen: 1, frigo: frigoUi, seed })!;
+      assert.equal(uit.dagen[0].recept.id, 'db-2', `seed ${seed}`);
+    }
+  });
+
+  test('de frigo-voorrang breekt de kooktijd van de weekplanner niet', () => {
+    const p = pool(ui(1, { kooktijdMin: 60 }), wortel(2, { kooktijdMin: 15 }));
+    const uit = plan(p, { aantalDagen: 1, kooktijden: ['snel'], frigo: frigoUi })!;
+    assert.equal(uit.dagen[0].recept.id, 'db-2');
+  });
+
+  test('zonder recepten die uit de frigo maken, kiest de planner gewoon uit de databank', () => {
+    const p = pool(wortel(1), wortel(2));
+    const uit = plan(p, { aantalDagen: 1, frigo: frigoUi })!;
+    assert.ok(uit.dagen[0].recept.id.startsWith('db-'));
+  });
+
+  test('zonder frigo verandert er niets aan de keuze', () => {
+    const p = pool(ui(1), wortel(2));
+    const zonder = plan(p, { aantalDagen: 2, seed: 7 })!;
+    const leeg = plan(p, { aantalDagen: 2, seed: 7, frigo: [] })!;
+    assert.deepEqual(zonder.dagen.map((d) => d.recept.id), leeg.dagen.map((d) => d.recept.id));
+  });
+
+  test('een los frigo-product geeft geen voorrang aan een recept', () => {
+    const p = pool(wortel(1), ui(2));
+    const los = [{ id: 'f2', naam: 'ui', afdeling: 'overig' as const, toegevoegdOp: new Date().toISOString(), bron: 'los' as const }];
+    const uit = plan(p, { aantalDagen: 1, frigo: los, seed: 3 })!;
+    assert.ok(uit.dagen[0].recept.id.startsWith('db-'));
+  });
+});
