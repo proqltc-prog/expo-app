@@ -6,7 +6,7 @@ export const nl = {
   'welkom.titel': 'Welkom bij Gezond Boodschappen',
   'welkom.tekst': 'Kies je taal. Daarna stel je je gezinsruimte in.',
   'welkom.merk': 'Famenu',
-  'welkom.slogan': 'Elke week een nieuw menu, samen gepland.',
+  'welkom.slogan': 'Samen plannen, samen aan tafel.',
   'welkom.knop': 'Kies je taal',
   'welkom.doorgaan': 'Doorgaan',
   'welkom.naamTitel': 'Hoe heet je?',
