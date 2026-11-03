@@ -92,13 +92,7 @@ const TABEL = {
   // dranken
   'bruin-bier': ['dranken', ['bruin bier', 'bière brune', 'dunkles Bier', 'brown ale', 'cerveza tostada', 'cerveja preta']],
   // ontbijt en middag (WEEK-43)
-  yoghurt: ['zuivel-eieren', ['yoghurt', 'yaourt nature', 'Joghurt', 'yogurt', 'yogur natural', 'iogurte natural']],
-  muesli: ['droge-voeding', ['muesli', 'muesli', 'Müsli', 'muesli', 'muesli', 'muesli']],
-  havermout: ['droge-voeding', ['havermout', 'flocons d’avoine', 'Haferflocken', 'oats', 'avena', 'aveia']],
-  fruit: ['groenten-fruit', ['fruit', 'fruits', 'Obst', 'fruit', 'fruta', 'fruta']],
   komkommer: ['groenten-fruit', ['komkommer', 'concombre', 'Gurke', 'cucumber', 'pepino', 'pepino']],
-  avocado: ['groenten-fruit', ['avocado', 'avocat', 'Avocado', 'avocado', 'aguacate', 'abacate']],
-  honing: ['conserven-sauzen', ['honing', 'miel', 'Honig', 'honey', 'miel', 'mel']],
 } as const satisfies Record<string, readonly [Afdeling, Namen]>;
 
 export type IngredientCode = keyof typeof TABEL;

@@ -90,12 +90,6 @@ describe('planUitDatabase per seizoen (WEEK-156)', () => {
     const perDatum = Object.fromEntries(uit.dagen.map((d) => [d.datum, d.recept.id]));
     assert.deepEqual(perDatum, { '2026-08-31': 'db-1', '2026-09-01': 'db-2' });
   });
-  test('het seizoen geldt per moment: ontbijt en avond op dezelfde dag kiezen allebei uit het seizoen', () => {
-    const ontbijtZomer = dbRecept(5, { moment: 'ontbijt', seizoenen: ['zomer'] });
-    const ontbijtWinter = dbRecept(6, { moment: 'ontbijt', seizoenen: ['winter'] });
-    const uit = planUitDatabase(verzoek({ datums: [ZOMERDAG], momenten: ['ontbijt', 'avond'] }), pool(zomer, ontbijtZomer, ontbijtWinter))!;
-    assert.deepEqual(uit.dagen.map((d) => d.recept.id), ['db-5', 'db-1']);
-  });
 
   test('regressie: zonder datums is er geen seizoensfilter; een winterrecept kan dan gewoon gekozen worden', () => {
     const uit = planUitDatabase(verzoek({ seed: 1 }), pool(herfst))!;

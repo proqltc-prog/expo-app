@@ -6,7 +6,7 @@ import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { wisselGedaan } from '@/lib/planner/bijwerken';
 import type { PlanDag, PlanIngredient, PlanRecept, Weekplan } from '@/lib/planner/types';
 
-// WEEK-159: één dag met drie recepten die ingrediënten delen (ontbijt, middag, avond).
+// WEEK-159: één dag met drie recepten die ingrediënten delen.
 const NU = new Date('2026-10-24T12:00:00.000Z');
 const ing = (code: string, naam: string, hoeveelheid: number, eenheid: string): PlanIngredient => ({
   code,
@@ -23,12 +23,12 @@ const recept = (id: string, naam: string, ingredienten: PlanIngredient[]): PlanR
   stijlen: ['italiaans'],
   ingredienten,
 });
-const dag = (moment: 'ontbijt' | 'middag' | 'avond', r: PlanRecept): PlanDag => ({ dag: 'maandag', moment, recept: r, bevestigd: true });
+const dag = (r: PlanRecept): PlanDag => ({ dag: 'maandag', recept: r, bevestigd: true });
 
 const ontbijt = recept('db-1', 'Havermout', [ing('havermout', 'havermout', 50, 'g'), ing('melk', 'melk', 200, 'ml'), ing('banaan', 'banaan', 1, 'stuk')]);
 const middag = recept('db-2', 'Pasta', [ing('pasta_penne', 'pasta', 100, 'g'), ing('tomaat', 'tomaat', 200, 'g'), ing('ui', 'ui', 1, 'stuk')]);
 const avond = recept('db-3', 'Tomatensoep', [ing('tomaat', 'tomaat', 150, 'g'), ing('ui', 'ui', 1, 'stuk'), ing('kipfilet', 'kipfilet', 200, 'g')]);
-const dagen: PlanDag[] = [dag('ontbijt', ontbijt), dag('middag', middag), dag('avond', avond)];
+const dagen: PlanDag[] = [dag(ontbijt), dag(middag), dag(avond)];
 
 const plan = (d: PlanDag[]): Weekplan => ({
   dagen: d,

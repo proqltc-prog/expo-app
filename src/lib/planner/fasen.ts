@@ -1,9 +1,9 @@
-// Het weekmenu als stappen (WEEK-68 deel 4b): periode, moment, stijl, vermijden, plan.
+// Het weekmenu als stappen (WEEK-68 deel 4b; WEEK-189: enkel avondeten, dus geen maaltijdkeuze): periode, kooktijd, stijl, vermijden, plan.
 // Pure logica: het scherm toont de stap, deze module bepaalt de volgorde en wat er mag.
 import type { Moment } from '@/data/receptenbank';
 import { behoudGeldige, kooktijdVoorMomenten, stijlVoorMomenten, standaardStijlen, vermijdVoorMomenten } from '@/lib/planner/opties';
 
-export const FASEN = ['periode', 'moment', 'stijl', 'vermijden', 'plan'] as const;
+export const FASEN = ['periode', 'kooktijd', 'stijl', 'vermijden', 'plan'] as const;
 export type Fase = (typeof FASEN)[number];
 
 export type Keuzes = {
@@ -31,15 +31,15 @@ export function vorigeFase(fase: Fase): Fase | undefined {
 
 /**
  * Mag de gebruiker naar de volgende stap?
- * Periode is altijd gekozen. Moment vraagt minstens één moment en één kooktijd.
+ * Periode is altijd gekozen. Kooktijd vraagt minstens één kooktijd.
  * Stijl vraagt minstens één stijl. Vermijden is optioneel.
  */
 export function kanVerder(fase: Fase, keuzes: Keuzes): boolean {
   switch (fase) {
     case 'periode':
       return keuzes.aantalDagen >= 1;
-    case 'moment':
-      return keuzes.momenten.length > 0 && keuzes.kooktijden.length > 0;
+    case 'kooktijd':
+      return keuzes.kooktijden.length > 0;
     case 'stijl':
       return keuzes.stijlen.length > 0;
     case 'vermijden':
@@ -52,9 +52,9 @@ export function kanVerder(fase: Fase, keuzes: Keuzes): boolean {
  * Welke melding hoort er onder de knop "Volgende" als de gebruiker nog niet verder kan?
  * undefined als er niets ontbreekt of de stap altijd mag.
  */
-export function ontbrekendeVoorkeur(fase: Fase, keuzes: Keuzes): 'planning.meld.moment' | 'planning.meld.stijl' | undefined {
+export function ontbrekendeVoorkeur(fase: Fase, keuzes: Keuzes): 'planning.meld.kooktijd' | 'planning.meld.stijl' | undefined {
   if (kanVerder(fase, keuzes)) return undefined;
-  if (fase === 'moment') return 'planning.meld.moment';
+  if (fase === 'kooktijd') return 'planning.meld.kooktijd';
   if (fase === 'stijl') return 'planning.meld.stijl';
   return undefined;
 }

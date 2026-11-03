@@ -1,23 +1,17 @@
-// Keuzes per moment in het weekmenu (WEEK-68, deel 4): kooktijd, stijl en vermijden hangen af van het moment.
+// Keuzes voor het avondeten in het weekmenu (WEEK-68, deel 4; WEEK-189: enkel avond). Pure logica.
 // Pure logica. De schermen tonen de lijsten; de planner filtert er later op.
 import type { Moment } from '@/data/receptenbank';
 
 export type KooktijdOptie = { id: string; naam: string; van: number; tot: number };
 export type Optie = { id: string; naam: string };
 
-// Ochtend: korte tijden. Middag en avond: snel tot 30 minuten, daarna verfijnde recepten tot 50 minuten.
+// Avondeten: snel tot 30 minuten, daarna verfijnde recepten tot 50 minuten.
 const MIDDAG_AVOND_KOOKTIJD: KooktijdOptie[] = [
   { id: 'snel', naam: 'Snel', van: 0, tot: 30 },
   { id: 'verfijnd', naam: 'Verfijnd', van: 31, tot: 50 },
 ];
 
 const KOOKTIJD: Record<Moment, KooktijdOptie[]> = {
-  ontbijt: [
-    { id: 'snel', naam: 'Snel', van: 0, tot: 5 },
-    { id: 'rustig', naam: 'Rustig', van: 6, tot: 15 },
-    { id: 'uitgebreid', naam: 'Uitgebreid', van: 16, tot: 30 },
-  ],
-  middag: MIDDAG_AVOND_KOOKTIJD,
   avond: MIDDAG_AVOND_KOOKTIJD,
 };
 
@@ -35,13 +29,6 @@ const MIDDAG_AVOND_STIJL: Optie[] = [
 ];
 
 const STIJL: Record<Moment, Optie[]> = {
-  ontbijt: [
-    { id: 'hartig', naam: 'Hartig' },
-    { id: 'zoet', naam: 'Zoet' },
-    { id: 'mediterraan', naam: 'Mediterraan' },
-    { id: 'belgisch', naam: 'Belgisch' },
-  ],
-  middag: MIDDAG_AVOND_STIJL,
   avond: MIDDAG_AVOND_STIJL,
 };
 
@@ -55,18 +42,10 @@ const MIDDAG_AVOND_VERMIJD: Optie[] = [
 ];
 
 const VERMIJD: Record<Moment, Optie[]> = {
-  ontbijt: [
-    { id: 'zuivel', naam: 'Zuivel' },
-    { id: 'eieren', naam: 'Eieren' },
-    { id: 'noten', naam: 'Noten' },
-  ],
-  middag: MIDDAG_AVOND_VERMIJD,
   avond: MIDDAG_AVOND_VERMIJD,
 };
 
 const STANDAARD_STIJL: Record<Moment, string[]> = {
-  ontbijt: ['hartig'],
-  middag: ['mediterraan'],
   avond: ['mediterraan'],
 };
 
@@ -132,8 +111,8 @@ function unie<T extends { id: string }>(lijsten: readonly (readonly T[])[]): T[]
   return uit;
 }
 
-/** Alle kooktijd-ids die het scherm kan opslaan (van alle momenten samen). */
-export const KOOKTIJD_IDS: string[] = unie([KOOKTIJD.ontbijt, KOOKTIJD.middag]).map((o) => o.id);
+/** Alle kooktijd-ids die het scherm kan opslaan. */
+export const KOOKTIJD_IDS: string[] = unie([KOOKTIJD.avond]).map((o) => o.id);
 
-/** Alle stijl-ids die het scherm kan opslaan (van alle momenten samen). */
-export const STIJL_IDS: string[] = unie([STIJL.ontbijt, STIJL.middag]).map((o) => o.id);
+/** Alle stijl-ids die het scherm kan opslaan. */
+export const STIJL_IDS: string[] = unie([STIJL.avond]).map((o) => o.id);

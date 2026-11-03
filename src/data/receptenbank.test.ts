@@ -71,8 +71,8 @@ describe('stijlen zonder licht en comfort (WEEK-78)', () => {
     }
   });
 
-  test('de vijf recepten die enkel licht of comfort hadden, hebben nu een stijl', () => {
-    for (const id of ['mac-kaas', 'havermout-fruit', 'yoghurt-muesli', 'avocado-ei', 'tonijnsalade']) {
+  test('de recepten die enkel licht of comfort hadden, hebben nu een stijl (WEEK-189: enkel nog avondrecepten)', () => {
+    for (const id of ['mac-kaas', 'kipwrap', 'pastasalade']) {
       const r = RECEPTENBANK.find((x) => x.id === id);
       assert.ok(r && r.stijlen.length >= 1, id);
     }

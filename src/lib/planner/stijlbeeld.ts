@@ -23,8 +23,6 @@ const BEELDEN: Record<string, Stijlbeeld> = {
   thais: { vorm: 'curry', voorbeeld: 'Groene kerrie met rijst', land: ['#2D2A4A', '#FFFFFF', '#A51931'] },
   japans: { vorm: 'nigiri', voorbeeld: 'Teriyaki-zalm', land: ['#FFFFFF', '#BC002D', '#FFFFFF'] },
   belgisch: { vorm: 'schotel', voorbeeld: 'Stoofvlees met friet', land: ['#17201A', '#FAE042', '#ED2939'] },
-  hartig: { vorm: 'toast', voorbeeld: 'Croque met kaas en ham', land: ['#B9733A', '#F4DDAA', '#7A4E26'] },
-  zoet: { vorm: 'stapel', voorbeeld: 'Pannenkoeken met fruit', land: ['#E77FA0', '#FBE3EA', '#B8336A'] },
 };
 
 /** Het beeld van een stijl, of undefined als de stijl er geen heeft. */
