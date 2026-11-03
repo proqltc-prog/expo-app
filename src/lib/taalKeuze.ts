@@ -25,3 +25,11 @@ export function taalUitOpslag(opgeslagen: string | null, oudProfiel: unknown): T
 export function taalNaarOpslag(taal: Taal | undefined): string {
   return taal ?? TOESTEL;
 }
+
+/** Versie van de taalregel (WEEK-186). Vanaf versie 2 volgt de taal het toestel, tenzij de gebruiker zelf kiest. */
+export const TAALVERSIE_NU = '2';
+
+/** Moet de opgeslagen taalkeuze eenmalig losgelaten worden? Zo ja, dan geldt de taal van het toestel. */
+export function taalMoetOpnieuwBepaald(versie: string | null): boolean {
+  return versie !== TAALVERSIE_NU;
+}

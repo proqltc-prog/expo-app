@@ -94,7 +94,7 @@ export default function Welkom() {
         <View style={s.glans} pointerEvents="none" />
         <View style={s.hero}>
           <Image source={require('../assets/icon.png')} style={s.logo} accessibilityLabel="Logo van Gezond Boodschappen" />
-          <Text style={s.merk}>Gezond{'\n'}Boodschappen</Text>
+          <Text style={s.merk}>{t('welkom.merk')}</Text>
           <Text style={s.slogan}>{t('welkom.slogan')}</Text>
           {/* Sfeerbeeld met de vijf kernthema's; wordt vervangen door een eigen foto of gif zodra die er is. */}
           <View style={s.sfeer} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
