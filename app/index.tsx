@@ -9,6 +9,7 @@ import { planSleutel, voegPlanToe } from '@/lib/lijst';
 import { planLokaal } from '@/lib/planner/lokaal';
 import { inTaal } from '@/lib/planner/vertaal';
 import { resetDagLokaal } from '@/lib/planner/reset';
+import { voegAfgewezenToe } from '@/lib/planner/afwijzen';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
@@ -271,21 +272,32 @@ export default function Weekplanning() {
   };
 
   // Enkel die ene dag krijgt een nieuw recept; de rest van de week blijft staan.
+  // WEEK-184: het recept dat er nu op staat, komt de rest van de week niet meer terug.
   const herdoeDag = async (index: number) => {
     if (!plan || !profiel || bezigDag !== null || !mag || !magDagWijzigen(plan.dagen[index])) return;
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
+      const oudId = plan.dagen[index]?.recept.id;
+      const basis = voegAfgewezenToe(plan, oudId);
       // WEEK-116: een dag wordt altijd uit de databank vervangen; lukt dat niet, dan lokaal (geen AI).
       const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
-      const uitDatabank = pool.length ? vervangDbDag(plan, index, pool, Date.now()) : plan;
-      const nieuw: Weekplan = uitDatabank !== plan ? uitDatabank : resetDagLokaal(plan, index, Date.now());
+      const uitDatabank = pool.length ? vervangDbDag(basis, index, pool, Date.now()) : basis;
+      const nieuw: Weekplan = uitDatabank !== basis ? uitDatabank : resetDagLokaal(basis, index, Date.now());
+      // Geen enkel recept meer over: de gebruiker kiest zelf (WEEK-184).
+      if (nieuw === basis) {
+        Alert.alert(t('planning.allesGezienTitel'), t('planning.allesGezienTekst'), [
+          { text: t('planning.annuleer'), style: 'cancel' },
+          { text: t('planning.zelfKiezen'), onPress: () => kiesZelf(index) },
+        ]);
+        return;
+      }
       // Enkel die ene dag in het nieuwste plan vervangen: wat intussen veranderde, blijft (WEEK-28).
       const nieuweDag = nieuw.dagen[index];
       const bewaard = nieuweDag
         ? await wijzigPlan((huidig) => {
             const vervangen = vervangDag(huidig, index, verwacht, nieuweDag);
-            return vervangen === huidig ? huidig : vervangen;
+            return vervangen === huidig ? huidig : voegAfgewezenToe(vervangen, oudId);
           })
         : null;
       if (bewaard) setPlan(bewaard);

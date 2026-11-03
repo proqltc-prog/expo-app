@@ -154,6 +154,8 @@ export const de: Vertalingen = {
   'recept.eenheid.teentje': 'Zehe',
   'recept.niet': 'Rezept nicht gefunden.',
   'planning.zelfKiezen': 'Selbst wählen',
+  'planning.allesGezienTitel': 'Kein neues Gericht mehr',
+  'planning.allesGezienTekst': 'Du hast alle Rezepte für diese Woche schon gesehen. Wähle selbst ein Gericht für diesen Tag.',
   'planning.verwijderen': 'Entfernen',
   'planning.verwijderVraag': 'Dieses Gericht aus dem Wochenmenü entfernen?',
   'planning.verwijderdVanLijst': '{n} Zutaten auch von der Einkaufsliste entfernt.',

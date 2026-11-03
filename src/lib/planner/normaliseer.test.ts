@@ -1,6 +1,8 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { normaliseerIngredient, normaliseerRecept } from '@/lib/planner/normaliseer';
+import { normaliseerIngredient, normaliseerRecept, normaliseerWeekplan } from '@/lib/planner/normaliseer';
+import { planLokaal } from '@/lib/planner/lokaal';
+import { standaardProfiel } from '@/lib/profiel';
 
 describe('normaliseer met vertalingen (WEEK-154)', () => {
   test('bewaart de vaste code, de namen per taal en de titels', () => {
@@ -25,5 +27,13 @@ describe('normaliseer met vertalingen (WEEK-154)', () => {
   test('een oud plan zonder vertalingen krijgt geen nieuwe velden', () => {
     const ingredient = normaliseerIngredient({ naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' });
     assert.deepEqual(ingredient, { naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit' });
+  });
+});
+
+describe('afgewezen recepten bewaren (WEEK-184)', () => {
+  test('de lijst van afgewezen recepten blijft na inlezen behouden, zonder ongeldige waarden', () => {
+    const plan = planLokaal({ aantalDagen: 2, kooktijden: [], stijlen: [], profiel: standaardProfiel(), taal: 'nl', seed: 3 });
+    const ruw = { ...JSON.parse(JSON.stringify(plan)), afgewezen: ['x', '', 5, 'y'] };
+    assert.deepEqual(normaliseerWeekplan(ruw)?.afgewezen, ['x', 'y']);
   });
 });

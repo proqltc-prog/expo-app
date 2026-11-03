@@ -154,6 +154,8 @@ export const es: Vertalingen = {
   'recept.eenheid.teentje': 'diente',
   'recept.niet': 'Receta no encontrada.',
   'planning.zelfKiezen': 'Elegir yo',
+  'planning.allesGezienTitel': 'No new dish left',
+  'planning.allesGezienTekst': 'You have already seen all recipes for this week. Choose a dish for this day yourself.',
   'planning.verwijderen': 'Quitar',
   'planning.verwijderVraag': '¿Quitar esta comida del menú semanal?',
   'planning.verwijderdVanLijst': '{n} ingredientes también quitados de la lista de la compra.',

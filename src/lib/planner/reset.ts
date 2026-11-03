@@ -4,6 +4,7 @@ import { BankRecept, RECEPTENBANK } from '@/data/receptenbank';
 import type { Profiel } from '@/lib/profiel';
 import { filterOpKeuzes, naarPlanRecept, passendeRecepten, toeval } from './lokaal';
 import { bankReceptVermijdt } from './vermijden';
+import { isAfgewezen } from './afwijzen';
 import { momentVan } from './moment';
 import type { PlanVerzoek, Weekplan } from './types';
 
@@ -28,7 +29,8 @@ export function kiesVervanging(
   if (!huidig) return undefined;
   // Een ontbijt wordt weer een ontbijt, een avondrecept weer een avondrecept (WEEK-43).
   const moment = huidig.moment ?? 'avond';
-  const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []) && momentVan(r) === moment);
+  // WEEK-184: een eerder vervangen recept komt in deze week nergens meer terug.
+  const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []) && !isAfgewezen(plan, r.id) && momentVan(r) === moment);
   const { recepten } = filterOpKeuzes(passendeRecepten(toegestaan), plan.kooktijden, plan.stijlen, 1);
 
   const andereDagen = plan.dagen.filter((_, i) => i !== index);

@@ -154,6 +154,8 @@ export const en: Vertalingen = {
   'recept.eenheid.teentje': 'clove',
   'recept.niet': 'Recipe not found.',
   'planning.zelfKiezen': 'Choose myself',
+  'planning.allesGezienTitel': 'No new dish left',
+  'planning.allesGezienTekst': 'You have already seen all recipes for this week. Choose a dish for this day yourself.',
   'planning.verwijderen': 'Remove',
   'planning.verwijderVraag': 'Remove this meal from the weekly menu?',
   'planning.verwijderdVanLijst': '{n} ingredients also removed from the shopping list.',
