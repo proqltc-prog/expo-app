@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.105.1] – 2026-11-03
+
+- Weekplanner: bij het kiezen uit de databank komen recepten die de frigo-producten gebruiken eerst. Pas daarna wordt de rest van de databank gebruikt.
+
+**Jira:** [WEEK-188](https://proqltc-1791495894841.atlassian.net/browse/WEEK-188) · **Confluence:** [WEEK-188 Frigo-recepten eerst in de databankplanner](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19693569)
+
 ## [0.105.0] – 2026-11-03
 
 - Weekplanner: enkel avondeten. De keuze voor ontbijt en middag is verwijderd uit de planner en het kies-scherm.
