@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.104.1] – 2026-11-03
+
+- Startscherm: de taal volgt het toestel. Een oude, opgeslagen taalkeuze wordt eenmalig losgelaten.
+- Startscherm: de titel is de appnaam Famenu, met een motto in de taal van het toestel.
+- Startscherm: het komt niet meer terug na Aan de slag of Aanmelden, ook niet als de app daarna dicht gaat.
+
+**Jira:** [WEEK-186](https://proqltc-1791495894841.atlassian.net/browse/WEEK-186) · **Confluence:** [WEEK-186 Startscherm: taal volgt het toestel en naam Famenu](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19464193)
+
 ## [0.104.0] – 2026-11-03
 
 - Opstart opnieuw ingericht: startscherm met logo en slogan in de taal van het toestel, daarna zeven uitlegschermen, daarna aanmelden. Taal- en naamscherm verdwenen uit de welkomstflow.
