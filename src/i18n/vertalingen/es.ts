@@ -5,7 +5,7 @@ export const es: Vertalingen = {
   'welkom.titel': 'Bienvenido a Gezond Boodschappen',
   'welkom.tekst': 'Elige tu idioma. Después configura tu espacio familiar.',
   'welkom.merk': 'Famenu',
-  'welkom.slogan': 'Eat well, plan smart, waste nothing.',
+  'welkom.slogan': 'One menu for the whole family.',
   'welkom.knop': 'Elige tu idioma',
   'welkom.doorgaan': 'Continuar',
   'welkom.naamTitel': '¿Cómo te llamas?',
