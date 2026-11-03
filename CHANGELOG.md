@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.104.0] – 2026-11-03
+
+- Opstart opnieuw ingericht: startscherm met logo en slogan in de taal van het toestel, daarna zeven uitlegschermen, daarna aanmelden. Taal- en naamscherm verdwenen uit de welkomstflow.
+- Taal volgt het toestel: Nederlands en Frans blijven, al het andere wordt Engels.
+- Aanmelden met Google, Apple, Facebook of e-mail, met een alternatief zonder account en de waarschuwing dat gegevens verloren gaan bij een ander toestel.
+- Nieuwe gebruiker gaat na de start naar de instellingen; bekende gebruiker naar het weekmenu.
+
+**Jira:** [WEEK-185](https://proqltc-1791495894841.atlassian.net/browse/WEEK-185) · **Confluence:** [WEEK-185 Opstart: splash, uitleg en aanmelden; taal volgt het toestel](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19234817)
+
 ## [0.103.0] – 2026-11-03
 
 **Jira:** [WEEK-184](https://proqltc-1791495894841.atlassian.net/browse/WEEK-184) · **Confluence:** [WEEK-184 Weekplanner: vervangen recept komt de week niet meer terug](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19136513)
