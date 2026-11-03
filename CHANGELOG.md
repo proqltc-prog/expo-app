@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.104.2] – 2026-11-03
+
+- Winkels in de buurt: garages, tankstations, wasstraten en elektrozaken worden niet meer onder supermarkten getoond.
+- Google Maps-zoekterm voor supermarkten is strenger ("supermarkt levensmiddelen"), zodat Google geen garages of elektrozaken toont.
+
+**Jira:** [WEEK-187](https://proqltc-1791495894841.atlassian.net/browse/WEEK-187) · **Confluence:** [WEEK-187 Winkels in de buurt: garages en elektrozaken niet meer onder supermarkten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19595265)
+
 ## [0.104.1] – 2026-11-03
 
 - Startscherm: de taal volgt het toestel. Een oude, opgeslagen taalkeuze wordt eenmalig losgelaten.
