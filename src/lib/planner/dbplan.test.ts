@@ -33,8 +33,8 @@ const plan = (p: DbPoolRecept[], wijziging: Partial<PlanVerzoek> = {}) =>
 
 describe('maakDbPool (WEEK-68)', () => {
   test('zet recepten om met moment, kooktijdklasse en stijl', () => {
-    const [k] = pool(dbRecept(1, { kooktijdMin: 30, moment: 'middag', stijl: 'klassiek' }));
-    assert.equal(k.moment, 'middag');
+    const [k] = pool(dbRecept(1, { kooktijdMin: 30, moment: 'avond', stijl: 'klassiek' }));
+    assert.equal(k.moment, 'avond');
     assert.equal(k.kooktijd, 'gemiddeld');
     assert.deepEqual(k.stijlen, ['klassiek']);
     assert.equal(k.recept.id, 'db-1');
@@ -50,14 +50,10 @@ describe('planUitDatabase: dagen en momenten (WEEK-68)', () => {
     assert.equal(plan(p, { aantalDagen: 3 })!.dagen.length, 3);
     assert.equal(plan(p, { aantalDagen: 10 })!.dagen.length, 7);
   });
-  test('alleen de gekozen momenten komen op het plan', () => {
-    const p = pool(dbRecept(1, { moment: 'ontbijt' }), dbRecept(2, { moment: 'avond' }));
-    const uit = plan(p, { aantalDagen: 1, momenten: ['ontbijt'] })!;
+  test('het plan is avondeten: het aantal dagen klopt met de avondrecepten', () => {
+    const p = pool(dbRecept(1, { moment: 'avond' }), dbRecept(2, { moment: 'avond' }));
+    const uit = plan(p, { aantalDagen: 1, momenten: ['avond'] })!;
     assert.equal(uit.dagen.length, 1);
-    assert.equal(uit.dagen[0].recept.id, 'db-1');
-  });
-  test('zonder recepten voor het gekozen moment is er geen plan', () => {
-    assert.equal(plan(pool(dbRecept(1, { moment: 'avond' })), { momenten: ['ontbijt'] }), undefined);
   });
   test('zonder recepten is er geen plan', () => {
     assert.equal(plan([]), undefined);
@@ -157,17 +153,11 @@ describe('vermijden en moment worden nooit overtreden (WEEK-116)', () => {
     assert.equal(plan, undefined);
   });
 
-  test('een ontbijtrecept komt niet op een avondplan', () => {
-    const p = pool(dbRecept(1, { moment: 'ontbijt' }));
+  test('regressie: een avondrecept komt op het avondplan', () => {
+    const p = pool(dbRecept(1, { moment: 'avond' }));
     const plan = planUitDatabase({ ...standaardProfielVerzoek(), momenten: ['avond'] }, p);
-    assert.equal(plan, undefined);
-  });
-
-  test('regressie: een avondrecept komt niet op een ontbijtplan', () => {
-    const p = pool(dbRecept(1, { moment: 'avond' }), dbRecept(2, { moment: 'ontbijt' }));
-    const plan = planUitDatabase({ ...standaardProfielVerzoek(), momenten: ['ontbijt'] }, p);
     assert.ok(plan);
-    assert.ok(plan!.dagen.every((d) => d.moment === 'ontbijt'));
+    assert.equal(plan!.dagen[0].recept.id, 'db-1');
   });
 
   test('een vervangen dag respecteert de vermijd-lijst van het plan', () => {

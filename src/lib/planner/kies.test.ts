@@ -14,14 +14,12 @@ import {
   zonderReceptVanLijst,
 } from '@/lib/planner/kies';
 
-const ontbijt = RECEPTENBANK.find((r) => r.moment === 'ontbijt')!;
-const middag = RECEPTENBANK.find((r) => r.moment === 'middag')!;
 const avond = RECEPTENBANK.find((r) => !r.moment)!;
+const avond2 = RECEPTENBANK.filter((r) => !r.moment)[1];
 const alle = { kooktijden: [], stijlen: [], vermijd: [], zoek: '', taal: 'nl' as const };
 
-const dag = (d: PlanDag['dag'], r: BankRecept, moment?: PlanDag['moment']): PlanDag => ({
+const dag = (d: PlanDag['dag'], r: BankRecept): PlanDag => ({
   dag: d,
-  ...(moment ? { moment } : {}),
   recept: naarPlanRecept(r, 'nl', 2),
 });
 
@@ -35,11 +33,11 @@ const plan = (dagen: PlanDag[]): Weekplan => ({
   gemaaktOp: '2026-10-12T10:00:00.000Z',
 });
 
-describe('kiesbareRecepten', () => {
-  test('geeft enkel recepten van het gekozen moment', () => {
-    const res = kiesbareRecepten(RECEPTENBANK, { ...alle, moment: 'middag' });
+describe('kiesbareRecepten (WEEK-189: enkel avondeten)', () => {
+  test('geeft enkel avondrecepten', () => {
+    const res = kiesbareRecepten(RECEPTENBANK, { ...alle, moment: 'avond' });
     assert.ok(res.length > 0);
-    assert.ok(res.every((r) => momentVan(r) === 'middag'));
+    assert.ok(res.every((r) => momentVan(r) === 'avond'));
   });
 
   test('recepten zonder moment zijn avondrecepten (regressie)', () => {
@@ -59,15 +57,15 @@ describe('kiesbareRecepten', () => {
   });
 
   test('zoeken negeert hoofdletters en accenten', () => {
-    const naam = middag.namen[0];
+    const naam = avond.namen[0];
     const zoek = naam.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
-    const res = kiesbareRecepten(RECEPTENBANK, { ...alle, moment: 'middag', zoek });
-    assert.ok(res.some((r) => r.id === middag.id));
+    const res = kiesbareRecepten(RECEPTENBANK, { ...alle, moment: 'avond', zoek });
+    assert.ok(res.some((r) => r.id === avond.id));
   });
 
   test('zoeken gebruikt de naam in de gekozen taal', () => {
-    const res = kiesbareRecepten(RECEPTENBANK, { ...alle, moment: 'middag', zoek: middag.namen[1], taal: 'fr' });
-    assert.ok(res.some((r) => r.id === middag.id));
+    const res = kiesbareRecepten(RECEPTENBANK, { ...alle, moment: 'avond', zoek: avond.namen[1], taal: 'fr' });
+    assert.ok(res.some((r) => r.id === avond.id));
   });
 
   test('zoekterm zonder treffers geeft een lege lijst', () => {
@@ -76,38 +74,36 @@ describe('kiesbareRecepten', () => {
 });
 
 describe('vervangDoorRecept', () => {
-  test('behoudt dag en moment, wisselt het recept', () => {
-    const p = plan([dag('dinsdag', ontbijt, 'ontbijt')]);
-    const nieuw = vervangDoorRecept(p, 0, middag);
+  test('behoudt de dag, wisselt het recept', () => {
+    const p = plan([dag('dinsdag', avond)]);
+    const nieuw = vervangDoorRecept(p, 0, avond2);
     assert.equal(nieuw.dagen[0].dag, 'dinsdag');
-    assert.equal(nieuw.dagen[0].moment, 'ontbijt');
-    assert.equal(nieuw.dagen[0].recept.id, middag.id);
+    assert.equal(nieuw.dagen[0].recept.id, avond2.id);
   });
 
   test('voortgang (gekookt) van het oude recept gaat weg', () => {
     const p = plan([{ ...dag('maandag', avond), gedaan: true }]);
-    const nieuw = vervangDoorRecept(p, 0, middag);
+    const nieuw = vervangDoorRecept(p, 0, avond2);
     assert.equal(nieuw.dagen[0].gedaan, undefined);
   });
 
   test('een avondrecept blijft zonder moment-veld (regressie)', () => {
     const p = plan([dag('maandag', avond)]);
-    const nieuw = vervangDoorRecept(p, 0, middag);
+    const nieuw = vervangDoorRecept(p, 0, avond2);
     assert.equal('moment' in nieuw.dagen[0], false);
   });
 
   test('onbekende index laat het plan ongewijzigd', () => {
     const p = plan([dag('maandag', avond)]);
-    assert.equal(vervangDoorRecept(p, 5, middag), p);
+    assert.equal(vervangDoorRecept(p, 5, avond2), p);
   });
 });
 
 describe('voegToe', () => {
   test('voegt op de eerste vrije weekdag toe', () => {
-    const res = voegToe(plan([]), middag, 'middag');
+    const res = voegToe(plan([]), avond2, 'avond');
     assert.equal(res?.dagen.length, 1);
     assert.equal(res?.dagen[0].dag, 'zondag');
-    assert.equal(res?.dagen[0].moment, 'middag');
   });
 
   test('avond krijgt geen moment-veld (regressie)', () => {
@@ -115,40 +111,25 @@ describe('voegToe', () => {
     assert.equal('moment' in (res?.dagen[0] ?? {}), false);
   });
 
-  test('slaat dagen over die voor hetzelfde moment al bezet zijn', () => {
-    const res = voegToe(plan([dag('zondag', ontbijt, 'ontbijt')]), ontbijt, 'ontbijt');
-    assert.equal(res?.dagen.find((d) => d.moment === 'ontbijt' && d.dag !== 'zondag')?.dag, 'maandag');
+  test('slaat dagen over die al bezet zijn', () => {
+    const res = voegToe(plan([dag('zondag', avond)]), avond2, 'avond');
+    assert.equal(res?.dagen.find((d) => d.dag !== 'zondag')?.dag, 'maandag');
   });
 
-  test('een bezette dag voor een ander moment blijft vrij (regressie)', () => {
-    const res = voegToe(plan([dag('zondag', avond)]), middag, 'middag');
-    assert.equal(res?.dagen.find((d) => d.moment === 'middag')?.dag, 'zondag');
-  });
-
-  test('sorteert op weekdag en daarbinnen op moment', () => {
+  test('sorteert op weekdag', () => {
     const p = plan([dag('maandag', avond)]);
-    const res = voegToe(p, ontbijt, 'ontbijt');
-    assert.deepEqual(
-      res?.dagen.map((d) => [d.dag, momentVan(d)]),
-      [
-        ['zondag', 'ontbijt'],
-        ['maandag', 'avond'],
-      ]
-    );
+    const res = voegToe(p, avond2, 'avond');
+    assert.deepEqual(res?.dagen.map((d) => d.dag), ['zondag', 'maandag']);
   });
 
-  test('geeft undefined als alle dagen voor dat moment bezet zijn', () => {
-    const vol = plan(
-      (['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'] as const).map((d) =>
-        dag(d, middag, 'middag')
-      )
-    );
-    assert.equal(voegToe(vol, middag, 'middag'), undefined);
+  test('geeft undefined als alle dagen bezet zijn', () => {
+    const vol = plan((['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'] as const).map((d) => dag(d, avond2)));
+    assert.equal(voegToe(vol, avond, 'avond'), undefined);
   });
 });
 
 describe('verwijderDag', () => {
-  const p = plan([dag('zondag', avond), dag('maandag', middag, 'middag')]);
+  const p = plan([dag('zondag', avond), dag('maandag', avond2)]);
   const verwacht = { gemaaktOp: p.gemaaktOp, receptNaam: p.dagen[1].recept.naam };
 
   test('verwijdert de maaltijd op de index', () => {

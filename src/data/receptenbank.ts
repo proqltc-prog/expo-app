@@ -6,9 +6,9 @@ export type Soort = 'vegetarisch' | 'vis' | 'vlees';
 export type StijlCode = 'klassiek' | 'italiaans' | 'aziatisch' | 'mexicaans' | 'mediterraan' | 'thais' | 'japans' | 'koreaans';
 export type Basis = 'pasta' | 'rijst' | 'aardappel' | 'brood' | 'wrap' | 'noedels' | 'granen';
 export type Eenheid = 'g' | 'ml' | 'stuk' | 'teentje';
-/** Wanneer het recept gegeten wordt (WEEK-43). Zonder moment geldt avond. */
-export type Moment = 'ontbijt' | 'middag' | 'avond';
-export const MOMENTEN: readonly Moment[] = ['ontbijt', 'middag', 'avond'];
+/** Wanneer het recept gegeten wordt. De app plant enkel avondeten (WEEK-189). */
+export type Moment = 'avond';
+export const MOMENTEN: readonly Moment[] = ['avond'];
 
 // Stijlen van de receptenbank. 'licht' en 'comfort' zijn verwijderd (WEEK-78), ook in de database.
 export const STIJLEN: StijlCode[] = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'thais', 'japans', 'koreaans'];
@@ -174,47 +174,16 @@ export const RECEPTENBANK: readonly BankRecept[] = [
     namen: ['Hachis parmentier', 'Hachis parmentier', 'Hackfleisch-Kartoffelauflauf', 'Cottage pie'],
     ingredienten: [['gehakt', 100, 'g'], ['aardappelen', 250, 'g'], ['wortelen', 1, 'stuk'], ['melk', 50, 'ml']],
   },
-  // ── ontbijt (WEEK-43) ──
+  // ── avond (kipwrap en pastasalade waren middagrecepten, WEEK-189) ──
   {
-    id: 'havermout-fruit', soort: 'vegetarisch', minuten: 10, stijlen: ['klassiek'], basis: 'granen', moment: 'ontbijt',
-    namen: ['Havermout met fruit', 'Flocons d’avoine aux fruits', 'Haferflocken mit Obst', 'Oatmeal with fruit'],
-    ingredienten: [['havermout', 60, 'g'], ['melk', 150, 'ml'], ['fruit', 100, 'g'], ['honing', 10, 'ml']],
-  },
-  {
-    id: 'yoghurt-muesli', soort: 'vegetarisch', minuten: 5, stijlen: ['klassiek'], basis: 'granen', moment: 'ontbijt',
-    namen: ['Yoghurt met muesli en fruit', 'Yaourt, muesli et fruits', 'Joghurt mit Müsli und Obst', 'Yogurt with muesli and fruit'],
-    ingredienten: [['yoghurt', 150, 'g'], ['muesli', 50, 'g'], ['fruit', 100, 'g']],
-  },
-  {
-    id: 'boterham-kaas', soort: 'vegetarisch', minuten: 5, stijlen: ['klassiek'], basis: 'brood', moment: 'ontbijt',
-    namen: ['Boterhammen met kaas en komkommer', 'Tartines au fromage et concombre', 'Brote mit Käse und Gurke', 'Sandwiches with cheese and cucumber'],
-    ingredienten: [['brood', 100, 'g'], ['kaas', 30, 'g'], ['komkommer', 0.5, 'stuk']],
-  },
-  {
-    id: 'avocado-ei', soort: 'vegetarisch', minuten: 15, stijlen: ['mediterraan'], basis: 'brood', moment: 'ontbijt',
-    namen: ['Avocadotoast met ei', 'Toast à l’avocat et œuf', 'Avocado-Toast mit Ei', 'Avocado toast with egg'],
-    ingredienten: [['brood', 80, 'g'], ['avocado', 0.5, 'stuk'], ['eieren', 1, 'stuk']],
-  },
-  // ── middag (WEEK-43) ──
-  {
-    id: 'tonijnsalade', soort: 'vis', minuten: 10, stijlen: ['mediterraan'], basis: 'brood', moment: 'middag',
-    namen: ['Tonijnsalade op brood', 'Salade au thon sur pain', 'Thunfischsalat auf Brot', 'Tuna salad on bread'],
-    ingredienten: [['tonijn', 80, 'g'], ['sla', 0.5, 'stuk'], ['tomaten', 0.5, 'stuk'], ['brood', 80, 'g']],
-  },
-  {
-    id: 'kipwrap', soort: 'vlees', minuten: 15, stijlen: ['mexicaans'], basis: 'wrap', moment: 'middag',
+    id: 'kipwrap', soort: 'vlees', minuten: 15, stijlen: ['mexicaans'], basis: 'wrap',
     namen: ['Kipwrap met sla en tomaat', 'Wrap au poulet, laitue et tomate', 'Hähnchen-Wrap mit Salat und Tomate', 'Chicken wrap with lettuce and tomato'],
     ingredienten: [['kipfilet', 100, 'g'], ['tortillas', 1, 'stuk'], ['sla', 0.5, 'stuk'], ['tomaten', 0.5, 'stuk'], ['kaas', 20, 'g']],
   },
   {
-    id: 'pastasalade', soort: 'vegetarisch', minuten: 20, stijlen: ['mediterraan'], basis: 'pasta', moment: 'middag',
+    id: 'pastasalade', soort: 'vegetarisch', minuten: 20, stijlen: ['mediterraan'], basis: 'pasta',
     namen: ['Pastasalade met feta', 'Salade de pâtes à la feta', 'Nudelsalat mit Feta', 'Pasta salad with feta'],
     ingredienten: [['pasta', 100, 'g'], ['tomaten', 0.5, 'stuk'], ['feta', 40, 'g'], ['komkommer', 0.5, 'stuk']],
-  },
-  {
-    id: 'eiersalade-brood', soort: 'vegetarisch', minuten: 15, stijlen: ['klassiek'], basis: 'brood', moment: 'middag',
-    namen: ['Eiersalade op brood', 'Salade d’œufs sur pain', 'Eiersalat auf Brot', 'Egg salad on bread'],
-    ingredienten: [['eieren', 2, 'stuk'], ['sla', 0.5, 'stuk'], ['brood', 100, 'g'], ['komkommer', 0.5, 'stuk']],
   },
   // ── thais (WEEK-86) ──
   {

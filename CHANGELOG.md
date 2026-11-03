@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.105.0] – 2026-11-03
+
+- Weekplanner: enkel avondeten. De keuze voor ontbijt en middag is verwijderd uit de planner en het kies-scherm.
+- Kooktijd blijft behouden voor het avondeten: Snel (0–30 min) en Verfijnd (31–50 min).
+- Alle ontbijtrecepten zijn uit de databank verwijderd.
+- Middagrecepten die als avondeten geschikt zijn (kipwrap en pastasalade) zijn avondrecepten geworden; de overige middagrecepten zijn verwijderd of afgekeurd.
+- Ongebruikte ingrediënten uit de catalogus verwijderd (muesli, havermout, fruit, avocado, honing, yoghurt).
+
+**Jira:** [WEEK-189](https://proqltc-1791495894841.atlassian.net/browse/WEEK-189) · **Confluence:** [WEEK-189 Weekplanner enkel avondeten: ontbijt en middag eruit](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19496970)
+
 ## [0.104.2] – 2026-11-03
 
 - Winkels in de buurt: garages, tankstations, wasstraten en elektrozaken worden niet meer onder supermarkten getoond.

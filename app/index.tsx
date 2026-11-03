@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { Moment, MOMENTEN, Soort } from '@/data/receptenbank';
+import { Moment, Soort } from '@/data/receptenbank';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
 import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
@@ -184,12 +184,6 @@ export default function Weekplanning() {
   };
   const periodeVan = keuzes.datums[0];
   const periodeTot = keuzes.datums[keuzes.datums.length - 1];
-  // Minstens één moment blijft aan; de volgorde is altijd ontbijt, middag, avond.
-  const wisselMoment = (m: Moment) => {
-    const ruw = wissel(keuzes.momenten, m);
-    if (!ruw.length) return;
-    pasKeuzesAan(wijzigMomenten(keuzes, MOMENTEN.filter((x) => ruw.includes(x))));
-  };
   const wisselKooktijd = (id: string) => pasKeuzesAan({ ...keuzes, kooktijden: wissel(keuzes.kooktijden, id) });
   const wisselStijl = (id: string) => pasKeuzesAan({ ...keuzes, stijlen: wissel(keuzes.stijlen, id) });
   const wisselVermijdKeuze = (v: Vermijd) => pasKeuzesAan({ ...keuzes, vermijd: wissel(keuzes.vermijd, v) });
@@ -412,7 +406,7 @@ export default function Weekplanning() {
   const stijlOpties = stijlVoorMomenten(keuzes.momenten);
   const kooktijdOpties = kooktijdVoorMomenten(keuzes.momenten);
 
-  const kopStap = (sleutel: 'planning.kies.periode' | 'planning.kies.moment' | 'planning.kies.stijl' | 'planning.kies.vermijd' | 'planning.kies.plan') => (
+  const kopStap = (sleutel: 'planning.kies.periode' | 'planning.kies.kooktijd' | 'planning.kies.stijl' | 'planning.kies.vermijd' | 'planning.kies.plan') => (
     <Text style={s.kop}>{t(sleutel)}</Text>
   );
 
@@ -472,11 +466,9 @@ export default function Weekplanning() {
         </View>
       )}
 
-      {fase === 'moment' && (
+      {fase === 'kooktijd' && (
         <View style={s.blok}>
-          {kopStap('planning.kies.moment')}
-          <Chips opties={MOMENTEN} gekozen={keuzes.momenten} label={(m) => t(`moment.${m}`)} onWissel={wisselMoment} />
-          <Text style={s.subkop}>{t('planning.kooktijd')}</Text>
+          {kopStap('planning.kies.kooktijd')}
           <Chips
             opties={kooktijdOpties.map((o) => o.id)}
             gekozen={keuzes.kooktijden}

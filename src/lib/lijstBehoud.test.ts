@@ -10,7 +10,7 @@ const ing = (code: string, naam: string, hoeveelheid: number, eenheid: string): 
 const recept = (id: string, naam: string, ingredienten: PlanIngredient[]): PlanRecept => ({ id, naam, soort: 'vegetarisch', minuten: 20, stijlen: ['italiaans'], ingredienten });
 
 const dagen: PlanDag[] = [
-  { dag: 'maandag', moment: 'middag', bevestigd: true, recept: recept('db-2', 'Pasta', [ing('tomaat', 'tomaat', 200, 'g'), ing('ui', 'ui', 1, 'stuk')]) },
+  { dag: 'maandag', moment: 'avond', bevestigd: true, recept: recept('db-2', 'Pasta', [ing('tomaat', 'tomaat', 200, 'g'), ing('ui', 'ui', 1, 'stuk')]) },
   { dag: 'maandag', moment: 'avond', bevestigd: true, recept: recept('db-3', 'Tomatensoep', [ing('tomaat', 'tomaat', 150, 'g')]) },
 ];
 

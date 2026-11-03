@@ -8,7 +8,7 @@ const SLEUTELS_NIEUW = ['planning.nogTeBevestigen', 'planning.bevestigDeze'] as 
 
 describe('weekmenu-teksten (WEEK-73)', () => {
   test('de stappen blijven in de afgesproken volgorde', () => {
-    assert.deepEqual([...FASEN], ['periode', 'moment', 'stijl', 'vermijden', 'plan']);
+    assert.deepEqual([...FASEN], ['periode', 'kooktijd', 'stijl', 'vermijden', 'plan']);
   });
 
   for (const taal of TALEN) {

@@ -14,7 +14,7 @@ describe('landenkleuren', () => {
     }
   });
   test('de stijlen in het scherm zijn allemaal gedekt', () => {
-    for (const m of ['ontbijt', 'middag', 'avond'] as const) {
+    for (const m of ['avond'] as const) {
       for (const o of stijlOpties(m)) assert.ok(ALLE.includes(o.id), `${m}: ${o.id}`);
     }
   });

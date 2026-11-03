@@ -179,36 +179,6 @@ export const BEREIDINGEN: Readonly<Record<string, Readonly<Record<KeuzeTaal, rea
     de: ['Die Kartoffeln 20 Minuten kochen und mit der Milch zu Püree stampfen.', 'Das Hackfleisch mit der fein gehackten Karotte 8 Minuten braten.', 'Das Hackfleisch in eine Auflaufform geben, mit dem Püree bedecken und 25 Minuten bei 200 °C backen.', '5 Minuten ruhen lassen und servieren.'],
     en: ['Boil the potatoes for 20 minutes and mash them with the milk.', 'Brown the mince with the finely chopped carrot for 8 minutes.', 'Spread the mince in an ovenproof dish, top with the mash and bake for 25 minutes at 200 °C.', 'Rest for 5 minutes and serve.'],
   },
-  'havermout-fruit': {
-    nl: ['Breng de melk aan de kook in een pan.', 'Voeg de havermout toe en laat 3 à 5 minuten zachtjes pruttelen, af en toe roeren.', 'Snijd het fruit in stukjes.', 'Schep de havermout in een kom, strooi het fruit erover en besprenkel met honing.'],
-    fr: ['Portez le lait à ébullition dans une casserole.', 'Ajoutez les flocons d’avoine et laissez mijoter 3 à 5 minutes en remuant de temps en temps.', 'Coupez les fruits en morceaux.', 'Versez les flocons dans un bol, disposez les fruits dessus et arrosez de miel.'],
-    de: ['Die Milch in einem Topf aufkochen.', 'Die Haferflocken dazugeben und 3 bis 5 Minuten bei milder Hitze köcheln lassen, dabei ab und zu rühren.', 'Das Obst in Stücke schneiden.', 'Den Haferbrei in eine Schale geben, mit dem Obst belegen und mit Honig beträufeln.'],
-    en: ['Bring the milk to the boil in a pan.', 'Add the oats and simmer for 3 to 5 minutes, stirring now and then.', 'Chop the fruit into pieces.', 'Spoon the porridge into a bowl, top with the fruit and drizzle with honey.'],
-  },
-  'yoghurt-muesli': {
-    nl: ['Snijd het fruit in stukjes.', 'Schep de yoghurt in een kom.', 'Strooi de muesli erover en leg het fruit erop.', 'Serveer meteen, zodat de muesli knapperig blijft.'],
-    fr: ['Coupez les fruits en morceaux.', 'Versez le yaourt dans un bol.', 'Parsemez de muesli et disposez les fruits dessus.', 'Servez aussitôt pour que le muesli reste croquant.'],
-    de: ['Das Obst in Stücke schneiden.', 'Den Joghurt in eine Schale geben.', 'Mit Müsli bestreuen und das Obst daraufgeben.', 'Sofort servieren, damit das Müsli knusprig bleibt.'],
-    en: ['Chop the fruit into pieces.', 'Spoon the yogurt into a bowl.', 'Sprinkle over the muesli and top with the fruit.', 'Serve straight away so the muesli stays crunchy.'],
-  },
-  'boterham-kaas': {
-    nl: ['Snijd de komkommer in dunne plakjes.', 'Beleg de boterhammen met de kaas en de komkommer.', 'Snijd ze diagonaal doormidden en serveer.'],
-    fr: ['Coupez le concombre en fines rondelles.', 'Garnissez les tartines de fromage et de concombre.', 'Coupez-les en deux en diagonale et servez.'],
-    de: ['Die Gurke in dünne Scheiben schneiden.', 'Die Brote mit Käse und Gurke belegen.', 'Diagonal halbieren und servieren.'],
-    en: ['Slice the cucumber thinly.', 'Top the bread with the cheese and cucumber.', 'Cut diagonally in half and serve.'],
-  },
-  'avocado-ei': {
-    nl: ['Rooster het brood in de broodrooster of in een droge pan.', 'Pureer de halve avocado en smeer die over het brood.', 'Bak het ei in een beetje olie tot het eiwit gestold is.', 'Leg het ei op de toast en serveer.'],
-    fr: ['Faites griller le pain dans le grille-pain ou une poêle sèche.', 'Écrasez l’avocat et tartinez-le sur le pain.', 'Faites cuire l’œuf dans un peu d’huile jusqu’à ce que le blanc soit pris.', 'Posez l’œuf sur la tartine et servez.'],
-    de: ['Das Brot im Toaster oder in einer trockenen Pfanne toasten.', 'Die halbe Avocado zerdrücken und auf das Brot streichen.', 'Das Ei in etwas Öl braten, bis das Eiweiß fest ist.', 'Das Ei auf den Toast legen und servieren.'],
-    en: ['Toast the bread in a toaster or dry pan.', 'Mash the half avocado and spread it over the bread.', 'Fry the egg in a little oil until the white is set.', 'Place the egg on the toast and serve.'],
-  },
-  tonijnsalade: {
-    nl: ['Laat de tonijn uitlekken en prak hem met een vork.', 'Snijd de sla en de tomaat in stukjes.', 'Leg de sla en de tomaat op het brood en schep de tonijn erop.', 'Serveer meteen.'],
-    fr: ['Égouttez le thon et émiettez-le à la fourchette.', 'Coupez la laitue et la tomate en morceaux.', 'Disposez la laitue et la tomate sur le pain, puis le thon.', 'Servez aussitôt.'],
-    de: ['Den Thunfisch abtropfen lassen und mit einer Gabel zerdrücken.', 'Salat und Tomate in Stücke schneiden.', 'Salat und Tomate auf das Brot legen und den Thunfisch daraufgeben.', 'Sofort servieren.'],
-    en: ['Drain the tuna and flake it with a fork.', 'Cut the lettuce and tomato into pieces.', 'Lay the lettuce and tomato on the bread, then top with the tuna.', 'Serve straight away.'],
-  },
   kipwrap: {
     nl: ['Bak de kipfilet in blokjes 5 minuten in een beetje olie gaar.', 'Snijd de sla en de tomaat in reepjes.', 'Warm de tortilla op en beleg met kip, sla, tomaat en kaas.', 'Rol de wrap op en serveer.'],
     fr: ['Faites cuire le poulet en dés 5 minutes dans un peu d’huile.', 'Coupez la laitue et la tomate en lanières.', 'Réchauffez la tortilla et garnissez-la de poulet, laitue, tomate et fromage.', 'Roulez le wrap et servez.'],
@@ -220,12 +190,6 @@ export const BEREIDINGEN: Readonly<Record<string, Readonly<Record<KeuzeTaal, rea
     fr: ['Faites cuire les pâtes selon l’emballage et rincez-les à l’eau froide.', 'Coupez la tomate et le concombre en dés.', 'Mélangez les pâtes aux légumes et émiettez la feta dessus.', 'Servez froid ou à température ambiante.'],
     de: ['Die Nudeln nach Packungsanweisung kochen und unter kaltem Wasser abschrecken.', 'Tomate und Gurke würfeln.', 'Die Nudeln mit dem Gemüse mischen und den Feta darüberbröseln.', 'Kalt oder lauwarm servieren.'],
     en: ['Cook the pasta according to the packet and rinse under cold water.', 'Dice the tomato and cucumber.', 'Toss the pasta with the vegetables and crumble the feta over the top.', 'Serve cold or at room temperature.'],
-  },
-  'eiersalade-brood': {
-    nl: ['Kook de eieren 9 minuten in kokend water en laat ze afkoelen.', 'Pel de eieren en prak ze met een vork.', 'Snijd de sla en de komkommer fijn en meng ze door de eieren.', 'Beleg het brood met de eiersalade en serveer.'],
-    fr: ['Faites cuire les œufs 9 minutes dans l’eau bouillante et laissez-les refroidir.', 'Écalez les œufs et écrasez-les à la fourchette.', 'Coupez finement la laitue et le concombre et mélangez-les aux œufs.', 'Garnissez le pain de salade d’œufs et servez.'],
-    de: ['Die Eier 9 Minuten in kochendem Wasser garen und abkühlen lassen.', 'Die Eier schälen und mit einer Gabel zerdrücken.', 'Salat und Gurke fein schneiden und unter die Eier mischen.', 'Das Brot mit dem Eiersalat belegen und servieren.'],
-    en: ['Boil the eggs for 9 minutes in boiling water and let them cool.', 'Peel the eggs and mash them with a fork.', 'Finely chop the lettuce and cucumber and mix them into the eggs.', 'Spread the egg salad on the bread and serve.'],
   },
   'thais-kip-curry': {
     nl: ['Snijd de kip in reepjes en de paprika in blokjes.', 'Fruit de currypasta 1 minuut in een scheutje olie.', 'Voeg de kip toe en bak 5 minuten tot ze gaar is.', 'Giet de kokosmelk erbij en laat 10 minuten sudderen.', 'Kook de rijst volgens de verpakking en serveer de curry erover.'],
