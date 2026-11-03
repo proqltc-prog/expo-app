@@ -5,7 +5,7 @@ export const fr: Vertalingen = {
   'welkom.titel': 'Bienvenue sur Gezond Boodschappen',
   'welkom.tekst': 'Choisissez votre langue. Ensuite, configurez votre espace familial.',
   'welkom.merk': 'Famenu',
-  'welkom.slogan': 'Planifier ensemble, manger en famille.',
+  'welkom.slogan': 'De la liste de courses à la table : sain, malin et ensemble.',
   'welkom.knop': 'Choisir votre langue',
   'welkom.doorgaan': 'Continuer',
   'welkom.naamTitel': "Quel est votre prénom ?",
