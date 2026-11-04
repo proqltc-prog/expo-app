@@ -30,6 +30,7 @@ export default function Kies() {
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
   const [vermijd, setVermijd] = useState<Vermijd[]>([]);
+  const [enkelVeg, setEnkelVeg] = useState(false);
   const [zoek, setZoek] = useState('');
   const [bezig, setBezig] = useState(false);
   // Tekst als een ander gezinslid het weekplan beheert: dan kies je hier niets (WEEK-30).
@@ -43,6 +44,7 @@ export default function Kies() {
         setKooktijden(kooktijdNaarDb(k.momenten, k.kooktijden));
         setStijlen(stijlNaarDb(k.stijlen));
         setVermijd(k.vermijd.filter((v): v is Vermijd => (VERMIJDBAAR as readonly string[]).includes(v)));
+        setEnkelVeg(k.enkelVegetarisch);
       });
       Promise.all([laadPlan(), ikId(), laadLeden().catch(() => [] as GezinsLid[])]).then(([plan, id, leden]) => {
         if (plan && !magPlanWijzigen(plan, id)) {
@@ -56,8 +58,8 @@ export default function Kies() {
   );
 
   const recepten = useMemo(
-    () => kiesbareRecepten(RECEPTENBANK, { moment, kooktijden, stijlen, vermijd, zoek, taal }),
-    [moment, kooktijden, stijlen, vermijd, zoek, taal]
+    () => kiesbareRecepten(RECEPTENBANK, { moment, kooktijden, stijlen, vermijd, enkelVegetarisch: enkelVeg, zoek, taal }),
+    [moment, kooktijden, stijlen, vermijd, enkelVeg, zoek, taal]
   );
 
   const kies = async (recept: BankRecept) => {

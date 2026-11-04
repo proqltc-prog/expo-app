@@ -20,6 +20,8 @@ export type KiesFilter = {
   kooktijden: readonly KooktijdCode[];
   stijlen: readonly StijlCode[];
   vermijd: readonly Vermijd[];
+  /** WEEK-190: enkel vegetarische recepten. */
+  enkelVegetarisch?: boolean;
   zoek: string;
   taal: Taal;
 };
@@ -34,6 +36,7 @@ export function kiesbareRecepten(bank: readonly BankRecept[], f: KiesFilter): Ba
       (!f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten))) &&
       (!f.stijlen.length || r.stijlen.some((s) => f.stijlen.includes(s))) &&
       !bankReceptVermijdt(r, f.vermijd) &&
+      (!f.enkelVegetarisch || r.soort === 'vegetarisch') &&
       (!zoek || zoeksleutel(r.namen[idx] ?? r.namen[0]).includes(zoek))
   );
 }

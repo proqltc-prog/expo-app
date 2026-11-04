@@ -1,7 +1,7 @@
 // Weekplan uit de recepten van de database (WEEK-68, deel 2).
 // Zelfde regels als de lokale planner: momenten, kooktijd en stijl eerst, geen herhaling als dat kan,
 // en stap voor stap versoepelen als er te weinig recepten zijn. Pure logica, zonder netwerk.
-import type { Moment, StijlCode } from '@/data/receptenbank';
+import type { Moment, Soort, StijlCode } from '@/data/receptenbank';
 import { isAfgewezen } from './afwijzen';
 import type { Seizoen } from '@/data/seizoenen';
 import type { Taal } from '@/i18n';
@@ -24,10 +24,16 @@ export function zonderVermeden(pool: DbPoolRecept[], vermijd: readonly Vermijd[]
   return pool.filter((k) => !heeftVermijdNaam(k.recept.ingredienten, vermijd));
 }
 
+/** WEEK-190: met 'enkel vegetarisch' blijven enkel vegetarische recepten over. */
+export function enkelVegetarischPool(pool: DbPoolRecept[], enkel: boolean | undefined): DbPoolRecept[] {
+  return enkel ? pool.filter((k) => k.soort === 'vegetarisch') : pool;
+}
+
 /** Een recept klaar voor de planner, met de eigenschappen waarop gefilterd wordt. */
 export type DbPoolRecept = {
   recept: PlanRecept;
   moment: Moment;
+  soort: Soort;
   kooktijd: KooktijdCode;
   stijlen: StijlCode[];
   /** Seizoenen waarin het recept past; leeg is het hele jaar (WEEK-156). */
@@ -39,7 +45,7 @@ export function maakDbPool(recepten: DbRecept[], taal: Taal, gezin: Gezin): DbPo
   return recepten.flatMap((r) => {
     const recept = naarPlanRecept(r, taal, gezin);
     return recept
-      ? [{ recept, moment: r.moment, kooktijd: kooktijdVan(r.kooktijdMin), stijlen: [r.stijl], seizoenen: r.seizoenen ?? [] }]
+      ? [{ recept, moment: r.moment, soort: r.soort, kooktijd: kooktijdVan(r.kooktijdMin), stijlen: [r.stijl], seizoenen: r.seizoenen ?? [] }]
       : [];
   });
 }
@@ -129,7 +135,7 @@ function kiesVoorSeizoen(
 /** Stelt een weekplan samen uit de databaserecepten. Geeft undefined als er voor geen enkel gekozen moment recepten zijn. */
 export function planUitDatabase(verzoek: PlanVerzoek, invoer: DbPoolRecept[]): Weekplan | undefined {
   const momenten = normaliseerMomenten(verzoek.momenten);
-  const pool = zonderVermeden(invoer, verzoek.vermijd);
+  const pool = enkelVegetarischPool(zonderVermeden(invoer, verzoek.vermijd), verzoek.enkelVegetarisch);
   if (!pool.some((k) => momenten.includes(k.moment))) return undefined;
   const random = toeval(verzoek.seed ?? Date.now());
   const gebruikt = new Set<string>();
@@ -159,6 +165,7 @@ export function planUitDatabase(verzoek: PlanVerzoek, invoer: DbPoolRecept[]): W
     kooktijden: [...verzoek.kooktijden],
     stijlen: [...verzoek.stijlen],
     vermijd: verzoek.vermijd,
+    ...(verzoek.enkelVegetarisch ? { enkelVegetarisch: true } : {}),
     taal: verzoek.taal,
     porties: schaalFactor(verzoek.profiel),
     bron: 'db',
@@ -177,7 +184,7 @@ export function vervangDbDag(plan: Weekplan, index: number, pool: DbPoolRecept[]
   const gebruikt = new Set(plan.dagen.map((d) => d.recept.id));
   // WEEK-170: het huidige recept wordt nooit teruggegeven; anders doet de pijl niets als de pool klein is.
   // WEEK-184: een eerder vervangen recept komt in deze week nergens meer terug.
-  const kandidaten = zonderVermeden(pool, plan.vermijd).filter((k) => k.recept.id !== doel.recept.id && !isAfgewezen(plan, k.recept.id));
+  const kandidaten = enkelVegetarischPool(zonderVermeden(pool, plan.vermijd), plan.enkelVegetarisch).filter((k) => k.recept.id !== doel.recept.id && !isAfgewezen(plan, k.recept.id));
   const keuze = kiesVoorSeizoen(
     kandidaten,
     doel.moment ?? 'avond',

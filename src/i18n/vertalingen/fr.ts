@@ -396,6 +396,7 @@ export const fr: Vertalingen = {
   'planning.kies.stijl': "Quelle cuisine vous plaît ?",
   'planning.kies.vermijd': 'Y a-t-il quelque chose à éviter ?',
   'planning.vermijdOptioneel': "Facultatif. Passez cette étape si vous n’évitez rien.",
+  'planning.enkelVegetarisch': 'Végétarien uniquement',
   'planning.kies.plan': "Votre menu de la semaine",
   'planning.kalenderKnop': 'Choisir dans le calendrier',
   'planning.kalenderTitel': "Choisissez vos jours",

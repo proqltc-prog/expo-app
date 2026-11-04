@@ -396,6 +396,7 @@ export const de: Vertalingen = {
   'planning.kies.stijl': 'Welche Küche magst du?',
   'planning.kies.vermijd': 'Gibt es etwas, das du meiden möchtest?',
   'planning.vermijdOptioneel': 'Optional. Überspringen, wenn du nichts meiden willst.',
+  'planning.enkelVegetarisch': 'Nur vegetarisch',
   'planning.kies.plan': 'Dein Wochenmenü',
   'planning.kalenderKnop': 'Im Kalender wählen',
   'planning.kalenderTitel': 'Wähle deine Tage',

@@ -30,7 +30,7 @@ export function kiesVervanging(
   // Een ontbijt wordt weer een ontbijt, een avondrecept weer een avondrecept (WEEK-43).
   const moment = huidig.moment ?? 'avond';
   // WEEK-184: een eerder vervangen recept komt in deze week nergens meer terug.
-  const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []) && !isAfgewezen(plan, r.id) && momentVan(r) === moment);
+  const toegestaan = bank.filter((r) => !bankReceptVermijdt(r, plan.vermijd ?? []) && (!plan.enkelVegetarisch || r.soort === 'vegetarisch') && !isAfgewezen(plan, r.id) && momentVan(r) === moment);
   const { recepten } = filterOpKeuzes(passendeRecepten(toegestaan), plan.kooktijden, plan.stijlen, 1);
 
   const andereDagen = plan.dagen.filter((_, i) => i !== index);

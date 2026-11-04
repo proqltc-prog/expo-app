@@ -69,6 +69,8 @@ export type PlanVerzoek = {
   stijlen: StijlCode[];
   /** Ingrediënten die vermeden worden (WEEK-41). */
   vermijd?: Vermijd[];
+  /** Enkel vegetarische recepten (WEEK-190). */
+  enkelVegetarisch?: boolean;
   /** Gekozen periode in dagen (WEEK-42). */
   aantalDagen?: number;
   /** De gekozen datums (YYYY-MM-DD), binnen een periode van 7 dagen (WEEK-97). */
@@ -88,6 +90,8 @@ export type Weekplan = {
   stijlen: StijlCode[];
   /** Ingrediënten die bij het maken van dit plan vermeden werden; ook bij het vervangen van een dag (WEEK-41). */
   vermijd?: Vermijd[];
+  /** Enkel vegetarische recepten (WEEK-190); ook bij het vervangen van een dag. */
+  enkelVegetarisch?: boolean;
   /** Gebruiker-id van de beheerder: enkel die mag het plan wijzigen (WEEK-30). Ontbreekt bij een plan zonder gezin. */
   beheerder?: string;
   taal: Taal;
