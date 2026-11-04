@@ -10,29 +10,53 @@ import {
   stijlVoorMomenten,
   vermijdOpties,
   vermijdVoorMomenten,
+  vernieuwKooktijden,
   KOOKTIJD_IDS,
   STIJL_IDS,
 } from '@/lib/planner/opties';
 
 const ids = (lijst: { id: string }[]) => lijst.map((o) => o.id);
 
-describe('kooktijd voor avondeten (WEEK-189)', () => {
-  test('avond heeft Snel en Verfijnd', () => {
-    assert.deepEqual(kooktijdOpties('avond').map((o) => o.naam), ['Snel', 'Verfijnd']);
+describe('kooktijd voor avondeten (WEEK-199: snel, gemiddeld en uitgebreid)', () => {
+  test('avond heeft Snel, Gemiddeld en Uitgebreid', () => {
+    assert.deepEqual(kooktijdOpties('avond').map((o) => o.naam), ['Snel', 'Gemiddeld', 'Uitgebreid']);
   });
-  test('de naam "chef" komt niet meer voor (hernoemd naar Verfijnd)', () => {
+  test('de namen "chef" en "verfijnd" komen niet meer voor', () => {
     const namen = kooktijdOpties('avond').map((o) => o.naam.toLowerCase());
-    assert.equal(namen.some((n) => n.includes('chef')), false);
+    assert.equal(namen.some((n) => n.includes('chef') || n.includes('verfijnd')), false);
   });
-  test('avond: tot 30 minuten snel, 31 tot 50 minuten verfijnd', () => {
-    assert.equal(kooktijdVan('avond', 0), 'snel');
+  test('avond: tot 30 minuten snel, 31 tot 45 gemiddeld, 46 tot 60 uitgebreid, daarboven niets', () => {
+    assert.equal(kooktijdVan('avond', 1), 'snel');
     assert.equal(kooktijdVan('avond', 30), 'snel');
-    assert.equal(kooktijdVan('avond', 31), 'verfijnd');
-    assert.equal(kooktijdVan('avond', 50), 'verfijnd');
-    assert.equal(kooktijdVan('avond', 51), undefined);
+    assert.equal(kooktijdVan('avond', 31), 'gemiddeld');
+    assert.equal(kooktijdVan('avond', 45), 'gemiddeld');
+    assert.equal(kooktijdVan('avond', 46), 'uitgebreid');
+    assert.equal(kooktijdVan('avond', 60), 'uitgebreid');
+    assert.equal(kooktijdVan('avond', 61), undefined);
   });
-  test('de kooktijd-ids zijn enkel snel en verfijnd', () => {
-    assert.deepEqual(KOOKTIJD_IDS, ['snel', 'verfijnd']);
+  test('de kooktijd-ids zijn snel, gemiddeld en uitgebreid, in die volgorde', () => {
+    assert.deepEqual(KOOKTIJD_IDS, ['snel', 'gemiddeld', 'uitgebreid']);
+  });
+  test('de bereiken sluiten op elkaar aan en lopen tot 60', () => {
+    const [snel, gemiddeld, uitgebreid] = kooktijdOpties('avond');
+    assert.equal(snel.van, 1);
+    assert.equal(gemiddeld.van, snel.tot + 1);
+    assert.equal(uitgebreid.van, gemiddeld.tot + 1);
+    assert.equal(uitgebreid.tot, 60);
+  });
+});
+
+describe('oude kooktijdkeuzes omzetten (WEEK-199)', () => {
+  test('"verfijnd" (31–50 min) wordt gemiddeld en uitgebreid', () => {
+    assert.deepEqual(vernieuwKooktijden(['verfijnd']), ['gemiddeld', 'uitgebreid']);
+  });
+  test('huidige keuzes blijven, in vaste volgorde en zonder dubbele', () => {
+    assert.deepEqual(vernieuwKooktijden(['uitgebreid', 'snel', 'snel']), ['snel', 'uitgebreid']);
+    assert.deepEqual(vernieuwKooktijden(['snel', 'verfijnd']), ['snel', 'gemiddeld', 'uitgebreid']);
+  });
+  test('onbekende en ongeldige waarden vallen weg', () => {
+    assert.deepEqual(vernieuwKooktijden(['rustig', 42, null, 'chef']), []);
+    assert.deepEqual(vernieuwKooktijden([]), []);
   });
 });
 

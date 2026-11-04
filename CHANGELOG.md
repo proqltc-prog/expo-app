@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.111.0] – 2026-11-04
+
+- Kooktijd: overal dezelfde drie kooktijden met de tijd erbij: snel (tot 30 min), gemiddeld (31–45 min) en uitgebreid (46–60 min). Een recept duurt nooit langer dan een uur: databankrecepten boven de 60 minuten komen niet meer in het weekmenu of in Kies.
+- Weekmenu: de stap Kooktijd toont de drie kooktijden met het tijdsbestek. Een eerder opgeslagen keuze "verfijnd" wordt gemiddeld plus uitgebreid.
+- Eigen recept: kies een kooktijd; de minuten worden vooraf ingevuld met de geschatte tijd uit onze recepten en blijven aanpasbaar tot 60 minuten.
+
+**Jira:** [WEEK-199](https://proqltc-1791495894841.atlassian.net/browse/WEEK-199) · **Confluence:** [WEEK-199 Kooktijd: snel, gemiddeld en uitgebreid met tijdsaanduiding, bovengrens 60 minuten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20414487)
+
 ## [0.110.0] – 2026-11-04
 
 - Thema: terracotta als tweede accentkleur naast het groen. Het groen blijft het hoofdthema; terracotta voor de secundaire acties (Mijn recepten beheren, + Nieuw recept en de knoppen op de gezinspagina).

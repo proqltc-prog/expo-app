@@ -11,6 +11,7 @@ import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { normaliseerMomenten } from '@/lib/planner/moment';
 import { schaalFactor } from '@/lib/schaal';
 import { toeval } from '@/lib/planner/lokaal';
+import { binnenKooktijd } from '@/lib/kooktijd';
 import { kooktijdVan, KooktijdCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
 import { dagenVoorVerzoek, plandagenVoorDatums, voegDatumsToe } from '@/lib/planner/datums';
 import { seizoenPasst, seizoenVan } from '@/lib/planner/seizoen';
@@ -40,9 +41,13 @@ export type DbPoolRecept = {
   seizoenen: Seizoen[];
 };
 
-/** Zet de databaserecepten om naar de planner-pool. Recepten zonder titel in de taal vallen weg. */
+/**
+ * Zet de databaserecepten om naar de planner-pool. Recepten zonder titel in de taal vallen weg,
+ * net als recepten die langer duren dan de bovengrens van een uur (WEEK-199).
+ */
 export function maakDbPool(recepten: DbRecept[], taal: Taal, gezin: Gezin): DbPoolRecept[] {
   return recepten.flatMap((r) => {
+    if (!binnenKooktijd(r.kooktijdMin)) return [];
     const recept = naarPlanRecept(r, taal, gezin);
     return recept
       ? [{ recept, moment: r.moment, soort: r.soort, kooktijd: kooktijdVan(r.kooktijdMin), stijlen: [r.stijl], seizoenen: r.seizoenen ?? [] }]

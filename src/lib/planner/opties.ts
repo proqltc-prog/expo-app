@@ -1,15 +1,17 @@
 // Keuzes voor het avondeten in het weekmenu (WEEK-68, deel 4; WEEK-189: enkel avond). Pure logica.
 // Pure logica. De schermen tonen de lijsten; de planner filtert er later op.
 import type { Moment } from '@/data/receptenbank';
+import { KOOKTIJD_BEREIK, KOOKTIJDEN, KooktijdCode } from '@/lib/kooktijd';
 
 export type KooktijdOptie = { id: string; naam: string; van: number; tot: number };
 export type Optie = { id: string; naam: string };
 
-// Avondeten: snel tot 30 minuten, daarna verfijnde recepten tot 50 minuten.
-const MIDDAG_AVOND_KOOKTIJD: KooktijdOptie[] = [
-  { id: 'snel', naam: 'Snel', van: 0, tot: 30 },
-  { id: 'verfijnd', naam: 'Verfijnd', van: 31, tot: 50 },
-];
+// WEEK-199: dezelfde drie kooktijden als in de databank, met het bereik uit src/lib/kooktijd.ts.
+const KOOKTIJD_NAAM: Record<KooktijdCode, string> = { snel: 'Snel', gemiddeld: 'Gemiddeld', uitgebreid: 'Uitgebreid' };
+const MIDDAG_AVOND_KOOKTIJD: KooktijdOptie[] = KOOKTIJDEN.map((id) => ({ id, naam: KOOKTIJD_NAAM[id], ...KOOKTIJD_BEREIK[id] }));
+
+/** Keuzes uit eerdere versies en wat ze nu betekenen: "verfijnd" (31–50 min) dekte gemiddeld en uitgebreid. */
+const VEROUDERDE_KOOKTIJD: Record<string, KooktijdCode[]> = { verfijnd: ['gemiddeld', 'uitgebreid'] };
 
 const KOOKTIJD: Record<Moment, KooktijdOptie[]> = {
   avond: MIDDAG_AVOND_KOOKTIJD,
@@ -113,6 +115,16 @@ function unie<T extends { id: string }>(lijsten: readonly (readonly T[])[]): T[]
 
 /** Alle kooktijd-ids die het scherm kan opslaan. */
 export const KOOKTIJD_IDS: string[] = unie([KOOKTIJD.avond]).map((o) => o.id);
+
+/** Zet opgeslagen kooktijdkeuzes om naar de huidige ids, in vaste volgorde en zonder dubbele; onbekende vallen weg (WEEK-199). */
+export function vernieuwKooktijden(gekozen: readonly unknown[]): string[] {
+  const gewenst = new Set<string>();
+  for (const k of gekozen) {
+    if (typeof k !== 'string') continue;
+    for (const id of VEROUDERDE_KOOKTIJD[k] ?? [k]) gewenst.add(id);
+  }
+  return KOOKTIJD_IDS.filter((id) => gewenst.has(id));
+}
 
 /** Alle stijl-ids die het scherm kan opslaan. */
 export const STIJL_IDS: string[] = unie([STIJL.avond]).map((o) => o.id);

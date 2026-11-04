@@ -105,3 +105,24 @@ describe('WEEK-192: zoeken naar ingrediënten zoals de lijst', () => {
     assert.equal(standaardEenheid(undefined), 'g');
   });
 });
+
+// WEEK-199: een eigen recept duurt, zoals elk recept in de app, nooit langer dan een uur.
+describe('WEEK-199: kooktijd van een eigen recept tot 60 minuten', () => {
+  test('60 minuten is geldig, 61 en 600 niet meer', () => {
+    assert.equal(valideer({ ...geldig, minuten: '60' }).ok, true);
+    const teLang = valideer({ ...geldig, minuten: '61' });
+    assert.equal(teLang.ok, false);
+    if (!teLang.ok) assert.deepEqual(teLang.fouten, ['minuten']);
+    assert.equal(valideer({ ...geldig, minuten: '600' }).ok, false);
+  });
+
+  test('regressie: een lege, nul- of niet-gehele kooktijd blijft een fout', () => {
+    for (const m of ['', '0', '12,5', 'abc']) assert.equal(valideer({ ...geldig, minuten: m }).ok, false, m);
+  });
+
+  test('regressie: de minuten worden als getal bewaard', () => {
+    const r = valideer({ ...geldig, minuten: ' 45 ' });
+    if (!r.ok) throw new Error('moet geldig zijn');
+    assert.equal(r.waarden.minuten, 45);
+  });
+});

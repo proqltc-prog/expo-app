@@ -8,6 +8,7 @@ import { BankRecept, Moment, RECEPTENBANK, Soort } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
 import { rondAf } from './hoeveelheid';
 import { schaalFactor } from '@/lib/schaal';
+import { binnenKooktijd, KOOKTIJD_BEREIK } from '@/lib/kooktijd';
 import { DagCode, KooktijdCode, kooktijdVan, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from './types';
 import type { StijlCode } from '@/data/receptenbank';
 import { kiesEersteDag, markeerUitFrigo } from './frigovoorrang';
@@ -37,15 +38,15 @@ export function soortenSchema(aantal: number): Soort[] {
   return Array.from({ length: aantal }, (_, i) => cyclus[i % cyclus.length]);
 }
 
-/** Recepten van alle soorten uit de bank. */
+/** Recepten van alle soorten uit de bank, binnen de bovengrens van een uur (WEEK-199). */
 export function passendeRecepten(bank: readonly BankRecept[] = RECEPTENBANK): BankRecept[] {
   const soorten = toegestaneSoorten();
-  return bank.filter((r) => soorten.includes(r.soort));
+  return bank.filter((r) => soorten.includes(r.soort) && binnenKooktijd(r.minuten));
 }
 
-/** Score: hoger = beter. Liefst geen uren in de keuken op een weekdag. */
+/** Score: hoger = beter. De planner kiest liefst de kortere recepten voor een weekdag. */
 function voorkeurScore(r: BankRecept): number {
-  return r.minuten > 60 ? -1 : 0;
+  return r.minuten > KOOKTIJD_BEREIK.gemiddeld.tot ? -1 : 0;
 }
 
 /** Zet een recept uit de bank om naar een planrecept in de juiste taal en voor het juiste aantal porties. */

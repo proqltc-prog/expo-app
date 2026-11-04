@@ -35,12 +35,12 @@ describe('mag de gebruiker verder?', () => {
 
 describe('wijzigen van de momenten houdt geldige keuzes (regressie)', () => {
   test('een kooktijd die bij het avondmoment hoort, blijft staan', () => {
-    const nieuw = wijzigMomenten({ ...leeg, kooktijden: ['snel', 'verfijnd'] }, ['avond']);
-    assert.deepEqual(nieuw.kooktijden, ['snel', 'verfijnd']);
+    const nieuw = wijzigMomenten({ ...leeg, kooktijden: ['snel', 'gemiddeld', 'uitgebreid'] }, ['avond']);
+    assert.deepEqual(nieuw.kooktijden, ['snel', 'gemiddeld', 'uitgebreid']);
   });
-  test('een kooktijd die niet meer bestaat, valt weg', () => {
-    const nieuw = wijzigMomenten({ ...leeg, kooktijden: ['rustig'] }, ['avond']);
-    assert.deepEqual(nieuw.kooktijden, []);
+  test('een kooktijd die niet meer bestaat, valt weg (ook de oude keuze verfijnd, WEEK-199)', () => {
+    assert.deepEqual(wijzigMomenten({ ...leeg, kooktijden: ['rustig'] }, ['avond']).kooktijden, []);
+    assert.deepEqual(wijzigMomenten({ ...leeg, kooktijden: ['verfijnd'] }, ['avond']).kooktijden, []);
   });
   test('een stijl die niet meer bestaat, valt weg; er wordt de standaard gekozen', () => {
     const nieuw = wijzigMomenten({ ...leeg, stijlen: ['ovenschotels'] }, ['avond']);

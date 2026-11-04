@@ -3,18 +3,21 @@ import assert from 'node:assert/strict';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { stijlOpties } from '@/lib/planner/opties';
 
-describe('kooktijd naar databasecodes', () => {
-  test('avond Snel (0–30 min) raakt snel en gemiddeld', () => {
-    assert.deepEqual(kooktijdNaarDb(['avond'], ['snel']), ['snel', 'gemiddeld']);
+describe('kooktijd naar databasecodes (WEEK-199: dezelfde codes als de databank)', () => {
+  test('elke kooktijd is zijn eigen databasecode', () => {
+    assert.deepEqual(kooktijdNaarDb(['avond'], ['snel']), ['snel']);
+    assert.deepEqual(kooktijdNaarDb(['avond'], ['gemiddeld']), ['gemiddeld']);
+    assert.deepEqual(kooktijdNaarDb(['avond'], ['uitgebreid']), ['uitgebreid']);
   });
-  test('avond Verfijnd (31–50 min) raakt gemiddeld en uitgebreid', () => {
-    assert.deepEqual(kooktijdNaarDb(['avond'], ['verfijnd']), ['gemiddeld', 'uitgebreid']);
+  test('meerdere kooktijden komen in vaste volgorde, zonder dubbele', () => {
+    assert.deepEqual(kooktijdNaarDb(['avond'], ['uitgebreid', 'snel', 'snel']), ['snel', 'uitgebreid']);
   });
-  test('meerdere kooktijden geven de vereniging van de codes', () => {
-    assert.deepEqual(kooktijdNaarDb(['avond'], ['snel', 'verfijnd']), ['snel', 'gemiddeld', 'uitgebreid']);
-  });
-  test('een onbekende kooktijd geeft niets', () => {
+  test('een onbekende of oude kooktijd geeft niets; het omzetten van oude keuzes gebeurt bij het inlezen', () => {
     assert.deepEqual(kooktijdNaarDb(['avond'], ['bestaat-niet']), []);
+    assert.deepEqual(kooktijdNaarDb(['avond'], ['verfijnd']), []);
+  });
+  test('zonder momenten blijft er niets over', () => {
+    assert.deepEqual(kooktijdNaarDb([], ['snel']), []);
   });
 });
 

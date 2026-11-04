@@ -1,29 +1,13 @@
-// Tijdelijke brug tussen de keuzes in het weekmenu (opties.ts) en de codes die de planner nu gebruikt
-// (KooktijdCode en StijlCode uit de database). Verdwijnt zodra WEEK-68 deel 4c de database en de codes gelijktrekt.
+// Brug tussen de keuzes in het weekmenu (opties.ts) en de codes die de planner gebruikt (KooktijdCode en StijlCode uit de database).
+// WEEK-199: de kooktijden zijn nu dezelfde codes als in de databank; enkel de stijlen worden nog vertaald.
 import type { Moment, StijlCode } from '@/data/receptenbank';
+import { KOOKTIJDEN, KooktijdCode } from '@/lib/kooktijd';
 import { kooktijdOpties } from '@/lib/planner/opties';
-import type { KooktijdCode } from '@/lib/planner/types';
 
-/** Minuten-bereik van de databasecodes (zie kooktijdVan in types.ts). */
-const DB_BEREIK: Record<KooktijdCode, { van: number; tot: number }> = {
-  snel: { van: 0, tot: 20 },
-  gemiddeld: { van: 21, tot: 40 },
-  uitgebreid: { van: 41, tot: Number.POSITIVE_INFINITY },
-};
-
-/** Welke databasecodes een keuze-moment-combinatie dekt: alle codes waarvan het bereik overlapt met de gekozen kooktijd. */
+/** De gekozen kooktijden als databasecodes, in vaste volgorde. Enkel keuzes die bij de momenten horen; onbekende vallen weg. */
 export function kooktijdNaarDb(momenten: readonly Moment[], gekozen: readonly string[]): KooktijdCode[] {
-  const uit = new Set<KooktijdCode>();
-  for (const m of momenten) {
-    for (const optie of kooktijdOpties(m)) {
-      if (!gekozen.includes(optie.id)) continue;
-      for (const code of Object.keys(DB_BEREIK) as KooktijdCode[]) {
-        const bereik = DB_BEREIK[code];
-        if (optie.van <= bereik.tot && optie.tot >= bereik.van) uit.add(code);
-      }
-    }
-  }
-  return (Object.keys(DB_BEREIK) as KooktijdCode[]).filter((c) => uit.has(c));
+  const beschikbaar = new Set(momenten.flatMap((m) => kooktijdOpties(m).map((o) => o.id)));
+  return KOOKTIJDEN.filter((code) => beschikbaar.has(code) && gekozen.includes(code));
 }
 
 const STIJL_NAAR_DB: Record<string, StijlCode[]> = {

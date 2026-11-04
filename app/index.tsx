@@ -35,6 +35,7 @@ import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
+import { KOOKTIJD_BEREIK, KooktijdCode } from '@/lib/kooktijd';
 import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
@@ -48,12 +49,7 @@ const LIJN = '#E4E8E1';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 // Vaste vertaalsleutels per keuze: TypeScript controleert ze zo mee.
-const KOOKTIJD_SLEUTEL = {
-  snel: 'kooktijdOptie.snel',
-  rustig: 'kooktijdOptie.rustig',
-  uitgebreid: 'kooktijdOptie.uitgebreid',
-  verfijnd: 'kooktijdOptie.verfijnd',
-} as const;
+// WEEK-199: de kooktijd toont het tijdsbestek erbij ("Gemiddeld (31–45 min)"), met de grenzen uit src/lib/kooktijd.ts.
 const STIJL_SLEUTEL = {
   mediterraan: 'stijlOptie.mediterraan',
   chinees: 'stijlOptie.chinees',
@@ -475,7 +471,7 @@ export default function Weekplanning() {
           <Chips
             opties={kooktijdOpties.map((o) => o.id)}
             gekozen={keuzes.kooktijden}
-            label={(id) => t(KOOKTIJD_SLEUTEL[id as keyof typeof KOOKTIJD_SLEUTEL])}
+            label={(id) => t(`kooktijd.${id as KooktijdCode}`, KOOKTIJD_BEREIK[id as KooktijdCode])}
             onWissel={wisselKooktijd}
           />
         </View>

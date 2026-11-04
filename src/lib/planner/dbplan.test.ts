@@ -33,7 +33,7 @@ const plan = (p: DbPoolRecept[], wijziging: Partial<PlanVerzoek> = {}) =>
 
 describe('maakDbPool (WEEK-68)', () => {
   test('zet recepten om met moment, kooktijdklasse en stijl', () => {
-    const [k] = pool(dbRecept(1, { kooktijdMin: 30, moment: 'avond', stijl: 'klassiek' }));
+    const [k] = pool(dbRecept(1, { kooktijdMin: 40, moment: 'avond', stijl: 'klassiek' }));
     assert.equal(k.moment, 'avond');
     assert.equal(k.kooktijd, 'gemiddeld');
     assert.deepEqual(k.stijlen, ['klassiek']);
@@ -41,6 +41,17 @@ describe('maakDbPool (WEEK-68)', () => {
   });
   test('recepten zonder titel in de taal vallen weg', () => {
     assert.equal(maakDbPool([dbRecept(1, { titels: {} })], 'nl', { volwassenen: 1, kinderen: 0 }).length, 0);
+  });
+  // WEEK-199: de kooktijdklasse volgt de nieuwe grenzen (30 en 45 minuten) en recepten boven het uur vallen weg.
+  test('WEEK-199: 30 minuten is snel, 45 gemiddeld en 60 uitgebreid', () => {
+    const [a, b, c] = pool(dbRecept(1, { kooktijdMin: 30 }), dbRecept(2, { kooktijdMin: 45 }), dbRecept(3, { kooktijdMin: 60 }));
+    assert.equal(a.kooktijd, 'snel');
+    assert.equal(b.kooktijd, 'gemiddeld');
+    assert.equal(c.kooktijd, 'uitgebreid');
+  });
+  test('WEEK-199: een recept dat langer duurt dan een uur komt niet in de pool', () => {
+    const p = pool(dbRecept(1, { kooktijdMin: 61 }), dbRecept(2, { kooktijdMin: 290 }), dbRecept(3, { kooktijdMin: 60 }));
+    assert.deepEqual(p.map((k) => k.recept.id), ['db-3']);
   });
 });
 
@@ -170,14 +181,15 @@ describe('vermijden en moment worden nooit overtreden (WEEK-116)', () => {
 });
 
 describe('planUitDatabase: aanvullen kiest korte recepten (WEEK-122)', () => {
-  test('bij aanvullen komt een recept van 290 minuten niet op het plan als er een korter recept is', () => {
-    const p = pool(dbRecept(1, { kooktijdMin: 290 }), dbRecept(2, { kooktijdMin: 25 }));
+  test('bij aanvullen komt een recept van 60 minuten niet op het plan als er een korter recept is', () => {
+    // Geen enkel recept is snel: de planner vult aan met het kortste (35 min, gemiddeld), niet met het lange.
+    const p = pool(dbRecept(1, { kooktijdMin: 60 }), dbRecept(2, { kooktijdMin: 35 }));
     const uit = plan(p, { aantalDagen: 1, kooktijden: ['snel'] })!;
     assert.equal(uit.dagen[0].recept.id, 'db-2');
     assert.equal(uit.versoepeld, true);
   });
   test('regressie: over veel seeds kiest het plan nooit het langste recept als een korter beschikbaar is', () => {
-    const p = pool(dbRecept(1, { kooktijdMin: 290 }), dbRecept(2, { kooktijdMin: 25 }), dbRecept(3, { kooktijdMin: 30 }));
+    const p = pool(dbRecept(1, { kooktijdMin: 60 }), dbRecept(2, { kooktijdMin: 25 }), dbRecept(3, { kooktijdMin: 30 }));
     for (let seed = 1; seed <= 20; seed++) {
       const uit = plan(p, { aantalDagen: 1, kooktijden: ['snel'], seed })!;
       assert.notEqual(uit.dagen[0].recept.id, 'db-1', `seed ${seed}`);

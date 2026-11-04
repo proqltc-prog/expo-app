@@ -19,13 +19,17 @@ import {
   verwijderEigen,
   zoekIngredienten,
 } from '@/lib/eigenrecepten';
+import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
+import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
 // Ingrediënten die nog niet bestaan, kun je handmatig toevoegen; die blijven bij het recept.
+// WEEK-199: de kooktijd kies je als snel, gemiddeld of uitgebreid (met het tijdsbestek); de minuten worden vooraf
+// ingevuld met de geschatte tijd uit de databank en blijven aanpasbaar tot de bovengrens van een uur.
 
 const KLEUR = '#2e7d4f';
 
@@ -58,6 +62,14 @@ export default function EigenReceptScherm() {
   const [gezinNaam, setGezinNaam] = useState<string | undefined>(undefined);
   const [fouten, setFouten] = useState<Fout[]>([]);
   const [bezig, setBezig] = useState(false);
+  // De geschatte tijd per kooktijd: het gemiddelde van de databankrecepten; zolang die niet geladen zijn, de vaste schatting.
+  const [schattingen, setSchattingen] = useState<Record<KooktijdCode, number>>(KOOKTIJD_SCHATTING_STANDAARD);
+
+  useEffect(() => {
+    laadDbRecepten()
+      .then((recepten) => setSchattingen(kooktijdSchattingen(recepten.map((r) => r.kooktijdMin))))
+      .catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     laadGezin().then((g) => setGezinNaam(g?.naam || undefined)).catch(() => setGezinNaam(undefined));
@@ -102,6 +114,11 @@ export default function EigenReceptScherm() {
   const voegStapToe = () => {
     if (laatsteGevuld) setStappen((s) => [...s, '']);
   };
+
+  // De gekozen kooktijd volgt uit de minuten; een chip vult de geschatte tijd van die kooktijd in.
+  const minutenGetal = Number(minuten.trim());
+  const gekozenKooktijd: KooktijdCode | undefined = minuten.trim() && binnenKooktijd(minutenGetal) ? kooktijdVan(minutenGetal) : undefined;
+  const kiesKooktijd = (k: KooktijdCode) => setMinuten(String(schattingen[k]));
 
   const toggleStijl = (k: StijlKeuze) =>
     setStijlen((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
@@ -155,7 +172,7 @@ export default function EigenReceptScherm() {
 
   if (!geladen) return null;
 
-  const fout = (f: Fout) => (fouten.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never)}</Text> : null);
+  const fout = (f: Fout) => (fouten.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
 
   return (
     <ScrollView contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
@@ -172,14 +189,23 @@ export default function EigenReceptScherm() {
         ))}
       </View>
 
-      <Text style={s.label}>{t('recept.minuten')}</Text>
-      <TextInput
-        style={s.veld}
-        value={minuten}
-        onChangeText={setMinuten}
-        keyboardType="number-pad"
-        accessibilityLabel={t('recept.minuten')}
-      />
+      <Text style={s.label}>{t('recept.kooktijd')}</Text>
+      <View style={s.rijChips}>
+        {KOOKTIJDEN.map((k) => (
+          <Chip key={k} tekst={t(`kooktijd.${k}`, KOOKTIJD_BEREIK[k])} actief={gekozenKooktijd === k} onPress={() => kiesKooktijd(k)} />
+        ))}
+      </View>
+      <View style={s.minutenRij}>
+        <TextInput
+          style={[s.veld, s.minutenVeld]}
+          value={minuten}
+          onChangeText={setMinuten}
+          keyboardType="number-pad"
+          placeholder={t('recept.minuten')}
+          accessibilityLabel={t('recept.minuten')}
+        />
+        <Text style={s.minutenHint}>{t('recept.minutenHint', { max: MAX_KOOKTIJD_MIN })}</Text>
+      </View>
       {fout('minuten')}
 
       <Text style={s.label}>{t('recept.stijlen')}</Text>
@@ -301,6 +327,9 @@ const s = StyleSheet.create({
   ingredientNaam: { fontSize: 15, fontWeight: '600' },
   ingredientRij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
   hoeveelheid: { width: 90, paddingVertical: 8 },
+  minutenRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  minutenVeld: { width: 90, paddingVertical: 8 },
+  minutenHint: { flex: 1, fontSize: 13, color: '#5E6B63', lineHeight: 18 },
   verwijder: { fontSize: 18, color: '#c62828', paddingHorizontal: 6 },
   treffer: { backgroundColor: '#f4f8f5', borderRadius: 10, padding: 10 },
   trefferTekst: { fontSize: 15, color: '#2e7d4f' },

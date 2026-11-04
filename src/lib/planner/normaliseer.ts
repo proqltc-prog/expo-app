@@ -8,7 +8,7 @@ import { isTaal, type Taal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { normaliseerVermijd } from './vermijden';
 import { normaliseerPeriode, PERIODE_STANDAARD } from './periode';
-import { KOOKTIJD_IDS, STIJL_IDS } from './opties';
+import { STIJL_IDS, vernieuwKooktijden } from './opties';
 import { DagCode, KooktijdCode, KOOKTIJDEN, PlanDag, PlanIngredient, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 
 const SOORTEN: Soort[] = ['vlees', 'vegetarisch', 'vis'];
@@ -123,11 +123,11 @@ export function normaliseerKeuzes(ruw: unknown): {
   uitgesloten: string[];
 } {
   if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], enkelVegetarisch: false, aantalDagen: PERIODE_STANDAARD, momenten: ['avond'], datums: [], uitgesloten: [] };
-  // Oude codes (snel/gemiddeld/uitgebreid, klassiek…) en de keuzes van het weekmenu blijven geldig.
-  const kooktijdToegestaan = [...new Set<string>([...KOOKTIJDEN, ...KOOKTIJD_IDS])];
+  // Oude codes (klassiek…) en de keuzes van het weekmenu blijven geldig.
+  // WEEK-199: de kooktijden zijn snel, gemiddeld en uitgebreid; een oude keuze "verfijnd" wordt gemiddeld en uitgebreid.
   const stijlToegestaan = [...new Set<string>([...STIJLEN, ...STIJL_IDS])];
   return {
-    kooktijden: Array.isArray(ruw.kooktijden) ? kooktijdToegestaan.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
+    kooktijden: Array.isArray(ruw.kooktijden) ? vernieuwKooktijden(ruw.kooktijden) : [],
     stijlen: Array.isArray(ruw.stijlen) ? stijlToegestaan.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
     vermijd: normaliseerVermijd(ruw.vermijd),
     enkelVegetarisch: ruw.enkelVegetarisch === true,

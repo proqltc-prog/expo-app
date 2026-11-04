@@ -138,19 +138,20 @@ describe('normaliseerWeekplan', () => {
 });
 
 describe('kooktijd en stijl (WEEK-10)', () => {
-  test('kooktijdVan: snel tot 20, gemiddeld tot 40, daarna uitgebreid', async () => {
+  test('kooktijdVan: snel tot 30, gemiddeld tot 45, daarna uitgebreid (WEEK-199)', async () => {
     const { kooktijdVan } = await import('@/lib/planner/types');
     assert.equal(kooktijdVan(15), 'snel');
-    assert.equal(kooktijdVan(20), 'snel');
-    assert.equal(kooktijdVan(21), 'gemiddeld');
-    assert.equal(kooktijdVan(40), 'gemiddeld');
-    assert.equal(kooktijdVan(41), 'uitgebreid');
+    assert.equal(kooktijdVan(30), 'snel');
+    assert.equal(kooktijdVan(31), 'gemiddeld');
+    assert.equal(kooktijdVan(45), 'gemiddeld');
+    assert.equal(kooktijdVan(46), 'uitgebreid');
+    assert.equal(kooktijdVan(60), 'uitgebreid');
   });
 
-  test('alleen "snel" geeft enkel recepten van maximaal 20 minuten', () => {
+  test('alleen "snel" geeft enkel recepten van maximaal 30 minuten', () => {
     for (let seed = 0; seed < 20; seed++) {
       const plan = planLokaal(verzoek({ seed, kooktijden: ['snel'] }));
-      assert.ok(plan.dagen.every((d) => d.recept.minuten <= 20), `seed ${seed}`);
+      assert.ok(plan.dagen.every((d) => d.recept.minuten <= 30), `seed ${seed}`);
       assert.equal(plan.versoepeld, undefined);
       assert.deepEqual(plan.kooktijden, ['snel']);
     }
@@ -158,7 +159,14 @@ describe('kooktijd en stijl (WEEK-10)', () => {
 
   test('meerdere kooktijden tegelijk', () => {
     const plan = planLokaal(verzoek({ kooktijden: ['snel', 'uitgebreid'] }));
-    assert.ok(plan.dagen.every((d) => d.recept.minuten <= 20 || d.recept.minuten > 40));
+    assert.ok(plan.dagen.every((d) => d.recept.minuten <= 30 || d.recept.minuten > 45));
+  });
+
+  test('WEEK-199: de lokale planner zet nooit een recept van meer dan een uur op het weekmenu', () => {
+    for (let seed = 0; seed < 20; seed++) {
+      const plan = planLokaal(verzoek({ seed, kooktijden: ['uitgebreid'] }));
+      assert.ok(plan.dagen.every((d) => d.recept.minuten <= 60), `seed ${seed}`);
+    }
   });
 
   test('stijl: elk recept heeft minstens één gekozen stijl als er genoeg zijn', () => {
@@ -174,7 +182,7 @@ describe('kooktijd en stijl (WEEK-10)', () => {
     const { recepten, versoepeld } = filterOpKeuzes([...RECEPTENBANK], ['snel'], ['mediterraan'], 5);
     assert.ok(versoepeld);
     assert.equal(recepten.length, 5);
-    assert.ok(recepten.every((r) => r.minuten <= 20));
+    assert.ok(recepten.every((r) => r.minuten <= 30));
   });
 
   test('zonder keuzes geldt alles en wordt niets versoepeld', async () => {
@@ -187,6 +195,8 @@ describe('kooktijd en stijl (WEEK-10)', () => {
   test('bewaarde keuzes worden veilig ingelezen', async () => {
     const { normaliseerKeuzes } = await import('@/lib/planner/normaliseer');
     // 'licht' is verwijderd (WEEK-78): een bewaarde keuze 'licht' valt weg, net als de onbekende 'thai'.
+    // WEEK-199: de oude kooktijd 'verfijnd' wordt gemiddeld en uitgebreid.
+    assert.deepEqual(normaliseerKeuzes({ kooktijden: ['verfijnd'], stijlen: [] }).kooktijden, ['gemiddeld', 'uitgebreid']);
     assert.deepEqual(normaliseerKeuzes({ kooktijden: ['uitgebreid', 'x', 'snel'], stijlen: ['licht', 'thai'] }), {
       kooktijden: ['snel', 'uitgebreid'],
       stijlen: [],

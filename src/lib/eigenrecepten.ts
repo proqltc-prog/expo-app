@@ -2,6 +2,7 @@
 // Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
 import { Eenheid, Soort, StijlCode } from '@/data/receptenbank';
 import { eenheidVan, IngredientCode } from '@/data/ingredienten';
+import { MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import type { Taal } from '@/i18n';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
 import { normaliseer, zoekCatalogus } from '@/lib/frigoSheets';
@@ -11,7 +12,8 @@ export const SOORTEN: readonly Soort[] = ['vegetarisch', 'vis', 'vlees'];
 /** De stijl die het gezin zelf kiest voor eigen recepten; de naam is de naam van de gezinsruimte (WEEK-192). */
 export const GEZIN_STIJL = 'gezin' as const;
 export type StijlKeuze = StijlCode | typeof GEZIN_STIJL;
-const MAX_MINUTEN = 600;
+// WEEK-199: een eigen recept duurt, zoals elk recept in de app, nooit langer dan een uur.
+const MAX_MINUTEN = MAX_KOOKTIJD_MIN;
 
 export type EigenIngredient = { code?: IngredientCode; naam: string; hoeveelheid: number; eenheid: Eenheid };
 
