@@ -68,11 +68,16 @@ export default function Kies() {
         setEnkelVeg(k.enkelVegetarisch === true);
       });
       laadEigenRecepten().then(setEigen);
-      laadProfiel().then(setProfiel).catch(() => setProfiel(null));
-      // De recepten van de app komen uit de databank. Lukt dat niet, dan blijft de lijst leeg.
-      laadDbRecepten()
-        .then((recepten) => setDbPool(maakDbPool(recepten, taal, profiel ?? standaardProfiel())))
-        .catch(() => setDbPool([]));
+      // WEEK-197: het profiel en de databankrecepten laden in één keten, zonder het profiel als afhankelijkheid.
+      // Het profiel is elke keer een nieuw object; stond het in de afhankelijkheden, dan startte dit scherm zichzelf opnieuw.
+      laadProfiel()
+        .catch(() => null)
+        .then(async (p) => {
+          setProfiel(p);
+          // De recepten van de app komen uit de databank. Lukt dat niet, dan blijft de lijst leeg.
+          const recepten = await laadDbRecepten().catch(() => null);
+          setDbPool(recepten ? maakDbPool(recepten, taal, p ?? standaardProfiel()) : []);
+        });
       Promise.all([laadPlan(), ikId(), laadLeden().catch(() => [] as GezinsLid[])]).then(([plan, id, leden]) => {
         if (plan && !magPlanWijzigen(plan, id)) {
           const naam = beheerderNaam(leden, plan.beheerder);
@@ -81,7 +86,7 @@ export default function Kies() {
           setGeenRecht(null);
         }
       });
-    }, [t, taal, profiel])
+    }, [t, taal])
   );
 
   const filter = { moment, kooktijden, stijlen, vermijd, enkelVegetarisch: enkelVeg, zoek, taal };
