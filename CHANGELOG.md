@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.110.0] – 2026-11-04
+
+- Thema: terracotta als tweede accentkleur naast het groen. Het groen blijft het hoofdthema; terracotta voor de secundaire acties (Mijn recepten beheren, + Nieuw recept en de knoppen op de gezinspagina).
+- Kies-scherm: info-icoon met uitleg over de tabs, de filters en het kiezen van een recept.
+
+**Jira:** [WEEK-198](https://proqltc-1791495894841.atlassian.net/browse/WEEK-198) · **Confluence:** [WEEK-198 Thema: terracotta als tweede accentkleur](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20578305)
+
 ## [0.109.2] – 2026-11-04
 
 - Kiezen: het scherm om een recept te kiezen loopt niet meer vast. Het profiel veroorzaakte een oneindige lus.
