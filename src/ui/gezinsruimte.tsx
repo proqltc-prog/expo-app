@@ -1,3 +1,4 @@
+import { ACCENT } from '@/ui/kleuren';
 // Blok "Gezinsruimte" op het tabblad Gezin (WEEK-8): een gezinsruimte maken, lid worden met een code,
 // de code delen, de leden zien en de gezinsruimte verlaten.
 // WEEK-174: het Google-blok is hier weg; aanmelden gebeurt bij het starten van de app.
@@ -329,7 +330,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 accessibilityState={{ expanded: uitlegOpen }}
                 hitSlop={8}
               >
-                <Ionicons name={uitlegOpen ? 'information-circle' : 'information-circle-outline'} size={22} color={KLEUR} />
+                <Ionicons name={uitlegOpen ? 'information-circle' : 'information-circle-outline'} size={22} color={ACCENT} />
               </Pressable>
             </View>
             {uitlegOpen && (
@@ -402,12 +403,12 @@ const s = StyleSheet.create({
   codeVeld: { flex: 1, minWidth: 0, letterSpacing: 2, fontWeight: '600', color: '#1d2420' },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   kiesRij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
-  knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
+  knop: { backgroundColor: ACCENT, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   // Icoonknop: vaste vorm, zodat hij nooit wordt afgesneden (WEEK-176).
-  icoonKnop: { width: 44, height: 44, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  knopKlein: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
-  knopKleinTekst: { color: KLEUR, fontWeight: '700' },
+  icoonKnop: { width: 44, height: 44, borderWidth: 1.5, borderColor: ACCENT, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  knopKlein: { borderWidth: 1.5, borderColor: ACCENT, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
+  knopKleinTekst: { color: ACCENT, fontWeight: '700' },
   knopGevaar: { backgroundColor: GEVAAR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   knopGevaarTekst: { color: '#fff', fontWeight: '700' },
   uit: { opacity: 0.6 },

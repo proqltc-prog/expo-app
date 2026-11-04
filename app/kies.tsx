@@ -24,6 +24,7 @@ import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 import { useTaal } from '@/ui/taal';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 
 // Zelf kiezen (WEEK-44): een recept kiezen, met de voorkeuren als filter en een zoekbalk.
 // WEEK-191: twee tabs. "Ontdek" toont de recepten van de app (uit de databank); "Ons gezin" toont de eigen recepten.
@@ -41,6 +42,7 @@ type Keuze = { id: string; naam: string; soort: Soort; minuten: number; recept: 
 
 export default function Kies() {
   const { t, taal } = useTaal();
+  const { popup } = usePaginaInfo({ tekst: t('pagina.kiesInfo'), kleur: ACCENT, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const params = useLocalSearchParams<{ moment?: string; index?: string; gemaaktOp?: string; naam?: string }>();
   const moment: Moment = isMoment(params.moment) ? params.moment : 'avond';
   const index = params.index !== undefined ? Number(params.index) : undefined;
@@ -158,6 +160,7 @@ export default function Kies() {
 
   return (
     <View style={s.scherm}>
+      {popup}
       <Text style={s.moment}>{t(`moment.${moment}`)}</Text>
       <View style={s.tabs} accessibilityRole="tablist">
         {(['ontdek', 'gezin'] as const).map((k) => {
