@@ -25,7 +25,7 @@ export default function Kies() {
   const params = useLocalSearchParams<{ moment?: string; index?: string; gemaaktOp?: string; naam?: string }>();
   const moment: Moment = isMoment(params.moment) ? params.moment : 'avond';
   const index = params.index !== undefined ? Number(params.index) : undefined;
-  const idx = ['nl', 'fr', 'de', 'en', 'es', 'pt'].indexOf(taal);
+  const idx = ['nl', 'fr', 'de', 'en'].indexOf(taal);
 
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);

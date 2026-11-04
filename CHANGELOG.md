@@ -14,6 +14,12 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 **Jira:** [WEEK-195](https://proqltc-1791495894841.atlassian.net/browse/WEEK-195)
 
+## [0.106.1] – 2026-11-04
+
+- Alleen Nederlands, Frans, Duits en Engels: de vertalingen in Spaans en Portugees zijn verwijderd uit de app en uit de databank.
+
+**Jira:** [WEEK-194](https://proqltc-1791495894841.atlassian.net/browse/WEEK-194) · **Confluence:** [WEEK-194 Alleen nl, fr, de en](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20119553)
+
 ## [0.106.0] – 2026-11-04
 
 - Weekplanner: nieuwe keuze "Alleen vegetarisch" in de stap vermijden. Geldt voor de recepten uit de databank en de lokale recepten, ook bij het vervangen van een dag en in "Zelf kiezen".
