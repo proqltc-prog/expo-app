@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.106.2] – 2026-11-04
+
+- CI: de webbuild draait niet meer bij elke pull request of merge, maar enkel bij een nieuwe release. Dat bespaart GitHub Actions. De tests blijven bij elke pull request draaien.
+
+**Jira:** [WEEK-195](https://proqltc-1791495894841.atlassian.net/browse/WEEK-195)
+
 ## [0.106.1] – 2026-11-04
 
 - Alleen Nederlands, Frans, Duits en Engels: de vertalingen in Spaans en Portugees zijn verwijderd uit de app en uit de databank.
