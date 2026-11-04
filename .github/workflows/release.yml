@@ -70,10 +70,11 @@ jobs:
             --notes-file release-notes.md
 
       # WEEK-195: de webbuild start pas bij een nieuwe release. Een tag die met het standaard token is gemaakt,
-      # start geen andere workflow, daarom starten we web.yml hier zelf op de nieuwe tag.
+      # start geen andere workflow, daarom starten we web.yml hier zelf.
+      # WEEK-196: niet op de tag (v0.x.y) starten: GitHub Pages weigert die publicatie (BlobNotFound).
+      # Op main starten; de tag wijst naar dezelfde commit als main op het moment van de release.
       - name: Webversie publiceren
         if: steps.versie.outputs.bestaat == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.versie.outputs.version }}
-        run: gh workflow run web.yml --ref "v$VERSION"
+        run: gh workflow run web.yml --ref main

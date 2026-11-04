@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.109.1] – 2026-11-04
+
+- Webversie: de publicatie op GitHub Pages werkt weer bij elke release. De release start de webbuild nu op main in plaats van op de tag, want GitHub Pages weigerde de publicatie vanaf de tag (BlobNotFound).
+
+**Jira:** [WEEK-196](https://proqltc-1791495894841.atlassian.net/browse/WEEK-196) · **Confluence:** [WEEK-196 Webversie: publicatie op GitHub Pages hersteld](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20545537)
+
 ## [0.109.0] – 2026-11-04
 
 - Gezinspagina: "Hoe werkt het?" staat niet meer bovenaan de pagina, maar achter het info-icoon rechtsboven.
