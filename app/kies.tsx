@@ -1,3 +1,4 @@
+import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -222,7 +223,7 @@ const s = StyleSheet.create({
   tabTekstActief: { color: '#fff' },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
   beheer: { alignSelf: 'flex-start', paddingVertical: 4 },
-  beheerTekst: { color: KLEUR, fontWeight: '700', fontSize: 14 },
+  beheerTekst: { color: ACCENT, fontWeight: '700', fontSize: 14 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },
   rij: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },

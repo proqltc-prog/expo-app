@@ -1,3 +1,4 @@
+import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
@@ -87,7 +88,7 @@ export default function MijnRecepten() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, padding: 16, gap: 10 },
-  nieuw: { backgroundColor: KLEUR, borderRadius: 12, padding: 12, alignItems: 'center' },
+  nieuw: { backgroundColor: ACCENT, borderRadius: 12, padding: 12, alignItems: 'center' },
   nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
   filters: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
