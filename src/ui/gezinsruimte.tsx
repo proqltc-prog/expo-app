@@ -264,8 +264,11 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
           </>
         ) : (
           <>
-            <Text style={s.gedeeld}>{t('gezin.gedeeldMet', { naam: gezin.naam })}</Text>
-            <Text style={[s.status, status === 'offline' && s.statusOffline]}>{t(`gezin.status.${status}` as Sleutel)}</Text>
+            {/* WEEK-193: naam en verbindingsstatus in een kopregel; de status als pil. */}
+            <View style={s.kopRij}>
+              <Text style={s.gedeeld}>{t('gezin.gedeeldMet', { naam: gezin.naam })}</Text>
+              <Text style={[s.statusPil, status === 'offline' && s.statusPilOffline]}>{t(`gezin.status.${status}` as Sleutel)}</Text>
+            </View>
 
             {/* WEEK-176: verlaten staat bovenaan, zodat het altijd bereikbaar is voor elk lid. */}
             {kiesOpvolger ? (
@@ -337,7 +340,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 </Pressable>
               </View>
             )}
-            <View style={s.rij}>
+            <View style={[s.rij, s.codePaneel]}>
               <Text style={s.code} selectable numberOfLines={1} adjustsFontSizeToFit>
                 {toonGezinscode(gezin.code)}
               </Text>
@@ -351,7 +354,10 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 <Text style={s.label}>{t('gezin.leden')}</Text>
                 {leden.map((l) => (
                   <View key={l.id} style={s.rij}>
-                    <Text style={[s.lid, s.lidNaam]}>• {l.ikZelf ? t('gezin.jij', { naam: naamVan(l) }) : naamVan(l)}</Text>
+                    <View style={s.avatar}>
+                      <Text style={s.avatarTekst}>{naamVan(l).charAt(0).toUpperCase()}</Text>
+                    </View>
+                    <Text style={[s.lid, s.lidNaam]}>{l.ikZelf ? t('gezin.jij', { naam: naamVan(l) }) : naamVan(l)}</Text>
                     {beheerder && !l.ikZelf && (
                       <Pressable
                         style={s.icoonKnop}
@@ -382,7 +388,13 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
 
 const s = StyleSheet.create({
   kop: { fontWeight: '700', fontSize: 15, color: '#333', marginTop: 10 },
-  kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5', gap: 10 },
+  kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: '#e5e5e5', gap: 14 },
+  kopRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 },
+  statusPil: { color: KLEUR, backgroundColor: '#e6f2ea', fontSize: 12, fontWeight: '600', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, overflow: 'hidden' },
+  statusPilOffline: { color: '#7a5b00', backgroundColor: '#fff4d6' },
+  codePaneel: { backgroundColor: '#eef6f1', borderRadius: 12, padding: 12 },
+  avatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#e6f2ea', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  avatarTekst: { color: KLEUR, fontWeight: '700' },
   uitleg: { color: '#555' },
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
   naamVeld: { flex: 1, minWidth: 0, fontSize: 16, color: '#1d2420' },
@@ -399,14 +411,14 @@ const s = StyleSheet.create({
   knopGevaar: { backgroundColor: GEVAAR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   knopGevaarTekst: { color: '#fff', fontWeight: '700' },
   uit: { opacity: 0.6 },
-  gedeeld: { fontSize: 16, fontWeight: '600' },
+  gedeeld: { fontSize: 18, fontWeight: '700', color: '#1d2420', flexShrink: 1 },
   status: { color: KLEUR, fontSize: 13 },
   statusOffline: { color: '#7a5b00' },
-  label: { color: '#777', fontSize: 13, fontWeight: '600' },
+  label: { color: '#5b6661', fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' },
   gezinsUitleg: { borderWidth: 1, borderColor: KLEUR, borderRadius: 10, padding: 12, gap: 10 },
   uitlegTekst: { color: '#1d2420', fontSize: 14, lineHeight: 20 },
   uitlegKnop: { alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
-  code: { flex: 1, minWidth: 0, fontSize: 24, fontWeight: '700', letterSpacing: 3, color: '#1f5c3a' },
+  code: { flex: 1, minWidth: 0, fontSize: 26, fontWeight: '700', letterSpacing: 4, color: '#1f5c3a' },
   lid: { fontSize: 15 },
   lidNaam: { flex: 1, minWidth: 0 },
   // Verlaten en opheffen: volle breedte, icoon + tekst, altijd goed zichtbaar.

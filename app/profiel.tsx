@@ -21,6 +21,8 @@ import { GezinsRuimte } from '@/ui/gezinsruimte';
 import { Inklapbaar } from '@/ui/inklapbaar';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import { wisselGroep } from '@/lib/groepen';
+import { usePaginaInfo } from '@/ui/paginaInfo';
+import { howtoTekst } from '@/lib/howto';
 
 const KLEUR = '#2e7d4f';
 
@@ -59,6 +61,13 @@ export default function ProfielScherm() {
   const [plaatsFout, setPlaatsFout] = useState(false);
   // Enkel het antwoord op de laatst ingevoerde postcode telt.
   const laatstePostcode = useRef('');
+  // WEEK-193: "Hoe werkt het?" zit achter het info-icoon rechtsboven, niet meer bovenaan de pagina.
+  const { popup } = usePaginaInfo({
+    tekst: howtoTekst((k) => t(k as Sleutel)),
+    kleur: KLEUR,
+    infoLabel: t('pagina.infoKnop'),
+    sluitLabel: t('pagina.sluiten'),
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -114,15 +123,8 @@ export default function ProfielScherm() {
 
   return (
     <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
+      {popup}
       <Text style={s.intro}>{t('profiel.intro')}</Text>
-
-      {/* Hoe werkt het? (WEEK-56): korte uitleg van de app, bovenaan de instellingen. */}
-      <View style={s.kaart}>
-        <Text style={s.waromKop}>{t('howto.kop')}</Text>
-        {['menu', 'lijst', 'frigo', 'scan', 'gezin'].map((k) => (
-          <Text key={k} style={s.hint}>• {t(`howto.${k}` as Sleutel)}</Text>
-        ))}
-      </View>
 
       {/* Taal (WEEK-126, WEEK-179): enkel de vier ondersteunde talen. Zonder keuze gebruikt de app de taal van het toestel. */}
       <Inklapbaar titel={t('profiel.taal')} open={uitgeklapt.has('taal')} onWissel={() => wissel('taal')}>
@@ -204,13 +206,13 @@ export default function ProfielScherm() {
 }
 
 const s = StyleSheet.create({
-  container: { padding: 16, gap: 8, paddingBottom: 40 },
-  intro: { color: '#555' },
+  container: { padding: 16, gap: 12, paddingBottom: 40 },
+  intro: { color: '#555', fontSize: 15, lineHeight: 21 },
   kop: { fontWeight: '700', fontSize: 15, color: '#333', marginTop: 10 },
-  kaart: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5', gap: 10 },
+  kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: '#e5e5e5', gap: 12 },
   rij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 16 },
-  waarom: { borderLeftWidth: 3, borderLeftColor: KLEUR, paddingLeft: 12, gap: 4, marginTop: 4 },
+  waarom: { backgroundColor: '#eef6f1', borderRadius: 14, padding: 16, gap: 6 },
   waromKop: { fontWeight: '700', fontSize: 15, color: '#333' },
   totaal: { color: '#777', fontSize: 13 },
   taalRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
