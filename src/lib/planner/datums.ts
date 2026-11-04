@@ -73,8 +73,6 @@ const DAGEN_KORT: Record<Taal, readonly string[]> = {
   fr: ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'],
   de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
   en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  es: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
-  pt: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'],
 };
 
 const MAANDEN_KORT: Record<Taal, readonly string[]> = {
@@ -82,8 +80,6 @@ const MAANDEN_KORT: Record<Taal, readonly string[]> = {
   fr: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
   de: ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sep.', 'Okt.', 'Nov.', 'Dez.'],
   en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'],
-  pt: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
 };
 
 /** Korte weergave, bv. "zo 19 okt" (nl). Ongeldige datum geeft een lege tekst. */

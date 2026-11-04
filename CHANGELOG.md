@@ -20,6 +20,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Ons gezin: eigen recepten toevoegen, wijzigen en verwijderen via het nieuwe scherm "Mijn recepten". Het zoekveld en de filter op soort werken ook hier.
 - Recept-editor: naam, soort, kooktijd, stijl (standaard de gezinsstijl, genoemd naar de gezinsruimte), seizoen (optioneel, meerdere), ingrediënten uit de databank met hoeveelheid en eenheid, en de bereiding stap per stap. Lege stappen worden niet getoond in de weekplanner.
 - Eigen recepten zijn enkel zichtbaar voor het gezin en worden via de gezinssynchronisatie gedeeld met alle gezinsleden.
+- Ingrediënten zoeken in de editor werkt zoals op de lijst en de frigo: zonder accenten en hoofdletters, met dezelfde eenheid uit de databank.
 
 **Jira:** [WEEK-192](https://proqltc-1791495894841.atlassian.net/browse/WEEK-192) · **Confluence:** [WEEK-192 Recept-editor voor eigen recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20119572)
 
@@ -29,6 +30,18 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - De filters (kooktijd, vermijden, vegetarisch en zoeken) werken in beide tabs.
 
 **Jira:** [WEEK-191](https://proqltc-1791495894841.atlassian.net/browse/WEEK-191)
+
+## [0.106.2] – 2026-11-04
+
+- CI: de webbuild draait niet meer bij elke pull request of merge, maar enkel bij een nieuwe release. Dat bespaart GitHub Actions. De tests blijven bij elke pull request draaien.
+
+**Jira:** [WEEK-195](https://proqltc-1791495894841.atlassian.net/browse/WEEK-195)
+
+## [0.106.1] – 2026-11-04
+
+- Alleen Nederlands, Frans, Duits en Engels: de vertalingen in Spaans en Portugees zijn verwijderd uit de app en uit de databank.
+
+**Jira:** [WEEK-194](https://proqltc-1791495894841.atlassian.net/browse/WEEK-194) · **Confluence:** [WEEK-194 Alleen nl, fr, de en](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20119553)
 
 ## [0.106.0] – 2026-11-04
 

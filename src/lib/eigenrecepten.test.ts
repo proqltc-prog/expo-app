@@ -75,3 +75,33 @@ describe('WEEK-192: gezinsstijl en seizoenen', () => {
     assert.deepEqual(terug.seizoenen, ['winter']);
   });
 });
+
+// WEEK-192: het zoeken hergebruikt de zoeklogica van de lijst en de frigo (zoekCatalogus).
+import { catalogus } from '@/lib/frigoSheets';
+import { standaardEenheid, EENHEDEN } from '@/lib/eigenrecepten';
+
+describe('WEEK-192: zoeken naar ingrediënten zoals de lijst', () => {
+  test('een zoekterm zonder accenten en hoofdletters vindt de databankingrediënten', () => {
+    const eerste = catalogus('nl')[0];
+    const gevonden = zoekIngredienten(eerste.naam.toUpperCase(), 'nl', []);
+    assert.ok(gevonden.some((k) => k.code === eerste.code));
+  });
+
+  test('eigen ingrediënten zonder databankcode komen erbij, zonder dubbel', () => {
+    const eigen: EigenRecept[] = [{ ...recept('x', 'Test'), ingredienten: [{ naam: 'Zeldzame kruid', hoeveelheid: 5, eenheid: 'g' }] }];
+    assert.deepEqual(zoekIngredienten('zeldzame', 'nl', eigen), [{ naam: 'Zeldzame kruid' }]);
+  });
+
+  test('een ingrediënt dat exact bestaat, is niet opnieuw nodig', () => {
+    const eerste = catalogus('nl')[0];
+    const keuzes = zoekIngredienten(eerste.naam, 'nl', []);
+    assert.equal(isExactBekend(eerste.naam.toUpperCase(), keuzes), true);
+    assert.equal(isExactBekend('zzz-bestaat-niet', keuzes), false);
+  });
+
+  test('de standaardeenheid komt uit de databank en is altijd een toegestane eenheid', () => {
+    const eerste = catalogus('nl')[0];
+    assert.ok((EENHEDEN as readonly string[]).includes(standaardEenheid(eerste.code)));
+    assert.equal(standaardEenheid(undefined), 'g');
+  });
+});

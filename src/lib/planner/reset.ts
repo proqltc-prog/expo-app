@@ -38,7 +38,7 @@ export function kiesVervanging(
   const gebruikteNamen = new Set(plan.dagen.map((d) => naamSleutel(d.recept.naam)));
   const buren = [plan.dagen[index - 1], plan.dagen[index + 1]].filter(Boolean).map((d) => d.recept.basis);
   const basisTelling = (b: string) => andereDagen.filter((d) => d.recept.basis === b).length;
-  const taalIndex = ['nl', 'fr', 'de', 'en', 'es', 'pt'].indexOf(plan.taal);
+  const taalIndex = ['nl', 'fr', 'de', 'en'].indexOf(plan.taal);
 
   const regels: ((r: BankRecept) => boolean)[] = [
     (r) => !gebruikteIds.has(r.id) && !gebruikteNamen.has(naamSleutel(r.namen[taalIndex])),

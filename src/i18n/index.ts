@@ -3,15 +3,13 @@ import { nl, Sleutel, Vertalingen } from './vertalingen/nl';
 import { fr } from './vertalingen/fr';
 import { de } from './vertalingen/de';
 import { en } from './vertalingen/en';
-import { es } from './vertalingen/es';
-import { pt } from './vertalingen/pt';
 
 export type { Sleutel } from './vertalingen/nl';
 
-export const TALEN = ['nl', 'fr', 'de', 'en', 'es', 'pt'] as const;
+export const TALEN = ['nl', 'fr', 'de', 'en'] as const;
 export type Taal = (typeof TALEN)[number];
 
-/** WEEK-169: talen die de gebruiker in de app kan kiezen. Es en pt blijven in de code maar worden niet aangeboden. */
+/** WEEK-169: talen die de gebruiker in de app kan kiezen. Enkel deze vier talen bestaan in de app. */
 export const KEUZE_TALEN: readonly Taal[] = ['nl', 'fr', 'de', 'en'];
 
 /** Valt een taal buiten de vier ondersteunde talen terug op de terugvaltaal. */
@@ -22,7 +20,7 @@ export function keuzeTaal(taal: Taal): Taal {
 /** Taal als de toesteltaal niet ondersteund wordt. */
 export const TERUGVALTAAL: Taal = 'en';
 
-export const VERTALINGEN: Record<Taal, Vertalingen> = { nl, fr, de, en, es, pt };
+export const VERTALINGEN: Record<Taal, Vertalingen> = { nl, fr, de, en };
 
 /** Locale voor getallen en datums per taal (België voor nl/fr/de). */
 export const LOCALE: Record<Taal, string> = {
@@ -30,8 +28,6 @@ export const LOCALE: Record<Taal, string> = {
   fr: 'fr-BE',
   de: 'de-BE',
   en: 'en-GB',
-  es: 'es-ES',
-  pt: 'pt-PT',
 };
 
 export function isTaal(waarde: unknown): waarde is Taal {

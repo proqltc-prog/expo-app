@@ -20,7 +20,7 @@ const plaatshouders = (tekst: string) => [...tekst.matchAll(/\{(\w+)\}/g)].map((
 
 describe('vertalingen', () => {
   test('ondersteunt precies NL, FR, DE, EN, ES en PT', () => {
-    assert.deepEqual([...TALEN].sort(), ['de', 'en', 'es', 'fr', 'nl', 'pt']);
+    assert.deepEqual([...TALEN].sort(), ['de', 'en', 'fr', 'nl']);
   });
 
   for (const taal of TALEN) {
@@ -81,7 +81,6 @@ describe('vertaalAantal', () => {
     assert.equal(vertaalAantal('nl', 'algemeen.personen', 1), '1 persoon');
     assert.equal(vertaalAantal('nl', 'algemeen.personen', 4), '4 personen');
     assert.equal(vertaalAantal('en', 'algemeen.personen', 4), '4 people');
-    assert.equal(vertaalAantal('pt', 'algemeen.personen', 0), '0 pessoas');
   });
 });
 
@@ -100,7 +99,7 @@ describe('kiesTaal', () => {
   });
   test('negeert een ongeldige voorkeur', () => {
     assert.equal(kiesTaal(['es-ES'], 'xx' as never), 'en');
-    assert.equal(kiesTaal(['fr-BE'], 'es'), 'fr');
+    assert.equal(kiesTaal(['fr-BE'], 'es' as never), 'fr');
   });
 });
 
