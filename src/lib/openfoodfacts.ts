@@ -30,7 +30,7 @@ export type Oordeel = {
 };
 
 const BASIS = 'https://world.openfoodfacts.org/api/v2/product';
-const TALEN_OFF = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
+const TALEN_OFF = ['nl', 'fr', 'de', 'en'];
 const VELDEN = [
   'product_name',
   ...TALEN_OFF.map((t) => `product_name_${t}`),

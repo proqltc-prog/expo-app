@@ -1,5 +1,5 @@
 // Ingrediënten van de lokale receptenbank, met winkelafdeling en naam in elke taal.
-// Volgorde van de namen: nl, fr, de, en, es, pt.
+// Volgorde van de namen: nl, fr, de, en.
 import type { Taal } from '@/i18n';
 
 export type Afdeling =
@@ -23,81 +23,81 @@ export const AFDELINGEN: Afdeling[] = [
   'dranken',
 ];
 
-type Namen = [nl: string, fr: string, de: string, en: string, es: string, pt: string];
+type Namen = [nl: string, fr: string, de: string, en: string];
 
 const TABEL = {
   // droge voeding
-  pasta: ['droge-voeding', ['pasta', 'pâtes', 'Nudeln', 'pasta', 'pasta', 'massa']],
-  spaghetti: ['droge-voeding', ['spaghetti', 'spaghetti', 'Spaghetti', 'spaghetti', 'espaguetis', 'esparguete']],
-  macaroni: ['droge-voeding', ['macaroni', 'macaronis', 'Makkaroni', 'macaroni', 'macarrones', 'macarrão']],
-  lasagnevellen: ['droge-voeding', ['lasagnevellen', 'feuilles de lasagne', 'Lasagneplatten', 'lasagne sheets', 'placas de lasaña', 'folhas de lasanha']],
-  noedels: ['droge-voeding', ['noedels', 'nouilles', 'Mie-Nudeln', 'noodles', 'fideos', 'noodles']],
-  rijst: ['droge-voeding', ['rijst', 'riz', 'Reis', 'rice', 'arroz', 'arroz']],
-  couscous: ['droge-voeding', ['couscous', 'couscous', 'Couscous', 'couscous', 'cuscús', 'cuscuz']],
-  'rode-linzen': ['droge-voeding', ['rode linzen', 'lentilles corail', 'rote Linsen', 'red lentils', 'lentejas rojas', 'lentilhas vermelhas']],
-  bouillon: ['droge-voeding', ['bouillonblokje', 'cube de bouillon', 'Brühwürfel', 'stock cube', 'pastilla de caldo', 'cubo de caldo']],
+  pasta: ['droge-voeding', ['pasta', 'pâtes', 'Nudeln', 'pasta']],
+  spaghetti: ['droge-voeding', ['spaghetti', 'spaghetti', 'Spaghetti', 'spaghetti']],
+  macaroni: ['droge-voeding', ['macaroni', 'macaronis', 'Makkaroni', 'macaroni']],
+  lasagnevellen: ['droge-voeding', ['lasagnevellen', 'feuilles de lasagne', 'Lasagneplatten', 'lasagne sheets']],
+  noedels: ['droge-voeding', ['noedels', 'nouilles', 'Mie-Nudeln', 'noodles']],
+  rijst: ['droge-voeding', ['rijst', 'riz', 'Reis', 'rice']],
+  couscous: ['droge-voeding', ['couscous', 'couscous', 'Couscous', 'couscous']],
+  'rode-linzen': ['droge-voeding', ['rode linzen', 'lentilles corail', 'rote Linsen', 'red lentils']],
+  bouillon: ['droge-voeding', ['bouillonblokje', 'cube de bouillon', 'Brühwürfel', 'stock cube']],
   // conserven en sauzen
-  pesto: ['conserven-sauzen', ['pesto', 'pesto', 'Pesto', 'pesto', 'pesto', 'pesto']],
-  currypasta: ['conserven-sauzen', ['currypasta', 'pâte de curry', 'Currypaste', 'curry paste', 'pasta de curry', 'pasta de caril']],
-  kokosmelk: ['conserven-sauzen', ['kokosmelk', 'lait de coco', 'Kokosmilch', 'coconut milk', 'leche de coco', 'leite de coco']],
-  sojasaus: ['conserven-sauzen', ['sojasaus', 'sauce soja', 'Sojasauce', 'soy sauce', 'salsa de soja', 'molho de soja']],
-  teriyakisaus: ['conserven-sauzen', ['teriyakisaus', 'sauce teriyaki', 'Teriyakisauce', 'teriyaki sauce', 'salsa teriyaki', 'molho teriyaki']],
-  tomatenblokjes: ['conserven-sauzen', ['tomatenblokjes', 'tomates concassées', 'gehackte Tomaten', 'chopped tomatoes', 'tomate troceado', 'tomate em pedaços']],
-  kidneybonen: ['conserven-sauzen', ['kidneybonen', 'haricots rouges', 'Kidneybohnen', 'kidney beans', 'alubias rojas', 'feijão vermelho']],
-  mais: ['conserven-sauzen', ['maïs', 'maïs', 'Mais', 'sweetcorn', 'maíz', 'milho']],
-  tonijn: ['conserven-sauzen', ['tonijn in blik', 'thon en boîte', 'Thunfisch (Dose)', 'tinned tuna', 'atún en lata', 'atum em lata']],
+  pesto: ['conserven-sauzen', ['pesto', 'pesto', 'Pesto', 'pesto']],
+  currypasta: ['conserven-sauzen', ['currypasta', 'pâte de curry', 'Currypaste', 'curry paste']],
+  kokosmelk: ['conserven-sauzen', ['kokosmelk', 'lait de coco', 'Kokosmilch', 'coconut milk']],
+  sojasaus: ['conserven-sauzen', ['sojasaus', 'sauce soja', 'Sojasauce', 'soy sauce']],
+  teriyakisaus: ['conserven-sauzen', ['teriyakisaus', 'sauce teriyaki', 'Teriyakisauce', 'teriyaki sauce']],
+  tomatenblokjes: ['conserven-sauzen', ['tomatenblokjes', 'tomates concassées', 'gehackte Tomaten', 'chopped tomatoes']],
+  kidneybonen: ['conserven-sauzen', ['kidneybonen', 'haricots rouges', 'Kidneybohnen', 'kidney beans']],
+  mais: ['conserven-sauzen', ['maïs', 'maïs', 'Mais', 'sweetcorn']],
+  tonijn: ['conserven-sauzen', ['tonijn in blik', 'thon en boîte', 'Thunfisch (Dose)', 'tinned tuna']],
   // brood
-  brood: ['brood', ['brood', 'pain', 'Brot', 'bread', 'pan', 'pão']],
-  tortillas: ['brood', ['tortilla’s', 'tortillas', 'Tortillas', 'tortilla wraps', 'tortillas de trigo', 'tortilhas']],
+  brood: ['brood', ['brood', 'pain', 'Brot', 'bread']],
+  tortillas: ['brood', ['tortilla’s', 'tortillas', 'Tortillas', 'tortilla wraps']],
   // groenten en fruit
-  aardappelen: ['groenten-fruit', ['aardappelen', 'pommes de terre', 'Kartoffeln', 'potatoes', 'patatas', 'batatas']],
-  krieltjes: ['groenten-fruit', ['krieltjes', 'grenailles', 'Drillinge', 'baby potatoes', 'patatas baby', 'batatas pequenas']],
-  broccoli: ['groenten-fruit', ['broccoli', 'brocoli', 'Brokkoli', 'broccoli', 'brócoli', 'brócolos']],
-  paprika: ['groenten-fruit', ['paprika', 'poivron', 'Paprika', 'pepper', 'pimiento', 'pimento']],
-  champignons: ['groenten-fruit', ['champignons', 'champignons', 'Champignons', 'mushrooms', 'champiñones', 'cogumelos']],
-  spinazie: ['groenten-fruit', ['spinazie', 'épinards', 'Spinat', 'spinach', 'espinacas', 'espinafres']],
-  soepgroenten: ['groenten-fruit', ['soepgroenten', 'légumes pour soupe', 'Suppengemüse', 'soup vegetables', 'verduras para sopa', 'legumes para sopa']],
-  wokgroenten: ['groenten-fruit', ['wokgroenten', 'légumes pour wok', 'Wokgemüse', 'stir-fry vegetables', 'verduras para wok', 'legumes para wok']],
-  ui: ['groenten-fruit', ['ui', 'oignon', 'Zwiebel', 'onion', 'cebolla', 'cebola']],
-  look: ['groenten-fruit', ['look', 'ail', 'Knoblauch', 'garlic', 'ajo', 'alho']],
-  courgette: ['groenten-fruit', ['courgette', 'courgette', 'Zucchini', 'courgette', 'calabacín', 'curgete']],
-  tomaten: ['groenten-fruit', ['tomaten', 'tomates', 'Tomaten', 'tomatoes', 'tomates', 'tomates']],
-  sperziebonen: ['groenten-fruit', ['sperziebonen', 'haricots verts', 'grüne Bohnen', 'green beans', 'judías verdes', 'feijão-verde']],
-  wortelen: ['groenten-fruit', ['wortelen', 'carottes', 'Karotten', 'carrots', 'zanahorias', 'cenouras']],
-  prei: ['groenten-fruit', ['prei', 'poireau', 'Lauch', 'leek', 'puerro', 'alho-francês']],
-  sla: ['groenten-fruit', ['sla', 'laitue', 'Salat', 'lettuce', 'lechuga', 'alface']],
-  citroen: ['groenten-fruit', ['citroen', 'citron', 'Zitrone', 'lemon', 'limón', 'limão']],
-  limoen: ['groenten-fruit', ['limoen', 'citron vert', 'Limette', 'lime', 'lima', 'lima']],
+  aardappelen: ['groenten-fruit', ['aardappelen', 'pommes de terre', 'Kartoffeln', 'potatoes']],
+  krieltjes: ['groenten-fruit', ['krieltjes', 'grenailles', 'Drillinge', 'baby potatoes']],
+  broccoli: ['groenten-fruit', ['broccoli', 'brocoli', 'Brokkoli', 'broccoli']],
+  paprika: ['groenten-fruit', ['paprika', 'poivron', 'Paprika', 'pepper']],
+  champignons: ['groenten-fruit', ['champignons', 'champignons', 'Champignons', 'mushrooms']],
+  spinazie: ['groenten-fruit', ['spinazie', 'épinards', 'Spinat', 'spinach']],
+  soepgroenten: ['groenten-fruit', ['soepgroenten', 'légumes pour soupe', 'Suppengemüse', 'soup vegetables']],
+  wokgroenten: ['groenten-fruit', ['wokgroenten', 'légumes pour wok', 'Wokgemüse', 'stir-fry vegetables']],
+  ui: ['groenten-fruit', ['ui', 'oignon', 'Zwiebel', 'onion']],
+  look: ['groenten-fruit', ['look', 'ail', 'Knoblauch', 'garlic']],
+  courgette: ['groenten-fruit', ['courgette', 'courgette', 'Zucchini', 'courgette']],
+  tomaten: ['groenten-fruit', ['tomaten', 'tomates', 'Tomaten', 'tomatoes']],
+  sperziebonen: ['groenten-fruit', ['sperziebonen', 'haricots verts', 'grüne Bohnen', 'green beans']],
+  wortelen: ['groenten-fruit', ['wortelen', 'carottes', 'Karotten', 'carrots']],
+  prei: ['groenten-fruit', ['prei', 'poireau', 'Lauch', 'leek']],
+  sla: ['groenten-fruit', ['sla', 'laitue', 'Salat', 'lettuce']],
+  citroen: ['groenten-fruit', ['citroen', 'citron', 'Zitrone', 'lemon']],
+  limoen: ['groenten-fruit', ['limoen', 'citron vert', 'Limette', 'lime']],
   // diepvries
-  erwten: ['diepvries', ['erwten', 'petits pois', 'Erbsen', 'peas', 'guisantes', 'ervilhas']],
-  vissticks: ['diepvries', ['vissticks', 'bâtonnets de poisson', 'Fischstäbchen', 'fish fingers', 'palitos de pescado', 'douradinhos']],
+  erwten: ['diepvries', ['erwten', 'petits pois', 'Erbsen', 'peas']],
+  vissticks: ['diepvries', ['vissticks', 'bâtonnets de poisson', 'Fischstäbchen', 'fish fingers']],
   // zuivel en eieren
-  eieren: ['zuivel-eieren', ['eieren', 'œufs', 'Eier', 'eggs', 'huevos', 'ovos']],
-  parmezaan: ['zuivel-eieren', ['Parmezaanse kaas', 'parmesan', 'Parmesan', 'Parmesan', 'parmesano', 'parmesão']],
-  kaas: ['zuivel-eieren', ['geraspte kaas', 'fromage râpé', 'geriebener Käse', 'grated cheese', 'queso rallado', 'queijo ralado']],
-  feta: ['zuivel-eieren', ['feta', 'feta', 'Feta', 'feta', 'queso feta', 'queijo feta']],
-  melk: ['zuivel-eieren', ['melk', 'lait', 'Milch', 'milk', 'leche', 'leite']],
-  room: ['zuivel-eieren', ['room', 'crème', 'Sahne', 'cream', 'nata', 'natas']],
-  boter: ['zuivel-eieren', ['boter', 'beurre', 'Butter', 'butter', 'mantequilla', 'manteiga']],
+  eieren: ['zuivel-eieren', ['eieren', 'œufs', 'Eier', 'eggs']],
+  parmezaan: ['zuivel-eieren', ['Parmezaanse kaas', 'parmesan', 'Parmesan', 'Parmesan']],
+  kaas: ['zuivel-eieren', ['geraspte kaas', 'fromage râpé', 'geriebener Käse', 'grated cheese']],
+  feta: ['zuivel-eieren', ['feta', 'feta', 'Feta', 'feta']],
+  melk: ['zuivel-eieren', ['melk', 'lait', 'Milch', 'milk']],
+  room: ['zuivel-eieren', ['room', 'crème', 'Sahne', 'cream']],
+  boter: ['zuivel-eieren', ['boter', 'beurre', 'Butter', 'butter']],
   // vlees en vis
-  zalmfilet: ['vlees-vis', ['zalmfilet', 'filet de saumon', 'Lachsfilet', 'salmon fillet', 'filete de salmón', 'filete de salmão']],
-  kabeljauw: ['vlees-vis', ['kabeljauwfilet', 'filet de cabillaud', 'Kabeljaufilet', 'cod fillet', 'filete de bacalao', 'filete de bacalhau']],
-  witvis: ['vlees-vis', ['witvis', 'poisson blanc', 'Weißfisch', 'white fish', 'pescado blanco', 'peixe branco']],
-  scampi: ['vlees-vis', ['scampi', 'scampis', 'Garnelen', 'prawns', 'langostinos', 'camarões']],
-  kipfilet: ['vlees-vis', ['kipfilet', 'filet de poulet', 'Hähnchenbrust', 'chicken breast', 'pechuga de pollo', 'peito de frango']],
-  kippendijen: ['vlees-vis', ['kippendijen', 'cuisses de poulet', 'Hähnchenschenkel', 'chicken thighs', 'muslos de pollo', 'coxas de frango']],
-  gehakt: ['vlees-vis', ['gehakt', 'haché', 'Hackfleisch', 'minced meat', 'carne picada', 'carne picada']],
-  worsten: ['vlees-vis', ['worsten', 'saucisses', 'Würstchen', 'sausages', 'salchichas', 'salsichas']],
-  rundvlees: ['vlees-vis', ['stoofvlees', 'viande à braiser', 'Schmorfleisch', 'stewing beef', 'carne para guisar', 'carne para estufar']],
+  zalmfilet: ['vlees-vis', ['zalmfilet', 'filet de saumon', 'Lachsfilet', 'salmon fillet']],
+  kabeljauw: ['vlees-vis', ['kabeljauwfilet', 'filet de cabillaud', 'Kabeljaufilet', 'cod fillet']],
+  witvis: ['vlees-vis', ['witvis', 'poisson blanc', 'Weißfisch', 'white fish']],
+  scampi: ['vlees-vis', ['scampi', 'scampis', 'Garnelen', 'prawns']],
+  kipfilet: ['vlees-vis', ['kipfilet', 'filet de poulet', 'Hähnchenbrust', 'chicken breast']],
+  kippendijen: ['vlees-vis', ['kippendijen', 'cuisses de poulet', 'Hähnchenschenkel', 'chicken thighs']],
+  gehakt: ['vlees-vis', ['gehakt', 'haché', 'Hackfleisch', 'minced meat']],
+  worsten: ['vlees-vis', ['worsten', 'saucisses', 'Würstchen', 'sausages']],
+  rundvlees: ['vlees-vis', ['stoofvlees', 'viande à braiser', 'Schmorfleisch', 'stewing beef']],
   // dranken
-  'bruin-bier': ['dranken', ['bruin bier', 'bière brune', 'dunkles Bier', 'brown ale', 'cerveza tostada', 'cerveja preta']],
+  'bruin-bier': ['dranken', ['bruin bier', 'bière brune', 'dunkles Bier', 'brown ale']],
   // ontbijt en middag (WEEK-43)
-  komkommer: ['groenten-fruit', ['komkommer', 'concombre', 'Gurke', 'cucumber', 'pepino', 'pepino']],
+  komkommer: ['groenten-fruit', ['komkommer', 'concombre', 'Gurke', 'cucumber']],
 } as const satisfies Record<string, readonly [Afdeling, Namen]>;
 
 export type IngredientCode = keyof typeof TABEL;
 
-const VOLGORDE: Taal[] = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
+const VOLGORDE: Taal[] = ['nl', 'fr', 'de', 'en'];
 
 export function isIngredient(code: string): code is IngredientCode {
   return code in TABEL;

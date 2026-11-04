@@ -46,8 +46,8 @@ describe('datums', () => {
     assert.equal(kortDatum('onzin', 'nl'), '');
   });
 
-  test('geeft in alle zes talen een afgekorte weekdag en datum (WEEK-93)', () => {
-    const talen = ['nl', 'fr', 'de', 'en', 'es', 'pt'] as const;
+  test('geeft in alle vier talen een afgekorte weekdag en datum (WEEK-93)', () => {
+    const talen = ['nl', 'fr', 'de', 'en'] as const;
     for (const taal of talen) {
       const tekst = kortDatum('2026-10-19', taal);
       assert.match(tekst, /^\S+ 19 \S+$/, `${taal}: ${tekst}`);
