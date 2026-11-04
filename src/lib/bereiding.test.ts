@@ -27,7 +27,7 @@ describe('bereidingVoor (WEEK-81)', () => {
   });
 
   test('een ingebouwd recept zoekt ook op naam, als het id ontbreekt; een taal buiten de app valt terug op Engels', () => {
-    const stappen = bereidingVoor({ id: 'onbekend', naam: bank.namen[3] }, [], 'es');
+    const stappen = bereidingVoor({ id: 'onbekend', naam: bank.namen[3] }, [], 'es' as never);
     assert.deepEqual(stappen, BEREIDINGEN['pasta-pesto'].en);
   });
 

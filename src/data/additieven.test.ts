@@ -32,9 +32,9 @@ describe('additiefWeergave (WEEK-71)', () => {
     assert.deepEqual(additiefWeergave('en:palm-oil', 'nl'), { code: 'PALM-OIL', omschrijving: null });
   });
 
-  test('regressie: elk bekend additief heeft een uitleg in alle zes talen', () => {
+  test('regressie: elk bekend additief heeft een uitleg in alle vier talen', () => {
     for (const code of ['E100', 'E150', 'E160A', 'E200', 'E202', 'E211', 'E300', 'E322', 'E330', 'E407', 'E412', 'E471', 'E621', 'E951', 'E955']) {
-      for (const taal of ['nl', 'fr', 'de', 'en', 'es', 'pt'] as const) {
+      for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
         const w = additiefWeergave(code, taal);
         assert.equal(w.code, code);
         assert.ok(w.omschrijving && w.omschrijving.includes(' · '), `${code} ${taal}`);

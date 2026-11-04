@@ -1,12 +1,9 @@
 name: Webversie
 
 # Bouwt de app voor de browser en publiceert ze op GitHub Pages (WEEK-167).
-# Op elke pull request: enkel bouwen, zo blijft een kapotte webbuild zichtbaar vóór de merge.
-# Op push naar main: bouwen en publiceren.
+# WEEK-195: enkel bij een release (door release.yml) of handmatig, om GitHub Actions te sparen.
+# Dan bouwen en publiceren we de tag. Op pull requests en bij gewone merges draait deze workflow niet meer.
 on:
-  pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -40,12 +37,12 @@ jobs:
           touch dist/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch'
         with:
           path: dist
 
   publiceer:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch'
     needs: bouw
     runs-on: ubuntu-latest
     environment:

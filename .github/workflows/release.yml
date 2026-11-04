@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   release:
@@ -67,3 +68,12 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "v$VERSION${TITEL:+ – $TITEL}" \
             --notes-file release-notes.md
+
+      # WEEK-195: de webbuild start pas bij een nieuwe release. Een tag die met het standaard token is gemaakt,
+      # start geen andere workflow, daarom starten we web.yml hier zelf op de nieuwe tag.
+      - name: Webversie publiceren
+        if: steps.versie.outputs.bestaat == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.versie.outputs.version }}
+        run: gh workflow run web.yml --ref "v$VERSION"
