@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.109.2] – 2026-11-04
+
+- Kiezen: het scherm om een recept te kiezen loopt niet meer vast. Het profiel veroorzaakte een oneindige lus.
+
+**Jira:** [WEEK-197](https://proqltc-1791495894841.atlassian.net/browse/WEEK-197) · **Confluence:** [WEEK-197 Kies-scherm: oneindige lus bij laden van het profiel](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20512785)
+
 ## [0.109.1] – 2026-11-04
 
 - Webversie: de publicatie op GitHub Pages werkt weer bij elke release. De release start de webbuild nu op main in plaats van op de tag, want GitHub Pages weigerde de publicatie vanaf de tag (BlobNotFound).
