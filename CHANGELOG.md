@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.107.0] – 2026-11-04
+
+- Zelf kiezen: twee tabs. "Ontdek" toont de recepten van de app, uit de databank. "Ons gezin" toont de eigen recepten van het gezin.
+- De filters (kooktijd, vermijden, vegetarisch en zoeken) werken in beide tabs.
+
+**Jira:** [WEEK-191](https://proqltc-1791495894841.atlassian.net/browse/WEEK-191)
+
 ## [0.106.0] – 2026-11-04
 
 - Weekplanner: nieuwe keuze "Alleen vegetarisch" in de stap vermijden. Geldt voor de recepten uit de databank en de lokale recepten, ook bij het vervangen van een dag en in "Zelf kiezen".

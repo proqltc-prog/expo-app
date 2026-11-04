@@ -1,12 +1,16 @@
 // Zelf kiezen en verwijderen van een maaltijd in het weekmenu (WEEK-44).
 // Pure logica: het scherm schrijft het resultaat weg.
+import { afdelingVan, IngredientCode } from '@/data/ingredienten';
 import { BankRecept, Moment, MOMENTEN, StijlCode } from '@/data/receptenbank';
 import type { Vermijd } from '@/data/vermijden';
 import type { Taal } from '@/i18n';
+import type { EigenRecept } from '@/lib/eigenrecepten';
 import type { LijstItem } from '@/lib/lijst';
-import { kooktijdVan, DagCode, KooktijdCode, PlanDag, Weekplan, WEEKDAGEN } from './types';
+import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
+import type { DbPoolRecept } from './dbplan';
+import { kooktijdVan, DagCode, KooktijdCode, PlanDag, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 import { momentVan } from './moment';
-import { bankReceptVermijdt } from './vermijden';
+import { bankReceptVermijdt, heeftVermijdNaam } from './vermijden';
 import { naarPlanRecept } from './lokaal';
 
 const TAAL_INDEX: Taal[] = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
@@ -43,36 +47,97 @@ export function kiesbareRecepten(bank: readonly BankRecept[], f: KiesFilter): Ba
 
 const momentVolgorde = (m: Moment) => MOMENTEN.indexOf(m);
 
+/**
+ * Recepten uit de databank (WEEK-191, tab "Ontdek"), met dezelfde voorwaarden als de receptenlijst.
+ * Het moment, de kooktijd, de stijl, de vermijd-ingrediënten en de zoekterm bepalen de lijst.
+ */
+export function kiesbarePoolRecepten(pool: readonly DbPoolRecept[], f: KiesFilter): DbPoolRecept[] {
+  const zoek = zoeksleutel(f.zoek);
+  return pool.filter(
+    (k) =>
+      k.moment === f.moment &&
+      (!f.kooktijden.length || f.kooktijden.includes(k.kooktijd)) &&
+      (!f.stijlen.length || k.stijlen.some((s) => f.stijlen.includes(s))) &&
+      !heeftVermijdNaam(k.recept.ingredienten, f.vermijd) &&
+      (!f.enkelVegetarisch || k.soort === 'vegetarisch') &&
+      (!zoek || zoeksleutel(k.recept.naam).includes(zoek))
+  );
+}
+
+/**
+ * Eigen recepten van het gezin (WEEK-191, tab "Ons gezin"). Eigen recepten hebben nog geen moment en nog geen
+ * stijl uit de databank; ze gelden als avondeten en de stijl-filter laat ze door. Dat wordt in WEEK-192 uitgewerkt.
+ */
+export function kiesbareEigenRecepten(lijst: readonly EigenRecept[], f: KiesFilter): EigenRecept[] {
+  const zoek = zoeksleutel(f.zoek);
+  return lijst.filter(
+    (r) =>
+      f.moment === 'avond' &&
+      (!f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten))) &&
+      !heeftVermijdNaam(r.ingredienten, f.vermijd) &&
+      (!f.enkelVegetarisch || r.soort === 'vegetarisch') &&
+      (!zoek || zoeksleutel(r.naam).includes(zoek))
+  );
+}
+
+/** Zet een eigen recept om naar een planrecept, met de gezinsgrootte als schaal (zoals de databank). */
+export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
+  return {
+    id: r.id,
+    naam: r.naam,
+    soort: r.soort,
+    minuten: r.minuten,
+    stijlen: [...r.stijlen],
+    ingredienten: r.ingredienten.map((i) => ({
+      naam: i.naam,
+      hoeveelheid: geschaaldeHoeveelheid(i.hoeveelheid, gezin, i.eenheid),
+      eenheid: i.eenheid,
+      afdeling: i.code ? afdelingVan(i.code as IngredientCode) : 'droge-voeding',
+      ...(i.code ? { code: i.code } : {}),
+    })),
+  };
+}
+
 /** Zet een ander recept op dezelfde plek: dag en moment blijven, de voortgang (gekookt, frigo) gaat weg. */
-export function vervangDoorRecept(plan: Weekplan, index: number, recept: BankRecept): Weekplan {
+export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: PlanRecept): Weekplan {
   const huidig = plan.dagen[index];
   if (!huidig) return plan;
   const nieuw: PlanDag = {
     dag: huidig.dag,
     ...(huidig.moment ? { moment: huidig.moment } : {}),
-    recept: naarPlanRecept(recept, plan.taal, plan.porties),
+    recept,
   };
   return { ...plan, dagen: plan.dagen.map((d, i) => (i === index ? nieuw : d)) };
+}
+
+/** Zet een ander recept op dezelfde plek (bankrecept). */
+export function vervangDoorRecept(plan: Weekplan, index: number, recept: BankRecept): Weekplan {
+  return vervangDoorPlanRecept(plan, index, naarPlanRecept(recept, plan.taal, plan.porties));
 }
 
 /**
  * Voegt een maaltijd toe op de eerste vrije weekdag voor dat moment.
  * Geeft undefined als er voor dat moment geen dag meer vrij is.
  */
-export function voegToe(plan: Weekplan, recept: BankRecept, moment: Moment): Weekplan | undefined {
+export function voegPlanReceptToe(plan: Weekplan, recept: PlanRecept, moment: Moment): Weekplan | undefined {
   const bezet = new Set<DagCode>(plan.dagen.filter((d) => momentVan(d) === moment).map((d) => d.dag));
   const dag = WEEKDAGEN.find((d) => !bezet.has(d));
   if (!dag) return undefined;
   const nieuw: PlanDag = {
     dag,
     ...(moment !== 'avond' ? { moment } : {}),
-    recept: naarPlanRecept(recept, plan.taal, plan.porties),
+    recept,
   };
   const dagen = [...plan.dagen, nieuw].sort(
     (a, b) =>
       WEEKDAGEN.indexOf(a.dag) - WEEKDAGEN.indexOf(b.dag) || momentVolgorde(momentVan(a)) - momentVolgorde(momentVan(b))
   );
   return { ...plan, dagen };
+}
+
+/** Voegt een bankrecept toe op de eerste vrije weekdag voor dat moment. */
+export function voegToe(plan: Weekplan, recept: BankRecept, moment: Moment): Weekplan | undefined {
+  return voegPlanReceptToe(plan, naarPlanRecept(recept, plan.taal, plan.porties), moment);
 }
 
 /**
