@@ -18,7 +18,8 @@ export type PlanIngredient = {
   hoeveelheid: number;
   /** g, ml, stuk, teentje — of een vrije eenheid uit de AI. */
   eenheid: string;
-  afdeling: Afdeling;
+  /** Winkelafdeling; ontbreekt bij een eigen ingrediënt zonder afdeling, dat komt onder "overig" (WEEK-201). */
+  afdeling?: Afdeling;
   /** Vaste code uit de ingrediëntenlijst of de database (WEEK-154): de stabiele sleutel, los van de taal. */
   code?: string;
   /** De naam in elke taal, vastgelegd bij het maken van het plan (WEEK-154). */

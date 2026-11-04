@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Afdeling } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
+import type { Sleutel } from '@/i18n';
 import {
+  afdelingVanEigen,
   bewaarEigen,
   EENHEDEN,
   EigenIngredient,
@@ -19,6 +22,9 @@ import {
   verwijderEigen,
   zoekIngredienten,
 } from '@/lib/eigenrecepten';
+import { normaliseer } from '@/lib/frigoSheets';
+import type { LosWijziging } from '@/lib/frigo';
+import { LosPopup, PopupOpties } from '@/ui/losPopup';
 import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
@@ -30,11 +36,17 @@ import { useTaal } from '@/ui/taal';
 // Ingrediënten die nog niet bestaan, kun je handmatig toevoegen; die blijven bij het recept.
 // WEEK-199: de kooktijd kies je als snel, gemiddeld of uitgebreid (met het tijdsbestek); de minuten worden vooraf
 // ingevuld met de geschatte tijd uit de databank en blijven aanpasbaar tot de bovengrens van een uur.
+// WEEK-200: een ingrediënt voeg je toe zoals een product op de lijst: naam ingeven, op de plus tikken (of een treffer
+// kiezen) en in de popup de hoeveelheid, de eenheid en de categorie invullen. Tikken op een ingrediënt opent de popup opnieuw.
+// Voor een ingrediënt uit de app liggen de eenheid en de categorie vast, zoals op de lijst en in de frigo.
 
 const KLEUR = '#2e7d4f';
 
-/** Een ingrediënt in het formulier: de hoeveelheid is tekst, zodat een lege invoer niet meteen een fout geeft. */
-type Rij = { code?: EigenIngredient['code']; naam: string; hoeveelheid: string; eenheid: Eenheid };
+/** Een ingrediënt in het formulier; de hoeveelheid komt uit de popup en is altijd ingevuld. */
+type Rij = EigenIngredient;
+
+/** Waarvoor de popup open staat: een nieuw ingrediënt (met of zonder code) of een bestaande rij. */
+type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string };
 
 const FOUT_TEKST: Record<Fout, string> = {
   naam: 'recept.fout.naam',
@@ -58,6 +70,8 @@ export default function EigenReceptScherm() {
   const [rijen, setRijen] = useState<Rij[]>([]);
   const [stappen, setStappen] = useState<string[]>(['']);
   const [zoek, setZoek] = useState('');
+  const [popup, setPopup] = useState<PopupOpties | null>(null);
+  const [popupDoel, setPopupDoel] = useState<PopupDoel | null>(null);
   const [alle, setAlle] = useState<EigenRecept[]>([]);
   const [gezinNaam, setGezinNaam] = useState<string | undefined>(undefined);
   const [fouten, setFouten] = useState<Fout[]>([]);
@@ -83,7 +97,7 @@ export default function EigenReceptScherm() {
         setMinuten(String(r.minuten));
         setStijlen([...(r.gezinStijl ? [GEZIN_STIJL] : []), ...r.stijlen]);
         setSeizoenen([...(r.seizoenen ?? [])]);
-        setRijen(r.ingredienten.map((i) => ({ code: i.code, naam: i.naam, hoeveelheid: String(i.hoeveelheid), eenheid: i.eenheid })));
+        setRijen(r.ingredienten.map((i) => ({ ...i })));
         setStappen(r.stappen.length ? [...r.stappen] : ['']);
       }
       setGeladen(true);
@@ -96,16 +110,60 @@ export default function EigenReceptScherm() {
   const zoekTreffers = useMemo(() => (zoek.trim() ? zoekIngredienten(zoek, taal, alle) : []), [zoek, taal, alle]);
   const kanNieuw = zoek.trim().length > 0 && !isExactBekend(zoek, zoekTreffers);
 
-  const voegIngredientToe = (code: EigenIngredient['code'], ingredientNaam: string) => {
-    // Dezelfde eenheid als de lijst en de frigo toont (WEEK-192): de databank bepaalt die.
-    setRijen((r) => [...r, { code, naam: ingredientNaam, hoeveelheid: '', eenheid: standaardEenheid(code) }]);
-    setZoek('');
+  /** Opent de popup voor een ingrediënt: met code liggen eenheid en categorie vast (zoals de lijst en de frigo), anders kies je ze. */
+  const openPopup = (doel: PopupDoel, bestaande?: Rij) => {
+    const code = doel.code;
+    const eenheid = bestaande?.eenheid ?? standaardEenheid(code);
+    const afdeling = code ? afdelingVanEigen({ code }) : bestaande?.afdeling;
+    setPopupDoel(doel);
+    setPopup({
+      sleutel: `${doel.index ?? 'nieuw'}-${Date.now()}`,
+      titel: t(doel.index === undefined ? 'recept.popupNieuw' : 'recept.popupBewerk'),
+      naam: doel.naam,
+      hoeveelheid: bestaande?.hoeveelheid,
+      eenheid,
+      afdeling: afdeling ?? 'overig',
+      toonEenheid: !code,
+      toonCategorie: !code,
+      toonVasteCategorie: !!code,
+      toonHoudbaar: false,
+      eenheden: EENHEDEN,
+      hoeveelheidVerplicht: true,
+      accent: KLEUR,
+    });
   };
 
-  const wijzigRij = (index: number, deel: Partial<Rij>) =>
-    setRijen((r) => r.map((x, i) => (i === index ? { ...x, ...deel } : x)));
+  const sluitPopup = () => {
+    setPopup(null);
+    setPopupDoel(null);
+  };
+
+  /** De plus: een treffer die exact zo heet, telt als dat ingrediënt; anders wordt het een eigen ingrediënt. */
+  const plus = () => {
+    const naam = zoek.trim();
+    if (!naam) return;
+    const exact = zoekTreffers.find((k) => normaliseer(k.naam) === normaliseer(naam));
+    openPopup(exact ? { code: exact.code, naam: exact.naam } : { naam });
+  };
+
+  const bewaarPopup = (w: LosWijziging) => {
+    if (!popupDoel || w.hoeveelheid === undefined) return;
+    const code = popupDoel.code;
+    const eenheid = (code ? standaardEenheid(code) : w.eenheid && (EENHEDEN as readonly string[]).includes(w.eenheid) ? w.eenheid : 'g') as Eenheid;
+    const afdeling: Afdeling | undefined = !code && w.afdeling !== 'overig' ? w.afdeling : undefined;
+    const rij: Rij = { ...(code ? { code } : {}), naam: popupDoel.naam, hoeveelheid: w.hoeveelheid, eenheid, ...(afdeling ? { afdeling } : {}) };
+    setRijen((r) => (popupDoel.index === undefined ? [...r, rij] : r.map((x, i) => (i === popupDoel.index ? rij : x))));
+    setZoek('');
+    sluitPopup();
+  };
 
   const verwijderRij = (index: number) => setRijen((r) => r.filter((_, i) => i !== index));
+
+  /** Wat een rij toont naast de naam: hoeveelheid, eenheid en categorie. */
+  const rijDetail = (r: Rij) => {
+    const afd = afdelingVanEigen(r);
+    return `${String(r.hoeveelheid).replace('.', ',')} ${t(`recept.eenheid.${r.eenheid}`)} · ${t(`afdeling.${afd ?? 'overig'}` as Sleutel)}`;
+  };
 
   const wijzigStap = (index: number, tekst: string) => setStappen((s) => s.map((x, i) => (i === index ? tekst : x)));
 
@@ -128,13 +186,7 @@ export default function EigenReceptScherm() {
 
   const bewaar = async () => {
     if (bezig) return;
-    const ingredienten: EigenIngredient[] = rijen.map((r) => ({
-      ...(r.code ? { code: r.code } : {}),
-      naam: r.naam,
-      hoeveelheid: Number(r.hoeveelheid.trim().replace(',', '.')),
-      eenheid: r.eenheid,
-    }));
-    const resultaat = valideer({ naam, soort, minuten, stijlen, seizoenen, ingredienten, stappen });
+    const resultaat = valideer({ naam, soort, minuten, stijlen, seizoenen, ingredienten: rijen, stappen });
     if (!resultaat.ok) {
       setFouten(resultaat.fouten);
       return;
@@ -226,42 +278,39 @@ export default function EigenReceptScherm() {
       <Text style={s.label}>{t('recept.ingredienten')}</Text>
       {rijen.map((r, i) => (
         <View key={`${r.naam}-${i}`} style={s.ingredient}>
-          <Text style={s.ingredientNaam}>{r.naam}</Text>
-          <View style={s.ingredientRij}>
-            <TextInput
-              style={[s.veld, s.hoeveelheid]}
-              value={r.hoeveelheid}
-              onChangeText={(h) => wijzigRij(i, { hoeveelheid: h })}
-              keyboardType="decimal-pad"
-              placeholder={t('recept.hoeveelheid')}
-              accessibilityLabel={t('recept.hoeveelheid')}
-            />
-            {EENHEDEN.map((e) => (
-              <Chip key={e} tekst={t(`recept.eenheid.${e}`)} actief={r.eenheid === e} onPress={() => wijzigRij(i, { eenheid: e })} />
-            ))}
-            <Pressable onPress={() => verwijderRij(i)} accessibilityRole="button" hitSlop={8}>
-              <Text style={s.verwijder}>✕</Text>
-            </Pressable>
-          </View>
+          <Pressable style={s.ingredientTekst} onPress={() => openPopup({ index: i, code: r.code, naam: r.naam }, r)} accessibilityRole="button">
+            <Text style={s.ingredientNaam}>{r.naam}</Text>
+            <Text style={s.ingredientDetail}>{rijDetail(r)}</Text>
+          </Pressable>
+          <Pressable onPress={() => verwijderRij(i)} accessibilityRole="button" accessibilityLabel={t('recept.verwijder')} hitSlop={8}>
+            <Text style={s.verwijder}>✕</Text>
+          </Pressable>
         </View>
       ))}
       {fout('ingredienten')}
 
-      <TextInput
-        style={s.veld}
-        value={zoek}
-        onChangeText={setZoek}
-        placeholder={t('recept.zoekIngredient')}
-        accessibilityLabel={t('recept.zoekIngredient')}
-        autoCorrect={false}
-      />
+      <View style={s.invoerRij}>
+        <TextInput
+          style={[s.veld, s.invoerVeld]}
+          value={zoek}
+          onChangeText={setZoek}
+          onSubmitEditing={plus}
+          returnKeyType="done"
+          placeholder={t('recept.zoekIngredient')}
+          accessibilityLabel={t('recept.zoekIngredient')}
+          autoCorrect={false}
+        />
+        <Pressable style={[s.plus, !zoek.trim() && s.plusUit]} onPress={plus} accessibilityRole="button" accessibilityLabel={t('recept.ingredientPlus')}>
+          <Text style={s.plusTekst}>+</Text>
+        </Pressable>
+      </View>
       {zoekTreffers.map((k) => (
-        <Pressable key={`${k.code ?? k.naam}`} style={s.treffer} onPress={() => voegIngredientToe(k.code, k.naam)} accessibilityRole="button">
+        <Pressable key={`${k.code ?? k.naam}`} style={s.treffer} onPress={() => openPopup({ code: k.code, naam: k.naam })} accessibilityRole="button">
           <Text style={s.trefferTekst}>{k.naam}</Text>
         </Pressable>
       ))}
       {kanNieuw && (
-        <Pressable style={s.treffer} onPress={() => voegIngredientToe(undefined, zoek.trim())} accessibilityRole="button">
+        <Pressable style={s.treffer} onPress={() => openPopup({ naam: zoek.trim() })} accessibilityRole="button">
           <Text style={s.trefferTekst}>{t('recept.voegIngredientToe', { naam: zoek.trim() })}</Text>
         </Pressable>
       )}
@@ -287,14 +336,20 @@ export default function EigenReceptScherm() {
       )}
       {fout('stappen')}
 
-      <Pressable style={[s.bewaar, bezig && { opacity: 0.6 }]} onPress={bewaar} disabled={bezig} accessibilityRole="button">
-        <Text style={s.bewaarTekst}>{t('recept.bewaar')}</Text>
-      </Pressable>
+      <View style={s.knoppen}>
+        <Pressable style={s.annuleer} onPress={() => router.back()} disabled={bezig} accessibilityRole="button">
+          <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
+        </Pressable>
+        <Pressable style={[s.bewaar, bezig && { opacity: 0.6 }]} onPress={bewaar} disabled={bezig} accessibilityRole="button">
+          <Text style={s.bewaarTekst}>{t('recept.bewaar')}</Text>
+        </Pressable>
+      </View>
       {bestaand && (
         <Pressable style={s.verwijderKnop} onPress={verwijder} accessibilityRole="button">
           <Text style={s.verwijderTekst}>{t('recept.verwijder')}</Text>
         </Pressable>
       )}
+      <LosPopup opties={popup} onSluit={sluitPopup} onBewaar={bewaarPopup} />
     </ScrollView>
   );
 }
@@ -323,10 +378,15 @@ const s = StyleSheet.create({
   chipActief: { backgroundColor: KLEUR, borderColor: KLEUR },
   chipTekst: { fontSize: 13, color: '#333', fontWeight: '600' },
   chipTekstActief: { color: '#fff' },
-  ingredient: { gap: 6, paddingVertical: 4 },
+  ingredient: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5', paddingVertical: 8, paddingHorizontal: 12 },
+  ingredientTekst: { flex: 1, gap: 2 },
   ingredientNaam: { fontSize: 15, fontWeight: '600' },
-  ingredientRij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
-  hoeveelheid: { width: 90, paddingVertical: 8 },
+  ingredientDetail: { fontSize: 13, color: '#5E6B63' },
+  invoerRij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  invoerVeld: { flex: 1 },
+  plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  plusUit: { opacity: 0.4 },
+  plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700', lineHeight: 28 },
   minutenRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   minutenVeld: { width: 90, paddingVertical: 8 },
   minutenHint: { flex: 1, fontSize: 13, color: '#5E6B63', lineHeight: 18 },
@@ -337,7 +397,10 @@ const s = StyleSheet.create({
   stapNummer: { width: 22, paddingTop: 12, fontWeight: '700', color: '#555', textAlign: 'center' },
   stapVeld: { flex: 1, minHeight: 44 },
   link: { color: KLEUR, fontWeight: '700', paddingVertical: 6 },
-  bewaar: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 16 },
+  knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
+  annuleer: { flex: 1, borderWidth: 1.5, borderColor: '#ccc', borderRadius: 12, padding: 14, alignItems: 'center', backgroundColor: '#fff' },
+  annuleerTekst: { color: '#444', fontWeight: '700', fontSize: 16 },
+  bewaar: { flex: 2, backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center' },
   bewaarTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   verwijderKnop: { padding: 12, alignItems: 'center' },
   verwijderTekst: { color: '#c62828', fontWeight: '600' },

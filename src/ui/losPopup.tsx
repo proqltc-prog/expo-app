@@ -23,6 +23,14 @@ export type PopupOpties = {
   toonCategorie: boolean;
   /** Houdbaarheid enkel in de frigo. */
   toonHoudbaar: boolean;
+  /** WEEK-200: de eenheden om uit te kiezen (standaard g, ml, stuk); een recept biedt ook teentje aan. */
+  eenheden?: readonly string[];
+  /** WEEK-200: een recept heeft altijd een hoeveelheid nodig. */
+  hoeveelheidVerplicht?: boolean;
+  /** WEEK-200: toon de vaste categorie als tekst wanneer ze niet te kiezen is (ingrediënt uit de app). */
+  toonVasteCategorie?: boolean;
+  /** WEEK-200: de kleur van de bewaarknop en de gekozen chips; standaard oranje (lijst en frigo). */
+  accent?: string;
 };
 
 type Props = {
@@ -60,12 +68,20 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
   const [eenheid, setEenheid] = useState<string | undefined>(opties.eenheid);
   const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>(opties.afdeling);
   const [houdbaar, setHoudbaar] = useState(naarInvoer(opties.houdbaarTot));
-  const [fout, setFout] = useState<'hoeveelheid' | 'houdbaar' | undefined>(undefined);
+  const [fout, setFout] = useState<'hoeveelheid' | 'houdbaar' | 'verplicht' | undefined>(undefined);
+
+  const accent = opties.accent ?? ORANJE;
+  const eenheden = opties.eenheden ?? ZELF_EENHEDEN;
+  const eenheidLabel = (e: string) => (e === 'stuk' ? t('frigo.stuks') : e === 'teentje' ? t('recept.eenheid.teentje') : e);
 
   const bewaar = () => {
     const invoer = leesLosInvoer(hoeveelheid, opties.toonHoudbaar ? houdbaar : '');
     if (invoer.fout) {
       setFout(invoer.fout);
+      return;
+    }
+    if (opties.hoeveelheidVerplicht && !(invoer.hoeveelheid !== undefined && invoer.hoeveelheid > 0)) {
+      setFout('verplicht');
       return;
     }
     onBewaar({
@@ -83,7 +99,7 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
 
       <Text style={s.label}>{t('frigo.hoeveelheid')}</Text>
       <TextInput
-        style={[s.veld, fout === 'hoeveelheid' && s.veldFout]}
+        style={[s.veld, (fout === 'hoeveelheid' || fout === 'verplicht') && s.veldFout]}
         value={hoeveelheid}
         onChangeText={(x) => {
           setHoeveelheid(x);
@@ -93,34 +109,49 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
         accessibilityLabel={t('frigo.hoeveelheid')}
       />
       {fout === 'hoeveelheid' && <Text style={s.fout}>{t('frigo.houdbaarFoutGetal')}</Text>}
+      {fout === 'verplicht' && <Text style={s.fout}>{t('frigo.hoeveelheidVerplicht')}</Text>}
 
       {opties.toonEenheid ? (
         <>
           <Text style={s.label}>{t('frigo.bewerkEenheid')}</Text>
           <View style={s.rij}>
-            {ZELF_EENHEDEN.map((e) => (
-              <Pressable key={e} style={[s.chip, eenheid === e && s.chipAan]} onPress={() => setEenheid(e)} accessibilityRole="button" accessibilityState={{ selected: eenheid === e }}>
-                <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{e === 'stuk' ? t('frigo.stuks') : e}</Text>
+            {eenheden.map((e) => (
+              <Pressable
+                key={e}
+                style={[s.chip, eenheid === e && { backgroundColor: accent, borderColor: accent }]}
+                onPress={() => setEenheid(e)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: eenheid === e }}
+              >
+                <Text style={[s.chipTekst, eenheid === e && s.chipTekstAan]}>{eenheidLabel(e)}</Text>
               </Pressable>
             ))}
           </View>
         </>
       ) : opties.eenheid ? (
-        <Text style={s.vast}>{`${t('frigo.bewerkEenheid')}: ${opties.eenheid === 'stuk' ? t('frigo.stuks') : opties.eenheid}`}</Text>
+        <Text style={s.vast}>{`${t('frigo.bewerkEenheid')}: ${eenheidLabel(opties.eenheid)}`}</Text>
       ) : null}
 
-      {opties.toonCategorie && (
+      {opties.toonCategorie ? (
         <>
           <Text style={s.label}>{t('frigo.bewerkCategorie')}</Text>
           <View style={s.rij}>
             {[...AFDELINGEN, 'overig' as const].map((a) => (
-              <Pressable key={a} style={[s.chip, afdeling === a && s.chipAan]} onPress={() => setAfdeling(a)} accessibilityRole="button" accessibilityState={{ selected: afdeling === a }}>
+              <Pressable
+                key={a}
+                style={[s.chip, afdeling === a && { backgroundColor: accent, borderColor: accent }]}
+                onPress={() => setAfdeling(a)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: afdeling === a }}
+              >
                 <Text style={[s.chipTekst, afdeling === a && s.chipTekstAan]}>{t(`afdeling.${a}` as Sleutel)}</Text>
               </Pressable>
             ))}
           </View>
         </>
-      )}
+      ) : opties.toonVasteCategorie ? (
+        <Text style={s.vast}>{`${t('frigo.bewerkCategorie')}: ${t(`afdeling.${opties.afdeling}` as Sleutel)}`}</Text>
+      ) : null}
 
       {opties.toonHoudbaar && (
         <>
@@ -143,7 +174,7 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
         <Pressable style={[s.knop, s.knopLicht]} onPress={onSluit} accessibilityRole="button">
           <Text style={s.knopLichtTekst}>{t('frigo.bewerkAnnuleer')}</Text>
         </Pressable>
-        <Pressable style={[s.knop, { backgroundColor: ORANJE }]} onPress={bewaar} accessibilityRole="button">
+        <Pressable style={[s.knop, { backgroundColor: accent }]} onPress={bewaar} accessibilityRole="button">
           <Text style={s.knopTekst}>{t('frigo.bewerkBewaar')}</Text>
         </Pressable>
       </View>
@@ -164,7 +195,6 @@ const s = StyleSheet.create({
   fout: { color: '#B23A05', fontSize: 13 },
   rij: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: '#fff' },
-  chipAan: { backgroundColor: ORANJE, borderColor: ORANJE },
   chipTekst: { color: '#444' },
   chipTekstAan: { color: '#fff', fontWeight: '700' },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 14 },

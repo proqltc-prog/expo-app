@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  afdelingVanEigen,
   bewaarEigen,
   EigenIngredient,
   EigenRecept,
@@ -124,5 +125,40 @@ describe('WEEK-199: kooktijd van een eigen recept tot 60 minuten', () => {
     const r = valideer({ ...geldig, minuten: ' 45 ' });
     if (!r.ok) throw new Error('moet geldig zijn');
     assert.equal(r.waarden.minuten, 45);
+  });
+});
+
+// WEEK-201: de winkelafdeling van een eigen ingrediënt, voor de lijst en de frigo.
+describe('WEEK-201: afdeling van een eigen ingrediënt', () => {
+  test('met code geldt de afdeling van de ingrediëntenlijst, ook als er een andere keuze bij staat', () => {
+    const eerste = catalogus('nl')[0];
+    assert.equal(afdelingVanEigen({ code: eerste.code, afdeling: 'dranken' }), eerste.afdeling);
+  });
+
+  test('zonder code geldt de gekozen afdeling; zonder keuze of met een onbekende waarde geen afdeling (overig)', () => {
+    assert.equal(afdelingVanEigen({ afdeling: 'zuivel-eieren' }), 'zuivel-eieren');
+    assert.equal(afdelingVanEigen({}), undefined);
+    assert.equal(afdelingVanEigen({ afdeling: 'onzin' as never }), undefined);
+  });
+
+  test('valideer bewaart de afdeling van een eigen ingrediënt en laat ze weg bij een ingrediënt met code', () => {
+    const eerste = catalogus('nl')[0];
+    const r = valideer({
+      ...geldig,
+      ingredienten: [
+        { naam: 'Zeldzaam kruid', hoeveelheid: 5, eenheid: 'g', afdeling: 'zuivel-eieren' },
+        { code: eerste.code, naam: eerste.naam, hoeveelheid: 100, eenheid: 'g', afdeling: 'dranken' },
+        { naam: 'Onbekend', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'onzin' as never },
+      ],
+    });
+    if (!r.ok) throw new Error('moet geldig zijn');
+    assert.deepEqual(r.waarden.ingredienten[0], { naam: 'Zeldzaam kruid', hoeveelheid: 5, eenheid: 'g', afdeling: 'zuivel-eieren' });
+    assert.equal('afdeling' in r.waarden.ingredienten[1], false);
+    assert.equal('afdeling' in r.waarden.ingredienten[2], false);
+  });
+
+  test('regressie: een opgeslagen recept met een afdeling bij een ingrediënt blijft leesbaar', () => {
+    const [terug] = normaliseerEigen([{ ...recept('a1', 'Ons', [{ naam: 'Zeldzaam kruid', hoeveelheid: 5, eenheid: 'g', afdeling: 'zuivel-eieren' }]) }]);
+    assert.equal(terug.ingredienten[0].afdeling, 'zuivel-eieren');
   });
 });

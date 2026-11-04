@@ -31,8 +31,9 @@ export function normaliseerIngredient(ruw: unknown): PlanIngredient | null {
   const naam = tekst(ruw.naam);
   const hoeveelheid = typeof ruw.hoeveelheid === 'number' && Number.isFinite(ruw.hoeveelheid) && ruw.hoeveelheid >= 0 ? ruw.hoeveelheid : 0;
   if (!naam) return null;
-  const afdeling: Afdeling = AFDELINGEN.includes(ruw.afdeling as Afdeling) ? (ruw.afdeling as Afdeling) : 'droge-voeding';
-  const ingredient: PlanIngredient = { naam, hoeveelheid, eenheid: tekst(ruw.eenheid), afdeling };
+  // WEEK-201: zonder geldige afdeling blijft het veld weg; het ingrediënt komt dan onder "overig".
+  const ingredient: PlanIngredient = { naam, hoeveelheid, eenheid: tekst(ruw.eenheid) };
+  if (AFDELINGEN.includes(ruw.afdeling as Afdeling)) ingredient.afdeling = ruw.afdeling as Afdeling;
   if (tekst(ruw.code)) ingredient.code = tekst(ruw.code);
   const namen = normaliseerVertalingen(ruw.namen);
   if (namen) ingredient.namen = namen;

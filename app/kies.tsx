@@ -179,9 +179,15 @@ export default function Kies() {
         })}
       </View>
       {tab === 'gezin' && (
-        <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
-          <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
-        </Pressable>
+        // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
+        <View style={s.gezinActies}>
+          <Pressable style={s.nieuw} onPress={() => router.push('/eigen-recept')} accessibilityRole="button">
+            <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
+          </Pressable>
+          <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
+            <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
+          </Pressable>
+        </View>
       )}
       <TextInput
         style={s.zoek}
@@ -225,7 +231,10 @@ const s = StyleSheet.create({
   tabTekst: { fontSize: 15, fontWeight: '600', color: KLEUR },
   tabTekstActief: { color: '#fff' },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
-  beheer: { alignSelf: 'flex-start', paddingVertical: 4 },
+  gezinActies: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  nieuw: { backgroundColor: ACCENT, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
+  nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  beheer: { paddingVertical: 4, flexShrink: 1 },
   beheerTekst: { color: ACCENT, fontWeight: '700', fontSize: 14 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },

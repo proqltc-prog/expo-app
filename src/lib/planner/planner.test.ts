@@ -132,7 +132,9 @@ describe('normaliseerWeekplan', () => {
     assert.ok(plan);
     assert.equal(plan.dagen.length, 1);
     assert.equal(plan.dagen[0].recept.minuten, 30);
-    assert.equal(plan.dagen[0].recept.ingredienten[0].afdeling, 'droge-voeding');
+    // WEEK-201: een onbekende afdeling blijft weg; het ingrediënt komt dan onder "overig" (voorheen droge voeding).
+    assert.equal(plan.dagen[0].recept.ingredienten[0].afdeling, undefined);
+    assert.equal('afdeling' in plan.dagen[0].recept.ingredienten[0], false);
     assert.equal(plan.taal, 'nl');
   });
 });
