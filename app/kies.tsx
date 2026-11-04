@@ -1,3 +1,4 @@
+import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -23,6 +24,7 @@ import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 import { useTaal } from '@/ui/taal';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 
 // Zelf kiezen (WEEK-44): een recept kiezen, met de voorkeuren als filter en een zoekbalk.
 // WEEK-191: twee tabs. "Ontdek" toont de recepten van de app (uit de databank); "Ons gezin" toont de eigen recepten.
@@ -40,6 +42,7 @@ type Keuze = { id: string; naam: string; soort: Soort; minuten: number; recept: 
 
 export default function Kies() {
   const { t, taal } = useTaal();
+  const { popup } = usePaginaInfo({ tekst: t('pagina.kiesInfo'), kleur: ACCENT, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const params = useLocalSearchParams<{ moment?: string; index?: string; gemaaktOp?: string; naam?: string }>();
   const moment: Moment = isMoment(params.moment) ? params.moment : 'avond';
   const index = params.index !== undefined ? Number(params.index) : undefined;
@@ -157,6 +160,7 @@ export default function Kies() {
 
   return (
     <View style={s.scherm}>
+      {popup}
       <Text style={s.moment}>{t(`moment.${moment}`)}</Text>
       <View style={s.tabs} accessibilityRole="tablist">
         {(['ontdek', 'gezin'] as const).map((k) => {
@@ -222,7 +226,7 @@ const s = StyleSheet.create({
   tabTekstActief: { color: '#fff' },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
   beheer: { alignSelf: 'flex-start', paddingVertical: 4 },
-  beheerTekst: { color: KLEUR, fontWeight: '700', fontSize: 14 },
+  beheerTekst: { color: ACCENT, fontWeight: '700', fontSize: 14 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },
   rij: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },

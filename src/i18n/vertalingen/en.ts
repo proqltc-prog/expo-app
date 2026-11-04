@@ -464,6 +464,7 @@ export const en: Vertalingen = {
   'frigo.alIngevoegd': 'Already in the fridge',
   'pagina.infoKnop': 'About this page',
   'pagina.lijstInfo': 'Shopping: tap a product to tick it off. Switch between per recipe and per category. Tap a heading to open or close a group.\n\nStores: for each store type on your list, opens Google Maps near you, using the postcode from your profile.',
+  'pagina.kiesInfo': 'Choose a recipe for this meal. The Discover tab shows the app\'s recipes, Our family shows the family\'s own recipes. The filters at the top narrow the list. Tap a recipe to put it on the week menu.',
   'pagina.frigoInfo': 'Recipes: what is at home for this week’s recipes. Search for an ingredient and enter the amount. The planner uses what has been in the house longest first.\n\nLoose products: what you have outside the recipes. They do not count for this week’s recipes. With the pencil you change amount, unit, category and best-before date. The app deletes nothing automatically.',
   'pagina.scanInfo': 'The app looks up the product and shows the nutrition values and a rating. You get a limited number of free scans per day.',
   'gezin.infoKnop': "Family code info",

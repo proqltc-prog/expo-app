@@ -465,6 +465,7 @@ export const nl = {
   'frigo.alIngevoegd': 'Al in de frigo',
   'pagina.infoKnop': 'Uitleg over deze pagina',
   'pagina.lijstInfo': 'Boodschappen: tik op een product om het af te vinken. Wissel tussen per recept en per categorie. Tik op een kop om een groep in of uit te klappen.\n\nWinkels: voor elk winkeltype op je lijst opent Google Maps bij jou in de buurt, met de postcode uit je profiel.',
+  'pagina.kiesInfo': 'Kies een recept voor deze maaltijd. Tab Ontdek toont de recepten van de app, Ons gezin toont de eigen recepten van het gezin. Met de filters bovenaan beperk je de lijst. Tik op een recept om het op het weekmenu te zetten.',
   'pagina.frigoInfo': 'Recepten: wat er in huis is voor de recepten van de week. Zoek een ingrediënt en geef de hoeveelheid op. De planner gebruikt eerst wat het langst in huis is.\n\nLosse producten: wat je buiten de recepten om hebt. Die tellen niet mee voor de recepten van de week. Met het potloodje wijzig je hoeveelheid, eenheid, categorie en houdbaarheid. De app verwijdert niets automatisch.',
   'pagina.scanInfo': 'De app zoekt het product op en toont de voedingswaarden en een oordeel. Je hebt per dag een beperkt aantal gratis scans.',
   'gezin.infoKnop': "Uitleg over de gezinscode",

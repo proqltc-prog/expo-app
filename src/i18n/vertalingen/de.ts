@@ -464,6 +464,7 @@ export const de: Vertalingen = {
   'frigo.alIngevoegd': 'Schon im Kühlschrank',
   'pagina.infoKnop': 'Erklärung zu dieser Seite',
   'pagina.lijstInfo': 'Einkauf: tippe auf ein Produkt, um es abzuhaken. Wechsle zwischen pro Rezept und pro Kategorie. Tippe auf eine Überschrift, um eine Gruppe auf- oder zuzuklappen.\n\nGeschäfte: für jeden Geschäftstyp auf deiner Liste öffnet Google Maps in deiner Nähe, mit der Postleitzahl aus deinem Profil.',
+  'pagina.kiesInfo': 'Wähle ein Rezept für diese Mahlzeit. Der Tab Entdecken zeigt die Rezepte der App, Unsere Familie zeigt die eigenen Rezepte der Familie. Mit den Filtern oben engst du die Liste ein. Tippe auf ein Rezept, um es in den Wochenplan zu setzen.',
   'pagina.frigoInfo': 'Rezepte: was im Haus ist für die Rezepte der Woche. Suche eine Zutat und gib die Menge an. Der Planer verbraucht zuerst, was am längsten da ist.\n\nLose Produkte: was du außerhalb der Rezepte hast. Diese zählen nicht für die Rezepte der Woche. Mit dem Stift änderst du Menge, Einheit, Kategorie und Haltbarkeit. Die App löscht nichts automatisch.',
   'pagina.scanInfo': 'Die App sucht das Produkt und zeigt Nährwerte und eine Bewertung. Du hast pro Tag eine begrenzte Anzahl gratis Scans.',
   'gezin.infoKnop': "Erkl\u00e4rung",
