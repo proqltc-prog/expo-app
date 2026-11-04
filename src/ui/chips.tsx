@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 
 /** Keuzeknoppen (chips); enkelvoudig of meervoudig, afhankelijk van hoe de aanroeper `gekozen` bijhoudt. */
 export function Chips<T extends string | number>({ opties, gekozen, label, onWissel }: {

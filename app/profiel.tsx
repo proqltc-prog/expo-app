@@ -24,7 +24,7 @@ import { wisselGroep } from '@/lib/groepen';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 
 const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   volwassenen: MAX_VOLWASSENEN,
@@ -212,11 +212,11 @@ const s = StyleSheet.create({
   kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: '#e5e5e5', gap: 12 },
   rij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 16 },
-  waarom: { backgroundColor: '#F6E0D3', borderRadius: 14, padding: 16, gap: 6 },
+  waarom: { backgroundColor: '#eef6f1', borderRadius: 14, padding: 16, gap: 6 },
   waromKop: { fontWeight: '700', fontSize: 15, color: '#333' },
   totaal: { color: '#777', fontSize: 13 },
   taalRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
-  vinkje: { color: '#A9472A', fontWeight: '800', fontSize: 16 },
+  vinkje: { color: '#2e7d4f', fontWeight: '800', fontSize: 16 },
   teller: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   tellerKnop: { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   uit: { opacity: 0.3 },
@@ -225,7 +225,7 @@ const s = StyleSheet.create({
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
   rijVelden: { flexDirection: 'row', gap: 8 },
   hint: { color: '#777', fontSize: 13 },
-  info: { backgroundColor: '#F6E0D3', borderRadius: 10, padding: 12, gap: 4 },
+  info: { backgroundColor: '#eef6f1', borderRadius: 10, padding: 12, gap: 4 },
   fout: { color: '#c62828' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6 },

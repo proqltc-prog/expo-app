@@ -11,7 +11,7 @@ import { laadProfiel } from '@/opslag/profiel';
 import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#0F6B66';
 
 export function WinkelVoorstel({ items }: { items: LijstItem[] }) {
   const { t } = useTaal();

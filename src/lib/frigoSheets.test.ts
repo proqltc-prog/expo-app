@@ -135,7 +135,7 @@ describe('niets verdwijnt automatisch (regressie)', () => {
 
 describe('sheetkleuren (WEEK-75)', () => {
   test('planner-frigo is petrol en losse producten oranje', () => {
-    assert.equal(sheetThema('planner').accent, '#A9472A');
+    assert.equal(sheetThema('planner').accent, '#0F6B66');
     assert.equal(sheetThema('los').accent, '#E8680F');
   });
   test('de twee sheets hebben verschillende accentkleuren', () => {

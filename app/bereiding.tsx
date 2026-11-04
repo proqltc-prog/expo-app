@@ -15,8 +15,8 @@ import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { useTaal } from '@/ui/taal';
 
-const PETROL = '#A9472A';
-const PETROL_ZACHT = '#F6E0D3';
+const PETROL = '#0F6B66';
+const PETROL_ZACHT = '#D5EDEA';
 const PAPIER = '#F8F8F4';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';

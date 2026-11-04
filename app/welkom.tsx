@@ -9,8 +9,8 @@ import { Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
 import { ROUTE_NA_INLOGGEN, ROUTE_NA_WELKOM, UITLEG_SCHERMEN } from '@/lib/welkom';
 import { useTaal } from '@/ui/taal';
 
-const KLEUR = '#A9472A';
-const KLEUR_ZACHT = '#F6E0D3';
+const KLEUR = '#0F6B66';
+const KLEUR_ZACHT = '#D5EDEA';
 const PAPIER = '#F8F8F4';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';

@@ -27,12 +27,12 @@ import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 import { SectieKop } from '@/ui/sectieKop';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
-const PETROL = '#A9472A';
+const PETROL = '#0F6B66';
 const ORANJE = '#E8680F';
 const ORANJE_ZACHT = '#FDE8D6';
-const MIST = '#F3ECE6';
+const MIST = '#EEF1EC';
 const MUTED = '#5E6B63';
 
 type Hoofd = 'winkels' | 'boodschappen';
@@ -429,7 +429,7 @@ export default function Lijst() {
                     accessibilityRole="button"
                     accessibilityLabel={t('lijst.scanProduct')}
                   >
-                    <Ionicons name={SCANNER_ICOON as IoniconNaam} size={20} color="#A9472A" />
+                    <Ionicons name={SCANNER_ICOON as IoniconNaam} size={20} color="#2e7d4f" />
                   </Pressable>
                 )}
               </Pressable>
@@ -462,7 +462,7 @@ const s = StyleSheet.create({
   pilAan: { backgroundColor: ORANJE_ZACHT, borderColor: 'transparent' },
   pilTekst: { color: '#17201A', fontWeight: '600', fontSize: 14 },
   pilTekstAan: { color: ORANJE },
-  scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#F6E0D3', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
+  scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   scanKnopTekst: { fontSize: 17 },
   streep: { height: 4, borderRadius: 2, marginTop: 10 },
   actieGroep: { flexDirection: 'row', alignItems: 'center', gap: 0, flexShrink: 0 },

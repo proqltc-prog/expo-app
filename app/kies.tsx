@@ -28,7 +28,7 @@ import { useTaal } from '@/ui/taal';
 // WEEK-191: twee tabs. "Ontdek" toont de recepten van de app (uit de databank); "Ons gezin" toont de eigen recepten.
 // Twee gevallen: een bestaande dag vervangen (index, gemaaktOp, naam meegegeven) of een nieuwe maaltijd toevoegen.
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 const isMoment = (x: unknown): x is Moment => MOMENTEN.includes(x as Moment);

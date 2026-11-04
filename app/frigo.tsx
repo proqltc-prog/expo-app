@@ -20,14 +20,14 @@ import { ProductInvoer } from '@/ui/productInvoer';
 import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
-const KLEUR = '#A9472A';
+const KLEUR = '#0F6B66';
 const PAPIER = '#F8F8F4';
 const ORANJE = '#E8680F';
 const ORANJE_ZACHT = '#FDE8D6';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';
 type IoniconNaam = ComponentProps<typeof Ionicons>['name'];
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#3B7D4F', matig: '#E8680F', slecht: '#B23A05' };
+const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#0F6B66', matig: '#E8680F', slecht: '#B23A05' };
 
 /** Productdetails van een gescand frigo-item (WEEK-49): oordeel, voeding per 100 g en additieven. */
 function ProductDetails({ product: p }: { product: Product }) {
@@ -388,7 +388,7 @@ const s = StyleSheet.create({
   tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
   tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
   tekst: { color: '#444' },
-  schakelaar: { flexDirection: 'row', backgroundColor: '#F3ECE6', borderRadius: 18, padding: 5, marginTop: 12 },
+  schakelaar: { flexDirection: 'row', backgroundColor: '#EEF1EC', borderRadius: 18, padding: 5, marginTop: 12 },
   keuze: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 14 },
   keuzeAan: { backgroundColor: '#fff', shadowColor: INKT, shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
   ico: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },

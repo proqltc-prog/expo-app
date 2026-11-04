@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { dagenTussen, geldigeBegin, maandCellen, maandKop, kortDatum, weekKoppen, MAX_PLANDAGEN } from '@/lib/planner/datums';
 import { useTaal } from '@/ui/taal';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 const MAANDEN_VOORUIT = 6;
 
 type Props = {

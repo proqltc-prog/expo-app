@@ -33,7 +33,7 @@ import {
 import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 const GEVAAR = '#c62828';
 
 // WEEK-104: het gezin krijgt een standaardnaam. De voornaam van het lid komt van het toestel (WEEK-163).
@@ -392,7 +392,7 @@ const s = StyleSheet.create({
   kopRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 },
   statusPil: { color: KLEUR, backgroundColor: '#e6f2ea', fontSize: 12, fontWeight: '600', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, overflow: 'hidden' },
   statusPilOffline: { color: '#7a5b00', backgroundColor: '#fff4d6' },
-  codePaneel: { backgroundColor: '#F6E0D3', borderRadius: 12, padding: 12 },
+  codePaneel: { backgroundColor: '#eef6f1', borderRadius: 12, padding: 12 },
   avatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#e6f2ea', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   avatarTekst: { color: KLEUR, fontWeight: '700' },
   uitleg: { color: '#555' },

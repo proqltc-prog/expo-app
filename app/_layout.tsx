@@ -10,7 +10,7 @@ import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
 import { gaatNaarMenu, sluitAppOp } from '@/lib/terugknop';
 
-const KLEUR = '#A9472A';
+const KLEUR = '#2e7d4f';
 
 /** Instellingen (WEEK-39): taal en gezinsruimte, bereikbaar via een icoon op het menu. */
 function InstellingenKnop() {
