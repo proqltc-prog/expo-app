@@ -397,6 +397,7 @@ export const nl = {
   'planning.kies.stijl': 'Welke keuken lust je?',
   'planning.kies.vermijd': 'Is er iets wat je wilt vermijden?',
   'planning.vermijdOptioneel': 'Dit is optioneel. Sla over als je niets wilt vermijden.',
+  'planning.enkelVegetarisch': 'Alleen vegetarisch',
   'planning.kies.plan': 'Je weekmenu',
   'planning.kalenderKnop': 'Kies in kalender',
   'planning.kalenderTitel': 'Kies je dagen',

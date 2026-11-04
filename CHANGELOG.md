@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.106.0] – 2026-11-04
+
+- Weekplanner: nieuwe keuze "Alleen vegetarisch" in de stap vermijden. Geldt voor de recepten uit de databank en de lokale recepten, ook bij het vervangen van een dag en in "Zelf kiezen".
+- De keuze wordt bewaard bij de voorkeuren; standaard uit.
+
+**Jira:** [WEEK-190](https://proqltc-1791495894841.atlassian.net/browse/WEEK-190) · **Confluence:** [WEEK-190 Planner-filter enkel vegetarisch](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/19890177)
+
 ## [0.105.1] – 2026-11-03
 
 - Weekplanner: bij het kiezen uit de databank komen recepten die de frigo-producten gebruiken eerst. Pas daarna wordt de rest van de databank gebruikt.

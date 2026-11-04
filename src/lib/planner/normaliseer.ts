@@ -93,6 +93,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     kooktijden: Array.isArray(ruw.kooktijden) ? ruw.kooktijden.filter((k): k is KooktijdCode => KOOKTIJDEN.includes(k as KooktijdCode)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [],
     ...(normaliseerVermijd(ruw.vermijd).length ? { vermijd: normaliseerVermijd(ruw.vermijd) } : {}),
+    ...(ruw.enkelVegetarisch === true ? { enkelVegetarisch: true } : {}),
     taal: isTaal(ruw.taal) ? ruw.taal : 'nl',
     porties: typeof ruw.porties === 'number' && ruw.porties > 0 ? ruw.porties : 2,
     bron: ruw.bron === 'db' ? 'db' : 'lokaal', // oude AI-plannen en 'favorieten'-plannen (WEEK-72) worden lokaal
@@ -115,12 +116,13 @@ export function normaliseerKeuzes(ruw: unknown): {
   kooktijden: string[];
   stijlen: string[];
   vermijd: Vermijd[];
+  enkelVegetarisch: boolean;
   aantalDagen: number;
   momenten: Moment[];
   datums: string[];
   uitgesloten: string[];
 } {
-  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], aantalDagen: PERIODE_STANDAARD, momenten: ['avond'], datums: [], uitgesloten: [] };
+  if (!isObject(ruw)) return { kooktijden: [], stijlen: [], vermijd: [], enkelVegetarisch: false, aantalDagen: PERIODE_STANDAARD, momenten: ['avond'], datums: [], uitgesloten: [] };
   // Oude codes (snel/gemiddeld/uitgebreid, klassiek…) en de keuzes van het weekmenu blijven geldig.
   const kooktijdToegestaan = [...new Set<string>([...KOOKTIJDEN, ...KOOKTIJD_IDS])];
   const stijlToegestaan = [...new Set<string>([...STIJLEN, ...STIJL_IDS])];
@@ -128,6 +130,7 @@ export function normaliseerKeuzes(ruw: unknown): {
     kooktijden: Array.isArray(ruw.kooktijden) ? kooktijdToegestaan.filter((k) => (ruw.kooktijden as unknown[]).includes(k)) : [],
     stijlen: Array.isArray(ruw.stijlen) ? stijlToegestaan.filter((s) => (ruw.stijlen as unknown[]).includes(s)) : [],
     vermijd: normaliseerVermijd(ruw.vermijd),
+    enkelVegetarisch: ruw.enkelVegetarisch === true,
     aantalDagen: normaliseerPeriode(ruw.aantalDagen) ?? PERIODE_STANDAARD,
     momenten: normaliseerMomenten(ruw.momenten),
     datums: normaliseerDatums(ruw.datums),

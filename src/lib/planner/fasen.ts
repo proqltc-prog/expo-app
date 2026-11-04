@@ -16,6 +16,8 @@ export type Keuzes = {
   kooktijden: string[];
   stijlen: string[];
   vermijd: string[];
+  /** WEEK-190: enkel vegetarische recepten. */
+  enkelVegetarisch?: boolean;
 };
 
 /** De stap na deze, of undefined bij de laatste. */

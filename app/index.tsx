@@ -187,6 +187,8 @@ export default function Weekplanning() {
   const wisselKooktijd = (id: string) => pasKeuzesAan({ ...keuzes, kooktijden: wissel(keuzes.kooktijden, id) });
   const wisselStijl = (id: string) => pasKeuzesAan({ ...keuzes, stijlen: wissel(keuzes.stijlen, id) });
   const wisselVermijdKeuze = (v: Vermijd) => pasKeuzesAan({ ...keuzes, vermijd: wissel(keuzes.vermijd, v) });
+  // WEEK-190: enkel vegetarische recepten, voor de databank en de lokale recepten.
+  const wisselEnkelVegetarisch = () => pasKeuzesAan({ ...keuzes, enkelVegetarisch: !keuzes.enkelVegetarisch });
 
   // Bij elk bezoek opnieuw laden: frigo of lijst kunnen het plan intussen aangepast hebben (WEEK-13).
   useFocusEffect(
@@ -227,6 +229,7 @@ export default function Weekplanning() {
         kooktijden: kooktijdNaarDb(keuzes.momenten, keuzes.kooktijden),
         stijlen: stijlNaarDb(keuzes.stijlen),
         vermijd: keuzes.vermijd.filter((v): v is Vermijd => (VERMIJDBAAR as readonly string[]).includes(v)),
+        enkelVegetarisch: keuzes.enkelVegetarisch,
         aantalDagen: keuzes.aantalDagen,
         datums: gekozenDatums,
         momenten: keuzes.momenten,
@@ -506,6 +509,7 @@ export default function Weekplanning() {
           {kopStap('planning.kies.vermijd')}
           <Text style={s.hint}>{t('planning.vermijdOptioneel')}</Text>
           <Chips opties={vermijdOpties} gekozen={keuzes.vermijd as Vermijd[]} label={(v) => t(`vermijd.${v}`)} onWissel={wisselVermijdKeuze} />
+          <Chips opties={['vegetarisch'] as const} gekozen={keuzes.enkelVegetarisch ? ['vegetarisch'] as const : []} label={() => t('planning.enkelVegetarisch')} onWissel={wisselEnkelVegetarisch} />
         </View>
       )}
 

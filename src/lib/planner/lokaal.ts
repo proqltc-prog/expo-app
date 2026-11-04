@@ -149,7 +149,8 @@ function planLokaalBasis(verzoek: PlanVerzoek, bank: readonly BankRecept[]): Wee
   // Elke dag krijgt één plek per gekozen moment, dag voor dag (WEEK-43).
   const sloten = dagen.flatMap((dag) => momenten.map((moment) => ({ dag, moment })));
   const random = toeval(verzoek.seed ?? Date.now());
-  const beschikbaar = bank.filter((r) => !bankReceptVermijdt(r, verzoek.vermijd ?? []));
+  // WEEK-190: met 'enkel vegetarisch' blijven enkel vegetarische recepten over.
+  const beschikbaar = bank.filter((r) => !bankReceptVermijdt(r, verzoek.vermijd ?? []) && (!verzoek.enkelVegetarisch || r.soort === 'vegetarisch'));
   let versoepeld = false;
   const kandidatenPerMoment = new Map<Moment, BankRecept[]>();
   for (const moment of momenten) {
@@ -162,7 +163,7 @@ function planLokaalBasis(verzoek: PlanVerzoek, bank: readonly BankRecept[]): Wee
     versoepeld ||= keuze.versoepeld;
     kandidatenPerMoment.set(moment, keuze.recepten);
   }
-  const schema = soortenSchema(sloten.length);
+  const schema: Soort[] = verzoek.enkelVegetarisch ? sloten.map(() => 'vegetarisch') : soortenSchema(sloten.length);
   const porties = schaalFactor(verzoek.profiel);
 
   const gekozen: BankRecept[] = [];
@@ -186,6 +187,7 @@ function planLokaalBasis(verzoek: PlanVerzoek, bank: readonly BankRecept[]): Wee
     kooktijden: verzoek.kooktijden,
     stijlen: verzoek.stijlen,
     ...(verzoek.vermijd?.length ? { vermijd: verzoek.vermijd } : {}),
+    ...(verzoek.enkelVegetarisch ? { enkelVegetarisch: true } : {}),
     taal: verzoek.taal,
     porties,
     bron: 'lokaal',
