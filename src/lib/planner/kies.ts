@@ -1,10 +1,9 @@
 // Zelf kiezen en verwijderen van een maaltijd in het weekmenu (WEEK-44).
 // Pure logica: het scherm schrijft het resultaat weg.
-import { afdelingVan, IngredientCode } from '@/data/ingredienten';
 import { BankRecept, Moment, MOMENTEN, StijlCode } from '@/data/receptenbank';
 import type { Vermijd } from '@/data/vermijden';
 import type { Taal } from '@/i18n';
-import type { EigenRecept } from '@/lib/eigenrecepten';
+import { afdelingVanEigen, EigenRecept } from '@/lib/eigenrecepten';
 import type { LijstItem } from '@/lib/lijst';
 import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
 import type { DbPoolRecept } from './dbplan';
@@ -93,7 +92,7 @@ export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
       naam: i.naam,
       hoeveelheid: geschaaldeHoeveelheid(i.hoeveelheid, gezin, i.eenheid),
       eenheid: i.eenheid,
-      afdeling: i.code ? afdelingVan(i.code as IngredientCode) : 'droge-voeding',
+      ...(afdelingVanEigen(i) ? { afdeling: afdelingVanEigen(i) } : {}),
       ...(i.code ? { code: i.code } : {}),
     })),
   };

@@ -133,6 +133,39 @@ describe('Ons gezin: eigen recepten', () => {
     assert.equal(pr.ingredienten[0].hoeveelheid, geschaaldeHoeveelheid(150, gezin, 'g'));
     assert.equal(pr.ingredienten[0].code, undefined);
   });
+
+  // WEEK-201: de afdeling van een eigen ingrediënt gaat mee naar het weekmenu, en zo naar de lijst en de frigo.
+  test('WEEK-201: een eigen ingrediënt neemt zijn gekozen afdeling mee; zonder keuze geen afdeling (overig)', () => {
+    const gezin = standaardProfiel();
+    const r = eigen('eigen:9', 'Kaasfondue', 30, 'vegetarisch', [
+      { naam: 'Zeldzame kaas', hoeveelheid: 200, eenheid: 'g', afdeling: 'zuivel-eieren' },
+      { naam: 'Geheim kruid', hoeveelheid: 5, eenheid: 'g' },
+      { code: 'ui', naam: 'ui', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'dranken' },
+    ]);
+    const pr = eigenNaarPlanRecept(r, gezin);
+    assert.equal(pr.ingredienten[0].afdeling, 'zuivel-eieren');
+    assert.equal('afdeling' in pr.ingredienten[1], false);
+    assert.equal(pr.ingredienten[2].afdeling, 'groenten-fruit');
+  });
+
+  test('WEEK-201: op de lijst per categorie komt het eigen ingrediënt onder zijn afdeling en zonder afdeling onder overig', async () => {
+    const { itemsUitPlan, perAfdeling, perRecept } = await import('@/lib/lijst');
+    const gezin = standaardProfiel();
+    const r = eigen('eigen:9', 'Kaasfondue', 30, 'vegetarisch', [
+      { naam: 'Zeldzame kaas', hoeveelheid: 200, eenheid: 'g', afdeling: 'zuivel-eieren' },
+      { naam: 'Geheim kruid', hoeveelheid: 5, eenheid: 'g' },
+    ]);
+    const items = itemsUitPlan([{ dag: 'maandag', recept: eigenNaarPlanRecept(r, gezin) }]);
+    const secties = perAfdeling(items);
+    const zuivel = secties.find((x) => x.soort === 'afdeling' && x.afdeling === 'zuivel-eieren');
+    const overig = secties.find((x) => x.soort === 'afdeling' && x.afdeling === 'overig');
+    assert.ok(zuivel?.regels.some((g) => g.naam === 'Zeldzame kaas'));
+    assert.ok(overig?.regels.some((g) => g.naam === 'Geheim kruid'));
+    assert.equal(secties.some((x) => x.soort === 'afdeling' && x.afdeling === 'droge-voeding'), false);
+    // Per recept staan beide onder de naam van het eigen recept.
+    const perR = perRecept(items).find((x) => x.soort === 'recept' && x.recept === 'Kaasfondue');
+    assert.deepEqual(perR?.regels.map((g) => g.naam), ['Zeldzame kaas', 'Geheim kruid']);
+  });
 });
 
 describe('planrecepten op het weekmenu', () => {

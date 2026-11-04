@@ -8,6 +8,19 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.111.0] – 2026-11-05
+
+- Kooktijd: overal dezelfde drie kooktijden met de tijd erbij: snel (tot 30 min), gemiddeld (31–45 min) en uitgebreid (46–60 min). Een recept duurt nooit langer dan een uur: recepten boven de 60 minuten komen niet meer in het weekmenu of in Kies, en zijn uit de databank verwijderd. In het weekmenu toont de stap Kooktijd de drie kooktijden met het tijdsbestek; een eerder opgeslagen keuze "verfijnd" wordt gemiddeld plus uitgebreid. (WEEK-199)
+- Eigen recept: kies een kooktijd; de minuten worden vooraf ingevuld met de geschatte tijd uit onze recepten en blijven aanpasbaar tot 60 minuten. (WEEK-199)
+- Eigen recept: een ingrediënt voeg je toe zoals een product op de lijst: naam ingeven, op de plus tikken en in de popup de hoeveelheid, de eenheid en de categorie kiezen. Voor een ingrediënt uit de app liggen eenheid en categorie vast. Tikken op een ingrediënt past het aan. Knop Annuleren naast Recept bewaren. (WEEK-200)
+- Lijst en frigo: ingrediënten van eigen recepten komen onder het juiste recept en de gekozen categorie; zonder categorie onder Overig (voorheen altijd Droge voeding). (WEEK-201)
+- Kies, tab Ons gezin: knop + Nieuw recept naast Mijn recepten beheren. (WEEK-202)
+- Uitlijning: dezelfde afstanden, hoogtes en hoekstralen voor velden, chips en knoppen in weekmenu, Kies, Mijn recepten en het receptformulier; de dubbele titel in het receptformulier is weg. (WEEK-203)
+
+**Jira:** [WEEK-199](https://proqltc-1791495894841.atlassian.net/browse/WEEK-199) · [WEEK-200](https://proqltc-1791495894841.atlassian.net/browse/WEEK-200) · [WEEK-201](https://proqltc-1791495894841.atlassian.net/browse/WEEK-201) · [WEEK-202](https://proqltc-1791495894841.atlassian.net/browse/WEEK-202) · [WEEK-203](https://proqltc-1791495894841.atlassian.net/browse/WEEK-203)
+
+**Confluence:** [WEEK-199 Kooktijd](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20414487) · [WEEK-200 Ingrediënt-popup en Annuleren](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20611073) · [WEEK-201 Eigen ingrediënten op lijst en frigo](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20119590) · [WEEK-202 Knop + Nieuw recept](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20643841) · [WEEK-203 Uitlijning](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20119610)
+
 ## [0.110.0] – 2026-11-04
 
 - Thema: terracotta als tweede accentkleur naast het groen. Het groen blijft het hoofdthema; terracotta voor de secundaire acties (Mijn recepten beheren, + Nieuw recept en de knoppen op de gezinspagina).

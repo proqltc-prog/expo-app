@@ -25,7 +25,7 @@ export function Chips<T extends string | number>({ opties, gekozen, label, onWis
 
 const s = StyleSheet.create({
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6 },
+  chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6, minHeight: 36, justifyContent: 'center' },
   chipAan: { backgroundColor: KLEUR },
   chipTekst: { color: KLEUR, fontWeight: '600', fontSize: 13 },
   chipTekstAan: { color: '#fff' },

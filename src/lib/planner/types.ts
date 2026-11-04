@@ -8,22 +8,18 @@ import type { FrigoItem } from '@/lib/frigo';
 export const WEEKDAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'] as const;
 export type DagCode = (typeof WEEKDAGEN)[number];
 
-export type KooktijdCode = 'snel' | 'gemiddeld' | 'uitgebreid';
-export const KOOKTIJDEN: KooktijdCode[] = ['snel', 'gemiddeld', 'uitgebreid'];
-
-/** snel: tot 20 min · gemiddeld: 21–40 min · uitgebreid: meer dan 40 min. */
-export function kooktijdVan(minuten: number): KooktijdCode {
-  if (minuten <= 20) return 'snel';
-  if (minuten <= 40) return 'gemiddeld';
-  return 'uitgebreid';
-}
+// WEEK-199: de kooktijdindeling staat in src/lib/kooktijd.ts (snel tot 30, gemiddeld 31–45, uitgebreid 46–60 min).
+import type { KooktijdCode } from '@/lib/kooktijd';
+export type { KooktijdCode };
+export { KOOKTIJDEN, kooktijdVan } from '@/lib/kooktijd';
 
 export type PlanIngredient = {
   naam: string;
   hoeveelheid: number;
   /** g, ml, stuk, teentje — of een vrije eenheid uit de AI. */
   eenheid: string;
-  afdeling: Afdeling;
+  /** Winkelafdeling; ontbreekt bij een eigen ingrediënt zonder afdeling, dat komt onder "overig" (WEEK-201). */
+  afdeling?: Afdeling;
   /** Vaste code uit de ingrediëntenlijst of de database (WEEK-154): de stabiele sleutel, los van de taal. */
   code?: string;
   /** De naam in elke taal, vastgelegd bij het maken van het plan (WEEK-154). */

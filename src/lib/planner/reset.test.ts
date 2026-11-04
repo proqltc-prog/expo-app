@@ -59,7 +59,7 @@ describe('resetDagLokaal', () => {
   test('respecteert de gekozen kooktijd', () => {
     const voor = plan({ kooktijden: ['snel'] });
     for (let seed = 0; seed < 20; seed++) {
-      assert.ok(resetDagLokaal(voor, seed % 4, seed).dagen[seed % 4].recept.minuten <= 20);
+      assert.ok(resetDagLokaal(voor, seed % 4, seed).dagen[seed % 4].recept.minuten <= 30);
     }
   });
 

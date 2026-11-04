@@ -179,9 +179,15 @@ export default function Kies() {
         })}
       </View>
       {tab === 'gezin' && (
-        <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
-          <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
-        </Pressable>
+        // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
+        <View style={s.gezinActies}>
+          <Pressable style={s.nieuw} onPress={() => router.push('/eigen-recept')} accessibilityRole="button">
+            <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
+          </Pressable>
+          <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
+            <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
+          </Pressable>
+        </View>
       )}
       <TextInput
         style={s.zoek}
@@ -216,16 +222,19 @@ export default function Kies() {
 }
 
 const s = StyleSheet.create({
-  scherm: { flex: 1, padding: 16, gap: 10 },
+  scherm: { flex: 1, padding: 16, gap: 12 },
   moment: { fontSize: 13, color: '#777', fontWeight: '600' },
   melding: { fontSize: 15, lineHeight: 22, color: '#333', backgroundColor: '#fff8e1', padding: 14, borderRadius: 12 },
   tabs: { flexDirection: 'row', gap: 8 },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center' },
+  tab: { flex: 1, paddingVertical: 10, minHeight: 44, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   tabActief: { backgroundColor: KLEUR },
   tabTekst: { fontSize: 15, fontWeight: '600', color: KLEUR },
   tabTekstActief: { color: '#fff' },
-  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
-  beheer: { alignSelf: 'flex-start', paddingVertical: 4 },
+  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
+  gezinActies: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  nieuw: { backgroundColor: ACCENT, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
+  nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  beheer: { paddingVertical: 4, flexShrink: 1 },
   beheerTekst: { color: ACCENT, fontWeight: '700', fontSize: 14 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },

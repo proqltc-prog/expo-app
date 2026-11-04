@@ -228,7 +228,7 @@ const s = StyleSheet.create({
   info: { backgroundColor: '#eef6f1', borderRadius: 10, padding: 12, gap: 4 },
   fout: { color: '#c62828' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6 },
+  chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6, minHeight: 36, justifyContent: 'center' },
   chipActief: { backgroundColor: KLEUR },
   chipTekst: { color: KLEUR, fontWeight: '600' },
   chipTekstActief: { color: '#fff' },

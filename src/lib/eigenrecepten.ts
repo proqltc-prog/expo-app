@@ -1,7 +1,8 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
 // Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
 import { Eenheid, Soort, StijlCode } from '@/data/receptenbank';
-import { eenheidVan, IngredientCode } from '@/data/ingredienten';
+import { Afdeling, AFDELINGEN, afdelingVan, eenheidVan, IngredientCode } from '@/data/ingredienten';
+import { MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import type { Taal } from '@/i18n';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
 import { normaliseer, zoekCatalogus } from '@/lib/frigoSheets';
@@ -11,9 +12,28 @@ export const SOORTEN: readonly Soort[] = ['vegetarisch', 'vis', 'vlees'];
 /** De stijl die het gezin zelf kiest voor eigen recepten; de naam is de naam van de gezinsruimte (WEEK-192). */
 export const GEZIN_STIJL = 'gezin' as const;
 export type StijlKeuze = StijlCode | typeof GEZIN_STIJL;
-const MAX_MINUTEN = 600;
+// WEEK-199: een eigen recept duurt, zoals elk recept in de app, nooit langer dan een uur.
+const MAX_MINUTEN = MAX_KOOKTIJD_MIN;
 
-export type EigenIngredient = { code?: IngredientCode; naam: string; hoeveelheid: number; eenheid: Eenheid };
+export type EigenIngredient = {
+  code?: IngredientCode;
+  naam: string;
+  hoeveelheid: number;
+  eenheid: Eenheid;
+  /** Winkelafdeling van een eigen ingrediënt zonder code (WEEK-201); ontbreekt = overig. Met code geldt de afdeling van de ingrediëntenlijst. */
+  afdeling?: Afdeling;
+};
+
+const isAfdeling = (x: unknown): x is Afdeling => typeof x === 'string' && (AFDELINGEN as string[]).includes(x);
+
+/**
+ * De winkelafdeling waaronder een eigen ingrediënt op de lijst en in de frigo komt (WEEK-201):
+ * met code die van de ingrediëntenlijst, anders de gekozen afdeling; zonder keuze geen afdeling (overig).
+ */
+export function afdelingVanEigen(i: Pick<EigenIngredient, 'code' | 'afdeling'>): Afdeling | undefined {
+  if (i.code) return afdelingVan(i.code);
+  return isAfdeling(i.afdeling) ? i.afdeling : undefined;
+}
 
 export type EigenRecept = {
   id: string;
@@ -50,8 +70,9 @@ export function valideer(invoer: Invoer): { ok: true; waarden: Gewaardeerd } | {
   if (!naam) fouten.push('naam');
   const minuten = Number(invoer.minuten.trim().replace(',', '.'));
   if (!Number.isInteger(minuten) || minuten < 1 || minuten > MAX_MINUTEN) fouten.push('minuten');
-  const ingredienten = invoer.ingredienten
-    .map((i) => ({ ...i, naam: i.naam.trim() }))
+  // Een ingrediënt met code krijgt zijn afdeling van de ingrediëntenlijst; een eigen ingrediënt houdt enkel een geldige keuze (WEEK-201).
+  const ingredienten: EigenIngredient[] = invoer.ingredienten
+    .map(({ afdeling, ...i }) => ({ ...i, naam: i.naam.trim(), ...(!i.code && isAfdeling(afdeling) ? { afdeling } : {}) }))
     .filter((i) => i.naam.length > 0);
   if (!ingredienten.length || ingredienten.some((i) => !(i.hoeveelheid > 0))) fouten.push('ingredienten');
   const stappen = invoer.stappen.map((s) => s.trim()).filter((s) => s.length > 0);
