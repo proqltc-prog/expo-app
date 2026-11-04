@@ -44,7 +44,7 @@ export function SheetSchakelaar({
 }
 
 const s = StyleSheet.create({
-  schakelaar: { flexDirection: 'row', backgroundColor: '#EEF1EC', borderRadius: 18, padding: 5, marginTop: 12 },
+  schakelaar: { flexDirection: 'row', backgroundColor: '#F3ECE6', borderRadius: 18, padding: 5, marginTop: 12 },
   keuze: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 14 },
   keuzeAan: { backgroundColor: '#fff', shadowColor: INKT, shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
   ico: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },

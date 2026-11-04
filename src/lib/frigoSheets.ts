@@ -66,7 +66,7 @@ export type Sheet = 'planner' | 'los';
  * Het goedgekeurde thema van het weekmenu; zo zijn de twee sheets in één oogopslag te onderscheiden.
  */
 export const SHEET_THEMA: Record<Sheet, { accent: string; accentZacht: string }> = {
-  planner: { accent: '#0F6B66', accentZacht: '#D5EDEA' },
+  planner: { accent: '#A9472A', accentZacht: '#F6E0D3' },
   los: { accent: '#E8680F', accentZacht: '#FDE8D6' },
 };
 

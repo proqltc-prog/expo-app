@@ -17,11 +17,11 @@ export type UitlegScherm = { icoon: string; kleur: string; titel: string; tekst:
 
 /** De uitlegschermen, in volgorde: weekplanner, huishouden, frigo, lijst, scanner, seizoen en winkels. */
 export const UITLEG_SCHERMEN: readonly UitlegScherm[] = [
-  { icoon: 'calendar-outline', kleur: '#0F6B66', titel: 'uitleg.weekplan.titel', tekst: 'uitleg.weekplan.tekst' },
+  { icoon: 'calendar-outline', kleur: '#A9472A', titel: 'uitleg.weekplan.titel', tekst: 'uitleg.weekplan.tekst' },
   { icoon: 'people-outline', kleur: '#7A5AA6', titel: 'uitleg.huishouden.titel', tekst: 'uitleg.huishouden.tekst' },
   { icoon: 'snow-outline', kleur: '#2E7D9A', titel: 'uitleg.frigo.titel', tekst: 'uitleg.frigo.tekst' },
   { icoon: 'cart-outline', kleur: '#E8680F', titel: 'uitleg.lijst.titel', tekst: 'uitleg.lijst.tekst' },
-  { icoon: 'scan-outline', kleur: '#2E7D4F', titel: 'uitleg.scan.titel', tekst: 'uitleg.scan.tekst' },
+  { icoon: 'scan-outline', kleur: '#A9472A', titel: 'uitleg.scan.titel', tekst: 'uitleg.scan.tekst' },
   { icoon: 'leaf-outline', kleur: '#6B8F2A', titel: 'uitleg.seizoen.titel', tekst: 'uitleg.seizoen.tekst' },
   { icoon: 'storefront-outline', kleur: '#B5562A', titel: 'uitleg.winkels.titel', tekst: 'uitleg.winkels.tekst' },
 ];

@@ -10,7 +10,7 @@ import { Soort } from '@/data/receptenbank';
 // Mijn recepten (WEEK-192): het overzicht van de recepten van het gezin, met zoeken en een filter op soort.
 // Een recept openen we om te bewerken; met "+ Nieuw recept" maak je er één bij.
 
-const KLEUR = '#2e7d4f';
+const KLEUR = '#A9472A';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 export default function MijnRecepten() {

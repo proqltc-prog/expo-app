@@ -27,7 +27,7 @@ import { useTaal } from '@/ui/taal';
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
 // Ingrediënten die nog niet bestaan, kun je handmatig toevoegen; die blijven bij het recept.
 
-const KLEUR = '#2e7d4f';
+const KLEUR = '#A9472A';
 
 /** Een ingrediënt in het formulier: de hoeveelheid is tekst, zodat een lege invoer niet meteen een fout geeft. */
 type Rij = { code?: EigenIngredient['code']; naam: string; hoeveelheid: string; eenheid: Eenheid };
@@ -303,7 +303,7 @@ const s = StyleSheet.create({
   hoeveelheid: { width: 90, paddingVertical: 8 },
   verwijder: { fontSize: 18, color: '#c62828', paddingHorizontal: 6 },
   treffer: { backgroundColor: '#f4f8f5', borderRadius: 10, padding: 10 },
-  trefferTekst: { fontSize: 15, color: '#2e7d4f' },
+  trefferTekst: { fontSize: 15, color: '#A9472A' },
   stapRij: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   stapNummer: { width: 22, paddingTop: 12, fontWeight: '700', color: '#555', textAlign: 'center' },
   stapVeld: { flex: 1, minHeight: 44 },

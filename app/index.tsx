@@ -37,8 +37,8 @@ import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorM
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
-const PETROL = '#0F6B66';
-const PETROL_ZACHT = '#D5EDEA';
+const PETROL = '#A9472A';
+const PETROL_ZACHT = '#F6E0D3';
 const ORANJE = '#E8680F';
 const ORANJE_ZACHT = '#FDE8D6';
 const PAPIER = '#F8F8F4';

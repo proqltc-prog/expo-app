@@ -2,7 +2,7 @@
 // Elke stijl krijgt de kleuren van het land als streep en tint. Geen app-kleuren: alleen als accent op de stijlkaarten.
 export type Landenkleuren = readonly [string, string, string];
 
-const NEUTRAAL: Landenkleuren = ['#0F6B66', '#E8C98A', '#F8F8F4'];
+const NEUTRAAL: Landenkleuren = ['#A9472A', '#E8C98A', '#F8F8F4'];
 
 const LANDEN: Record<string, Landenkleuren> = {
   mediterraan: ['#1F5FA8', '#FFFFFF', '#E8C98A'],

@@ -23,13 +23,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { scanTerug } from '@/lib/scanBestemming';
 
 // Thema (WEEK-71): dezelfde kleuren als frigo en lijst. Petrol voor de hoofdacties, oranje voor afwijzen.
-const KLEUR = '#0F6B66';
+const KLEUR = '#A9472A';
 const PAPIER = '#F8F8F4';
 const ORANJE = '#E8680F';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';
 const LIJN = '#E4E8E1';
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#0F6B66', matig: '#E8680F', slecht: '#B23A05' };
+const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#3B7D4F', matig: '#E8680F', slecht: '#B23A05' };
 
 type Status =
   | { soort: 'scannen' }
@@ -41,7 +41,7 @@ type Status =
 // WEEK-177: de uitleg zit in de koptekst; de popup hangt in de wrapper, zodat elke weergave hem kan tonen.
 export default function Scan() {
   const { t } = useTaal();
-  const { popup } = usePaginaInfo({ tekst: t('pagina.scanInfo'), kleur: '#2e7d4f', infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
+  const { popup } = usePaginaInfo({ tekst: t('pagina.scanInfo'), kleur: '#A9472A', infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   return (
     <>
       <ScanInhoud />
