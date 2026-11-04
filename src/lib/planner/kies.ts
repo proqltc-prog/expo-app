@@ -65,8 +65,8 @@ export function kiesbarePoolRecepten(pool: readonly DbPoolRecept[], f: KiesFilte
 }
 
 /**
- * Eigen recepten van het gezin (WEEK-191, tab "Ons gezin"). Eigen recepten hebben nog geen moment en nog geen
- * stijl uit de databank; ze gelden als avondeten en de stijl-filter laat ze door. Dat wordt in WEEK-192 uitgewerkt.
+ * Eigen recepten van het gezin (WEEK-191, tab "Ons gezin"). Eigen recepten gelden als avondeten.
+ * De gezinsstijl (WEEK-192) laat het stijl-filter altijd door; andere eigen recepten vallen onder de gekozen stijlen.
  */
 export function kiesbareEigenRecepten(lijst: readonly EigenRecept[], f: KiesFilter): EigenRecept[] {
   const zoek = zoeksleutel(f.zoek);
@@ -74,6 +74,7 @@ export function kiesbareEigenRecepten(lijst: readonly EigenRecept[], f: KiesFilt
     (r) =>
       f.moment === 'avond' &&
       (!f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten))) &&
+      (!f.stijlen.length || r.gezinStijl === true || r.stijlen.some((s) => f.stijlen.includes(s))) &&
       !heeftVermijdNaam(r.ingredienten, f.vermijd) &&
       (!f.enkelVegetarisch || r.soort === 'vegetarisch') &&
       (!zoek || zoeksleutel(r.naam).includes(zoek))

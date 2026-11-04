@@ -8,7 +8,7 @@
 // - de laatst gekende versie van de lijst (om te zien wat dit toestel zelf veranderde)
 // - per item het tijdstip van de laatst gekende wijziging ("meta")
 
-export type ItemSoort = 'lijst' | 'frigo';
+export type ItemSoort = 'lijst' | 'frigo' | 'eigenRecept';
 export type DocumentSleutel = 'plan' | 'profiel';
 
 /** Een rij zoals ze in de tabel gezin_items staat. */

@@ -169,6 +169,11 @@ export default function Kies() {
           );
         })}
       </View>
+      {tab === 'gezin' && (
+        <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
+          <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
+        </Pressable>
+      )}
       <TextInput
         style={s.zoek}
         value={zoek}
@@ -211,6 +216,8 @@ const s = StyleSheet.create({
   tabTekst: { fontSize: 15, fontWeight: '600', color: KLEUR },
   tabTekstActief: { color: '#fff' },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
+  beheer: { alignSelf: 'flex-start', paddingVertical: 4 },
+  beheerTekst: { color: KLEUR, fontWeight: '700', fontSize: 14 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },
   rij: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },
