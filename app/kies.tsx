@@ -222,15 +222,15 @@ export default function Kies() {
 }
 
 const s = StyleSheet.create({
-  scherm: { flex: 1, padding: 16, gap: 10 },
+  scherm: { flex: 1, padding: 16, gap: 12 },
   moment: { fontSize: 13, color: '#777', fontWeight: '600' },
   melding: { fontSize: 15, lineHeight: 22, color: '#333', backgroundColor: '#fff8e1', padding: 14, borderRadius: 12 },
   tabs: { flexDirection: 'row', gap: 8 },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center' },
+  tab: { flex: 1, paddingVertical: 10, minHeight: 44, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   tabActief: { backgroundColor: KLEUR },
   tabTekst: { fontSize: 15, fontWeight: '600', color: KLEUR },
   tabTekstActief: { color: '#fff' },
-  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
+  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
   gezinActies: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   nieuw: { backgroundColor: ACCENT, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },

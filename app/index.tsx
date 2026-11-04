@@ -672,7 +672,7 @@ const s = StyleSheet.create({
   kalenderKnop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, paddingVertical: 12 },
   kalenderKnopTekst: { color: PETROL, fontWeight: '700' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 7 },
+  chip: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6, minHeight: 36, justifyContent: 'center' },
   chipAan: { backgroundColor: PETROL },
   chipTekst: { color: PETROL, fontWeight: '600', fontSize: 13 },
   chipTekstAan: { color: '#fff' },

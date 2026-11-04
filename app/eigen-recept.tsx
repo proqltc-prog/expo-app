@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Afdeling } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
@@ -59,6 +59,7 @@ export default function EigenReceptScherm() {
   const { t, taal } = useTaal();
   const params = useLocalSearchParams<{ id?: string }>();
   const id = params.id;
+  const navigation = useNavigation();
 
   const [geladen, setGeladen] = useState(!id);
   const [bestaand, setBestaand] = useState<EigenRecept | undefined>(undefined);
@@ -103,6 +104,11 @@ export default function EigenReceptScherm() {
       setGeladen(true);
     });
   }, [id]);
+
+  // WEEK-203: de titel staat één keer, in de kop van het scherm: "Nieuw recept" of "Recept bewerken".
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t(bestaand ? 'recept.titelBewerk' : 'recept.titelNieuw') });
+  }, [navigation, bestaand, t]);
 
   // De gezinsstijl heet naar de gezinsruimte; zonder naam heet hij "Ons gezin".
   const gezinLabel = gezinNaam ?? t('recept.stijlGezinZonderNaam');
@@ -228,8 +234,6 @@ export default function EigenReceptScherm() {
 
   return (
     <ScrollView contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
-      <Text style={s.kop}>{t(bestaand ? 'recept.titelBewerk' : 'recept.titelNieuw')}</Text>
-
       <Text style={s.label}>{t('recept.naam')}</Text>
       <TextInput style={s.veld} value={naam} onChangeText={setNaam} accessibilityLabel={t('recept.naam')} />
       {fout('naam')}
@@ -368,39 +372,39 @@ function Chip({ tekst, actief, onPress }: { tekst: string; actief: boolean; onPr
 }
 
 const s = StyleSheet.create({
+  // WEEK-203: dezelfde maten als Kies en Mijn recepten: zijmarge 16, velden en knoppen met hoekstraal 12, chips zoals in het weekmenu.
   scherm: { padding: 16, gap: 8, paddingBottom: 48 },
-  kop: { fontSize: 20, fontWeight: '700', marginBottom: 4 },
   label: { fontSize: 14, fontWeight: '700', color: '#333', marginTop: 10 },
-  veld: { borderWidth: 1.5, borderColor: '#ccc', borderRadius: 10, padding: 10, fontSize: 16, backgroundColor: '#fff' },
+  veld: { borderWidth: 1.5, borderColor: '#ccc', borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
   fout: { color: '#c62828', fontSize: 13 },
   rijChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, borderWidth: 1.5, borderColor: '#ccc', backgroundColor: '#fff' },
+  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 18, borderWidth: 1.5, borderColor: '#ccc', backgroundColor: '#fff', minHeight: 36, justifyContent: 'center' },
   chipActief: { backgroundColor: KLEUR, borderColor: KLEUR },
   chipTekst: { fontSize: 13, color: '#333', fontWeight: '600' },
   chipTekstActief: { color: '#fff' },
-  ingredient: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5', paddingVertical: 8, paddingHorizontal: 12 },
+  ingredient: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#e5e5e5', paddingVertical: 10, paddingHorizontal: 14 },
   ingredientTekst: { flex: 1, gap: 2 },
   ingredientNaam: { fontSize: 15, fontWeight: '600' },
   ingredientDetail: { fontSize: 13, color: '#5E6B63' },
   invoerRij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   invoerVeld: { flex: 1 },
-  plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  plus: { width: 48, height: 48, borderRadius: 12, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   plusUit: { opacity: 0.4 },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700', lineHeight: 28 },
   minutenRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  minutenVeld: { width: 90, paddingVertical: 8 },
+  minutenVeld: { width: 96 },
   minutenHint: { flex: 1, fontSize: 13, color: '#5E6B63', lineHeight: 18 },
   verwijder: { fontSize: 18, color: '#c62828', paddingHorizontal: 6 },
-  treffer: { backgroundColor: '#f4f8f5', borderRadius: 10, padding: 10 },
+  treffer: { backgroundColor: '#f4f8f5', borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14 },
   trefferTekst: { fontSize: 15, color: '#2e7d4f' },
   stapRij: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   stapNummer: { width: 22, paddingTop: 12, fontWeight: '700', color: '#555', textAlign: 'center' },
   stapVeld: { flex: 1, minHeight: 44 },
   link: { color: KLEUR, fontWeight: '700', paddingVertical: 6 },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
-  annuleer: { flex: 1, borderWidth: 1.5, borderColor: '#ccc', borderRadius: 12, padding: 14, alignItems: 'center', backgroundColor: '#fff' },
+  annuleer: { flex: 1, borderWidth: 1.5, borderColor: '#ccc', borderRadius: 12, padding: 14, minHeight: 50, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
   annuleerTekst: { color: '#444', fontWeight: '700', fontSize: 16 },
-  bewaar: { flex: 2, backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center' },
+  bewaar: { flex: 2, backgroundColor: KLEUR, borderRadius: 12, padding: 14, minHeight: 50, alignItems: 'center', justifyContent: 'center' },
   bewaarTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   verwijderKnop: { padding: 12, alignItems: 'center' },
   verwijderTekst: { color: '#c62828', fontWeight: '600' },

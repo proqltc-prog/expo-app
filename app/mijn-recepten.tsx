@@ -87,12 +87,12 @@ export default function MijnRecepten() {
 }
 
 const s = StyleSheet.create({
-  scherm: { flex: 1, padding: 16, gap: 10 },
-  nieuw: { backgroundColor: ACCENT, borderRadius: 12, padding: 12, alignItems: 'center' },
+  scherm: { flex: 1, padding: 16, gap: 12 },
+  nieuw: { backgroundColor: ACCENT, borderRadius: 12, padding: 12, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, fontSize: 16 },
+  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
   filters: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  filter: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, borderWidth: 1.5, borderColor: '#ccc' },
+  filter: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 18, borderWidth: 1.5, borderColor: '#ccc', minHeight: 36, justifyContent: 'center' },
   filterTekst: { fontSize: 13, color: '#333', fontWeight: '600' },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },
