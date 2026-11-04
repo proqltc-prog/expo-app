@@ -35,9 +35,8 @@ describe('leesBereidingen: stappen uit recept_bereidingen (WEEK-121)', () => {
       { taal: 'it', stappen: ['Cuocere.'] },
       { taal: 'de', stappen: [] },
       { taal: 'en', stappen: ['   ', ''] },
-      { taal: 'es', stappen: ['  Cocina el arroz.  '] },
     ]);
-    assert.deepEqual(uit, { es: ['Cocina el arroz.'] });
+    assert.deepEqual(uit, {});
   });
 
   test('zonder rijen (of ongeldige invoer) is de map leeg', () => {
@@ -77,11 +76,11 @@ describe('bereidingVoorDbRecept: stappen in de taal van de gebruiker (WEEK-121)'
   });
 
   test('valt terug op nl als de taal ontbreekt', () => {
-    assert.deepEqual(bereidingVoorDbRecept(recept(), 'pt'), stappenNl);
+    assert.deepEqual(bereidingVoorDbRecept(recept(), 'en'), stappenNl);
   });
 
   test('valt terug op de eerste beschikbare taal als ook nl ontbreekt', () => {
-    assert.deepEqual(bereidingVoorDbRecept(recept({ bereidingen: { es: ['Cocina.'] } }), 'de'), ['Cocina.']);
+    assert.deepEqual(bereidingVoorDbRecept(recept({ bereidingen: { en: ['Cook.'] } }), 'de'), ['Cook.']);
   });
 
   test('geeft null zonder stappen', () => {

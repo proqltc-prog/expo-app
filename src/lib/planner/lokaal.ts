@@ -50,7 +50,7 @@ function voorkeurScore(r: BankRecept): number {
 
 /** Zet een recept uit de bank om naar een planrecept in de juiste taal en voor het juiste aantal porties. */
 export function naarPlanRecept(r: BankRecept, taal: Taal, porties: number): PlanRecept {
-  const index = ['nl', 'fr', 'de', 'en', 'es', 'pt'].indexOf(taal);
+  const index = ['nl', 'fr', 'de', 'en'].indexOf(taal);
   return {
     id: r.id,
     naam: r.namen[index],
