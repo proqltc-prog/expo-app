@@ -52,7 +52,7 @@ describe('databank-planner', () => {
   test('met enkel vegetarisch komt er enkel een vegetarisch recept in het plan', () => {
     const pool = maakDbPool([dbRecept(1, 'vlees'), dbRecept(2, 'vegetarisch'), dbRecept(3, 'vis'), dbRecept(4, 'vegetarisch')], 'nl', standaardProfiel());
     const plan = planUitDatabase(verzoek({ enkelVegetarisch: true }), pool);
-    assert.ok(plan, 'er is een plan');
+    if (!plan) throw new Error('er is een plan');
     assert.equal(plan.enkelVegetarisch, true);
     assert.ok(plan.dagen.length > 0);
     assert.ok(plan.dagen.every((d) => d.recept.soort === 'vegetarisch'));
@@ -61,7 +61,7 @@ describe('databank-planner', () => {
   test('zonder de keuze blijft het gedrag ongewijzigd en staat de vlag niet in het plan', () => {
     const pool = maakDbPool([dbRecept(1, 'vlees'), dbRecept(2, 'vegetarisch')], 'nl', standaardProfiel());
     const plan = planUitDatabase(verzoek(), pool);
-    assert.ok(plan);
+    if (!plan) throw new Error('er is een plan');
     assert.equal(plan.enkelVegetarisch, undefined);
   });
 

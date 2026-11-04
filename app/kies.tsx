@@ -44,7 +44,7 @@ export default function Kies() {
         setKooktijden(kooktijdNaarDb(k.momenten, k.kooktijden));
         setStijlen(stijlNaarDb(k.stijlen));
         setVermijd(k.vermijd.filter((v): v is Vermijd => (VERMIJDBAAR as readonly string[]).includes(v)));
-        setEnkelVeg(k.enkelVegetarisch);
+        setEnkelVeg(k.enkelVegetarisch === true);
       });
       Promise.all([laadPlan(), ikId(), laadLeden().catch(() => [] as GezinsLid[])]).then(([plan, id, leden]) => {
         if (plan && !magPlanWijzigen(plan, id)) {
