@@ -1,10 +1,10 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
 // Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
 import { Eenheid, Soort, StijlCode } from '@/data/receptenbank';
-import { INGREDIENT_CODES, IngredientCode, ingredientNaam } from '@/data/ingredienten';
+import { eenheidVan, IngredientCode } from '@/data/ingredienten';
 import type { Taal } from '@/i18n';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
-import { zoeksleutel } from '@/lib/planner/kies';
+import { normaliseer, zoekCatalogus } from '@/lib/frigoSheets';
 
 export const EENHEDEN: readonly Eenheid[] = ['g', 'ml', 'stuk', 'teentje'];
 export const SOORTEN: readonly Soort[] = ['vegetarisch', 'vis', 'vlees'];
@@ -110,22 +110,18 @@ export function verwijderEigen(lijst: readonly EigenRecept[], id: string): Eigen
 export type IngredientKeuze = { code?: IngredientCode; naam: string };
 
 /**
- * Zoekt ingrediënten: eerst de ingrediëntenlijst van de app, daarna de handmatig ingevoerde
- * ingrediënten uit eigen recepten (zodat die later opnieuw gevonden worden). Zonder accenten en hoofdletters.
+ * Zoeken naar een ingrediënt: dezelfde zoeklogica als de lijst en de frigo (zoekCatalogus, zonder accenten en hoofdletters),
+ * gevolgd door de eigen ingrediënten van het gezin die nog geen databankcode hebben (WEEK-192).
  */
 export function zoekIngredienten(zoek: string, taal: Taal, eigen: readonly EigenRecept[], max = 8): IngredientKeuze[] {
-  const q = zoeksleutel(zoek);
+  const q = normaliseer(zoek);
   if (!q) return [];
-  const uit: IngredientKeuze[] = [];
-  for (const code of INGREDIENT_CODES) {
-    const naam = ingredientNaam(code, taal);
-    if (zoeksleutel(naam).includes(q)) uit.push({ code, naam });
-  }
-  const bekend = new Set(uit.map((k) => zoeksleutel(k.naam)));
+  const uit: IngredientKeuze[] = zoekCatalogus(zoek, taal).map((i) => ({ code: i.code, naam: i.naam }));
+  const bekend = new Set(uit.map((k) => normaliseer(k.naam)));
   for (const recept of eigen) {
     for (const i of recept.ingredienten) {
       if (i.code) continue;
-      const k = zoeksleutel(i.naam);
+      const k = normaliseer(i.naam);
       if (k.includes(q) && !bekend.has(k)) {
         bekend.add(k);
         uit.push({ naam: i.naam });
@@ -135,10 +131,17 @@ export function zoekIngredienten(zoek: string, taal: Taal, eigen: readonly Eigen
   return uit.slice(0, max);
 }
 
+/** De eenheid die de lijst bij dit ingrediënt toont; zonder databankcode is het gram. */
+export function standaardEenheid(code?: IngredientCode): Eenheid {
+  if (!code) return 'g';
+  const e = eenheidVan(code);
+  return (EENHEDEN as readonly string[]).includes(e) ? (e as Eenheid) : 'g';
+}
+
 /** Staat de zoekterm al exact in de lijst? Dan hoeft er geen handmatig ingrediënt bij. */
 export function isExactBekend(zoek: string, keuzes: readonly IngredientKeuze[]): boolean {
-  const q = zoeksleutel(zoek);
-  return keuzes.some((k) => zoeksleutel(k.naam) === q);
+  const q = normaliseer(zoek);
+  return keuzes.some((k) => normaliseer(k.naam) === q);
 }
 
 export type Bron = 'alle' | 'mijn' | 'favoriet';

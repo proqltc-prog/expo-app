@@ -12,6 +12,7 @@ import {
   GEZIN_STIJL,
   isExactBekend,
   nieuweId,
+  standaardEenheid,
   SOORTEN,
   StijlKeuze,
   valideer,
@@ -84,7 +85,8 @@ export default function EigenReceptScherm() {
   const kanNieuw = zoek.trim().length > 0 && !isExactBekend(zoek, zoekTreffers);
 
   const voegIngredientToe = (code: EigenIngredient['code'], ingredientNaam: string) => {
-    setRijen((r) => [...r, { code, naam: ingredientNaam, hoeveelheid: '', eenheid: 'g' }]);
+    // Dezelfde eenheid als de lijst en de frigo toont (WEEK-192): de databank bepaalt die.
+    setRijen((r) => [...r, { code, naam: ingredientNaam, hoeveelheid: '', eenheid: standaardEenheid(code) }]);
     setZoek('');
   };
 
