@@ -37,7 +37,7 @@ export type DbRecept = {
 };
 
 const TALEN: Taal[] = ['nl', 'fr', 'en'];
-const ALLE_TALEN: readonly Taal[] = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
+const ALLE_TALEN: readonly Taal[] = ['nl', 'fr', 'de', 'en'];
 
 /** Kiest de tekst in de gevraagde taal, met terugval op nl en daarna op de eerste beschikbare. */
 export function kiesTekst(vertalingen: Vertalingen, taal: Taal): string | undefined {

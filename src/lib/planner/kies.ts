@@ -9,7 +9,7 @@ import { momentVan } from './moment';
 import { bankReceptVermijdt } from './vermijden';
 import { naarPlanRecept } from './lokaal';
 
-const TAAL_INDEX: Taal[] = ['nl', 'fr', 'de', 'en', 'es', 'pt'];
+const TAAL_INDEX: Taal[] = ['nl', 'fr', 'de', 'en'];
 
 /** Kleine letters, zonder accenten, zodat "croque" ook "Croqué" vindt. */
 export const zoeksleutel = (t: string) =>
