@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.109.0] – 2026-11-04
+
+- Gezinspagina: "Hoe werkt het?" staat niet meer bovenaan de pagina, maar achter het info-icoon rechtsboven.
+- Gezinspagina en gezinsruimte: verzorgde vormgeving. De verbindingsstatus is een pil naast de gezinsnaam, de code staat in een gekleurd vak en de leden hebben een avatar. Er is niets veranderd aan hoe de gezinsruimte werkt.
+
+**Jira:** [WEEK-193](https://proqltc-1791495894841.atlassian.net/browse/WEEK-193) · **Confluence:** [WEEK-193 Gezinspagina: info-icoon en visuele opfrisbeurt](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20217857)
+
 ## [0.108.0] – 2026-11-04
 
 - Ons gezin: eigen recepten toevoegen, wijzigen en verwijderen via het nieuwe scherm "Mijn recepten". Het zoekveld en de filter op soort werken ook hier.
