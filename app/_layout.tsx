@@ -68,6 +68,10 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null }} />
       {/* Zelf kiezen (WEEK-44): een gerecht uit de receptenbank, vanuit het weekmenu. */}
       <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null }} />
+      {/* Mijn recepten (WEEK-192): het overzicht van de eigen recepten, vanuit "Ons gezin" in "Zelf kiezen". */}
+      <Tabs.Screen name="mijn-recepten" options={{ title: t('mijn.titel'), href: null }} />
+      {/* Eigen recept bewerken (WEEK-192): een nieuw of bestaand eigen recept. */}
+      <Tabs.Screen name="eigen-recept" options={{ title: t('recept.titelNieuw'), href: null }} />
       {/* Bereiding (WEEK-81): de stappen van een bevestigd gerecht, vanuit het weekmenu. */}
       <Tabs.Screen name="bereiding" options={{ title: t('bereiding.titel'), href: null }} />
     </Tabs>

@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { ikBeheerder } from '@/lib/gezinbeheer';
 import { normaliseerFrigo } from '@/lib/frigo';
+import { normaliseerEigen } from '@/lib/eigenrecepten';
 import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import { normaliseerProfiel } from '@/lib/profiel';
@@ -63,6 +64,13 @@ const ITEMBRONNEN: Partial<Record<ItemSoort, ItemBron>> = {
     lees: (d) => normaliseerFrigo([d])[0] ?? null,
     normaliseer: normaliseerFrigo,
     tijdVan: (i) => (i as { toegevoegdOp?: string }).toegevoegdOp,
+  },
+  // WEEK-192: de eigen recepten van het gezin worden met alle leden gedeeld.
+  eigenRecept: {
+    sleutel: SLEUTEL.eigenRecepten,
+    lees: (d) => normaliseerEigen([d])[0] ?? null,
+    normaliseer: normaliseerEigen,
+    tijdVan: (i) => (i as { bijgewerkt?: string }).bijgewerkt,
   },
 };
 

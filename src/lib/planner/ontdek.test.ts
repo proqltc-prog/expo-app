@@ -113,6 +113,14 @@ describe('Ons gezin: eigen recepten', () => {
     assert.deepEqual(kiesbareEigenRecepten(lijst, { ...basis, zoek: 'oma' }).map((r) => r.id), ['eigen:1']);
   });
 
+  test('de gezinsstijl laat het stijl-filter altijd door, andere stijlen filteren', () => {
+    const gezinRecept = { ...eigen('eigen:4', 'Ons stoofvlees', 30, 'vlees'), stijlen: [], gezinStijl: true };
+    const klassiek = eigen('eigen:5', 'Klassieke soep', 20, 'vegetarisch');
+    const lijstMetStijl = [gezinRecept, klassiek];
+    assert.deepEqual(kiesbareEigenRecepten(lijstMetStijl, { ...basis, stijlen: ['italiaans'] }).map((r) => r.id), ['eigen:4']);
+    assert.deepEqual(kiesbareEigenRecepten(lijstMetStijl, { ...basis, stijlen: ['klassiek'] }).map((r) => r.id), ['eigen:4', 'eigen:5']);
+  });
+
   test('eigen recepten gelden als avondeten, dus een ander moment geeft niets', () => {
     assert.deepEqual(kiesbareEigenRecepten(lijst, { ...basis, moment: 'avond' as const }).length, 3);
   });

@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.108.0] – 2026-11-04
+
+- Ons gezin: eigen recepten toevoegen, wijzigen en verwijderen via het nieuwe scherm "Mijn recepten". Het zoekveld en de filter op soort werken ook hier.
+- Recept-editor: naam, soort, kooktijd, stijl (standaard de gezinsstijl, genoemd naar de gezinsruimte), seizoen (optioneel, meerdere), ingrediënten uit de databank met hoeveelheid en eenheid, en de bereiding stap per stap. Lege stappen worden niet getoond in de weekplanner.
+- Eigen recepten zijn enkel zichtbaar voor het gezin en worden via de gezinssynchronisatie gedeeld met alle gezinsleden.
+- Ingrediënten zoeken in de editor werkt zoals op de lijst en de frigo: zonder accenten en hoofdletters, met dezelfde eenheid uit de databank.
+
+**Jira:** [WEEK-192](https://proqltc-1791495894841.atlassian.net/browse/WEEK-192) · **Confluence:** [WEEK-192 Recept-editor voor eigen recepten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20119572)
+
 ## [0.107.0] – 2026-11-04
 
 - Zelf kiezen: twee tabs. "Ontdek" toont de recepten van de app, uit de databank. "Ons gezin" toont de eigen recepten van het gezin.
