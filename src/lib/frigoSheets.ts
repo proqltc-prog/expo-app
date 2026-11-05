@@ -35,16 +35,16 @@ export function zoekCatalogus(zoek: string, taal: Taal): CatalogusItem[] {
 }
 
 /**
- * Kent de receptenbank dit ingrediënt? Alleen die mogen in de planner-frigo (WEEK-162):
+ * Kent de databank dit ingrediënt? Alleen die mogen in de planner-frigo (WEEK-162):
  * de weekplanner kan enkel verwerken wat een databankcode heeft. Generieke items zonder equivalent (pasta, kaas, rijst...) niet.
  */
-export function inReceptenbank(code: IngredientCode): boolean {
+export function inDatabank(code: IngredientCode): boolean {
   return dbCodeVan(code) !== undefined;
 }
 
-/** Zoekt in de catalogus, enkel de ingrediënten die de receptenbank kent (WEEK-162). Voor de planner-frigo. */
-export function zoekReceptenbank(zoek: string, taal: Taal): CatalogusItem[] {
-  return zoekCatalogus(zoek, taal).filter((i) => inReceptenbank(i.code));
+/** Zoekt in de catalogus, enkel de ingrediënten die de databank kent (WEEK-162). Voor de planner-frigo. */
+export function zoekDatabank(zoek: string, taal: Taal): CatalogusItem[] {
+  return zoekCatalogus(zoek, taal).filter((i) => inDatabank(i.code));
 }
 
 /** Alle namen van een catalogus-ingrediënt, in elke taal; zo koppelen oude items ook als ze in een andere taal staan. */
@@ -97,8 +97,8 @@ export const SHEET_ICOON: Record<Sheet, string> = { planner: 'calendar-outline',
  * Staat het er al in (zelfde naam), dan verandert er niets: geen dubbele regels.
  */
 export function voegPlannerToe(frigo: readonly FrigoItem[], item: CatalogusItem, nu: Date, hoeveelheid?: number): FrigoItem[] {
-  // WEEK-162: een ingrediënt zonder receptenbank-code kan de planner niet verwerken; het gaat dus niet in de planner-frigo.
-  if (!inReceptenbank(item.code)) return [...frigo];
+  // WEEK-162: een ingrediënt zonder databankcode kan de planner niet verwerken; het gaat dus niet in de planner-frigo.
+  if (!inDatabank(item.code)) return [...frigo];
   const n = normaliseer(item.naam);
   if (frigo.some((f) => frigoBron(f) === 'planner' && normaliseer(f.naam) === n)) return [...frigo];
   const code = dbCodeVan(item.code);
@@ -122,7 +122,7 @@ export function voegLosToe(frigo: readonly FrigoItem[], naam: string, nu: Date, 
  * Items die al een bron hebben en niet overeenkomen, worden los.
  */
 export function koppelBronnen(frigo: readonly FrigoItem[]): FrigoItem[] {
-  // WEEK-162: planner-frigo enkel voor ingrediënten die de receptenbank kent.
+  // WEEK-162: planner-frigo enkel voor ingrediënten die de databank kent.
   // WEEK-204: een item met een code komt altijd uit een recept of de catalogus en hoort in de planner-frigo, ook als
   // het eerder verkeerd als los werd ingedeeld. Wat via de boodschappenlijst kwam (lijstId), houdt zijn bron. Anders
   // belandden receptingrediënten die niet in de lokale ingrediëntenlijst staan (gember, shiitake…) bij de losse producten.
@@ -130,6 +130,6 @@ export function koppelBronnen(frigo: readonly FrigoItem[]): FrigoItem[] {
     if (f.code) return f.bron === 'planner' ? f : { ...f, bron: 'planner' };
     if (f.lijstId) return f.bron ? f : { ...f, bron: frigoBron(f) };
     const code = inCatalogus(f.naam);
-    return { ...f, bron: code !== undefined && inReceptenbank(code) ? 'planner' : 'los' };
+    return { ...f, bron: code !== undefined && inDatabank(code) ? 'planner' : 'los' };
   });
 }

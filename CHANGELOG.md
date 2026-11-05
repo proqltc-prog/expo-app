@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.113.0] – 2026-11-05
+
+- De app plant enkel nog met de databank: de ingebouwde receptenbank (46 recepten met bereidingsstappen) en de lokale planner zijn verwijderd. Een nieuw weekmenu en het vervangen van een dag komen altijd uit de databank; is die niet bereikbaar, dan zegt de app dat duidelijk in plaats van stilletjes een oud lokaal recept te kiezen.
+- Onderhoud: gedeelde recept-types in `src/data/recept.ts`, testrecepten voor de planner-tests in plaats van de receptenbank.
+
+**Jira:** [WEEK-208](https://proqltc-1791495894841.atlassian.net/browse/WEEK-208) · **Confluence:** [WEEK-208 Enkel nog de databank als receptenbron](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21233665)
+
 ## [0.112.2] – 2026-11-05
 
 - Lijst: de namen van de weekmenu-items worden niet meer in de taal van het toestel naar de (gedeelde) lijst geschreven. Elk toestel toont ze in zijn eigen taal; in een gezin met verschillende talen springen de namen daardoor niet meer heen en weer.

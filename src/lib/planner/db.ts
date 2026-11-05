@@ -3,7 +3,7 @@
 // Hoeveelheden in de database gelden voor 1 volwassene; hier worden ze geschaald naar het gezin (WEEK-67).
 import { type Afdeling, afdelingVan, afdelingVoorCategorie, isIngredient } from '@/data/ingredienten';
 import { SEIZOENEN, type Seizoen } from '@/data/seizoenen';
-import type { Basis, Moment, Soort, StijlCode } from '@/data/receptenbank';
+import type { Basis, Moment, Soort, StijlCode } from '@/data/recept';
 import type { Taal } from '@/i18n';
 import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
 import type { PlanIngredient, PlanRecept } from '@/lib/planner/types';

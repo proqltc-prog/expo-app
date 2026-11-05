@@ -1,7 +1,7 @@
 import { ReactNode, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { eenheidVan, IngredientCode } from '@/data/ingredienten';
-import { CatalogusItem, zoekReceptenbank, Sheet } from '@/lib/frigoSheets';
+import { CatalogusItem, zoekDatabank, Sheet } from '@/lib/frigoSheets';
 import { leesHoeveelheid } from '@/lib/frigo';
 import { useTaal } from '@/ui/taal';
 
@@ -31,7 +31,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
   const [gekozen, setGekozen] = useState<CatalogusItem | null>(null);
   const [hoeveelheid, setHoeveelheid] = useState('');
   const [nieuw, setNieuw] = useState('');
-  const resultaten = useMemo(() => (sheet === 'planner' && zoek.trim() ? zoekReceptenbank(zoek, taal) : []), [zoek, sheet, taal]);
+  const resultaten = useMemo(() => (sheet === 'planner' && zoek.trim() ? zoekDatabank(zoek, taal) : []), [zoek, sheet, taal]);
 
   if (sheet === 'los') {
     return (

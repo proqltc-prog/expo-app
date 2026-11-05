@@ -6,7 +6,7 @@ import { EigenRecept, SOORTEN } from '@/lib/eigenrecepten';
 import { kiesbareEigenRecepten, KiesFilter } from '@/lib/planner/kies';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { useTaal } from '@/ui/taal';
-import { Soort } from '@/data/receptenbank';
+import { Soort } from '@/data/recept';
 
 // Mijn recepten (WEEK-192): het overzicht van de recepten van het gezin, met zoeken en een filter op soort.
 // Een recept openen we om te bewerken; met "+ Nieuw recept" maak je er één bij.

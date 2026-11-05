@@ -1,6 +1,6 @@
 import type { Afdeling } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
-import type { Basis, Moment, Soort, StijlCode } from '@/data/receptenbank';
+import type { Basis, Moment, Soort, StijlCode } from '@/data/recept';
 import type { Taal } from '@/i18n';
 import type { Profiel } from '@/lib/profiel';
 import type { FrigoItem } from '@/lib/frigo';
@@ -28,7 +28,7 @@ export type PlanIngredient = {
 
 /** Een recept zoals het in een weekplan staat: namen al in de taal van de gebruiker, hoeveelheden voor het hele gezin. */
 export type PlanRecept = {
-  /** Id uit de lokale receptenbank, of een id van de AI. */
+  /** Id van het recept: "db-<nummer>" uit de databank, een eigen recept, of een oud id uit de vroegere lokale receptenbank. */
   id: string;
   naam: string;
   soort: Soort;
@@ -93,7 +93,7 @@ export type Weekplan = {
   taal: Taal;
   /** Schaalfactor waarvoor de hoeveelheden berekend zijn (volwassene 1, kind 0 tot 12 jaar 0,5; zie src/lib/schaal.ts). */
   porties: number;
-  /** lokaal = receptenbank van de app, db = recepten uit de database. Geen AI (WEEK-116). */
+  /** db = recepten uit de databank. 'lokaal' is de oude waarde van plannen uit de vroegere ingebouwde receptenbank (WEEK-208); blijft leesbaar. */
   bron: 'lokaal' | 'db';
   gemaaktOp: string;
   /** true als er niet genoeg recepten waren voor de gekozen kooktijd/stijl en de planner moest versoepelen. */

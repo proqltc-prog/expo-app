@@ -2,7 +2,8 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
-import { planLokaal } from '@/lib/planner/lokaal';
+import { planUitDatabase } from '@/lib/planner/dbplan';
+import { testPool } from '@/lib/planner/testrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 
 describe('magPlanWijzigen', () => {
@@ -41,7 +42,7 @@ describe('beheerderNaam', () => {
 
 describe('beheerder op het weekplan (regressie)', () => {
   const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
-  const plan = planLokaal({ kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42 });
+  const plan = planUitDatabase({ kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42 }, testPool('nl', gezin))!;
 
   it('bewaart de beheerder bij het inlezen', () => {
     const ingelezen = normaliseerWeekplan(JSON.parse(JSON.stringify({ ...plan, beheerder: 'ik' })));

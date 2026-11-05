@@ -3,7 +3,7 @@ import { normaliseerKeuzes, normaliseerWeekplan } from '@/lib/planner/normalisee
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import type { KooktijdCode, Weekplan } from '@/lib/planner/types';
 import type { Vermijd } from '@/data/vermijden';
-import type { Moment, StijlCode } from '@/data/receptenbank';
+import type { Moment, StijlCode } from '@/data/recept';
 import { SLEUTEL } from './sleutels';
 import { ikId, registreerDocument, registreerItems } from './sync';
 import { magPlanWijzigen } from '@/lib/planner/beheer';

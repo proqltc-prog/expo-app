@@ -1,11 +1,8 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ingredientNaam } from '@/data/ingredienten';
-import { RECEPTENBANK } from '@/data/receptenbank';
 import { dagenInTaal, ingredientenInTaal, inTaal } from '@/lib/planner/vertaal';
 import type { PlanRecept } from '@/lib/planner/types';
-
-const pesto = RECEPTENBANK.find((r) => r.id === 'pasta-pesto')!;
 
 /** Een recept uit de database: titel en ingrediënten in meerdere talen (WEEK-154). */
 const dbRecept: PlanRecept = {
@@ -22,9 +19,14 @@ const dbRecept: PlanRecept = {
 };
 
 describe('inTaal', () => {
-  test('een bankrecept krijgt de naam in de gekozen taal, op id', () => {
-    const plan: PlanRecept = { id: pesto.id, naam: pesto.namen[0], soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [] };
-    assert.equal(inTaal(plan, 'fr').naam, pesto.namen[1]);
+  test('een recept uit de vroegere lokale receptenbank (oud plan, zonder titels) houdt zijn opgeslagen naam (WEEK-208)', () => {
+    const oud: PlanRecept = { id: 'pasta-pesto', naam: 'Pasta pesto met broccoli', soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [] };
+    assert.equal(inTaal(oud, 'fr').naam, 'Pasta pesto met broccoli');
+  });
+
+  test('de vastgelegde titels gaan voor; ontbreekt de taal, dan blijft de opgeslagen naam', () => {
+    assert.equal(inTaal(dbRecept, 'nl').naam, 'Risotto met champignons en witte wijn');
+    assert.equal(inTaal(dbRecept, 'de').naam, dbRecept.naam);
   });
 
   test('een databankrecept krijgt de titel uit de vastgelegde vertalingen', () => {

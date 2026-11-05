@@ -457,6 +457,7 @@ export const fr: Vertalingen = {
   'stijlOptie.hartig': 'Salé',
   'stijlOptie.zoet': 'Sucré',
   'planning.geenRecepten': 'Il n’y a pas assez de recettes pour ces choix. Ajoute par exemple une cuisine ou choisis un autre temps de cuisson.',
+  'planning.geenVerbinding': 'La base de recettes n’est pas accessible. Vérifie ta connexion internet et réessaie.',
   'frigo.sheetPlanner': 'Recettes',
   'frigo.sheetLos': 'Produits libres',
   'frigo.plannerUitleg': 'Ingrédients de la liste de l’application. Ils comptent pour le menu de la semaine : avec « Cuisiné », ils sortent du frigo.',

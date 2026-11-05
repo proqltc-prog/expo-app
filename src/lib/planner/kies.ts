@@ -1,6 +1,6 @@
 // Zelf kiezen en verwijderen van een maaltijd in het weekmenu (WEEK-44).
 // Pure logica: het scherm schrijft het resultaat weg.
-import { BankRecept, Moment, MOMENTEN, StijlCode } from '@/data/receptenbank';
+import { Moment, MOMENTEN, StijlCode } from '@/data/recept';
 import type { Vermijd } from '@/data/vermijden';
 import type { Taal } from '@/i18n';
 import { afdelingVanEigen, EigenRecept } from '@/lib/eigenrecepten';
@@ -9,10 +9,7 @@ import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
 import type { DbPoolRecept } from './dbplan';
 import { kooktijdVan, DagCode, KooktijdCode, PlanDag, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 import { momentVan } from './moment';
-import { bankReceptVermijdt, heeftVermijdNaam } from './vermijden';
-import { naarPlanRecept } from './lokaal';
-
-const TAAL_INDEX: Taal[] = ['nl', 'fr', 'de', 'en'];
+import { heeftVermijdNaam } from './vermijden';
 
 /** Kleine letters, zonder accenten, zodat "croque" ook "Croqué" vindt. */
 export const zoeksleutel = (t: string) =>
@@ -29,25 +26,10 @@ export type KiesFilter = {
   taal: Taal;
 };
 
-/** Recepten die passen bij het moment, de voorkeuren als filter, en de zoekterm. */
-export function kiesbareRecepten(bank: readonly BankRecept[], f: KiesFilter): BankRecept[] {
-  const zoek = zoeksleutel(f.zoek);
-  const idx = Math.max(0, TAAL_INDEX.indexOf(f.taal));
-  return bank.filter(
-    (r) =>
-      momentVan(r) === f.moment &&
-      (!f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten))) &&
-      (!f.stijlen.length || r.stijlen.some((s) => f.stijlen.includes(s))) &&
-      !bankReceptVermijdt(r, f.vermijd) &&
-      (!f.enkelVegetarisch || r.soort === 'vegetarisch') &&
-      (!zoek || zoeksleutel(r.namen[idx] ?? r.namen[0]).includes(zoek))
-  );
-}
-
 const momentVolgorde = (m: Moment) => MOMENTEN.indexOf(m);
 
 /**
- * Recepten uit de databank (WEEK-191, tab "Ontdek"), met dezelfde voorwaarden als de receptenlijst.
+ * Recepten uit de databank (WEEK-191, tab "Ontdek"), gefilterd op de voorkeuren en de zoekterm.
  * Het moment, de kooktijd, de stijl, de vermijd-ingrediënten en de zoekterm bepalen de lijst.
  */
 export function kiesbarePoolRecepten(pool: readonly DbPoolRecept[], f: KiesFilter): DbPoolRecept[] {
@@ -111,11 +93,6 @@ export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: Pla
   return { ...plan, dagen: plan.dagen.map((d, i) => (i === index ? nieuw : d)) };
 }
 
-/** Zet een ander recept op dezelfde plek (bankrecept). */
-export function vervangDoorRecept(plan: Weekplan, index: number, recept: BankRecept): Weekplan {
-  return vervangDoorPlanRecept(plan, index, naarPlanRecept(recept, plan.taal, plan.porties));
-}
-
 /**
  * Voegt een maaltijd toe op de eerste vrije weekdag voor dat moment.
  * Geeft undefined als er voor dat moment geen dag meer vrij is.
@@ -134,11 +111,6 @@ export function voegPlanReceptToe(plan: Weekplan, recept: PlanRecept, moment: Mo
       WEEKDAGEN.indexOf(a.dag) - WEEKDAGEN.indexOf(b.dag) || momentVolgorde(momentVan(a)) - momentVolgorde(momentVan(b))
   );
   return { ...plan, dagen };
-}
-
-/** Voegt een bankrecept toe op de eerste vrije weekdag voor dat moment. */
-export function voegToe(plan: Weekplan, recept: BankRecept, moment: Moment): Weekplan | undefined {
-  return voegPlanReceptToe(plan, naarPlanRecept(recept, plan.taal, plan.porties), moment);
 }
 
 /**

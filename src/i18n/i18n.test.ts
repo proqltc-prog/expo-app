@@ -163,7 +163,7 @@ describe('hoeveelheidTekst', () => {
 describe('keuzes voor kooktijd en stijl', () => {
   test('elke kooktijd en stijl heeft een vertaling', async () => {
     const { KOOKTIJDEN } = await import('@/lib/planner/types');
-    const { STIJLEN } = await import('@/data/receptenbank');
+    const { STIJLEN } = await import('@/data/recept');
     for (const k of KOOKTIJDEN) assert.ok(`kooktijd.${k}` in nl, k);
     for (const s of STIJLEN) assert.ok(`stijl.${s}` in nl, s);
   });

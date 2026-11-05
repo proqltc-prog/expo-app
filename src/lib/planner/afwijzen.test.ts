@@ -1,12 +1,13 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { isAfgewezen, voegAfgewezenToe } from '@/lib/planner/afwijzen';
-import { planLokaal } from '@/lib/planner/lokaal';
+import { planUitDatabase } from '@/lib/planner/dbplan';
+import { testPool } from '@/lib/planner/testrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 import type { Weekplan } from '@/lib/planner/types';
 
 const gezin: Profiel = { ...standaardProfiel(), kinderen: 2 };
-const plan = (): Weekplan => planLokaal({ aantalDagen: 3, kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 5 });
+const plan = (): Weekplan => planUitDatabase({ aantalDagen: 3, kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 5 }, testPool('nl', gezin))!;
 
 describe('afgewezen recepten van een weekplan (WEEK-184)', () => {
   test('een vervangen recept komt op de lijst', () => {

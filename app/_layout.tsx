@@ -66,7 +66,7 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
       <Tabs.Screen name="scan" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="scan-outline" size={size} color={color} />, title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
       {/* Gezinsprofiel (WEEK-39): geen eigen tabblad meer, bereikbaar via het instellingen-icoon. */}
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null }} />
-      {/* Zelf kiezen (WEEK-44): een gerecht uit de receptenbank, vanuit het weekmenu. */}
+      {/* Zelf kiezen (WEEK-44): een gerecht uit de databank, vanuit het weekmenu. */}
       <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null }} />
       {/* Mijn recepten (WEEK-192): het overzicht van de eigen recepten, vanuit "Ons gezin" in "Zelf kiezen". */}
       <Tabs.Screen name="mijn-recepten" options={{ title: t('mijn.titel'), href: null }} />

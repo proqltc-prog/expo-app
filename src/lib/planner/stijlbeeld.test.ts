@@ -29,7 +29,7 @@ describe('stijlbeeld (WEEK-73)', () => {
 });
 
 import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
-import { STIJLEN } from '@/data/receptenbank';
+import { STIJLEN } from '@/data/recept';
 
 describe('beeldVoorReceptStijl (WEEK-73)', () => {
   test('elke databasestijl heeft een beeld dat bestaat', () => {

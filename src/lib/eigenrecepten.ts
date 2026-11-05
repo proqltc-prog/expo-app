@@ -1,6 +1,6 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
-// Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
-import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
+// Hoeveelheden zijn per volwassen portie, zoals in de databank.
+import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
 import { Afdeling, AFDELINGEN, afdelingVan, dbCodeVan, eenheidVan, IngredientCode } from '@/data/ingredienten';
 import { MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import type { Taal } from '@/i18n';

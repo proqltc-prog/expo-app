@@ -1,6 +1,6 @@
 // Keuzes voor het avondeten in het weekmenu (WEEK-68, deel 4; WEEK-189: enkel avond). Pure logica.
 // Pure logica. De schermen tonen de lijsten; de planner filtert er later op.
-import type { Moment } from '@/data/receptenbank';
+import type { Moment } from '@/data/recept';
 import { KOOKTIJD_BEREIK, KOOKTIJDEN, KooktijdCode } from '@/lib/kooktijd';
 
 export type KooktijdOptie = { id: string; naam: string; van: number; tot: number };

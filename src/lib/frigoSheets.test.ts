@@ -1,11 +1,11 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalSheet, catalogus, inCatalogus, inReceptenbank, koppelBronnen, normaliseer, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus, zoekReceptenbank } from '@/lib/frigoSheets';
+import { aantalSheet, catalogus, inCatalogus, inDatabank, koppelBronnen, normaliseer, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus, zoekDatabank } from '@/lib/frigoSheets';
 import { FrigoItem, voegZelfToe } from '@/lib/frigo';
 
 const nu = new Date('2026-10-18T10:00:00.000Z');
 const naam = (f: FrigoItem[]) => f.map((x) => x.naam);
-// WEEK-162: planner-items zijn ingrediënten die de receptenbank kent (databankcode aanwezig).
+// WEEK-162: planner-items zijn ingrediënten die de databank kent (databankcode aanwezig).
 const kendUIt = (code: string) => catalogus('nl').find((i) => i.code === code)!;
 
 describe('normaliseren en zoeken', () => {
@@ -53,21 +53,21 @@ describe('planner-frigo', () => {
 describe('planner-frigo en de ingrediëntenlijst (WEEK-162, sinds WEEK-205 één lijst uit de databank)', () => {
   test('elk ingrediënt uit de lijst zit in de databank, ook algemene producten als pasta, kaas en rijst', () => {
     for (const code of ['pasta', 'kaas_geraspt', 'rijst', 'tomaat'] as const) {
-      assert.equal(inReceptenbank(code), true, code);
+      assert.equal(inDatabank(code), true, code);
       assert.equal(voegPlannerToe([], kendUIt(code), nu).length, 1, code);
     }
   });
 
   test('een oude catalogus-code (kaas, tomaten) telt als zijn databankcode', () => {
-    assert.equal(inReceptenbank('kaas' as never), true);
-    assert.equal(inReceptenbank('tomaten' as never), true);
-    assert.equal(inReceptenbank('bestaat-niet' as never), false);
+    assert.equal(inDatabank('kaas' as never), true);
+    assert.equal(inDatabank('tomaten' as never), true);
+    assert.equal(inDatabank('bestaat-niet' as never), false);
   });
 
   test('de zoekfunctie van de planner-frigo is dezelfde als de algemene zoekfunctie', () => {
-    assert.ok(zoekReceptenbank('pasta', 'nl').some((i) => i.code === 'pasta'));
-    assert.ok(zoekReceptenbank('toma', 'nl').some((i) => i.code === 'tomaat'));
-    assert.deepEqual(zoekReceptenbank('gember', 'nl').map((i) => i.code), zoekCatalogus('gember', 'nl').map((i) => i.code));
+    assert.ok(zoekDatabank('pasta', 'nl').some((i) => i.code === 'pasta'));
+    assert.ok(zoekDatabank('toma', 'nl').some((i) => i.code === 'tomaat'));
+    assert.deepEqual(zoekDatabank('gember', 'nl').map((i) => i.code), zoekCatalogus('gember', 'nl').map((i) => i.code));
   });
 
   test('de algemene zoekfunctie vindt ook ingrediënten die vroeger enkel in de databank zaten', () => {

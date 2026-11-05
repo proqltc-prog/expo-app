@@ -1,11 +1,10 @@
-// WEEK-190: 'enkel vegetarisch' werkt in de receptenlijst, de databank-planner, de lokale planner en het opslaan van de keuze.
+// WEEK-190: 'enkel vegetarisch' werkt in de receptenlijst, de databank-planner en het opslaan van de keuze.
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { RECEPTENBANK } from '@/data/receptenbank';
 import type { DbRecept } from '@/lib/planner/db';
 import { maakDbPool, planUitDatabase } from '@/lib/planner/dbplan';
-import { kiesbareRecepten } from '@/lib/planner/kies';
-import { planLokaal } from '@/lib/planner/lokaal';
+import { kiesbarePoolRecepten } from '@/lib/planner/kies';
+import { testPool } from '@/lib/planner/testrecepten';
 import { normaliseerKeuzes } from '@/lib/planner/normaliseer';
 import { standaardProfiel } from '@/lib/profiel';
 import type { PlanVerzoek } from '@/lib/planner/types';
@@ -36,15 +35,17 @@ const dbRecept = (id: number, soort: DbRecept['soort']): DbRecept => ({
 describe('receptenlijst (kies)', () => {
   const basis = { moment: 'avond' as const, kooktijden: [], stijlen: [], vermijd: [], zoek: '', taal: 'nl' as const };
 
+  const pool = testPool();
+
   test('zonder de keuze blijven ook vlees- en visrecepten in de lijst', () => {
-    const alles = kiesbareRecepten(RECEPTENBANK, basis);
-    assert.ok(alles.some((r) => r.soort !== 'vegetarisch'));
+    const alles = kiesbarePoolRecepten(pool, basis);
+    assert.ok(alles.some((k) => k.soort !== 'vegetarisch'));
   });
 
   test('met enkel vegetarisch blijven alleen vegetarische recepten over', () => {
-    const veg = kiesbareRecepten(RECEPTENBANK, { ...basis, enkelVegetarisch: true });
+    const veg = kiesbarePoolRecepten(pool, { ...basis, enkelVegetarisch: true });
     assert.ok(veg.length > 0);
-    assert.ok(veg.every((r) => r.soort === 'vegetarisch'));
+    assert.ok(veg.every((k) => k.soort === 'vegetarisch'));
   });
 });
 
@@ -71,17 +72,20 @@ describe('databank-planner', () => {
   });
 });
 
-describe('lokale planner', () => {
-  test('met enkel vegetarisch bestaat het weekmenu enkel uit vegetarische recepten', () => {
-    const plan = planLokaal(verzoek({ enkelVegetarisch: true }));
-    assert.ok(plan.dagen.length > 0);
+describe('databank-planner met de testrecepten (WEEK-208)', () => {
+  test('met enkel vegetarisch bestaat het weekmenu enkel uit vegetarische recepten, ook als die herhaald moeten worden', () => {
+    const plan = planUitDatabase(verzoek({ enkelVegetarisch: true, aantalDagen: 6 }), testPool());
+    if (!plan) throw new Error('er is een plan');
+    assert.equal(plan.dagen.length, 6);
     assert.ok(plan.dagen.every((d) => d.recept.soort === 'vegetarisch'));
     assert.equal(plan.enkelVegetarisch, true);
   });
 
-  test('zonder de keuze blijft de lokale planner ongewijzigd', () => {
-    const plan = planLokaal(verzoek());
+  test('zonder de keuze komen ook vlees en vis op het weekmenu', () => {
+    const plan = planUitDatabase(verzoek({ aantalDagen: 7 }), testPool());
+    if (!plan) throw new Error('er is een plan');
     assert.equal(plan.enkelVegetarisch, undefined);
+    assert.ok(plan.dagen.some((d) => d.recept.soort !== 'vegetarisch'));
   });
 });
 

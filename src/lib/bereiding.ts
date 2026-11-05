@@ -1,7 +1,5 @@
 // Bereidingsstappen per maaltijd (WEEK-81). Pure logica, zonder opslag of React.
-import { BEREIDINGEN, type KeuzeTaal } from '@/data/bereidingen';
-import { RECEPTENBANK } from '@/data/receptenbank';
-import { keuzeTaal, type Taal } from '@/i18n';
+import type { Taal } from '@/i18n';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { bereidingVoorDbRecept, type DbRecept } from '@/lib/planner/db';
 import { verdeelFrigo, type Dekking, type FrigoItem } from '@/lib/frigo';
@@ -10,9 +8,8 @@ import { ingredientenInTaal } from '@/lib/planner/vertaal';
 
 /**
  * De bereidingsstappen van een maaltijd, of null als er geen bekend zijn.
- * Volgorde: een eigen recept op id, dan op naam; een databankrecept (id "db-<nummer>", WEEK-121) op id;
- * daarna de ingebouwde receptenbank op id, dan op naam in elke taal.
- * Ingebouwde recepten en databankrecepten vallen terug op Nederlands als een taal ontbreekt.
+ * Volgorde: een eigen recept op id, dan op naam; daarna een databankrecept (id "db-<nummer>", WEEK-121) op id.
+ * Databankrecepten vallen terug op Nederlands als een taal ontbreekt (WEEK-208: geen ingebouwde recepten meer).
  */
 export function bereidingVoor(
   recept: { id: string; naam: string },
@@ -23,16 +20,9 @@ export function bereidingVoor(
   const eigenRecept = eigen.find((e) => e.id === recept.id) ?? eigen.find((e) => e.naam === recept.naam);
   if (eigenRecept) return eigenRecept.stappen.length ? [...eigenRecept.stappen] : null;
 
-  if (recept.id.startsWith('db-')) {
-    const dbRecept = db.find((r) => `db-${r.id}` === recept.id);
-    return dbRecept ? bereidingVoorDbRecept(dbRecept, taal) : null;
-  }
-
-  const bank = RECEPTENBANK.find((r) => r.id === recept.id) ?? RECEPTENBANK.find((r) => r.namen.includes(recept.naam));
-  if (!bank) return null;
-  const sleutel = keuzeTaal(taal) as KeuzeTaal;
-  const stappen = BEREIDINGEN[bank.id]?.[sleutel] ?? BEREIDINGEN[bank.id]?.nl;
-  return stappen && stappen.length ? [...stappen] : null;
+  if (!recept.id.startsWith('db-')) return null;
+  const dbRecept = db.find((r) => `db-${r.id}` === recept.id);
+  return dbRecept ? bereidingVoorDbRecept(dbRecept, taal) : null;
 }
 
 /**

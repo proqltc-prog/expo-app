@@ -2,7 +2,7 @@ import { isGeldigeIso, plandagenVoorDatums } from '@/lib/planner/datums';
 // Controle van een weekplan dat van buitenaf komt (opslag op het toestel of AI-antwoord).
 import { AFDELINGEN, Afdeling, naarDbCode } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
-import { MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
+import { MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/recept';
 import { normaliseerMomenten } from './moment';
 import { isTaal, type Taal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
@@ -97,7 +97,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
     ...(ruw.enkelVegetarisch === true ? { enkelVegetarisch: true } : {}),
     taal: isTaal(ruw.taal) ? ruw.taal : 'nl',
     porties: typeof ruw.porties === 'number' && ruw.porties > 0 ? ruw.porties : 2,
-    bron: ruw.bron === 'db' ? 'db' : 'lokaal', // oude AI-plannen en 'favorieten'-plannen (WEEK-72) worden lokaal
+    bron: ruw.bron === 'db' ? 'db' : 'lokaal', // oude AI-, 'favorieten'- (WEEK-72) en lokale plannen (WEEK-208) blijven leesbaar als 'lokaal'
     gemaaktOp: tekst(ruw.gemaaktOp) || new Date(0).toISOString(),
     ...(ruw.versoepeld === true ? { versoepeld: true } : {}),
     ...(ruw.herhaald === true ? { herhaald: true } : {}),
