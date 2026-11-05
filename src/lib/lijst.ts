@@ -1,5 +1,5 @@
 import type { Afdeling } from '@/data/ingredienten';
-import { AFDELINGEN, naarDbCode } from '@/data/ingredienten';
+import { AFDELINGEN, isVoorraad, naarDbCode } from '@/data/ingredienten';
 import { Sleutel, Taal } from '@/i18n';
 import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { DagCode, PlanDag, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
@@ -81,6 +81,8 @@ export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): Lijst
   const items: LijstItem[] = [];
   for (const { dag, recept } of dagen) {
     for (const ing of recept.ingredienten) {
+      // WEEK-211: basisvoorraad (water, zout, peper) komt nooit op de lijst.
+      if (isVoorraad(ing.code)) continue;
       // WEEK-154: het id volgt de vaste code (niet de taalafhankelijke naam), zodat afvinken en frigo blijven kloppen na een taalwissel.
       const basis = `recept-${sleutel ? `${sleutel}-` : ''}${dag}-${klein(ing.code ?? ing.naam)}-${ing.eenheid}`;
       const eerste = items.find((i) => i.id === basis);

@@ -169,3 +169,15 @@ export function dbCodeVanNaam(naam: string): string | undefined {
   }
   return undefined;
 }
+
+/**
+ * Basisvoorraad (WEEK-211): ingrediënten die elk huishouden in huis heeft en die nooit op de boodschappenlijst komen.
+ * Ze blijven wel in het recept staan (de bereiding toont de hoeveelheid water).
+ */
+export const VOORRAAD_CODES: readonly IngredientCode[] = ['water', 'zout', 'zwarte_peper'];
+
+/** Hoort een (oude) code of databankcode bij de basisvoorraad? */
+export function isVoorraad(code: string | undefined): boolean {
+  const db = code ? dbCodeVan(code) : undefined;
+  return db !== undefined && VOORRAAD_CODES.includes(db);
+}
