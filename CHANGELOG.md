@@ -10,7 +10,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.114.0] – 2026-11-05
 
-- Uitleg-popup (Kies, Lijst, Frigo): de tabbladnamen staan in het vet, met een alinea per tabblad. (WEEK-209)
+- Uitleg-popup (Kies, Lijst, Frigo, Gezin): de tabbladnamen en onderdelen staan in het vet, met een alinea per tabblad. (WEEK-209)
 - Bereiding: de stappen van een volgend recept beginnen weer bij stap 1. (WEEK-210)
 - Lijst: water, zout en peper komen niet meer op de boodschappenlijst. Water blijft in de bereiding staan; zout en peper zijn uit de databankrecepten gehaald en de bereidingsstappen zeggen nu overal wanneer je op smaak brengt. (WEEK-211)
 
