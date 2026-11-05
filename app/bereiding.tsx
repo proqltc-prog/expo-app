@@ -34,6 +34,8 @@ export default function Bereiding() {
   // WEEK-147: wat er al in de frigo ligt, wordt bij elk ingrediënt getoond.
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
   const [index, setIndex] = useState(0);
+  // WEEK-210: het scherm wordt hergebruikt voor een volgend recept; dan begint de bereiding weer bij stap 1.
+  useEffect(() => setIndex(0), [id]);
 
   useEffect(() => {
     Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[]), laadPlan().catch(() => null), laadFrigo().catch(() => [] as FrigoItem[])]).then(([lijst, dbLijst, huidigPlan, frigoLijst]) => {

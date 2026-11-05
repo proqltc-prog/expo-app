@@ -2,11 +2,13 @@ import { useLayoutEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
+import { alineas, vetteDelen } from '@/lib/opmaak';
 
 /**
  * Uitleg over een pagina (WEEK-177): een infoknop rechtsboven in de koptekst, die een popup opent die je kunt wegklikken.
  * Geen blok op de pagina zelf, zodat de inhoud de volle ruimte krijgt.
- * De teksten komen van het aanroepende scherm, dus al in de gekozen taal. Alinea's scheiden met een lege regel.
+ * De teksten komen van het aanroepende scherm, dus al in de gekozen taal. Alinea's scheiden met een lege regel;
+ * **vette delen** (bv. tabbladnamen) staan tussen dubbele sterretjes (WEEK-209).
  */
 export function usePaginaInfo({
   tekst,
@@ -38,7 +40,7 @@ export function usePaginaInfo({
     });
   }, [navigation, kleur, infoLabel]);
 
-  const alinea = tekst.split('\n\n');
+  const alinea = alineas(tekst);
   const popup = (
     <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
       <Pressable style={s.achtergrond} onPress={() => setOpen(false)} accessibilityLabel={sluitLabel}>
@@ -47,7 +49,11 @@ export function usePaginaInfo({
           <ScrollView style={s.scroll} contentContainerStyle={s.inhoud}>
             {alinea.map((a, i) => (
               <Text key={i} style={s.tekst}>
-                {a}
+                {vetteDelen(a).map((d, n) => (
+                  <Text key={n} style={d.vet ? s.vet : undefined}>
+                    {d.tekst}
+                  </Text>
+                ))}
               </Text>
             ))}
           </ScrollView>
@@ -69,6 +75,7 @@ const s = StyleSheet.create({
   scroll: { flexGrow: 0 },
   inhoud: { gap: 12 },
   tekst: { color: '#1F2A24', fontSize: 15, lineHeight: 22 },
+  vet: { fontWeight: '700' },
   knopSluit: { alignSelf: 'stretch', borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
   knopSluitTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });

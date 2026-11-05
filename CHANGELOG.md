@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.114.0] – 2026-11-05
+
+- Uitleg-popup (Kies, Lijst, Frigo, Gezin): de tabbladnamen en onderdelen staan in het vet, met een alinea per tabblad. (WEEK-209)
+- Bereiding: de stappen van een volgend recept beginnen weer bij stap 1. (WEEK-210)
+- Lijst: water, zout en peper komen niet meer op de boodschappenlijst. Water blijft in de bereiding staan; zout en peper zijn uit de databankrecepten gehaald en de bereidingsstappen zeggen nu overal wanneer je op smaak brengt. (WEEK-211)
+
+**Jira:** [WEEK-209](https://proqltc-1791495894841.atlassian.net/browse/WEEK-209) · [WEEK-210](https://proqltc-1791495894841.atlassian.net/browse/WEEK-210) · [WEEK-211](https://proqltc-1791495894841.atlassian.net/browse/WEEK-211) · **Confluence:** [WEEK-209](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21266433) · [WEEK-210](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21168150) · [WEEK-211](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21135369)
+
 ## [0.113.0] – 2026-11-05
 
 - De app plant enkel nog met de databank: de ingebouwde receptenbank (46 recepten met bereidingsstappen) en de lokale planner zijn verwijderd. Een nieuw weekmenu en het vervangen van een dag komen altijd uit de databank; is die niet bereikbaar, dan zegt de app dat duidelijk in plaats van stilletjes een oud lokaal recept te kiezen.

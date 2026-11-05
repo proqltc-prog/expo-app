@@ -2,6 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { lijstInTaal, itemsUitPlan, LijstItem, voegPlanToe } from '@/lib/lijst';
 import type { PlanDag } from '@/lib/planner/types';
+import { isVoorraad } from '@/data/ingredienten';
 
 /** Een databankrecept op maandag, met vaste codes en namen per taal (WEEK-154). */
 const dagen: PlanDag[] = [
@@ -77,5 +78,27 @@ describe('lijstInTaal', () => {
     const terug = lijstInTaal(fr, dagen, 'nl', 'x');
     assert.deepEqual(terug.map((i) => [i.id, i.naam]), nl.map((i) => [i.id, i.naam]));
     assert.deepEqual(lijstInTaal(fr, dagen, 'fr', 'x'), fr);
+  });
+});
+
+describe('basisvoorraad komt niet op de lijst (WEEK-211)', () => {
+  const dag: PlanDag = { dag: 'maandag', recept: { id: 'db-1', naam: 'Risotto', soort: 'vegetarisch', minuten: 30, stijlen: [], ingredienten: [
+    { naam: 'risottorijst', hoeveelheid: 300, eenheid: 'g', afdeling: 'droge-voeding', code: 'risottorijst' },
+    { naam: 'water', hoeveelheid: 900, eenheid: 'ml', afdeling: 'dranken', code: 'water' },
+    { naam: 'zout', hoeveelheid: 2, eenheid: 'g', afdeling: 'droge-voeding', code: 'zout' },
+    { naam: 'zwarte peper', hoeveelheid: 1, eenheid: 'g', afdeling: 'droge-voeding', code: 'zwarte_peper' },
+  ] } };
+  test('water, zout en peper worden overgeslagen; de rest blijft', () => {
+    assert.deepEqual(itemsUitPlan([dag], 'x').map((i) => i.naam), ['risottorijst']);
+  });
+  test('isVoorraad kent de databankcodes en laat andere codes en geen code met rust', () => {
+    assert.equal(isVoorraad('water'), true);
+    assert.equal(isVoorraad('zwarte_peper'), true);
+    assert.equal(isVoorraad('risottorijst'), false);
+    assert.equal(isVoorraad(undefined), false);
+  });
+  test('een eigen ingrediënt zonder code met de naam water blijft op de lijst (regressie)', () => {
+    const eigen: PlanDag = { ...dag, recept: { ...dag.recept, ingredienten: [{ naam: 'water', hoeveelheid: 1, eenheid: 'l', afdeling: 'dranken' }] } };
+    assert.equal(itemsUitPlan([eigen], 'x').length, 1);
   });
 });

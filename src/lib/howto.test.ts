@@ -16,7 +16,7 @@ describe('howtoTekst (WEEK-193)', () => {
     const alinea = howtoTekst(vertaal).split('\n\n');
     assert.deepEqual(
       alinea.slice(1),
-      ['menu', 'lijst', 'frigo', 'scan', 'gezin'].map((k) => `• [howto.${k}]`),
+      ['menu', 'lijst', 'frigo', 'scan', 'gezin'].map((k) => `[howto.${k}]`),
     );
   });
 
