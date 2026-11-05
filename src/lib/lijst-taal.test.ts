@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { hernoemLijst, itemsUitPlan, LijstItem, voegPlanToe } from '@/lib/lijst';
+import { lijstInTaal, itemsUitPlan, LijstItem, voegPlanToe } from '@/lib/lijst';
 import type { PlanDag } from '@/lib/planner/types';
 
 /** Een databankrecept op maandag, met vaste codes en namen per taal (WEEK-154). */
@@ -43,24 +43,39 @@ describe('voegPlanToe in de gekozen taal', () => {
   });
 });
 
-describe('hernoemLijst', () => {
+describe('lijstInTaal', () => {
   const nl = itemsUitPlan(dagen, 'x');
   const afgevinkt: LijstItem[] = nl.map((i) => ({ ...i, afgevinkt: true, hoeveelheid: 250 }));
 
   test('zet de namen op de nieuwe taal en behoudt afvinkstatus en hoeveelheid', () => {
-    const [item] = hernoemLijst(afgevinkt, dagen, 'fr', 'x');
+    const [item] = lijstInTaal(afgevinkt, dagen, 'fr', 'x');
     assert.equal(item.naam, 'champignons de Paris');
     assert.equal(item.afgevinkt, true);
     assert.equal(item.hoeveelheid, 250);
   });
 
   test('geeft dezelfde lijst terug als de namen al kloppen', () => {
-    assert.equal(hernoemLijst(nl, dagen, 'nl', 'x'), nl);
+    assert.equal(lijstInTaal(nl, dagen, 'nl', 'x'), nl);
   });
 
   test('raakt items van andere bronnen (vaste items, zonder recept) niet aan', () => {
     const vast: LijstItem = { id: 'fruit-appel', naam: 'Appel', categorie: 'fruit', afgevinkt: false };
-    const [, andere] = hernoemLijst([...nl, vast], dagen, 'fr', 'x');
+    const [, andere] = lijstInTaal([...nl, vast], dagen, 'fr', 'x');
     assert.deepEqual(andere, vast);
+  });
+
+  test('verandert de bewaarde lijst niet: vertalen is enkel weergave (WEEK-207)', () => {
+    const bewaard = nl.map((i) => ({ ...i }));
+    const fr = lijstInTaal(nl, dagen, 'fr', 'x');
+    assert.deepEqual(nl, bewaard);
+    assert.notEqual(fr[0].naam, nl[0].naam);
+  });
+
+  test('een lijst in een andere taal dan het toestel blijft op zijn id koppelen (gezin met meerdere talen, WEEK-207)', () => {
+    // Het andere toestel heeft de lijst in het Frans bewaard; dit toestel toont ze in het Nederlands, zonder te herschrijven.
+    const fr = lijstInTaal(nl, dagen, 'fr', 'x');
+    const terug = lijstInTaal(fr, dagen, 'nl', 'x');
+    assert.deepEqual(terug.map((i) => [i.id, i.naam]), nl.map((i) => [i.id, i.naam]));
+    assert.deepEqual(lijstInTaal(fr, dagen, 'fr', 'x'), fr);
   });
 });

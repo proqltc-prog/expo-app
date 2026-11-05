@@ -107,10 +107,12 @@ export function itemsUitPlan(dagen: readonly PlanDag[], sleutel?: string): Lijst
 }
 
 /**
- * Zet de namen van de weekmenu-items op de gekozen taal (WEEK-154). Hoeveelheden, afvinkstatus en frigo blijven
- * ongewijzigd; geeft dezelfde lijst terug als er niets verandert.
+ * De weekmenu-items met hun naam in de gekozen taal (WEEK-154), enkel voor de weergave. De bewaarde naam blijft de
+ * sleutel en wordt niet herschreven (WEEK-207): zo springt een gedeelde lijst niet heen en weer tussen de talen van
+ * de toestellen in het gezin. Hoeveelheden, afvinkstatus en zelf toegevoegde items blijven ongewijzigd; geeft dezelfde
+ * lijst terug als er niets te vertalen valt.
  */
-export function hernoemLijst(items: readonly LijstItem[], dagen: readonly PlanDag[], taal: Taal, sleutel?: string): LijstItem[] {
+export function lijstInTaal(items: readonly LijstItem[], dagen: readonly PlanDag[], taal: Taal, sleutel?: string): LijstItem[] {
   const namen = new Map(itemsUitPlan(dagenInTaal(dagen, taal), sleutel).map((i) => [i.id, i.naam]));
   let veranderd = false;
   const nieuw = items.map((i) => {

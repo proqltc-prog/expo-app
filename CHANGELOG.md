@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.112.2] – 2026-11-05
+
+- Lijst: de namen van de weekmenu-items worden niet meer in de taal van het toestel naar de (gedeelde) lijst geschreven. Elk toestel toont ze in zijn eigen taal; in een gezin met verschillende talen springen de namen daardoor niet meer heen en weer.
+
+**Jira:** [WEEK-207](https://proqltc-1791495894841.atlassian.net/browse/WEEK-207) · **Confluence:** [WEEK-207 Gedeelde lijst niet herschrijven in de toesteltaal](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21168129)
+
 ## [0.112.1] – 2026-11-05
 
 - Weekmenu: de voorrang voor recepten die iets uit de frigo gebruiken, herkent producten nu op hun databankcode, net als Gekookt en de lijst. Een product dat in een andere taal of onder een oude code in de frigo staat, telt daardoor ook mee; voor producten zonder code blijft de naam gelden.
