@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { alleenHuidigPlan, bewerkLijstItem, eigenItem, hernoemLijst, LijstItem, LijstRegel, LijstSectie, magBewerken, opSheet, planSleutel, receptItem, secties as maakSecties, sectieKeuze, staatOpLijst, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
+import { alleenHuidigPlan, bewerkLijstItem, eigenItem, lijstInTaal, LijstItem, LijstRegel, LijstSectie, magBewerken, opSheet, planSleutel, receptItem, secties as maakSecties, sectieKeuze, staatOpLijst, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
 import { eenheidVan } from '@/data/ingredienten';
 import { CatalogusItem, Sheet, sheetThema } from '@/lib/frigoSheets';
 import { inTaal } from '@/lib/planner/vertaal';
@@ -209,12 +209,6 @@ export default function Lijst() {
     if (afgevinkt) await wijzigPlan((plan) => werkOntbrekendBij(plan, frigoNieuw));
   };
 
-  // WEEK-154: de titel van een weekmenu-recept volgt de gekozen taal; de opgeslagen naam blijft de sleutel.
-  useEffect(() => {
-    if (!plan) return;
-    void wijzigLijst((huidig) => hernoemLijst(huidig, plan.dagen, taal, planSleutel(plan)));
-  }, [plan, taal]);
-
   const titel = (sectie: LijstSectie) => {
     if (sectie.soort === 'recept') {
       const recept = plan?.dagen.find((d) => d.dag === sectie.dag && d.recept.naam === sectie.recept)?.recept;
@@ -224,7 +218,11 @@ export default function Lijst() {
     return categorieNaam(taal, sectie.categorie);
   };
 
-  const zichtbaar = useMemo(() => alleenHuidigPlan(items, plan), [items, plan]);
+  // WEEK-154/207: de weekmenu-items volgen de gekozen taal, enkel op het scherm; de bewaarde naam blijft de sleutel.
+  const zichtbaar = useMemo(
+    () => alleenHuidigPlan(plan ? lijstInTaal(items, plan.dagen, taal, planSleutel(plan)) : items, plan),
+    [items, plan, taal]
+  );
   // Het tabblad bepaalt welke items op het scherm komen; de teller en groepen volgen het tabblad.
   const sheetLijst = sheet === 'planner' ? 'recept' : 'los';
   const sheetItems = useMemo(() => opSheet(zichtbaar, sheetLijst), [zichtbaar, sheetLijst]);
