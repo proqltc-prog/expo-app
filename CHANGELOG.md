@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.115.0] – 2026-11-06
+
+- Recepten in de databank staan nu allemaal op 1 volwassene. 51 recepten stonden nog op 4 porties, waardoor de lijst ongeveer 4 keer te veel toonde; hun hoeveelheden zijn gedeeld door 4. Nieuwe recepten kunnen enkel nog per volwassene in de databank. (WEEK-212)
+- 43 echte recepten toegevoegd (Allerhande, met bron): 18 vis, 18 vegetarisch, 7 vlees, avondmaaltijden van maximaal 60 minuten, in 4 talen. De databank telt nu 100 recepten. 24 nieuwe ingrediënten (309 in totaal). De gegevens en het controlescript staan in `supabase/data/` en `scripts/recepten-naar-sql.mjs`. (WEEK-213)
+
+**Jira:** [WEEK-212](https://proqltc-1791495894841.atlassian.net/browse/WEEK-212) · [WEEK-213](https://proqltc-1791495894841.atlassian.net/browse/WEEK-213) · **Confluence:** [WEEK-212](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21266454) · [WEEK-213](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21266474)
+
 ## [0.114.0] – 2026-11-05
 
 - Uitleg-popup (Kies, Lijst, Frigo, Gezin): de tabbladnamen en onderdelen staan in het vet, met een alinea per tabblad. (WEEK-209)

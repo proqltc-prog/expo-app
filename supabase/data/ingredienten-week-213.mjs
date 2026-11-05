@@ -1,0 +1,28 @@
+// WEEK-213: nieuwe ingrediënten voor de receptenbatch van 5 november 2026.
+// [code, eenheid, categorie, soort, allergenen, { nl, fr, de, en }]
+export const NIEUWE_INGREDIENTEN = [
+  ['dragon', 'g', 'kruid', 'vegetarisch', [], { nl: 'dragon', fr: 'estragon', de: 'Estragon', en: 'tarragon' }],
+  ['edamame', 'g', 'peulvrucht', 'vegetarisch', ['soja'], { nl: 'edamamebonen', fr: 'edamame', de: 'Edamame', en: 'edamame beans' }],
+  ['taartdeeg', 'stuk', 'graan', 'vegetarisch', ['gluten'], { nl: 'hartig taartdeeg (vel)', fr: 'pâte brisée (feuille)', de: 'Mürbeteig (Platte)', en: 'shortcrust pastry (sheet)' }],
+  ['venkelzaad', 'g', 'specerij', 'vegetarisch', [], { nl: 'venkelzaad', fr: 'graines de fenouil', de: 'Fenchelsamen', en: 'fennel seeds' }],
+  ['tonijn', 'g', 'vis', 'vis', ['vis'], { nl: 'verse tonijn', fr: 'thon frais', de: 'frischer Thunfisch', en: 'fresh tuna' }],
+  ['pesto_rosso', 'g', 'condiment', 'vegetarisch', ['melk'], { nl: 'rode pesto', fr: 'pesto rosso', de: 'rotes Pesto', en: 'red pesto' }],
+  ['kappertjes', 'g', 'condiment', 'vegetarisch', [], { nl: 'kappertjes', fr: 'câpres', de: 'Kapern', en: 'capers' }],
+  ['gegrilde_groenten', 'g', 'groente', 'vegetarisch', [], { nl: 'gegrilde groenten (diepvries)', fr: 'légumes grillés (surgelés)', de: 'gegrilltes Gemüse (TK)', en: 'grilled vegetables (frozen)' }],
+  ['provencaalse_kruiden', 'g', 'kruid', 'vegetarisch', [], { nl: 'Provençaalse kruiden', fr: 'herbes de Provence', de: 'Kräuter der Provence', en: 'herbes de Provence' }],
+  ['mangochutney', 'g', 'condiment', 'vegetarisch', [], { nl: 'mangochutney', fr: 'chutney de mangue', de: 'Mango-Chutney', en: 'mango chutney' }],
+  ['chinese_kool', 'stuk', 'groente', 'vegetarisch', [], { nl: 'Chinese kool', fr: 'chou chinois', de: 'Chinakohl', en: 'Chinese cabbage' }],
+  ['geroosterde_paprika', 'g', 'groente', 'vegetarisch', [], { nl: 'geroosterde paprika (pot)', fr: 'poivrons grillés (bocal)', de: 'geröstete Paprika (Glas)', en: 'roasted peppers (jar)' }],
+  ['hummus', 'g', 'peulvrucht', 'vegetarisch', [], { nl: 'hummus', fr: 'houmous', de: 'Hummus', en: 'hummus' }],
+  ['falafel', 'g', 'peulvrucht', 'vegetarisch', [], { nl: 'falafel', fr: 'falafels', de: 'Falafel', en: 'falafel' }],
+  ['mexicaanse_kruiden', 'g', 'specerij', 'vegetarisch', [], { nl: 'Mexicaanse kruidenmix', fr: 'mélange d\'épices mexicain', de: 'mexikanische Gewürzmischung', en: 'Mexican spice mix' }],
+  ['orzo', 'g', 'graan', 'vegetarisch', ['gluten'], { nl: 'orzo', fr: 'orzo', de: 'Orzo', en: 'orzo' }],
+  ['burrata', 'g', 'zuivel', 'vegetarisch', ['melk'], { nl: 'burrata', fr: 'burrata', de: 'Burrata', en: 'burrata' }],
+  ['vegetarisch_gehakt', 'g', 'eiwit', 'vegetarisch', ['soja'], { nl: 'vegetarisch gehakt', fr: 'haché végétarien', de: 'vegetarisches Hack', en: 'vegetarian mince' }],
+  ['gnocchi', 'g', 'graan', 'vegetarisch', ['gluten'], { nl: 'gnocchi', fr: 'gnocchis', de: 'Gnocchi', en: 'gnocchi' }],
+  ['platbrood', 'stuk', 'graan', 'vegetarisch', ['gluten'], { nl: 'platbrood', fr: 'pain plat', de: 'Fladenbrot', en: 'flatbread' }],
+  ['peultjes', 'g', 'groente', 'vegetarisch', [], { nl: 'peultjes', fr: 'pois mange-tout', de: 'Zuckerschoten', en: 'mangetout' }],
+  ['kipdrumsticks', 'g', 'vlees', 'vlees', [], { nl: 'kippenboutjes', fr: 'pilons de poulet', de: 'Hähnchenunterschenkel', en: 'chicken drumsticks' }],
+  ['mexicaanse_roerbakgroente', 'g', 'groente', 'vegetarisch', [], { nl: 'Mexicaanse roerbakgroente', fr: 'légumes mexicains à poêler', de: 'mexikanisches Pfannengemüse', en: 'Mexican stir-fry vegetables' }],
+  ['italiaanse_roerbakgroente', 'g', 'groente', 'vegetarisch', [], { nl: 'Italiaanse roerbakgroente', fr: 'légumes italiens à poêler', de: 'italienisches Pfannengemüse', en: 'Italian stir-fry vegetables' }],
+];
