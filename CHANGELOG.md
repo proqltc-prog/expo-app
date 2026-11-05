@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.112.0] – 2026-11-05
+
+- Eén ingrediëntenlijst: de app gebruikt de ingrediënten uit de databank (285) in plaats van een eigen lokale lijst (58). Zoeken op de lijst, in de frigo en in het receptformulier vindt nu alle ingrediënten van de recepten, en hetzelfde product wordt overal als één product gezien (geen "tomaten" naast "tomaat" meer). Algemene producten als pasta en kaas kunnen in de planner-frigo.
+- Bewaarde lijsten, frigo's, weekplannen en eigen recepten met oude codes worden vanzelf omgezet.
+
+**Jira:** [WEEK-205](https://proqltc-1791495894841.atlassian.net/browse/WEEK-205) · **Confluence:** [WEEK-205 Eén ingrediëntenlijst](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20905994)
+
 ## [0.111.1] – 2026-11-05
 
 - Frigo: afgevinkte receptingrediënten staan weer allemaal onder Recepten, niet deels bij Losse producten; verkeerd ingedeelde items worden bij het openen van de frigo hersteld.

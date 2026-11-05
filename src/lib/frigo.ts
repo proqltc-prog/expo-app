@@ -1,6 +1,6 @@
 // Virtuele frigo (WEEK-4): wat het gezin in huis heeft. Pure logica, zonder opslag.
 // Opslag op het toestel staat in src/opslag/frigo.ts.
-import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk, naarDbCode } from '@/data/ingredienten';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum, leesDatum } from '@/lib/houdbaarheid';
@@ -239,7 +239,7 @@ export function normaliseerFrigo(ruw: unknown): FrigoItem[] {
       toegevoegdOp,
       ...(typeof r.lijstId === 'string' ? { lijstId: r.lijstId } : {}),
       ...(r.bron === 'planner' || r.bron === 'los' ? { bron: r.bron } : {}),
-      ...(typeof r.code === 'string' && r.code ? { code: r.code } : {}),
+      ...(typeof r.code === 'string' && r.code ? { code: naarDbCode(r.code) } : {}), // WEEK-205: oude catalogus-codes worden databankcodes
       ...(product ? { product } : {}),
       ...(houdbaarTot ? { houdbaarTot } : {}),
     }];

@@ -7,13 +7,14 @@ import type { IngredientCode } from '@/data/ingredienten';
 export const VERMIJDBAAR = ['varkensvlees', 'schaaldieren', 'zuivel', 'vis', 'eieren', 'noten'] as const;
 export type Vermijd = (typeof VERMIJDBAAR)[number];
 
+// WEEK-205: databankcodes (één ingrediëntenlijst); de woorden hieronder blijven het vangnet voor namen zonder code.
 export const VERMIJD_CODES: Record<Vermijd, readonly IngredientCode[]> = {
-  varkensvlees: ['worsten'],
-  schaaldieren: ['scampi'],
-  zuivel: ['parmezaan', 'kaas', 'feta', 'melk', 'room', 'boter'],
-  vis: ['zalmfilet', 'kabeljauw', 'witvis', 'vissticks', 'tonijn'],
+  varkensvlees: ['worst', 'rookworst', 'spek', 'hesp', 'guanciale', 'varkensfilet', 'varkensgehakt', 'schouderkarbonade'],
+  schaaldieren: ['scampi', 'garnalen', 'garnalenpasta', 'mosselen', 'oestersaus'],
+  zuivel: ['kaas_parmezaan', 'kaas_geraspt', 'kaas_gruyere', 'feta', 'melk', 'room', 'boter', 'brie', 'creme_fraiche', 'gorgonzola', 'halloumi', 'kwark', 'mascarpone', 'mozzarella', 'pecorino', 'ricotta', 'roomkaas', 'skyr', 'yoghurt', 'zuivelspread_knoflook', 'zuivelspread_spinazie_avocado'],
+  vis: ['zalm', 'gerookte_zalm', 'kabeljauw', 'witvis', 'vissticks', 'tonijn_blik', 'vissaus', 'dashi'],
   eieren: ['eieren'],
-  noten: [],
+  noten: ['amandelen', 'cashewnoten', 'gemengde_noten', 'hazelnoten', 'notenmix', 'pecannoten', 'pistachenoten', 'walnoten', 'pijnboompitten', 'pinda'],
 };
 
 export const VERMIJD_WOORDEN: Record<Vermijd, { begin: readonly string[]; los: readonly string[] }> = {

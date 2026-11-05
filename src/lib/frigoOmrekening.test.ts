@@ -66,18 +66,18 @@ describe('verbruik met omrekening (WEEK-160)', () => {
 
 describe('koppelen op code en naam over talen heen (WEEK-160)', () => {
   test('een frigo-product in een andere taal koppelt aan het recept-ingrediënt via de code', () => {
-    const frans = ingredientNaam('tomaten', 'fr');
+    const frans = ingredientNaam('tomaat', 'fr');
     assert.ok(pastBij(f('x', frans, 200, 'g'), { naam: 'tomaat', code: 'tomaat', hoeveelheid: 200, eenheid: 'g' }));
   });
 
   test('de naam in een andere taal van dezelfde catalogus-code wordt herkend, zonder eigen code', () => {
-    assert.equal(dbCodeVanNaam(ingredientNaam('tomaten', 'nl')), 'tomaat');
-    assert.equal(dbCodeVanNaam(ingredientNaam('tomaten', 'en')), 'tomaat');
+    assert.equal(dbCodeVanNaam(ingredientNaam('tomaat', 'nl')), 'tomaat');
+    assert.equal(dbCodeVanNaam(ingredientNaam('tomaat', 'en')), 'tomaat');
   });
 
   test('catalogus-codes die verschillen van de databank worden omgezet (tomaten → tomaat)', () => {
-    assert.equal(dbCodeVanNaam(ingredientNaam('tomaten', 'de')), 'tomaat');
-    assert.ok(pastBij(f('x', ingredientNaam('tomaten', 'de'), 200, 'g'), { naam: 'Tomate', code: 'tomaat', hoeveelheid: 200, eenheid: 'g' }));
+    assert.equal(dbCodeVanNaam(ingredientNaam('tomaat', 'de')), 'tomaat');
+    assert.ok(pastBij(f('x', ingredientNaam('tomaat', 'de'), 200, 'g'), { naam: 'Tomate', code: 'tomaat', hoeveelheid: 200, eenheid: 'g' }));
   });
 
   test('twee verschillende codes passen niet, ook als de naam gelijk is', () => {

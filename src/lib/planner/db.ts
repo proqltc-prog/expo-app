@@ -1,7 +1,7 @@
 // Recepten uit de Supabase-database omzetten naar het formaat van het weekplan (WEEK-68).
 // Pure logica: geen netwerk. Het ophalen zit in src/opslag/receptenbank.ts.
 // Hoeveelheden in de database gelden voor 1 volwassene; hier worden ze geschaald naar het gezin (WEEK-67).
-import type { Afdeling } from '@/data/ingredienten';
+import { type Afdeling, afdelingVan, afdelingVoorCategorie, isIngredient } from '@/data/ingredienten';
 import { SEIZOENEN, type Seizoen } from '@/data/seizoenen';
 import type { Basis, Moment, Soort, StijlCode } from '@/data/receptenbank';
 import type { Taal } from '@/i18n';
@@ -46,24 +46,9 @@ export function kiesTekst(vertalingen: Vertalingen, taal: Taal): string | undefi
   return Object.values(vertalingen).map((v) => v?.trim()).find((v) => v);
 }
 
-/** Afdeling van de winkel voor een categorie uit de database. Onbekend = droge voeding. */
-export function afdelingVoorCategorie(categorie: string): Afdeling {
-  switch (categorie) {
-    case 'groente':
-      return 'groenten-fruit';
-    case 'vlees':
-    case 'vis':
-      return 'vlees-vis';
-    case 'zuivel':
-    case 'ei':
-    case 'eiwit':
-      return 'zuivel-eieren';
-    case 'condiment':
-    case 'vet':
-      return 'conserven-sauzen';
-    default:
-      return 'droge-voeding';
-  }
+/** De winkelafdeling van een databankingrediënt: via de ingrediëntenlijst (WEEK-205), anders via de categorie. */
+export function afdelingVoorIngredient(code: string, categorie: string): Afdeling {
+  return isIngredient(code) ? afdelingVan(code) : afdelingVoorCategorie(categorie);
 }
 
 /**
@@ -77,7 +62,7 @@ export function naarPlanRecept(r: DbRecept, taal: Taal, gezin: Gezin): PlanRecep
     naam: kiesTekst(i.namen, taal) ?? i.code,
     hoeveelheid: geschaaldeHoeveelheid(i.hoeveelheid, gezin, i.eenheid),
     eenheid: i.eenheid,
-    afdeling: afdelingVoorCategorie(i.categorie),
+    afdeling: afdelingVoorIngredient(i.code, i.categorie),
     // WEEK-154: de vaste code en alle namen, zodat het plan later in een andere taal getoond kan worden.
     code: i.code,
     namen: i.namen,

@@ -1,6 +1,6 @@
 import { isGeldigeIso, plandagenVoorDatums } from '@/lib/planner/datums';
 // Controle van een weekplan dat van buitenaf komt (opslag op het toestel of AI-antwoord).
-import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, naarDbCode } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
 import { MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/receptenbank';
 import { normaliseerMomenten } from './moment';
@@ -34,7 +34,7 @@ export function normaliseerIngredient(ruw: unknown): PlanIngredient | null {
   // WEEK-201: zonder geldige afdeling blijft het veld weg; het ingrediënt komt dan onder "overig".
   const ingredient: PlanIngredient = { naam, hoeveelheid, eenheid: tekst(ruw.eenheid) };
   if (AFDELINGEN.includes(ruw.afdeling as Afdeling)) ingredient.afdeling = ruw.afdeling as Afdeling;
-  if (tekst(ruw.code)) ingredient.code = tekst(ruw.code);
+  if (tekst(ruw.code)) ingredient.code = naarDbCode(tekst(ruw.code)); // WEEK-205: oude catalogus-codes worden databankcodes
   const namen = normaliseerVertalingen(ruw.namen);
   if (namen) ingredient.namen = namen;
   return ingredient;

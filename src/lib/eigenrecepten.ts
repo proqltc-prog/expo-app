@@ -1,7 +1,7 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
 // Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
-import { Afdeling, AFDELINGEN, afdelingVan, eenheidVan, IngredientCode } from '@/data/ingredienten';
+import { Afdeling, AFDELINGEN, afdelingVan, dbCodeVan, eenheidVan, IngredientCode } from '@/data/ingredienten';
 import { MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import type { Taal } from '@/i18n';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
@@ -118,7 +118,13 @@ export function normaliseerEigen(ruw: unknown): EigenRecept[] {
       minuten: Number.isFinite(r.minuten) && r.minuten >= 1 ? Math.round(r.minuten) : 30,
       stijlen: Array.isArray(r.stijlen) ? r.stijlen.filter((x): x is StijlCode => (STIJLEN as readonly string[]).includes(x)) : [],
       ...(Array.isArray(r.seizoenen) ? { seizoenen: r.seizoenen.filter((x): x is Seizoen => (SEIZOENEN as readonly string[]).includes(x)) } : {}),
-      ingredienten: r.ingredienten.filter((i) => i && typeof i === 'object' && typeof i.naam === 'string'),
+      // WEEK-205: oude catalogus-codes worden databankcodes; een onbekende code valt weg (het ingrediënt blijft als eigen ingrediënt).
+      ingredienten: r.ingredienten
+        .filter((i) => i && typeof i === 'object' && typeof i.naam === 'string')
+        .map(({ code, ...i }) => {
+          const db = typeof code === 'string' ? dbCodeVan(code) : undefined;
+          return db ? { ...i, code: db } : i;
+        }),
       stappen: r.stappen.filter((x): x is string => typeof x === 'string'),
     }));
 }

@@ -15,7 +15,7 @@ const vanCatalogus = (code: string) => {
 describe('vaste eenheid per ingrediënt (WEEK-160)', () => {
   test('tellingen in stuk of teentje, vloeistoffen in ml, de rest in gram', () => {
     assert.equal(eenheidVan('eieren'), 'stuk');
-    assert.equal(eenheidVan('look'), 'teentje');
+    assert.equal(eenheidVan('knoflook'), 'teentje');
     assert.equal(eenheidVan('olijfolie'), 'ml');
     assert.equal(eenheidVan('rijst'), 'g', 'rijst heeft geen databankcode: gram');
     assert.equal(eenheidVan('pasta'), 'g');
@@ -34,14 +34,16 @@ describe('voegPlannerToe met code, eenheid en hoeveelheid (WEEK-160)', () => {
   });
 
   test('look zonder hoeveelheid: databankcode knoflook en eenheid teentje, zonder hoeveelheid', () => {
-    const [f] = voegPlannerToe([], vanCatalogus('look'), nu);
+    const [f] = voegPlannerToe([], vanCatalogus('knoflook'), nu);
     assert.equal(f.code, 'knoflook');
     assert.equal(f.eenheid, 'teentje');
     assert.equal(f.hoeveelheid, undefined);
   });
 
-  test('pasta heeft geen receptenbank-code: het komt niet in de planner-frigo (WEEK-162)', () => {
-    assert.deepEqual(voegPlannerToe([], vanCatalogus('pasta'), nu, 500), []);
+  test('WEEK-205: ook pasta staat in de databank en komt in de planner-frigo (voorheen niet, WEEK-162)', () => {
+    const [p] = voegPlannerToe([], vanCatalogus('pasta'), nu, 500);
+    assert.equal(p.code, 'pasta');
+    assert.equal(p.bron, 'planner');
   });
 
   test('een tweede keer toevoegen van hetzelfde product verandert niets', () => {
@@ -58,7 +60,7 @@ describe('verbruik van een stuk-product met de databankcode (WEEK-160)', () => {
   });
 
   test('look in de frigo koppelt aan een recept met knoflook in teentjes, op code', () => {
-    const frigo = voegPlannerToe([], vanCatalogus('look'), nu, 10);
+    const frigo = voegPlannerToe([], vanCatalogus('knoflook'), nu, 10);
     const { frigo: na, verbruikt } = verbruik(frigo, [{ naam: 'knoflook', code: 'knoflook', hoeveelheid: 2, eenheid: 'teentje' }]);
     assert.equal(verbruikt.length, 1);
     assert.equal(na[0].hoeveelheid, 8);

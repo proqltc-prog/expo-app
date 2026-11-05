@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { afdelingVoorCategorie, DbRecept, kiesTekst, leesDbRecept, naarPlanRecept } from '@/lib/planner/db';
+import { DbRecept, kiesTekst, leesDbRecept, naarPlanRecept } from '@/lib/planner/db';
+import { afdelingVoorCategorie } from '@/data/ingredienten';
 
 const gezin1 = { volwassenen: 1, kinderen: 0 };
 const gezin2k = { volwassenen: 2, kinderen: 2 };

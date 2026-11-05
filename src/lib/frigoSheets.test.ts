@@ -27,7 +27,7 @@ describe('normaliseren en zoeken', () => {
 });
 
 describe('planner-frigo', () => {
-  const tomaat = kendUIt('tomaten');
+  const tomaat = kendUIt('tomaat');
 
   test('een catalogus-ingrediënt komt in de planner-sheet', () => {
     const f = voegPlannerToe([], tomaat, nu);
@@ -43,42 +43,36 @@ describe('planner-frigo', () => {
   });
 
   test('een los product met dezelfde naam blokkeert de planner-regel niet', () => {
-    const los = voegLosToe([], 'tomaten', nu);
+    const los = voegLosToe([], 'tomaat', nu);
     const beide = voegPlannerToe(los, tomaat, nu);
     assert.equal(sheets(beide).planner.length, 1);
     assert.equal(sheets(beide).los.length, 1);
   });
 });
 
-describe('planner-frigo beperkt tot de receptenbank (WEEK-162)', () => {
-  test('pasta, kaas en rijst kent de receptenbank niet: ze komen niet in de planner-frigo', () => {
-    for (const code of ['pasta', 'kaas', 'rijst']) {
-      assert.equal(inReceptenbank(code as never), false, code);
-      const frigo: FrigoItem[] = [];
-      assert.deepEqual(voegPlannerToe(frigo, kendUIt(code), nu), [], code);
+describe('planner-frigo en de ingrediëntenlijst (WEEK-162, sinds WEEK-205 één lijst uit de databank)', () => {
+  test('elk ingrediënt uit de lijst zit in de databank, ook algemene producten als pasta, kaas en rijst', () => {
+    for (const code of ['pasta', 'kaas_geraspt', 'rijst', 'tomaat'] as const) {
+      assert.equal(inReceptenbank(code), true, code);
+      assert.equal(voegPlannerToe([], kendUIt(code), nu).length, 1, code);
     }
   });
 
-  test('een ingrediënt uit de receptenbank komt er wel in', () => {
-    assert.equal(inReceptenbank('tomaten'), true);
-    assert.equal(voegPlannerToe([], kendUIt('tomaten'), nu).length, 1);
+  test('een oude catalogus-code (kaas, tomaten) telt als zijn databankcode', () => {
+    assert.equal(inReceptenbank('kaas' as never), true);
+    assert.equal(inReceptenbank('tomaten' as never), true);
+    assert.equal(inReceptenbank('bestaat-niet' as never), false);
   });
 
-  test('de zoekfunctie van de planner-frigo toont geen generieke items zonder receptenbank-code', () => {
-    const treffers = zoekReceptenbank('pasta', 'nl');
-    assert.equal(treffers.some((i) => i.code === 'pasta'), false);
-    assert.equal(zoekReceptenbank('kaas', 'nl').some((i) => i.code === 'kaas'), false);
-    assert.ok(zoekReceptenbank('tomat', 'nl').length > 0,'gewone receptenbank-ingrediënten blijven zoekbaar');
+  test('de zoekfunctie van de planner-frigo is dezelfde als de algemene zoekfunctie', () => {
+    assert.ok(zoekReceptenbank('pasta', 'nl').some((i) => i.code === 'pasta'));
+    assert.ok(zoekReceptenbank('toma', 'nl').some((i) => i.code === 'tomaat'));
+    assert.deepEqual(zoekReceptenbank('gember', 'nl').map((i) => i.code), zoekCatalogus('gember', 'nl').map((i) => i.code));
   });
 
-  test('de algemene zoekfunctie (catalogus) blijft ongewijzigd: losse producten mogen alles', () => {
-    assert.ok(zoekCatalogus('pasta', 'nl').some((i) => i.code === 'pasta'));
-  });
-
-  test('regressie: een los product "pasta" blijft mogelijk en telt niet mee voor de planner', () => {
-    const f = voegLosToe([], 'pasta', nu);
-    assert.equal(f[0].bron, 'los');
-    assert.equal(sheets(f).planner.length, 0);
+  test('de algemene zoekfunctie vindt ook ingrediënten die vroeger enkel in de databank zaten', () => {
+    assert.ok(zoekCatalogus('shiitake', 'nl').some((i) => i.code === 'shiitake'));
+    assert.ok(zoekCatalogus('Ingwer', 'de').some((i) => i.code === 'gember'));
   });
 });
 
@@ -95,13 +89,13 @@ describe('losse producten', () => {
 });
 
 describe('koppelen van bestaande items', () => {
-  test('een item dat overeenkomt met de catalogus wordt planner-frigo', () => {
-    const oud = voegZelfToe([], 'Tomaten', nu, {});
+  test('een item dat overeenkomt met de ingrediëntenlijst wordt planner-frigo', () => {
+    const oud = voegZelfToe([], 'Tomaat', nu, {});
     assert.equal(koppelBronnen(oud)[0].bron, 'planner');
   });
-  test('regressie WEEK-162: een item uit de catalogus zonder receptenbank-code (pasta) wordt los, niet planner', () => {
+  test('WEEK-205: ook een algemeen product als pasta staat in de databank en wordt planner (voorheen los, WEEK-162)', () => {
     const oud = voegZelfToe([], 'Pasta', nu, {});
-    assert.equal(koppelBronnen(oud)[0].bron, 'los');
+    assert.equal(koppelBronnen(oud)[0].bron, 'planner');
   });
   test('een item in een andere taal van de catalogus koppelt ook', () => {
     assert.ok(inCatalogus('pâtes') !== undefined);
@@ -125,7 +119,7 @@ describe('koppelen van bestaande items', () => {
 describe('niets verdwijnt automatisch (regressie)', () => {
   test('de twee sheets bevatten samen precies de hele frigo', () => {
     let f: FrigoItem[] = [];
-    f = voegPlannerToe(f, kendUIt('tomaten'), nu);
+    f = voegPlannerToe(f, kendUIt('tomaat'), nu);
     f = voegLosToe(f, 'los product', nu);
     f = voegLosToe(f, 'nog een los product', nu);
     const s = sheets(f);
@@ -150,7 +144,7 @@ describe('sheetkleuren (WEEK-75)', () => {
     }
   });
   test('regressie: de sheet-indeling blijft gelijk na de kleurwijziging', () => {
-    const f = voegLosToe(voegPlannerToe([], kendUIt('tomaten'), nu), 'los product', nu);
+    const f = voegLosToe(voegPlannerToe([], kendUIt('tomaat'), nu), 'los product', nu);
     assert.equal(sheets(f).planner.length, 1);
     assert.equal(sheets(f).los.length, 1);
   });
@@ -161,7 +155,7 @@ describe('teller per sheet (WEEK-96)', () => {
     const nu = new Date('2026-10-19T10:00:00');
     let frigo: FrigoItem[] = [];
     // Zelfde ingrediënt twee keer toegevoegd: twee frigo-items, één product op het scherm.
-    frigo = voegPlannerToe(frigo, kendUIt('tomaten'), nu);
+    frigo = voegPlannerToe(frigo, kendUIt('tomaat'), nu);
     frigo = [...frigo, { ...frigo[0], id: 'dubbel' }];
     assert.equal(sheets(frigo).planner.length, 2);
     assert.equal(aantalSheet(frigo, 'planner'), 1);
@@ -169,7 +163,7 @@ describe('teller per sheet (WEEK-96)', () => {
 
   test('de sheets tellen elk enkel hun eigen producten', () => {
     const nu = new Date('2026-10-19T10:00:00');
-    let frigo: FrigoItem[] = voegPlannerToe([], kendUIt('tomaten'), nu);
+    let frigo: FrigoItem[] = voegPlannerToe([], kendUIt('tomaat'), nu);
     frigo = voegLosToe(frigo, 'Yoghurt', nu);
     assert.equal(aantalSheet(frigo, 'planner'), 1);
     assert.equal(aantalSheet(frigo, 'los'), 1);
@@ -215,7 +209,51 @@ describe('WEEK-204: koppelBronnen laat lijst- en code-items met rust', () => {
 
   test('regressie: vrije items zonder lijst of code worden nog altijd op naam ingedeeld', () => {
     const oud = voegZelfToe(voegZelfToe([], 'Pasta', nu, {}), 'jam van oma', nu, {});
-    assert.deepEqual(koppelBronnen(oud).map((x) => x.bron), ['los', 'los']);
+    assert.deepEqual(koppelBronnen(oud).map((x) => x.bron), ['planner', 'los']);
     assert.equal(koppelBronnen(voegZelfToe([], kendUIt('ui').naam, nu, {}))[0].bron, 'planner');
+  });
+});
+
+// WEEK-205: één ingrediëntenlijst. Oude catalogus-codes in bewaarde gegevens worden bij het inlezen databankcodes.
+describe('WEEK-205: oude codes worden bij het inlezen databankcodes', () => {
+  test('lijst: een bewaard item met code tomaten krijgt code tomaat', async () => {
+    const { leesLijstItem } = await import('@/lib/lijst');
+    assert.equal(leesLijstItem({ id: 'x', naam: 'Tomaten', categorie: 'extra', afgevinkt: false, code: 'tomaten' })?.code, 'tomaat');
+    assert.equal(leesLijstItem({ id: 'y', naam: 'Gember', categorie: 'extra', afgevinkt: false, code: 'gember' })?.code, 'gember');
+  });
+
+  test('frigo: een bewaard item met code look krijgt code knoflook', async () => {
+    const { normaliseerFrigo } = await import('@/lib/frigo');
+    const [f] = normaliseerFrigo([{ id: 'a', naam: 'look', afdeling: 'groenten-fruit', toegevoegdOp: nu.toISOString(), code: 'look' }]);
+    assert.equal(f.code, 'knoflook');
+  });
+
+  test('weekplan: een bewaard ingrediënt met code kaas krijgt code kaas_geraspt', async () => {
+    const { normaliseerWeekplan } = await import('@/lib/planner/normaliseer');
+    const plan = normaliseerWeekplan({
+      dagen: [{ dag: 'maandag', recept: { id: 'r', naam: 'Test', soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [{ naam: 'kaas', hoeveelheid: 50, eenheid: 'g', code: 'kaas' }] } }],
+      kooktijden: [], stijlen: [], taal: 'nl', porties: 2, bron: 'lokaal', gemaaktOp: nu.toISOString(),
+    });
+    assert.equal(plan?.dagen[0].recept.ingredienten[0].code, 'kaas_geraspt');
+  });
+
+  test('eigen recept: een bewaard ingrediënt met code wortelen krijgt code wortel; een onbekende code valt weg', async () => {
+    const { normaliseerEigen } = await import('@/lib/eigenrecepten');
+    const [r] = normaliseerEigen([{ id: 'e', naam: 'Soep', soort: 'vegetarisch', minuten: 30, stijlen: [], stappen: ['Kook.'], ingredienten: [
+      { code: 'wortelen', naam: 'wortelen', hoeveelheid: 2, eenheid: 'stuk' },
+      { code: 'bestaat-niet', naam: 'Geheim kruid', hoeveelheid: 5, eenheid: 'g' },
+    ] }]);
+    assert.equal(r.ingredienten[0].code, 'wortel');
+    assert.equal(r.ingredienten[1].code, undefined);
+    assert.equal(r.ingredienten[1].naam, 'Geheim kruid');
+  });
+
+  test('de ingrediëntenlijst bevat de databank: 285 ingrediënten, elk met naam in vier talen en een afdeling', async () => {
+    const { INGREDIENT_CODES, ingredientNaam, afdelingVan, AFDELINGEN } = await import('@/data/ingredienten');
+    assert.ok(INGREDIENT_CODES.length >= 285);
+    for (const code of INGREDIENT_CODES) {
+      for (const taal of ['nl', 'fr', 'de', 'en'] as const) assert.ok(ingredientNaam(code, taal).trim().length > 0, `${code} ${taal}`);
+      assert.ok((AFDELINGEN as string[]).includes(afdelingVan(code)), code);
+    }
   });
 });
