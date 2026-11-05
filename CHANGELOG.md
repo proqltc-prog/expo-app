@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.112.1] – 2026-11-05
+
+- Weekmenu: de voorrang voor recepten die iets uit de frigo gebruiken, herkent producten nu op hun databankcode, net als Gekookt en de lijst. Een product dat in een andere taal of onder een oude code in de frigo staat, telt daardoor ook mee; voor producten zonder code blijft de naam gelden.
+
+**Jira:** [WEEK-206](https://proqltc-1791495894841.atlassian.net/browse/WEEK-206) · **Confluence:** [WEEK-206 Frigo-voorrang op databankcode](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21069825)
+
 ## [0.112.0] – 2026-11-05
 
 - Eén ingrediëntenlijst: de app gebruikt de ingrediënten uit de databank (285) in plaats van een eigen lokale lijst (58). Zoeken op de lijst, in de frigo en in het receptformulier vindt nu alle ingrediënten van de recepten, en hetzelfde product wordt overal als één product gezien (geen "tomaten" naast "tomaat" meer). Algemene producten als pasta en kaas kunnen in de planner-frigo.

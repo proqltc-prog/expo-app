@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { RECEPTENBANK } from '@/data/receptenbank';
 import { FrigoItem, trekFrigoAf, verdeelFrigo } from '@/lib/frigo';
 import { itemsUitPlan, voegPlanToe } from '@/lib/lijst';
-import { frigoScore, kiesEersteDag, markeerUitFrigo } from '@/lib/planner/frigovoorrang';
+import { frigoScore, frigoScoreIngredienten, frigoScoreNamen, kiesEersteDag, markeerUitFrigo } from '@/lib/planner/frigovoorrang';
 import { planLokaal } from '@/lib/planner/lokaal';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, PlanVerzoek } from '@/lib/planner/types';
@@ -78,9 +78,10 @@ describe('frigoScore en kiesEersteDag', () => {
     assert.ok(linzen > kip, `${linzen} > ${kip}`);
     assert.equal(frigoScore(bank('pasta-pesto'), frigo, 'nl', NU), 0);
   });
-  test('herkent producten in de taal van het plan', () => {
+  test('herkent producten in elke taal, los van de taal van het plan (WEEK-206)', () => {
     assert.ok(frigoScore(bank('linzencurry'), [f('épinards', 200, 'g', 2)], 'fr', NU) > 0);
-    assert.equal(frigoScore(bank('linzencurry'), [f('épinards', 200, 'g', 2)], 'nl', NU), 0);
+    assert.ok(frigoScore(bank('linzencurry'), [f('épinards', 200, 'g', 2)], 'nl', NU) > 0);
+    assert.ok(frigoScore(bank('linzencurry'), [f('Spinat', 200, 'g', 2)], 'en', NU) > 0);
   });
   test('kiest het recept dat het meest opmaakt; niets in de frigo = geen keuze', () => {
     const r = kiesEersteDag(RECEPTENBANK, [f('spinazie', 200, 'g', 5), f('kokosmelk', 400, 'ml', 5), f('linzen', 500, 'g', 5)], 'nl', NU);
@@ -118,3 +119,27 @@ describe('markeerUitFrigo', () => {
   });
 });
 
+
+describe('frigoScoreIngredienten: vergelijkt op databankcode (WEEK-206)', () => {
+  const frigo = [f('spinazie', 200, 'g', 3, { code: 'spinazie' })];
+  test('een databankrecept in een andere taal herkent het product op zijn code', () => {
+    assert.equal(frigoScoreIngredienten([{ naam: 'épinards', code: 'spinazie' }], frigo, NU), 4);
+    assert.equal(frigoScoreIngredienten([{ naam: 'spinach', code: 'spinazie' }], frigo, NU), 4);
+  });
+  test('een oude catalogus-code en een naam in een andere taal koppelen ook (WEEK-205)', () => {
+    const oud = [f('tomaten', 3, 'stuk', 2, { code: 'tomaten' })];
+    assert.equal(frigoScoreIngredienten([{ naam: 'tomate', code: 'tomaat' }], oud, NU), 3);
+    assert.equal(frigoScoreIngredienten([{ naam: 'Tomaat', code: 'tomaat' }], [f('tomate', 3, 'stuk', 2)], NU), 3);
+  });
+  test('verschillende codes met dezelfde naam tellen niet mee', () => {
+    assert.equal(frigoScoreIngredienten([{ naam: 'spinazie', code: 'linzen' }], frigo, NU), 0);
+  });
+  test('zonder code blijft de naam het vangnet; een onbekende naam zonder product scoort 0', () => {
+    assert.equal(frigoScoreIngredienten([{ naam: 'Mysterieus kruid' }], [f('mysterieus kruid', 1, 'stuk', 1)], NU), 2);
+    assert.equal(frigoScoreIngredienten([{ naam: 'mysterieus kruid' }], [f('ander kruid', 1, 'stuk', 1)], NU), 0);
+    assert.equal(frigoScoreNamen(['spinazie'], frigo, NU), 4);
+  });
+  test('losse producten tellen nooit mee (regressie WEEK-158)', () => {
+    assert.equal(frigoScoreIngredienten([{ naam: 'spinazie', code: 'spinazie' }], [f('spinazie', 200, 'g', 3, { code: 'spinazie', bron: 'los' })], NU), 0);
+  });
+});
