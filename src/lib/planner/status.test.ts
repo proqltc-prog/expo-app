@@ -54,14 +54,23 @@ describe('markeerOntbrekend', () => {
     assert.deepEqual(nieuw.dagen[1].ontbreekt, ['Pasta']);
   });
 
-  test('alle ingrediënten weg: het recept springt naar gedaan', () => {
-    const een = markeerOntbrekend(plan, [f('a', 'pasta')], []);
+  test('alle ingrediënten weg: een bevestigd recept springt naar gedaan', () => {
+    const bevestigd = { ...plan, dagen: plan.dagen.map((d) => ({ ...d, bevestigd: true })) };
+    const een = markeerOntbrekend(bevestigd, [f('a', 'pasta')], []);
     assert.equal(receptStatus(een.dagen[0]), 'ontbreekt');
     const twee = markeerOntbrekend(een, [f('b', 'pesto')], []);
     assert.equal(receptStatus(twee.dagen[0]), 'gedaan');
     assert.equal(twee.dagen[0].ontbreekt, undefined);
-    const omelet = markeerOntbrekend(plan, [f('e', 'eieren')], []);
+    const omelet = markeerOntbrekend(bevestigd, [f('e', 'eieren')], []);
     assert.equal(receptStatus(omelet.dagen[2]), 'gedaan');
+  });
+
+  // WEEK-204: een voorstel dat nog niet bevestigd is, mag niet op "gedaan" springen: dan was de kaart niet meer te wijzigen.
+  test('WEEK-204: alle ingrediënten weg bij een niet-bevestigd recept: blijft ontbreekt, niet gedaan', () => {
+    const omelet = markeerOntbrekend(plan, [f('e', 'eieren')], []);
+    assert.equal(receptStatus(omelet.dagen[2]), 'ontbreekt');
+    assert.equal(omelet.dagen[2].gedaan, undefined);
+    assert.deepEqual(omelet.dagen[2].ontbreekt, ['eieren']);
   });
 
   test('hetzelfde ingrediënt twee keer verwijderen zet het maar één keer op ontbrekend', () => {

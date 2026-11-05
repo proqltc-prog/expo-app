@@ -369,6 +369,19 @@ describe('lijstitems per weekplan (WEEK-29)', () => {
     // en wie toch opnieuw koopt, krijgt een tweede exemplaar in de frigo
     assert.equal(pasFrigoAan(frigo, [week2[0]], true, new Date('2026-10-10T10:00:00Z')).length, 2);
   });
+  // WEEK-204: wat uit precies dit lijstitem gekocht werd, komt na "Wissen" bij het opnieuw overzetten terug als gekocht, niet als open boodschap.
+  test('WEEK-204: een gekocht en gewist item komt bij het opnieuw overzetten als afgevinkt terug', async () => {
+    const { pasFrigoAan, trekFrigoAf } = await import('@/lib/frigo');
+    const week = itemsUitPlan(dagen, 'w1');
+    const gekocht = vinkAf(week, [week[0].id], true);
+    const frigo = pasFrigoAan([], [week[0]], true, new Date('2026-10-03T10:00:00Z'));
+    const gewist = gekocht.filter((i) => !i.afgevinkt); // de knop Wissen
+    const opnieuw = voegPlanToe(gewist, dagen, 'nl', (items) => trekFrigoAf(items, frigo), 'w1');
+    const terug = opnieuw.find((i) => i.id === week[0].id);
+    assert.equal(terug?.afgevinkt, true);
+    // regressie: de andere items blijven open en worden niet door het gekochte product gedekt
+    assert.ok(opnieuw.filter((i) => i.id !== week[0].id && i.recept).every((i) => !i.afgevinkt));
+  });
 });
 
 describe('selectievakje per sectie (WEEK-111)', () => {

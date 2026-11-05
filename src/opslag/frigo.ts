@@ -26,7 +26,8 @@ export function wijzigFrigo(wijziging: (frigo: FrigoItem[]) => FrigoItem[]): Pro
   });
 }
 
-const SLEUTEL_KOPPELING = 'famenu.frigoBronKoppeling';
+// WEEK-204: nieuwe sleutel, zodat de koppeling op elk toestel nog één keer draait en verkeerd ingedeelde items herstelt.
+const SLEUTEL_KOPPELING = 'famenu.frigoBronKoppeling.v2';
 
 /** Is de eenmalige koppeling van de bestaande frigo al gedaan (WEEK-71 deel 2)? */
 export async function koppelingGedaan(): Promise<boolean> {

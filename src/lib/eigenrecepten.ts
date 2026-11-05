@@ -1,6 +1,6 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
 // Hoeveelheden zijn per volwassen portie, zoals de receptenbank.
-import { Eenheid, Soort, StijlCode } from '@/data/receptenbank';
+import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
 import { Afdeling, AFDELINGEN, afdelingVan, eenheidVan, IngredientCode } from '@/data/ingredienten';
 import { MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import type { Taal } from '@/i18n';
@@ -101,15 +101,26 @@ export function valideer(invoer: Invoer): { ok: true; waarden: Gewaardeerd } | {
  */
 export function normaliseerEigen(ruw: unknown): EigenRecept[] {
   if (!Array.isArray(ruw)) return [];
-  return ruw.filter(
-    (r): r is EigenRecept =>
-      typeof r === 'object' &&
-      r !== null &&
-      typeof (r as EigenRecept).id === 'string' &&
-      typeof (r as EigenRecept).naam === 'string' &&
-      Array.isArray((r as EigenRecept).ingredienten) &&
-      Array.isArray((r as EigenRecept).stappen)
-  );
+  return ruw
+    .filter(
+      (r): r is EigenRecept =>
+        typeof r === 'object' &&
+        r !== null &&
+        typeof (r as EigenRecept).id === 'string' &&
+        typeof (r as EigenRecept).naam === 'string' &&
+        Array.isArray((r as EigenRecept).ingredienten) &&
+        Array.isArray((r as EigenRecept).stappen)
+    )
+    // WEEK-204: een oud of gesynchroniseerd recept zonder stijlen, seizoenen of geldige soort/minuten mag de app niet laten vastlopen.
+    .map((r) => ({
+      ...r,
+      soort: (SOORTEN as readonly string[]).includes(r.soort) ? r.soort : 'vegetarisch',
+      minuten: Number.isFinite(r.minuten) && r.minuten >= 1 ? Math.round(r.minuten) : 30,
+      stijlen: Array.isArray(r.stijlen) ? r.stijlen.filter((x): x is StijlCode => (STIJLEN as readonly string[]).includes(x)) : [],
+      ...(Array.isArray(r.seizoenen) ? { seizoenen: r.seizoenen.filter((x): x is Seizoen => (SEIZOENEN as readonly string[]).includes(x)) } : {}),
+      ingredienten: r.ingredienten.filter((i) => i && typeof i === 'object' && typeof i.naam === 'string'),
+      stappen: r.stappen.filter((x): x is string => typeof x === 'string'),
+    }));
 }
 
 /** Een nieuwe id; uniek genoeg voor één gezin op één toestel. */

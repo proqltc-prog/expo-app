@@ -186,4 +186,9 @@ describe('planrecepten op het weekmenu', () => {
     assert.equal(nieuw.dagen[0].recept.id, 'y');
     assert.equal(nieuw.dagen[0].gedaan, undefined);
   });
+
+  test('WEEK-204: een planrecept vervangen houdt de datum van de dag', () => {
+    const p = plan([{ dag: 'woensdag', datum: '2026-11-11', recept: r1 }]);
+    assert.equal(vervangDoorPlanRecept(p, 0, r2).dagen[0].datum, '2026-11-11');
+  });
 });

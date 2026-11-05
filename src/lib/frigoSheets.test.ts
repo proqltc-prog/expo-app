@@ -180,3 +180,42 @@ describe('teller per sheet (WEEK-96)', () => {
     assert.equal(SHEET_ICOON.los, 'cube-outline');
   });
 });
+
+// WEEK-204: wat via de boodschappenlijst uit een recept kwam, blijft in de planner-frigo, ook zonder lokale catalogusnaam.
+describe('WEEK-204: koppelBronnen laat lijst- en code-items met rust', () => {
+  const uitLijst = (naam: string, code?: string, bron: 'planner' | 'los' = 'planner'): FrigoItem => ({
+    id: `lijst:${naam}`,
+    naam,
+    afdeling: 'overig',
+    toegevoegdOp: nu.toISOString(),
+    lijstId: `l-${naam}`,
+    bron,
+    ...(code ? { code } : {}),
+  });
+
+  test('een receptingrediënt van de lijst dat niet in de lokale catalogus staat, blijft planner', () => {
+    const f = [uitLijst('gember', 'gember'), uitLijst('shiitake', 'shiitake'), uitLijst('lente-ui', 'lente-ui')];
+    assert.deepEqual(koppelBronnen(f).map((x) => x.bron), ['planner', 'planner', 'planner']);
+  });
+
+  test('een los product van de lijst blijft los, ook als de naam in de catalogus staat', () => {
+    const f = [uitLijst('ui', undefined, 'los')];
+    assert.equal(koppelBronnen(f)[0].bron, 'los');
+  });
+
+  test('een item met code dat eerder verkeerd als los stond, wordt hersteld naar planner', () => {
+    const f = [uitLijst('gember', 'gember', 'los'), { ...uitLijst('shiitake', 'shiitake', 'los'), lijstId: undefined }];
+    assert.deepEqual(koppelBronnen(f).map((x) => x.bron), ['planner', 'planner']);
+  });
+
+  test('een oud lijstitem zonder bron wordt planner (afgeleid van lijstId)', () => {
+    const { bron: _weg, ...zonder } = uitLijst('gember', 'gember');
+    assert.equal(koppelBronnen([zonder])[0].bron, 'planner');
+  });
+
+  test('regressie: vrije items zonder lijst of code worden nog altijd op naam ingedeeld', () => {
+    const oud = voegZelfToe(voegZelfToe([], 'Pasta', nu, {}), 'jam van oma', nu, {});
+    assert.deepEqual(koppelBronnen(oud).map((x) => x.bron), ['los', 'los']);
+    assert.equal(koppelBronnen(voegZelfToe([], kendUIt('ui').naam, nu, {}))[0].bron, 'planner');
+  });
+});
