@@ -275,7 +275,7 @@ export function omrekenFactor(van: string | undefined, naar: string | undefined)
 }
 
 /** De databankcode van een frigo-item of ingrediënt: de eigen code, anders afgeleid van de naam in een taal (WEEK-160). */
-function codeVan(x: { naam: string; code?: string }): string | undefined {
+export function codeVan(x: { naam: string; code?: string }): string | undefined {
   return x.code ? dbCodeVan(x.code) : dbCodeVanNaam(x.naam);
 }
 

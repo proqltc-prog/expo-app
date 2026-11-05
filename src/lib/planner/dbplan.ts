@@ -17,7 +17,7 @@ import { dagenVoorVerzoek, plandagenVoorDatums, voegDatumsToe } from '@/lib/plan
 import { seizoenPasst, seizoenVan } from '@/lib/planner/seizoen';
 import type { Vermijd } from '@/data/vermijden';
 import { heeftVermijdNaam } from '@/lib/planner/vermijden';
-import { frigoScoreNamen } from '@/lib/planner/frigovoorrang';
+import { frigoScoreIngredienten } from '@/lib/planner/frigovoorrang';
 
 /** Recepten met een vermeden ingrediënt vallen altijd weg, ook bij aanvullen (WEEK-116). */
 export function zonderVermeden(pool: DbPoolRecept[], vermijd: readonly Vermijd[] | undefined): DbPoolRecept[] {
@@ -148,11 +148,9 @@ export function planUitDatabase(verzoek: PlanVerzoek, invoer: DbPoolRecept[]): W
   let versoepeld = false;
   const seizoenPerDag = new Map(plandagenVoorDatums(verzoek.datums ?? []).map((p) => [p.dag, seizoenVan(p.datum)]));
   // WEEK-188: recepten die iets uit de frigo gebruiken, komen eerst (binnen de wensen en het seizoen).
-  // Pas als die er niet zijn, kiest de planner uit de rest van de databank.
+  // Pas als die er niet zijn, kiest de planner uit de rest van de databank. Vergeleken op code (WEEK-206).
   const frigo = verzoek.frigo ?? [];
-  const frigoPool = frigo.length
-    ? pool.filter((k) => frigoScoreNamen(k.recept.ingredienten.map((i) => i.naam), frigo, new Date()) > 0)
-    : [];
+  const frigoPool = frigo.length ? pool.filter((k) => frigoScoreIngredienten(k.recept.ingredienten, frigo, new Date()) > 0) : [];
   for (const dag of dagenVoorVerzoek(verzoek, PERIODE_STANDAARD)) {
     for (const moment of momenten) {
       const seizoen = seizoenPerDag.get(dag);
