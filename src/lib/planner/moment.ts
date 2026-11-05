@@ -1,10 +1,10 @@
 // Maaltijdmoment van een plan. De planner kiest enkel avondeten (WEEK-189).
 // Recepten zonder moment zijn avondrecepten.
-import { BankRecept, Moment, MOMENTEN } from '@/data/receptenbank';
+import { Moment, MOMENTEN } from '@/data/recept';
 
 export const MOMENT_STANDAARD: Moment[] = ['avond'];
 
-export function momentVan(recept: Pick<BankRecept, 'moment'>): Moment {
+export function momentVan(recept: { moment?: Moment }): Moment {
   return recept.moment ?? 'avond';
 }
 

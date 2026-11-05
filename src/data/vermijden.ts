@@ -1,21 +1,10 @@
-// Ingrediënten die de gebruiker wil vermijden (WEEK-41). Per keuze: de codes uit de lokale receptenbank,
-// woorden om recepten van de AI en favorieten te herkennen (in de zes talen), en een Engelse omschrijving voor de AI.
+// Ingrediënten die de gebruiker wil vermijden (WEEK-41). Per keuze: woorden om de ingrediëntnamen van
+// databankrecepten en eigen recepten te herkennen (in de talen van de app).
 // Woorden worden vergeleken zonder accenten en kleine letters. `begin`: het woord begint een woord in de naam;
 // `los`: enkel het hele woord (zodat "ham" niet in "hamburger" valt).
-import type { IngredientCode } from '@/data/ingredienten';
 
 export const VERMIJDBAAR = ['varkensvlees', 'schaaldieren', 'zuivel', 'vis', 'eieren', 'noten'] as const;
 export type Vermijd = (typeof VERMIJDBAAR)[number];
-
-// WEEK-205: databankcodes (één ingrediëntenlijst); de woorden hieronder blijven het vangnet voor namen zonder code.
-export const VERMIJD_CODES: Record<Vermijd, readonly IngredientCode[]> = {
-  varkensvlees: ['worst', 'rookworst', 'spek', 'hesp', 'guanciale', 'varkensfilet', 'varkensgehakt', 'schouderkarbonade'],
-  schaaldieren: ['scampi', 'garnalen', 'garnalenpasta', 'mosselen', 'oestersaus'],
-  zuivel: ['kaas_parmezaan', 'kaas_geraspt', 'kaas_gruyere', 'feta', 'melk', 'room', 'boter', 'brie', 'creme_fraiche', 'gorgonzola', 'halloumi', 'kwark', 'mascarpone', 'mozzarella', 'pecorino', 'ricotta', 'roomkaas', 'skyr', 'yoghurt', 'zuivelspread_knoflook', 'zuivelspread_spinazie_avocado'],
-  vis: ['zalm', 'gerookte_zalm', 'kabeljauw', 'witvis', 'vissticks', 'tonijn_blik', 'vissaus', 'dashi'],
-  eieren: ['eieren'],
-  noten: ['amandelen', 'cashewnoten', 'gemengde_noten', 'hazelnoten', 'notenmix', 'pecannoten', 'pistachenoten', 'walnoten', 'pijnboompitten', 'pinda'],
-};
 
 export const VERMIJD_WOORDEN: Record<Vermijd, { begin: readonly string[]; los: readonly string[] }> = {
   varkensvlees: {

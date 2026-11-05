@@ -20,7 +20,7 @@ export type LijstItem = {
   afdeling?: Afdeling;
   /** Vaste ingrediëntcode (taalonafhankelijk); enkel voor items uit de weekplanning (WEEK-159). */
   code?: string;
-  /** Het recept waar dit ingrediënt bij hoort (enkel voor items uit de weekplanning). `id` is de databank- of receptenbankcode (WEEK-160). */
+  /** Het recept waar dit ingrediënt bij hoort (enkel voor items uit de weekplanning). `id` is de databankcode (WEEK-160). */
   recept?: { dag: DagCode; naam: string; id?: string };
   /** Naam van het gezinslid dat het item zelf toevoegde (gedeelde lijst, WEEK-17). */
   door?: string;
@@ -281,7 +281,7 @@ export function bewerkLijstItem(
 }
 
 /**
- * Een ingrediënt uit de receptenbank op de lijst zetten (WEEK-164, sheet Recepten).
+ * Een ingrediënt uit de ingrediëntenlijst van de databank op de lijst zetten (WEEK-164, sheet Recepten).
  * Het krijgt de vaste code, eenheid en afdeling van het ingrediënt, zodat het later met de frigo en de recepten koppelt.
  * Staat dezelfde code al open op de lijst, dan verandert er niets: geen dubbele regel.
  */

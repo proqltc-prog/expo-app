@@ -1,8 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { bereidingVoor, ingredientenMetFrigo, ingredientenVoor, toonBereidingsIcoon } from '@/lib/bereiding';
-import { BEREIDINGEN } from '@/data/bereidingen';
-import { RECEPTENBANK } from '@/data/receptenbank';
+import { testRecept } from '@/lib/planner/testrecepten';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import type { Weekplan } from '@/lib/planner/types';
 import type { FrigoItem } from '@/lib/frigo';
@@ -18,21 +17,33 @@ const eigen: EigenRecept = {
   bijgewerkt: '2026-10-18T10:00:00.000Z',
 };
 
-const bank = RECEPTENBANK.find((r) => r.id === 'pasta-pesto')!;
+const curry = testRecept(1); // linzencurry: stappen in nl, fr en en
+const cacio = testRecept(2); // cacio e pepe: enkel Nederlandse stappen
+const db = [curry, cacio];
 
-describe('bereidingVoor (WEEK-81)', () => {
-  test('een ingebouwd recept geeft de stappen in de taal van de gebruiker', () => {
-    const stappen = bereidingVoor({ id: bank.id, naam: bank.namen[1] }, [], 'fr');
-    assert.deepEqual(stappen, BEREIDINGEN['pasta-pesto'].fr);
+describe('bereidingVoor (WEEK-81, WEEK-121: stappen uit de databank)', () => {
+  test('een databankrecept geeft de stappen in de taal van de gebruiker', () => {
+    const stappen = bereidingVoor({ id: 'db-1', naam: curry.titels.fr! }, [], 'fr', db);
+    assert.deepEqual(stappen, curry.bereidingen!.fr);
   });
 
-  test('een ingebouwd recept zoekt ook op naam, als het id ontbreekt; een taal buiten de app valt terug op Engels', () => {
-    const stappen = bereidingVoor({ id: 'onbekend', naam: bank.namen[3] }, [], 'es' as never);
-    assert.deepEqual(stappen, BEREIDINGEN['pasta-pesto'].en);
+  test('ontbreekt de taal, dan vallen de stappen terug op het Nederlands', () => {
+    assert.deepEqual(bereidingVoor({ id: 'db-2', naam: cacio.titels.de! }, [], 'de', db), cacio.bereidingen!.nl);
   });
 
   test('het Nederlands geeft de Nederlandse stappen, ook als de naam in een andere taal staat', () => {
-    assert.deepEqual(bereidingVoor({ id: bank.id, naam: bank.namen[3] }, [], 'nl'), BEREIDINGEN['pasta-pesto'].nl);
+    assert.deepEqual(bereidingVoor({ id: 'db-1', naam: curry.titels.en! }, [], 'nl', db), curry.bereidingen!.nl);
+  });
+
+  test('een databankrecept wordt enkel op id gevonden: zonder de lijst van databankrecepten zijn er geen stappen', () => {
+    assert.equal(bereidingVoor({ id: 'db-1', naam: curry.titels.nl! }, [], 'nl'), null);
+    assert.equal(bereidingVoor({ id: 'db-999', naam: curry.titels.nl! }, [], 'nl', db), null);
+  });
+
+  test('een databankrecept zonder stappen geeft null', () => {
+    const zonder = { ...testRecept(3) };
+    assert.equal(zonder.bereidingen, undefined);
+    assert.equal(bereidingVoor({ id: 'db-3', naam: zonder.titels.nl! }, [], 'nl', [zonder]), null);
   });
 
   test('een eigen recept geeft zijn eigen stappen, op id', () => {
@@ -43,9 +54,13 @@ describe('bereidingVoor (WEEK-81)', () => {
     assert.deepEqual(bereidingVoor({ id: 'eigen:ander', naam: 'Oma’s soep' }, [eigen], 'nl'), eigen.stappen);
   });
 
-  test('een eigen recept gaat voor een ingebouwd recept met dezelfde naam', () => {
-    const naamGelijk: EigenRecept = { ...eigen, naam: bank.namen[0], stappen: ['Eigen stap.'] };
-    assert.deepEqual(bereidingVoor({ id: 'eigen:abc', naam: bank.namen[0] }, [naamGelijk], 'nl'), ['Eigen stap.']);
+  test('een eigen recept gaat voor een databankrecept met dezelfde naam', () => {
+    const naamGelijk: EigenRecept = { ...eigen, naam: curry.titels.nl!, stappen: ['Eigen stap.'] };
+    assert.deepEqual(bereidingVoor({ id: 'eigen:abc', naam: curry.titels.nl! }, [naamGelijk], 'nl', db), ['Eigen stap.']);
+  });
+
+  test('een recept uit de vroegere lokale receptenbank (oud plan) heeft geen stappen meer (WEEK-208)', () => {
+    assert.equal(bereidingVoor({ id: 'pasta-pesto', naam: 'Pasta pesto met broccoli' }, [], 'nl', db), null);
   });
 
   test('een AI-recept zonder bekende stappen geeft null', () => {
@@ -56,6 +71,9 @@ describe('bereidingVoor (WEEK-81)', () => {
     const stappen = bereidingVoor({ id: 'eigen:abc', naam: 'x' }, [eigen], 'nl');
     stappen?.push('extra');
     assert.equal(eigen.stappen.length, 2);
+    const dbStappen = bereidingVoor({ id: 'db-1', naam: 'x' }, [], 'nl', db);
+    dbStappen?.push('extra');
+    assert.equal(curry.bereidingen!.nl!.length, 3);
   });
 });
 

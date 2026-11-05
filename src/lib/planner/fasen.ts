@@ -1,6 +1,6 @@
 // Het weekmenu als stappen (WEEK-68 deel 4b; WEEK-189: enkel avondeten, dus geen maaltijdkeuze): periode, kooktijd, stijl, vermijden, plan.
 // Pure logica: het scherm toont de stap, deze module bepaalt de volgorde en wat er mag.
-import type { Moment } from '@/data/receptenbank';
+import type { Moment } from '@/data/recept';
 import { behoudGeldige, kooktijdVoorMomenten, stijlVoorMomenten, standaardStijlen, vermijdVoorMomenten } from '@/lib/planner/opties';
 
 export const FASEN = ['periode', 'kooktijd', 'stijl', 'vermijden', 'plan'] as const;

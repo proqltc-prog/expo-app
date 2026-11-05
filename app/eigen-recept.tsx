@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Afdeling } from '@/data/ingredienten';
-import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/receptenbank';
+import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
 import type { Sleutel } from '@/i18n';
 import {

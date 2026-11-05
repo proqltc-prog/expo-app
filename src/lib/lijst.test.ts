@@ -271,7 +271,7 @@ describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
     const nu = new Date('2026-10-26T12:00:00Z');
     const tomaat = { code: 'tomaat', naam: 'Tomaat', afdeling: 'groenten-fruit' as const, eenheid: 'stuk' };
 
-    test('een receptenbank-ingrediënt komt met code, eenheid, afdeling en categorie extra op de lijst', () => {
+    test('een databank-ingrediënt komt met code, eenheid, afdeling en categorie extra op de lijst', () => {
       const [item] = receptItem([], tomaat, nu);
       assert.equal(item.naam, 'Tomaat');
       assert.equal(item.code, 'tomaat');
@@ -316,7 +316,7 @@ describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
       assert.equal(item?.categorie, 'extra');
     });
 
-    test('regressie: een receptenbank-item en een los product tellen samen als twee regels', () => {
+    test('regressie: een databank-item en een los product tellen samen als twee regels', () => {
       const met = receptItem([], tomaat, nu);
       const beide = [...met, eigenItem('Zelfgemaakte sambal', nu)!];
       assert.equal(samenvoegen(beide).length, 2);

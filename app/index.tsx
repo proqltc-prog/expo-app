@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { Moment, Soort } from '@/data/receptenbank';
+import { Moment, Soort } from '@/data/recept';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
 import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe } from '@/lib/lijst';
-import { planLokaal } from '@/lib/planner/lokaal';
 import { inTaal } from '@/lib/planner/vertaal';
-import { resetDagLokaal } from '@/lib/planner/reset';
 import { voegAfgewezenToe } from '@/lib/planner/afwijzen';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
 import { laadDbRecepten } from '@/opslag/receptenbank';
@@ -183,7 +181,7 @@ export default function Weekplanning() {
   const wisselKooktijd = (id: string) => pasKeuzesAan({ ...keuzes, kooktijden: wissel(keuzes.kooktijden, id) });
   const wisselStijl = (id: string) => pasKeuzesAan({ ...keuzes, stijlen: wissel(keuzes.stijlen, id) });
   const wisselVermijdKeuze = (v: Vermijd) => pasKeuzesAan({ ...keuzes, vermijd: wissel(keuzes.vermijd, v) });
-  // WEEK-190: enkel vegetarische recepten, voor de databank en de lokale recepten.
+  // WEEK-190: enkel vegetarische recepten uit de databank.
   const wisselEnkelVegetarisch = () => pasKeuzesAan({ ...keuzes, enkelVegetarisch: !keuzes.enkelVegetarisch });
 
   // Bij elk bezoek opnieuw laden: frigo of lijst kunnen het plan intussen aangepast hebben (WEEK-13).
@@ -213,7 +211,7 @@ export default function Weekplanning() {
   // Een knop die niet mag werken, legt uit waarom (WEEK-92): geen stille knop meer.
   const toonBeheer = () => Alert.alert(t('planning.beheerTitel'), beheerTekst);
 
-  // Een nieuw weekmenu uit de database (WEEK-68). Zonder passende databankrecepten vult de lokale planner aan (WEEK-116).
+  // Een nieuw weekmenu uit de databank (WEEK-68). Sinds WEEK-208 is de databank de enige bron: geen lokale planner meer.
   // Met bevestigde dagen vervangt dit ook de boodschappenlijst; de gebruiker is daar eerst mee akkoord gegaan.
   const maakPlan = async (resetLijst: boolean) => {
     if (!profiel || bezig || !mag) return;
@@ -233,8 +231,13 @@ export default function Weekplanning() {
         taal,
         frigo,
       };
-      const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
-      const nieuw = planUitDatabase(verzoek, pool) ?? planLokaal(verzoek);
+      // Databank onbereikbaar: melden en stoppen, want zonder recepten is er geen plan.
+      const recepten = await laadDbRecepten().catch(() => null);
+      if (!recepten) {
+        Alert.alert(t('planning.plan'), t('planning.geenVerbinding'));
+        return;
+      }
+      const nieuw = planUitDatabase(verzoek, maakDbPool(recepten, taal, profiel));
       if (!nieuw) {
         Alert.alert(t('planning.plan'), t('planning.geenRecepten'));
         return;
@@ -273,10 +276,13 @@ export default function Weekplanning() {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
       const oudId = plan.dagen[index]?.recept.id;
       const basis = voegAfgewezenToe(plan, oudId);
-      // WEEK-116: een dag wordt altijd uit de databank vervangen; lukt dat niet, dan lokaal (geen AI).
-      const pool = maakDbPool(await laadDbRecepten().catch(() => []), taal, profiel);
-      const uitDatabank = pool.length ? vervangDbDag(basis, index, pool, Date.now()) : basis;
-      const nieuw: Weekplan = uitDatabank !== basis ? uitDatabank : resetDagLokaal(basis, index, Date.now());
+      // WEEK-116/WEEK-208: een dag wordt altijd uit de databank vervangen; is die onbereikbaar, dan melden we dat.
+      const recepten = await laadDbRecepten().catch(() => null);
+      if (!recepten) {
+        Alert.alert(t('planning.plan'), t('planning.geenVerbinding'));
+        return;
+      }
+      const nieuw: Weekplan = vervangDbDag(basis, index, maakDbPool(recepten, taal, profiel), Date.now());
       // Geen enkel recept meer over: de gebruiker kiest zelf (WEEK-184).
       if (nieuw === basis) {
         Alert.alert(t('planning.allesGezienTitel'), t('planning.allesGezienTekst'), [
@@ -373,7 +379,7 @@ export default function Weekplanning() {
     ]);
   };
 
-  // Zelf kiezen (WEEK-44): een ander gerecht uit de receptenbank voor deze dag.
+  // Zelf kiezen (WEEK-44): een ander gerecht uit de databank of de eigen recepten voor deze dag.
   const kiesZelf = (index: number) => {
     const dag = plan?.dagen[index];
     if (!plan || !dag || !mag || !magDagWijzigen(dag)) return;

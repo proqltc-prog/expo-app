@@ -1,11 +1,12 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { RECEPTENBANK } from '@/data/receptenbank';
 import { FrigoItem, trekFrigoAf, verdeelFrigo } from '@/lib/frigo';
 import { itemsUitPlan, voegPlanToe } from '@/lib/lijst';
-import { frigoScore, frigoScoreIngredienten, frigoScoreNamen, kiesEersteDag, markeerUitFrigo } from '@/lib/planner/frigovoorrang';
-import { planLokaal } from '@/lib/planner/lokaal';
+import { naarPlanRecept } from '@/lib/planner/db';
+import { planUitDatabase } from '@/lib/planner/dbplan';
+import { frigoScoreIngredienten, frigoScoreNamen } from '@/lib/planner/frigovoorrang';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
+import { testPool, testRecept, TESTRECEPTEN } from '@/lib/planner/testrecepten';
 import type { PlanDag, PlanVerzoek } from '@/lib/planner/types';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 
@@ -19,7 +20,6 @@ const gezin: Profiel = { ...standaardProfiel(), volwassenen: 2, kinderen: 2 };
 const verzoek = (extra: Partial<PlanVerzoek> = {}): PlanVerzoek => ({
   kooktijden: [], stijlen: [], profiel: gezin, taal: 'nl', seed: 42, ...extra,
 });
-const bank = (id: string) => RECEPTENBANK.find((r) => r.id === id)!;
 
 describe('verdeelFrigo (WEEK-12)', () => {
   test('geheel, deels of niet gedekt, de voorraad wordt verdeeld in volgorde', () => {
@@ -70,55 +70,57 @@ describe('trekFrigoAf', () => {
   });
 });
 
-describe('frigoScore en kiesEersteDag', () => {
+/** De ingrediënten van een testrecept zoals de databankplanner ze scoort: naam in de taal en de vaste code. */
+const ingredientenVan = (id: number, taal: 'nl' | 'fr' | 'en' = 'nl') =>
+  naarPlanRecept(testRecept(id), taal, { volwassenen: 1, kinderen: 0 })!.ingredienten;
+
+describe('frigoScoreIngredienten op databankrecepten', () => {
   test('een recept dat meer en oudere frigo-producten gebruikt, scoort hoger', () => {
     const frigo = [f('spinazie', 200, 'g', 5), f('kokosmelk', 400, 'ml', 1)];
-    const linzen = frigoScore(bank('linzencurry'), frigo, 'nl', NU);
-    const kip = frigoScore(bank('kipcurry'), frigo, 'nl', NU);
+    const linzen = frigoScoreIngredienten(ingredientenVan(1), frigo, NU); // linzencurry: spinazie + kokosmelk
+    const kip = frigoScoreIngredienten(ingredientenVan(6), frigo, NU); // Thaise kipcurry: enkel kokosmelk
     assert.ok(linzen > kip, `${linzen} > ${kip}`);
-    assert.equal(frigoScore(bank('pasta-pesto'), frigo, 'nl', NU), 0);
+    assert.equal(frigoScoreIngredienten(ingredientenVan(2), frigo, NU), 0); // cacio e pepe: niets uit de frigo
   });
   test('herkent producten in elke taal, los van de taal van het plan (WEEK-206)', () => {
-    assert.ok(frigoScore(bank('linzencurry'), [f('épinards', 200, 'g', 2)], 'fr', NU) > 0);
-    assert.ok(frigoScore(bank('linzencurry'), [f('épinards', 200, 'g', 2)], 'nl', NU) > 0);
-    assert.ok(frigoScore(bank('linzencurry'), [f('Spinat', 200, 'g', 2)], 'en', NU) > 0);
+    assert.ok(frigoScoreIngredienten(ingredientenVan(1, 'fr'), [f('épinards', 200, 'g', 2)], NU) > 0);
+    assert.ok(frigoScoreIngredienten(ingredientenVan(1, 'nl'), [f('épinards', 200, 'g', 2)], NU) > 0);
+    assert.ok(frigoScoreIngredienten(ingredientenVan(1, 'en'), [f('Spinat', 200, 'g', 2)], NU) > 0);
   });
-  test('kiest het recept dat het meest opmaakt; niets in de frigo = geen keuze', () => {
-    const r = kiesEersteDag(RECEPTENBANK, [f('spinazie', 200, 'g', 5), f('kokosmelk', 400, 'ml', 5), f('linzen', 500, 'g', 5)], 'nl', NU);
-    assert.equal(r?.id, 'linzencurry');
-    assert.equal(kiesEersteDag(RECEPTENBANK, [], 'nl', NU), undefined);
-    assert.equal(kiesEersteDag(RECEPTENBANK, [f('kaviaar', 1, 'stuk', 1)], 'nl', NU), undefined);
+  test('het recept dat het meest opmaakt, scoort het hoogst; niets in de frigo of een onbekend product scoort 0', () => {
+    const frigo = [f('spinazie', 200, 'g', 5), f('kokosmelk', 400, 'ml', 5), f('linzen', 500, 'g', 5)];
+    const scores = TESTRECEPTEN.map((r) => ({ id: r.id, score: frigoScoreIngredienten(ingredientenVan(r.id), frigo, NU) }));
+    const beste = scores.reduce((a, b) => (b.score > a.score ? b : a));
+    assert.equal(beste.id, 1);
+    assert.ok(TESTRECEPTEN.every((r) => frigoScoreIngredienten(ingredientenVan(r.id), [], NU) === 0));
+    assert.ok(TESTRECEPTEN.every((r) => frigoScoreIngredienten(ingredientenVan(r.id), [f('kaviaar', 1, 'stuk', 1)], NU) === 0));
   });
 });
 
-describe('planLokaal met frigo-voorrang', () => {
+describe('planUitDatabase met frigo-voorrang (WEEK-188)', () => {
   const frigo = [f('spinazie', 200, 'g', 6), f('kokosmelk', 400, 'ml', 6), f('linzen', 500, 'g', 6)];
-  test('dag 1 maakt op wat het langst in huis is en toont wat uit de frigo komt', () => {
-    const plan = planLokaal(verzoek({ frigo }));
-    assert.equal(plan.dagen[0].recept.id, 'linzencurry');
-    assert.deepEqual(plan.dagen[0].uitFrigo, ['linzen', 'kokosmelk', 'spinazie']);
+  const pool = testPool('nl', gezin);
+  const planMet = (extra: Partial<PlanVerzoek> = {}) => {
+    const plan = planUitDatabase(verzoek(extra), pool);
+    if (!plan) throw new Error('er is een plan');
+    return plan;
+  };
+  test('de recepten die opmaken wat in huis is, komen eerst; daarna de rest zonder dubbel recept', () => {
+    const plan = planMet({ frigo });
+    // Linzencurry (db-1) en Thaise kipcurry (db-6) gebruiken kokosmelk; die staan op de eerste twee dagen.
+    assert.deepEqual(plan.dagen.slice(0, 2).map((d) => d.recept.id).sort(), ['db-1', 'db-6']);
     assert.equal(new Set(plan.dagen.map((d) => d.recept.id)).size, plan.dagen.length, 'geen dubbel recept');
   });
   test('zonder frigo verandert er niets', () => {
-    assert.deepEqual(planLokaal(verzoek({ frigo: [] })).dagen.map((d) => d.recept.id), planLokaal(verzoek()).dagen.map((d) => d.recept.id));
-    assert.ok(planLokaal(verzoek()).dagen.every((d) => !d.uitFrigo));
+    assert.deepEqual(planMet({ frigo: [] }).dagen.map((d) => d.recept.id), planMet().dagen.map((d) => d.recept.id));
+    assert.ok(planMet().dagen.every((d) => !d.uitFrigo));
   });
-  test('uitFrigo blijft bewaard na opslaan en inlezen', () => {
-    const plan = planLokaal(verzoek({ frigo }));
-    assert.deepEqual(normaliseerWeekplan(JSON.parse(JSON.stringify(plan)))!.dagen[0].uitFrigo, plan.dagen[0].uitFrigo);
-  });
-});
-
-describe('markeerUitFrigo', () => {
-  test('wat dag 1 opmaakt, is er niet meer voor dag 2', () => {
-    const dag = (d: PlanDag['dag']): PlanDag => ({ dag: d, recept: { id: d, naam: d, soort: 'vegetarisch', minuten: 20, stijlen: [], ingredienten: [
-      { naam: 'spinazie', hoeveelheid: 200, eenheid: 'g', afdeling: 'groenten-fruit' },
-    ] } });
-    const gemarkeerd = markeerUitFrigo([dag('zondag'), dag('maandag')], [f('spinazie', 200, 'g', 3)]);
-    assert.deepEqual(gemarkeerd.map((d) => d.uitFrigo), [['spinazie'], undefined]);
+  test('uitFrigo blijft bewaard na opslaan en inlezen (oude plannen)', () => {
+    const plan = planMet({ frigo });
+    const metUitFrigo = { ...plan, dagen: plan.dagen.map((d, i) => (i === 0 ? { ...d, uitFrigo: ['linzen', 'kokosmelk', 'spinazie'] } : d)) };
+    assert.deepEqual(normaliseerWeekplan(JSON.parse(JSON.stringify(metUitFrigo)))!.dagen[0].uitFrigo, ['linzen', 'kokosmelk', 'spinazie']);
   });
 });
-
 
 describe('frigoScoreIngredienten: vergelijkt op databankcode (WEEK-206)', () => {
   const frigo = [f('spinazie', 200, 'g', 3, { code: 'spinazie' })];

@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import { FrigoItem, receptFrigo, trekFrigoAf, verbruik, verdeelFrigo } from '@/lib/frigo';
 import type { LijstItem } from '@/lib/lijst';
 import { frigoScoreNamen } from '@/lib/planner/frigovoorrang';
-import { markeerUitFrigo } from '@/lib/planner/frigovoorrang';
 import { markeerOntbrekend, werkOntbrekendBij } from '@/lib/planner/status';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -88,17 +87,6 @@ describe('frigoScoreNamen: losse producten geven geen voorrang (WEEK-158)', () =
   });
   test('regressie: een planner-product scoort', () => {
     assert.ok(frigoScoreNamen(['tomaat'], [product('p', 'tomaat', 'planner')], NU) > 0);
-  });
-});
-
-describe('markeerUitFrigo: losse producten worden niet als "uit de frigo" aangeduid (WEEK-158)', () => {
-  test('een los product markeert het recept niet', () => {
-    const [d] = markeerUitFrigo([dag('Pasta', [{ naam: 'tomaat', hoeveelheid: 300, eenheid: 'g' }])], [product('l', 'tomaat', 'los', 500, 'g')]);
-    assert.equal(d.uitFrigo, undefined);
-  });
-  test('regressie: een planner-product markeert het recept', () => {
-    const [d] = markeerUitFrigo([dag('Pasta', [{ naam: 'tomaat', hoeveelheid: 300, eenheid: 'g' }])], [product('p', 'tomaat', 'planner', 500, 'g')]);
-    assert.deepEqual(d.uitFrigo, ['tomaat']);
   });
 });
 

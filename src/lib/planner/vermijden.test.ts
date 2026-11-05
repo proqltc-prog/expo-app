@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bankReceptVermijdt, heeftVermijdNaam, normaliseerVermijd, vermijdVoorNaam } from '@/lib/planner/vermijden';
-import { RECEPTENBANK } from '@/data/receptenbank';
+import { heeftVermijdNaam, normaliseerVermijd, vermijdVoorNaam } from '@/lib/planner/vermijden';
+import { testPool } from '@/lib/planner/testrecepten';
 
 describe('vermijden: keuzes lezen (WEEK-41)', () => {
   test('houdt enkel bekende keuzes over', () => {
@@ -53,20 +53,29 @@ describe('vermijden: ingrediëntnamen herkennen (WEEK-41)', () => {
   });
 });
 
-describe('vermijden: receptenbank (WEEK-41)', () => {
-  test('zonder keuzes blijft elk bankrecept toegestaan', () => {
-    assert.ok(RECEPTENBANK.every((r) => !bankReceptVermijdt(r, [])));
+describe('vermijden: databankrecepten (WEEK-41, WEEK-208)', () => {
+  const pool = testPool();
+  const vermijdt = (k: (typeof pool)[number], vermijd: Parameters<typeof heeftVermijdNaam>[1]) => heeftVermijdNaam(k.recept.ingredienten, vermijd);
+
+  test('zonder keuzes blijft elk databankrecept toegestaan', () => {
+    assert.ok(pool.every((k) => !vermijdt(k, [])));
   });
 
   test('een recept met room valt weg bij zuivel, maar niet bij noten', () => {
-    const metRoom = RECEPTENBANK.find((r) => r.ingredienten.some(([c]) => c === 'room'));
-    assert.ok(metRoom, 'de receptenbank bevat een recept met room');
-    assert.equal(bankReceptVermijdt(metRoom, ['zuivel']), true);
-    assert.equal(bankReceptVermijdt(metRoom, ['noten']), false);
+    const metRoom = pool.find((k) => k.recept.ingredienten.some((i) => i.code === 'room'));
+    assert.ok(metRoom, 'de testrecepten bevatten een recept met room');
+    assert.equal(vermijdt(metRoom, ['zuivel']), true);
+    assert.equal(vermijdt(metRoom, ['noten']), false);
+  });
+
+  test('een recept wordt herkend op de ingrediëntnaam in elke taal', () => {
+    const fr = testPool('fr').find((k) => k.recept.ingredienten.some((i) => i.code === 'scampi'))!;
+    assert.equal(vermijdt(fr, ['schaaldieren']), true);
+    assert.equal(vermijdt(fr, ['vis']), false);
   });
 
   test('er blijven genoeg recepten over als enkel varkensvlees of noten gevraagd wordt', () => {
-    const over = RECEPTENBANK.filter((r) => !bankReceptVermijdt(r, ['varkensvlees', 'noten']));
-    assert.ok(over.length >= RECEPTENBANK.length - 2);
+    const over = pool.filter((k) => !vermijdt(k, ['varkensvlees', 'noten']));
+    assert.ok(over.length >= pool.length - 2);
   });
 });

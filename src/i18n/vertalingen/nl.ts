@@ -458,6 +458,7 @@ export const nl = {
   'stijlOptie.hartig': 'Hartig',
   'stijlOptie.zoet': 'Zoet',
   'planning.geenRecepten': 'Er zijn met deze keuzes nu niet genoeg recepten. Kies bijvoorbeeld een stijl erbij of een andere kooktijd.',
+  'planning.geenVerbinding': 'De receptendatabank is niet bereikbaar. Controleer je internetverbinding en probeer opnieuw.',
   'frigo.sheetPlanner': 'Recepten',
   'frigo.sheetLos': 'Losse producten',
   'frigo.plannerUitleg': 'Ingrediënten uit de lijst van de app. Deze tellen mee bij het weekmenu: bij “Gekookt” gaan ze uit de frigo.',

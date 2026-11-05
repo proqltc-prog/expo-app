@@ -457,6 +457,7 @@ export const de: Vertalingen = {
   'stijlOptie.hartig': 'Herzhaft',
   'stijlOptie.zoet': 'Süß',
   'planning.geenRecepten': 'Mit dieser Auswahl gibt es gerade nicht genug Rezepte. Wähle zum Beispiel eine weitere Küche oder eine andere Kochzeit.',
+  'planning.geenVerbinding': 'Die Rezeptdatenbank ist nicht erreichbar. Prüfe deine Internetverbindung und versuche es erneut.',
   'frigo.sheetPlanner': 'Rezepte',
   'frigo.sheetLos': 'Einzelne Produkte',
   'frigo.plannerUitleg': 'Zutaten aus der Liste der App. Sie zählen für den Wochenplan: bei „Gekocht“ verschwinden sie aus dem Kühlschrank.',

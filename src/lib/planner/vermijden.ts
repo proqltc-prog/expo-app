@@ -1,7 +1,5 @@
-// Ingrediënten die de gebruiker wil vermijden (WEEK-41). Pure logica, gebruikt door alle planners.
-import type { BankRecept } from '@/data/receptenbank';
-import type { IngredientCode } from '@/data/ingredienten';
-import { VERMIJDBAAR, VERMIJD_CODES, VERMIJD_WOORDEN, Vermijd } from '@/data/vermijden';
+// Ingrediënten die de gebruiker wil vermijden (WEEK-41). Pure logica, gebruikt door de planner en de receptenlijst.
+import { VERMIJDBAAR, VERMIJD_WOORDEN, Vermijd } from '@/data/vermijden';
 
 /** Leest de keuzes uit opgeslagen of binnenkomende data; onbekende waarden vallen weg. */
 export function normaliseerVermijd(ruw: unknown): Vermijd[] {
@@ -33,9 +31,3 @@ export function heeftVermijdNaam(ingredienten: readonly { naam: string }[], verm
   return ingredienten.some((i) => vermijdVoorNaam(i.naam, vermijd) !== undefined);
 }
 
-/** Heeft een recept uit de lokale receptenbank een ingrediënt dat vermeden wordt? */
-export function bankReceptVermijdt(recept: BankRecept, vermijd: readonly Vermijd[]): boolean {
-  if (!vermijd.length) return false;
-  const verboden = new Set<IngredientCode>(vermijd.flatMap((v) => VERMIJD_CODES[v]));
-  return recept.ingredienten.some(([code]) => verboden.has(code));
-}

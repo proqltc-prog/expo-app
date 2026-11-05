@@ -1,7 +1,7 @@
-// Weekplan uit de recepten van de database (WEEK-68, deel 2).
-// Zelfde regels als de lokale planner: momenten, kooktijd en stijl eerst, geen herhaling als dat kan,
+// Weekplan uit de recepten van de databank (WEEK-68, deel 2); sinds WEEK-208 de enige planner van de app.
+// Regels: momenten, kooktijd en stijl eerst, geen herhaling als dat kan,
 // en stap voor stap versoepelen als er te weinig recepten zijn. Pure logica, zonder netwerk.
-import type { Moment, Soort, StijlCode } from '@/data/receptenbank';
+import type { Moment, Soort, StijlCode } from '@/data/recept';
 import { isAfgewezen } from './afwijzen';
 import type { Seizoen } from '@/data/seizoenen';
 import type { Taal } from '@/i18n';
@@ -10,7 +10,7 @@ import { DbRecept, naarPlanRecept } from '@/lib/planner/db';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { normaliseerMomenten } from '@/lib/planner/moment';
 import { schaalFactor } from '@/lib/schaal';
-import { toeval } from '@/lib/planner/lokaal';
+import { toeval } from '@/lib/planner/toeval';
 import { binnenKooktijd } from '@/lib/kooktijd';
 import { kooktijdVan, KooktijdCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
 import { dagenVoorVerzoek, plandagenVoorDatums, voegDatumsToe } from '@/lib/planner/datums';

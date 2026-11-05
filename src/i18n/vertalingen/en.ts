@@ -457,6 +457,7 @@ export const en: Vertalingen = {
   'stijlOptie.hartig': 'Savoury',
   'stijlOptie.zoet': 'Sweet',
   'planning.geenRecepten': 'There are not enough recipes for these choices. Try adding another cuisine or a different cooking time.',
+  'planning.geenVerbinding': 'The recipe database cannot be reached. Check your internet connection and try again.',
   'frigo.sheetPlanner': 'Recipes',
   'frigo.sheetLos': 'Loose products',
   'frigo.plannerUitleg': 'Ingredients from the app’s list. They count for the weekly menu: when you tap “Cooked”, they leave the fridge.',

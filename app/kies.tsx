@@ -2,7 +2,7 @@ import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Moment, MOMENTEN, Soort, StijlCode } from '@/data/receptenbank';
+import { Moment, MOMENTEN, Soort, StijlCode } from '@/data/recept';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { DbPoolRecept, maakDbPool } from '@/lib/planner/dbplan';

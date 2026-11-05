@@ -1,6 +1,6 @@
 // Brug tussen de keuzes in het weekmenu (opties.ts) en de codes die de planner gebruikt (KooktijdCode en StijlCode uit de database).
 // WEEK-199: de kooktijden zijn nu dezelfde codes als in de databank; enkel de stijlen worden nog vertaald.
-import type { Moment, StijlCode } from '@/data/receptenbank';
+import type { Moment, StijlCode } from '@/data/recept';
 import { KOOKTIJDEN, KooktijdCode } from '@/lib/kooktijd';
 import { kooktijdOpties } from '@/lib/planner/opties';
 

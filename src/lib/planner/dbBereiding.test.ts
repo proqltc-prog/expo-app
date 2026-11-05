@@ -109,8 +109,7 @@ describe('bereidingVoor met databankrecepten (WEEK-121)', () => {
     assert.equal(bereidingVoor({ id: 'db-246', naam: 'Stamppot' }, [], 'nl'), null);
   });
 
-  test('regressie: ingebouwde recepten blijven zoeken zoals voorheen, ook met een databanklijst', () => {
-    const stappen = bereidingVoor({ id: 'pasta-pesto', naam: 'Pasta pesto' }, [], 'nl', [recept()]);
-    assert.ok(stappen && stappen.length > 0);
+  test('WEEK-208: een id uit de vroegere ingebouwde receptenbank heeft geen stappen meer, ook niet met een databanklijst', () => {
+    assert.equal(bereidingVoor({ id: 'pasta-pesto', naam: 'Pasta pesto' }, [], 'nl', [recept()]), null);
   });
 });
