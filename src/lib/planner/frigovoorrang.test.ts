@@ -83,7 +83,7 @@ describe('frigoScore en kiesEersteDag', () => {
     assert.equal(frigoScore(bank('linzencurry'), [f('épinards', 200, 'g', 2)], 'nl', NU), 0);
   });
   test('kiest het recept dat het meest opmaakt; niets in de frigo = geen keuze', () => {
-    const r = kiesEersteDag(RECEPTENBANK, [f('spinazie', 200, 'g', 5), f('kokosmelk', 400, 'ml', 5), f('rode linzen', 500, 'g', 5)], 'nl', NU);
+    const r = kiesEersteDag(RECEPTENBANK, [f('spinazie', 200, 'g', 5), f('kokosmelk', 400, 'ml', 5), f('linzen', 500, 'g', 5)], 'nl', NU);
     assert.equal(r?.id, 'linzencurry');
     assert.equal(kiesEersteDag(RECEPTENBANK, [], 'nl', NU), undefined);
     assert.equal(kiesEersteDag(RECEPTENBANK, [f('kaviaar', 1, 'stuk', 1)], 'nl', NU), undefined);
@@ -91,11 +91,11 @@ describe('frigoScore en kiesEersteDag', () => {
 });
 
 describe('planLokaal met frigo-voorrang', () => {
-  const frigo = [f('spinazie', 200, 'g', 6), f('kokosmelk', 400, 'ml', 6), f('rode linzen', 500, 'g', 6)];
+  const frigo = [f('spinazie', 200, 'g', 6), f('kokosmelk', 400, 'ml', 6), f('linzen', 500, 'g', 6)];
   test('dag 1 maakt op wat het langst in huis is en toont wat uit de frigo komt', () => {
     const plan = planLokaal(verzoek({ frigo }));
     assert.equal(plan.dagen[0].recept.id, 'linzencurry');
-    assert.deepEqual(plan.dagen[0].uitFrigo, ['rode linzen', 'kokosmelk', 'spinazie']);
+    assert.deepEqual(plan.dagen[0].uitFrigo, ['linzen', 'kokosmelk', 'spinazie']);
     assert.equal(new Set(plan.dagen.map((d) => d.recept.id)).size, plan.dagen.length, 'geen dubbel recept');
   });
   test('zonder frigo verandert er niets', () => {

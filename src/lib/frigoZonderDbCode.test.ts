@@ -16,30 +16,26 @@ const f = (id: string, naam: string, hoeveelheid?: number, eenheid?: string): Fr
   ...(eenheid ? { eenheid } : {}),
 });
 
-describe('catalogus-ingrediënten zonder databankequivalent (WEEK-160 regressie)', () => {
-  test('dbCodeVan geeft geen code voor "pasta" of "kaas", wel voor een gekoppelde code', () => {
-    assert.equal(dbCodeVan('pasta'), undefined);
-    assert.equal(dbCodeVan('kaas'), undefined);
+describe('één ingrediëntenlijst uit de databank (WEEK-205; vervangt de WEEK-160-regressie)', () => {
+  test('dbCodeVan geeft de databankcode, ook voor een oude catalogus-code; een onbekende code geeft niets', () => {
+    assert.equal(dbCodeVan('pasta'), 'pasta');
+    assert.equal(dbCodeVan('kaas'), 'kaas_geraspt');
     assert.equal(dbCodeVan('tomaten'), 'tomaat');
+    assert.equal(dbCodeVan('bestaat-niet'), undefined);
   });
 
-  test('frigo "pasta" matcht het recept-ingrediënt "pasta" met databankcode pasta_penne, op naam', () => {
-    assert.ok(pastBij(f('p', 'pasta', 500, 'g'), { naam: 'pasta', code: 'pasta_penne', hoeveelheid: 300, eenheid: 'g' }));
+  test('algemene "pasta" en "penne" (pasta_penne) zijn twee producten: ze koppelen niet op elkaar', () => {
+    assert.equal(pastBij(f('p', 'pasta', 500, 'g'), { naam: 'penne', code: 'pasta_penne', hoeveelheid: 300, eenheid: 'g' }), false);
   });
 
-  test('frigo "kaas" (andere taal of zelfde naam) matcht een recept met kaas_geraspt op naam', () => {
-    const naam = ingredientNaam('kaas', 'nl');
-    assert.ok(pastBij(f('k', naam, 200, 'g'), { naam, code: 'kaas_geraspt', hoeveelheid: 50, eenheid: 'g' }));
+  test('een frigo-product zonder code koppelt via zijn naam aan de databankcode, in elke taal', () => {
+    const naam = ingredientNaam('kaas_geraspt', 'fr');
+    assert.ok(pastBij(f('k', naam, 200, 'g'), { naam: 'geraspte oude kaas', code: 'kaas_geraspt', hoeveelheid: 50, eenheid: 'g' }));
   });
 
-  test('de verbruik-regressie: pasta wordt verbruikt via de naam ook als het recept een databankcode heeft', () => {
-    const { frigo, verbruikt } = verbruik([f('p', 'pasta', 500, 'g')], [{ naam: 'pasta', code: 'pasta_penne', hoeveelheid: 300, eenheid: 'g' }]);
+  test('verbruik: pasta wordt verbruikt door een recept dat pasta met dezelfde code vraagt', () => {
+    const { frigo, verbruikt } = verbruik([f('p', 'pasta', 500, 'g')], [{ naam: 'pasta', code: 'pasta', hoeveelheid: 300, eenheid: 'g' }]);
     assert.equal(verbruikt.length, 1);
     assert.equal(frigo[0].hoeveelheid, 200);
-  });
-
-  test('zonder code in de frigo telt de naam; de eigen code van het recept-ingrediënt blijft gelijk', () => {
-    assert.equal(pastBij(f('x', 'kip', 200, 'g'), { naam: 'kip', code: 'kip_heel', hoeveelheid: 200, eenheid: 'g' }), true);
-    assert.equal(dbCodeVanNaam('onbekend ingrediënt xyz'), undefined);
   });
 });

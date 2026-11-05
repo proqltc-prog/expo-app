@@ -1,5 +1,5 @@
 import type { Afdeling } from '@/data/ingredienten';
-import { AFDELINGEN } from '@/data/ingredienten';
+import { AFDELINGEN, naarDbCode } from '@/data/ingredienten';
 import { Sleutel, Taal } from '@/i18n';
 import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { DagCode, PlanDag, Weekplan, WEEKDAGEN } from '@/lib/planner/types';
@@ -433,7 +433,7 @@ export function leesLijstItem(ruw: unknown): LijstItem | null {
     ...(hoeveelheid !== undefined ? { hoeveelheid } : {}),
     ...(typeof ruw.eenheid === 'string' ? { eenheid: ruw.eenheid } : {}),
     ...(typeof ruw.afdeling === 'string' && (AFDELINGEN as string[]).includes(ruw.afdeling) ? { afdeling: ruw.afdeling as Afdeling } : {}),
-    ...(typeof ruw.code === 'string' && ruw.code ? { code: ruw.code } : {}),
+    ...(typeof ruw.code === 'string' && ruw.code ? { code: naarDbCode(ruw.code) } : {}), // WEEK-205: oude catalogus-codes worden databankcodes
     ...(recept ? { recept } : {}),
     ...(typeof ruw.door === 'string' && ruw.door ? { door: ruw.door } : {}),
     ...(ruw.afgevinkt === true && typeof ruw.afgevinktDoor === 'string' && ruw.afgevinktDoor ? { afgevinktDoor: ruw.afgevinktDoor } : {}),

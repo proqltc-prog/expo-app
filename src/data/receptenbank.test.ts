@@ -53,13 +53,13 @@ describe('ingrediënten', () => {
     }
   });
 
-  test('elk ingrediënt wordt in minstens één recept gebruikt', () => {
-    const gebruikt = new Set(RECEPTENBANK.flatMap((r) => r.ingredienten.map(([c]) => c)));
-    for (const code of INGREDIENT_CODES) assert.ok(gebruikt.has(code), code);
+  test('elk ingrediënt van de meegeleverde recepten staat in de ingrediëntenlijst van de databank (WEEK-205)', () => {
+    const codes = new Set<string>(INGREDIENT_CODES);
+    for (const r of RECEPTENBANK) for (const [c] of r.ingredienten) assert.ok(codes.has(c), `${r.id}: ${c}`);
   });
 
-  test('vertaalt namen', () => {
-    assert.equal(ingredientNaam('aardappelen', 'fr'), 'pommes de terre');
+  test('vertaalt namen (namen uit de databank)', () => {
+    assert.equal(ingredientNaam('aardappel', 'fr'), 'pomme de terre');
     assert.equal(ingredientNaam('kipfilet', 'en'), 'chicken breast');
   });
 });

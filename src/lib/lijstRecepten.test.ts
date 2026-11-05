@@ -54,7 +54,7 @@ describe('één dag, drie recepten met gedeelde ingrediënten (WEEK-159)', () =>
     const secties = perRecept(voegPlanToe([], dagen, 'nl', undefined, 'p'));
     const pasta = secties.find((s) => s.soort === 'recept' && s.recept === 'Pasta');
     assert.ok(pasta);
-    assert.deepEqual(pasta!.regels.map((r) => [r.naam, r.hoeveelheid]).sort(), [['pasta', 100], ['tomaat', 200], ['ui', 1]]);
+    assert.deepEqual(pasta!.regels.map((r) => [r.naam, r.hoeveelheid]).sort(), [['penne', 100], ['tomaat', 200], ['ui', 1]]);
   });
 
   test('per categorie: gedeelde ingrediënten staan als 1 regel met de som', () => {

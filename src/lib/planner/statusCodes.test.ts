@@ -33,7 +33,7 @@ const dag: PlanDag = {
   },
 };
 const plan: Weekplan = { dagen: [dag], kooktijden: [], stijlen: [], taal: 'nl', porties: 1, bron: 'lokaal', gemaaktOp: OUD };
-const frans = ingredientNaam('tomaten', 'fr');
+const frans = ingredientNaam('tomaat', 'fr');
 
 describe('markeerOntbrekend op code en eenheid (WEEK-160)', () => {
   test('een verwijderd product in een andere taal markeert het recept-ingrediënt als ontbrekend', () => {

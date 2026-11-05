@@ -269,12 +269,12 @@ describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
 
   describe('zoekfunctie op de lijst (WEEK-164)', () => {
     const nu = new Date('2026-10-26T12:00:00Z');
-    const tomaat = { code: 'tomaten', naam: 'Tomaten', afdeling: 'groenten-fruit' as const, eenheid: 'stuk' };
+    const tomaat = { code: 'tomaat', naam: 'Tomaat', afdeling: 'groenten-fruit' as const, eenheid: 'stuk' };
 
     test('een receptenbank-ingrediënt komt met code, eenheid, afdeling en categorie extra op de lijst', () => {
       const [item] = receptItem([], tomaat, nu);
-      assert.equal(item.naam, 'Tomaten');
-      assert.equal(item.code, 'tomaten');
+      assert.equal(item.naam, 'Tomaat');
+      assert.equal(item.code, 'tomaat');
       assert.equal(item.eenheid, 'stuk');
       assert.equal(item.afdeling, 'groenten-fruit');
       assert.equal(item.categorie, 'extra');
@@ -299,14 +299,14 @@ describe('gedeelde lijst: wie voegde toe en wie vinkte af (WEEK-17)', () => {
     });
 
     test('een open weekmenu-item met dezelfde code telt ook als "al op de lijst"', () => {
-      const uitPlan: LijstItem = { id: 'x', naam: 'tomaten', categorie: 'avondeten', afgevinkt: false, code: 'tomaten' };
+      const uitPlan: LijstItem = { id: 'x', naam: 'tomaat', categorie: 'avondeten', afgevinkt: false, code: 'tomaat' };
       assert.equal(receptItem([uitPlan], tomaat, nu).length, 1);
-      assert.equal(staatOpLijst([uitPlan], 'tomaten'), true);
+      assert.equal(staatOpLijst([uitPlan], 'tomaat'), true);
     });
 
     test('staatOpLijst: alleen open items met de code tellen', () => {
-      assert.equal(staatOpLijst([], 'tomaten'), false);
-      assert.equal(staatOpLijst([{ id: 'x', naam: 'Tomaten', categorie: 'extra', afgevinkt: true, code: 'tomaten' }], 'tomaten'), false);
+      assert.equal(staatOpLijst([], 'tomaat'), false);
+      assert.equal(staatOpLijst([{ id: 'x', naam: 'Tomaat', categorie: 'extra', afgevinkt: true, code: 'tomaat' }], 'tomaat'), false);
     });
 
     test('regressie: een losse product via eigenItem blijft zonder code en afdeling', () => {

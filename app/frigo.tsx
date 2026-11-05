@@ -12,7 +12,7 @@ import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { aantalSheet, CatalogusItem, koppelBronnen, sheets, sheetThema, voegLosToe, voegPlannerToe } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
-import { ingredientNaam } from '@/data/ingredienten';
+import { ingredientNaam, dbCodeVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
@@ -197,7 +197,7 @@ export default function Frigo() {
         sheet={sheet}
         accent={thema.accent}
         accentZacht={thema.accentZacht}
-        staatOp={(code) => sheets(frigo).planner.some((f) => f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase())}
+        staatOp={(code) => sheets(frigo).planner.some((f) => (f.code ? dbCodeVan(f.code) === code : f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase()))}
         onReceptKies={(item, h) => voegCatalogusToe(item, h)}
         onLosPlus={openNieuwLos}
         scanKnop={
