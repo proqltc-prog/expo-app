@@ -98,13 +98,14 @@ export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
   };
 }
 
-/** Zet een ander recept op dezelfde plek: dag en moment blijven, de voortgang (gekookt, frigo) gaat weg. */
+/** Zet een ander recept op dezelfde plek: dag, moment en datum blijven, de voortgang (gekookt, frigo) gaat weg. */
 export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: PlanRecept): Weekplan {
   const huidig = plan.dagen[index];
   if (!huidig) return plan;
   const nieuw: PlanDag = {
     dag: huidig.dag,
     ...(huidig.moment ? { moment: huidig.moment } : {}),
+    ...(huidig.datum ? { datum: huidig.datum } : {}), // WEEK-204: de datum bleef vroeger niet bewaard
     recept,
   };
   return { ...plan, dagen: plan.dagen.map((d, i) => (i === index ? nieuw : d)) };

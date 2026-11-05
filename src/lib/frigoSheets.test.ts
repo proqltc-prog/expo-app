@@ -203,6 +203,11 @@ describe('WEEK-204: koppelBronnen laat lijst- en code-items met rust', () => {
     assert.equal(koppelBronnen(f)[0].bron, 'los');
   });
 
+  test('een item met code dat eerder verkeerd als los stond, wordt hersteld naar planner', () => {
+    const f = [uitLijst('gember', 'gember', 'los'), { ...uitLijst('shiitake', 'shiitake', 'los'), lijstId: undefined }];
+    assert.deepEqual(koppelBronnen(f).map((x) => x.bron), ['planner', 'planner']);
+  });
+
   test('een oud lijstitem zonder bron wordt planner (afgeleid van lijstId)', () => {
     const { bron: _weg, ...zonder } = uitLijst('gember', 'gember');
     assert.equal(koppelBronnen([zonder])[0].bron, 'planner');

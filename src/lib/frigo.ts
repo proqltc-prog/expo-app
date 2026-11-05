@@ -460,13 +460,16 @@ export function verdeelFrigo(behoeften: readonly Benodigd[], frigo: readonly Fri
 /**
  * Trekt wat al in huis is af van de items die op de boodschappenlijst komen.
  * Geheel gedekt = niet op de lijst; deels gedekt = enkel het verschil.
- * Producten die uit precies deze lijstitems gekocht werden, tellen niet mee
- * (anders zou opnieuw overzetten wat je net kocht van de lijst halen).
+ * Producten die uit precies deze lijstitems gekocht werden, tellen niet mee in de dekking
+ * (anders zou opnieuw overzetten wat je net kocht van de lijst halen); dat item komt als gekocht (afgevinkt) terug (WEEK-204),
+ * zodat het na "Wissen" niet opnieuw als open boodschap verschijnt.
  */
 export function trekFrigoAf(items: readonly LijstItem[], frigo: readonly FrigoItem[]): LijstItem[] {
   const eigen = new Set(items.map((i) => i.id));
+  const gekocht = new Set(frigo.map((f) => f.lijstId).filter((id): id is string => !!id && eigen.has(id)));
   const dekking = verdeelFrigo(items, frigo.filter((f) => !f.lijstId || !eigen.has(f.lijstId)));
   return items.flatMap((i, n) => {
+    if (gekocht.has(i.id)) return [{ ...i, afgevinkt: true }];
     const d = dekking[n];
     if (d.gedekt === 'geheel') return [];
     if (d.gedekt === 'deels' && d.rest !== undefined) return [{ ...i, hoeveelheid: d.rest }];

@@ -62,7 +62,10 @@ export function resetDagLokaal(plan: Weekplan, index: number, seed: number = Dat
   return {
     ...plan,
     dagen: plan.dagen.map((d, i) =>
-      i === index ? { dag: d.dag, ...(d.moment ? { moment: d.moment } : {}), recept: naarPlanRecept(nieuw, plan.taal, plan.porties) } : d
+      // WEEK-204: de datum van de dag blijft bewaard; enkel recept en voortgang veranderen.
+      i === index
+        ? { dag: d.dag, ...(d.moment ? { moment: d.moment } : {}), ...(d.datum ? { datum: d.datum } : {}), recept: naarPlanRecept(nieuw, plan.taal, plan.porties) }
+        : d
     ),
   };
 }

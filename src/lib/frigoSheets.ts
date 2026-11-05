@@ -123,10 +123,12 @@ export function voegLosToe(frigo: readonly FrigoItem[], naam: string, nu: Date, 
  */
 export function koppelBronnen(frigo: readonly FrigoItem[]): FrigoItem[] {
   // WEEK-162: planner-frigo enkel voor ingrediënten die de receptenbank kent.
-  // WEEK-204: wat via de boodschappenlijst kwam (lijstId) of een code heeft, houdt zijn bron. Anders belandden
-  // receptingrediënten die niet in de lokale ingrediëntenlijst staan (gember, shiitake…) bij de losse producten.
+  // WEEK-204: een item met een code komt altijd uit een recept of de catalogus en hoort in de planner-frigo, ook als
+  // het eerder verkeerd als los werd ingedeeld. Wat via de boodschappenlijst kwam (lijstId), houdt zijn bron. Anders
+  // belandden receptingrediënten die niet in de lokale ingrediëntenlijst staan (gember, shiitake…) bij de losse producten.
   return frigo.map((f) => {
-    if (f.lijstId || f.code) return f.bron ? f : { ...f, bron: frigoBron(f) };
+    if (f.code) return f.bron === 'planner' ? f : { ...f, bron: 'planner' };
+    if (f.lijstId) return f.bron ? f : { ...f, bron: frigoBron(f) };
     const code = inCatalogus(f.naam);
     return { ...f, bron: code !== undefined && inReceptenbank(code) ? 'planner' : 'los' };
   });

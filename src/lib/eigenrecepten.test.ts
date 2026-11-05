@@ -162,3 +162,30 @@ describe('WEEK-201: afdeling van een eigen ingrediënt', () => {
     assert.equal(terug.ingredienten[0].afdeling, 'zuivel-eieren');
   });
 });
+
+// WEEK-204: een oud of gesynchroniseerd eigen recept met ontbrekende velden mag de app niet laten vastlopen.
+describe('WEEK-204: normaliseerEigen vult ontbrekende velden in', () => {
+  test('zonder stijlen en seizoenen, met vreemde soort en minuten: bruikbaar recept', async () => {
+    const [terug] = normaliseerEigen([{ id: 'x', naam: 'Oud', ingredienten: [], stappen: ['Doe iets.'], soort: 'onzin', minuten: 'veel' }]);
+    assert.deepEqual(terug.stijlen, []);
+    assert.equal(terug.seizoenen, undefined);
+    assert.equal(terug.soort, 'vegetarisch');
+    assert.equal(terug.minuten, 30);
+    // en de planner kan ermee werken zonder TypeError
+    const { kiesbareEigenRecepten, eigenNaarPlanRecept } = await import('@/lib/planner/kies');
+    const { standaardProfiel } = await import('@/lib/profiel');
+    assert.doesNotThrow(() => kiesbareEigenRecepten([terug], { moment: 'avond', kooktijden: [], stijlen: [], vermijd: [], enkelVegetarisch: false, zoek: '', taal: 'nl' }));
+    assert.doesNotThrow(() => eigenNaarPlanRecept(terug, standaardProfiel()));
+  });
+
+  test('regressie: een geldig recept blijft ongewijzigd', () => {
+    const r = { ...recept('g1', 'Ons stoofvlees'), gezinStijl: true, seizoenen: ['winter' as const] };
+    assert.deepEqual(normaliseerEigen([r]), [r]);
+  });
+
+  test('ongeldige stijlen en seizoenen vallen weg, geldige blijven', () => {
+    const [terug] = normaliseerEigen([{ ...recept('g2', 'Test'), stijlen: ['italiaans', 'bogus'], seizoenen: ['zomer', 'nooit'] }]);
+    assert.deepEqual(terug.stijlen, ['italiaans']);
+    assert.deepEqual(terug.seizoenen, ['zomer']);
+  });
+});

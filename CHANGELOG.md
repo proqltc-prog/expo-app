@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.111.1] – 2026-11-05
+
+- Frigo: afgevinkte receptingrediënten staan weer allemaal onder Recepten, niet deels bij Losse producten; verkeerd ingedeelde items worden bij het openen van de frigo hersteld.
+- Lijst: een gekocht en gewist item komt bij het bevestigen of koken van een andere dag niet meer terug als open boodschap.
+- Weekmenu: een nog niet bevestigd recept springt niet meer naar "Gedaan" als zijn ingrediënten uit de frigo verdwijnen.
+- Weekmenu: de datum van een dag blijft bewaard bij een reset en bij Zelf kiezen.
+- Eigen recepten: een oud of gesynchroniseerd recept zonder stijlen laat de app niet meer vastlopen.
+
+**Jira:** [WEEK-204](https://proqltc-1791495894841.atlassian.net/browse/WEEK-204) · **Confluence:** [WEEK-204 Frigo en logicafouten](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/20807681)
+
 ## [0.111.0] – 2026-11-05
 
 - Kooktijd: overal dezelfde drie kooktijden met de tijd erbij: snel (tot 30 min), gemiddeld (31–45 min) en uitgebreid (46–60 min). Een recept duurt nooit langer dan een uur: recepten boven de 60 minuten komen niet meer in het weekmenu of in Kies, en zijn uit de databank verwijderd. In het weekmenu toont de stap Kooktijd de drie kooktijden met het tijdsbestek; een eerder opgeslagen keuze "verfijnd" wordt gemiddeld plus uitgebreid. (WEEK-199)

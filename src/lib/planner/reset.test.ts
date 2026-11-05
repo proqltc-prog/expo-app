@@ -13,6 +13,13 @@ const plan = (extra: Partial<PlanVerzoek> = {}): Weekplan =>
 const ids = (p: Weekplan) => p.dagen.map((d) => d.recept.id);
 
 describe('resetDagLokaal', () => {
+  test('WEEK-204: de datum van de dag blijft bewaard na een reset', () => {
+    const voor = plan();
+    const metDatum = { ...voor, dagen: voor.dagen.map((d, i) => (i === 2 ? { ...d, datum: '2026-11-10' } : d)) };
+    const na = resetDagLokaal(metDatum, 2, 7);
+    assert.equal(na.dagen[2].datum, '2026-11-10');
+    assert.notEqual(na.dagen[2].recept.id, metDatum.dagen[2].recept.id);
+  });
   test('vervangt enkel de gekozen dag; de rest blijft identiek', () => {
     const voor = plan();
     for (let index = 0; index < voor.dagen.length; index++) {
