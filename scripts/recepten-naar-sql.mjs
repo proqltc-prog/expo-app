@@ -191,5 +191,6 @@ if (import.meta.url === `file://${process.argv[1]}` && process.argv.includes('--
   const map = process.argv[process.argv.indexOf('--delen') + 1];
   mkdirSync(map, { recursive: true });
   writeFileSync(`${map}/0-ingredienten.sql`, ingredientenSql() + '\n');
-  for (let d = 0; d * 11 < RECEPTEN.length; d++) writeFileSync(`${map}/${d + 1}-recepten.sql`, batchJsonSql(RECEPTEN.slice(d * 11, d * 11 + 11)));
+  const per = process.argv.includes('--per') ? Number(process.argv[process.argv.indexOf('--per') + 1]) : 11;
+  for (let d = 0; d * per < RECEPTEN.length; d++) writeFileSync(`${map}/${d + 1}-recepten.sql`, batchJsonSql(RECEPTEN.slice(d * per, d * per + per)));
 }
