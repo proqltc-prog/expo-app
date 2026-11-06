@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.116.0] – 2026-11-06
+
+- 50 extra echte recepten toegevoegd (Allerhande, met bron): 20 vis, 20 vegetarisch, 10 vlees, avondmaaltijden van maximaal 60 minuten, per volwassene en in 4 talen. De databank telt nu 150 recepten (42 vis, 53 vegetarisch, 55 vlees). 20 nieuwe ingrediënten (329 in totaal). Het script `scripts/recepten-naar-sql.mjs` kent nu meerdere batches (`--batch`). (WEEK-214)
+
+**Jira:** [WEEK-214](https://proqltc-1791495894841.atlassian.net/browse/WEEK-214) · **Confluence:** [WEEK-214](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21463041)
+
 ## [0.115.0] – 2026-11-06
 
 - Recepten in de databank staan nu allemaal op 1 volwassene. 51 recepten stonden nog op 4 porties, waardoor de lijst ongeveer 4 keer te veel toonde; hun hoeveelheden zijn gedeeld door 4. Nieuwe recepten kunnen enkel nog per volwassene in de databank. (WEEK-212)
