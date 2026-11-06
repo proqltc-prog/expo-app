@@ -142,6 +142,19 @@ describe('ingredientenMetFrigo (WEEK-147)', () => {
     assert.deepEqual(ingredientenMetFrigo(ingredienten, frigo)[0], { naam: 'Pasta', hoeveelheid: 400, eenheid: 'g', dekking: 'geheel' });
   });
 
+  test('precies dezelfde hoeveelheid in de frigo telt als geheel in huis (WEEK-217, lasagne-voorbeeld)', () => {
+    const lasagne = [
+      { naam: 'tomatenblokjes', hoeveelheid: 400, eenheid: 'g', code: 'tomaat_blokjes' },
+      { naam: 'olijfolie', hoeveelheid: 60, eenheid: 'ml', code: 'olijfolie' },
+      { naam: 'ricotta', hoeveelheid: 250, eenheid: 'g', code: 'ricotta' },
+    ];
+    const inHuis = [
+      { id: 'a', naam: 'tomatenblokjes', code: 'tomaat_blokjes', hoeveelheid: 400, eenheid: 'g', afdeling: 'conserven', toegevoegdOp: '2026-11-06T10:00:00Z', bron: 'planner', lijstId: 'l1' },
+      { id: 'b', naam: 'olijfolie', code: 'olijfolie', hoeveelheid: 60, eenheid: 'ml', afdeling: 'conserven', toegevoegdOp: '2026-11-06T10:00:00Z', bron: 'planner', lijstId: 'l2' },
+    ] as unknown as FrigoItem[];
+    assert.deepEqual(ingredientenMetFrigo(lasagne, inHuis).map((i) => i.dekking), ['geheel', 'geheel', 'niet']);
+  });
+
   test('zonder frigo is niets gedekt (regressie)', () => {
     assert.deepEqual(
       ingredientenMetFrigo(ingredienten, []).map((i) => i.dekking),

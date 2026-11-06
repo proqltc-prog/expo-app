@@ -6,7 +6,10 @@ import { testPool } from '@/lib/planner/testrecepten';
 import type { LijstItem } from '@/lib/lijst';
 import {
   kiesbarePoolRecepten,
+  soortToegelaten,
+  startSoorten,
   verwijderDag,
+  wisselSoort,
   vervangDoorPlanRecept,
   voegPlanReceptToe,
   zonderReceptVanLijst,
@@ -76,6 +79,45 @@ describe('kiesbarePoolRecepten (WEEK-189: enkel avondeten)', () => {
 
   test('zoekterm zonder treffers geeft een lege lijst', () => {
     assert.deepEqual(kiesbarePoolRecepten(pool, { ...alle, moment: 'avond', zoek: 'zzzz-geen-recept' }), []);
+  });
+});
+
+describe('soortfilter (WEEK-216)', () => {
+  const soorten = new Set(pool.map((k) => k.soort));
+
+  test('zonder soortfilter blijft alles over (regressie)', () => {
+    assert.equal(kiesbarePoolRecepten(pool, { ...alle, moment: 'avond', soorten: [] }).length, pool.length);
+    assert.equal(kiesbarePoolRecepten(pool, { ...alle, moment: 'avond' }).length, pool.length);
+  });
+
+  test('één soort aan: enkel die soort', () => {
+    for (const soort of soorten) {
+      const res = kiesbarePoolRecepten(pool, { ...alle, moment: 'avond', soorten: [soort] });
+      assert.ok(res.length > 0, soort);
+      assert.ok(res.every((k) => k.soort === soort), soort);
+    }
+  });
+
+  test('twee soorten aan: beide soorten, de derde niet', () => {
+    const res = kiesbarePoolRecepten(pool, { ...alle, moment: 'avond', soorten: ['vis', 'vegetarisch'] });
+    assert.ok(res.every((k) => k.soort === 'vis' || k.soort === 'vegetarisch'));
+    assert.equal(res.length, pool.filter((k) => k.soort !== 'vlees').length);
+  });
+
+  test('"enkel vegetarisch" (WEEK-190) blijft gelden, ook met een soortfilter (regressie)', () => {
+    const res = kiesbarePoolRecepten(pool, { ...alle, moment: 'avond', enkelVegetarisch: true, soorten: ['vlees', 'vegetarisch'] });
+    assert.ok(res.every((k) => k.soort === 'vegetarisch'));
+    assert.equal(soortToegelaten('vlees', { enkelVegetarisch: true }), false);
+    assert.equal(soortToegelaten('vlees', {}), true);
+  });
+
+  test('startSoorten en wisselSoort', () => {
+    assert.deepEqual(startSoorten(true), ['vegetarisch']);
+    assert.deepEqual(startSoorten(false), []);
+    assert.deepEqual(startSoorten(undefined), []);
+    assert.deepEqual(wisselSoort([], 'vis'), ['vis']);
+    assert.deepEqual(wisselSoort(['vis'], 'vlees'), ['vis', 'vlees']);
+    assert.deepEqual(wisselSoort(['vis', 'vlees'], 'vis'), ['vlees']);
   });
 });
 

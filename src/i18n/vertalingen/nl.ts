@@ -36,6 +36,8 @@ export const nl = {
   'bereiding.ingredienten': 'Ingrediënten',
   'bereiding.inFrigo': 'In de frigo',
   'bereiding.deelsInFrigo': 'Deels in de frigo',
+  'bereiding.inHuis': 'in huis',
+  'bereiding.frigoUitleg': '✓ in huis = ligt al in je Frigo. Wat er niet bij staat, moet je nog kopen.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
@@ -171,6 +173,7 @@ export const nl = {
   'planning.annuleer': 'Annuleren',
   'kies.titel': 'Kies een gerecht',
   'kies.zoek': 'Zoek een gerecht',
+  'kies.filterSoort': 'Filter: {soort}',
   'kies.tabOntdek': 'Ontdek',
   'kies.tabGezin': 'Ons gezin',
   'kies.gezinLeeg': 'Nog geen gerechten van het gezin.',
