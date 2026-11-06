@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AFDELINGEN, afdelingVan, eenheidVan, INGREDIENT_CODES, ingredientNaam, isIngredient } from '@/data/ingredienten';
+import { AFDELINGEN, afdelingVan, eenheidVan, INGREDIENT_CODES, ingredientNaam, isIngredient, type IngredientCode } from '@/data/ingredienten';
 import { STIJLEN } from '@/data/recept';
 import { TESTRECEPTEN } from '@/lib/planner/testrecepten';
 import { TALEN } from '@/i18n';
@@ -60,6 +60,42 @@ describe('nieuwe ingrediënten van de receptenbatch (WEEK-214)', () => {
   test('bestaande ingrediënten blijven bestaan (regressie: enkel toevoegingen)', () => {
     for (const code of ['aardappel', 'kipfilet', 'zalm', 'spinazie', 'maïs', 'zwarte_peper']) assert.ok(isIngredient(code), code);
     assert.ok(INGREDIENT_CODES.length >= 329);
+  });
+});
+
+describe('nieuwe ingrediënten van de receptenbatch per stijl (WEEK-215)', () => {
+  const NIEUW: [IngredientCode, string, string][] = [
+    ['rivierkreeftjes', 'g', 'rivierkreeftjes'], ['paneermeel', 'g', 'paneermeel'], ['paneer', 'g', 'paneer'],
+    ['tandoori_pasta', 'g', 'tandoori kruidenpasta'], ['lamsgehakt', 'g', 'lamsgehakt'], ['marsala', 'ml', 'marsala'],
+    ['tom_kha_pasta', 'g', 'tom kha-kruidenpasta'], ['tonkatsusaus', 'ml', 'tonkatsusaus'], ['cheddar', 'g', 'cheddar'],
+    ['tacoschelp', 'stuk', 'tacoschelp'], ['gerookte_makreel', 'g', 'gerookte makreel'], ['pistolet', 'stuk', 'pistolet'],
+    ['shaoxing_wijn', 'ml', 'shaoxing-rijstwijn'], ['gochugaru', 'g', 'gochugaru (Koreaanse chilivlokken)'],
+    ['sobanoedels', 'g', 'sobanoedels'], ['visfond', 'ml', 'visfond'], ['tong', 'g', 'tong (filet)'],
+    ['camembert', 'g', 'camembert'], ['reblochon', 'g', 'reblochon'],
+  ];
+
+  test('staan in de lijst met de juiste eenheid en naam', () => {
+    for (const [code, eenheid, naam] of NIEUW) {
+      assert.ok(isIngredient(code), code);
+      assert.equal(eenheidVan(code), eenheid, code);
+      assert.equal(ingredientNaam(code, 'nl'), naam, code);
+    }
+  });
+
+  test('elk nieuw ingrediënt heeft een naam in elke taal', () => {
+    for (const [code] of NIEUW) for (const taal of TALEN) assert.ok(ingredientNaam(code, taal).trim(), `${code}/${taal}`);
+  });
+
+  test('één code voor tong; noordzeetong bestaat niet apart', () => {
+    assert.equal(isIngredient('noordzeetong'), false);
+    assert.equal(afdelingVan('tong'), afdelingVan('zalm'));
+    assert.equal(afdelingVan('rivierkreeftjes'), afdelingVan('garnalen'));
+    assert.equal(afdelingVan('camembert'), afdelingVan('feta'));
+  });
+
+  test('bestaande ingrediënten blijven bestaan (regressie: enkel toevoegingen, WEEK-214 blijft)', () => {
+    for (const code of ['aardappel', 'kipfilet', 'zalm', 'spinazie', 'mierikswortel', 'zalm_blik', 'beschuit']) assert.ok(isIngredient(code), code);
+    assert.ok(INGREDIENT_CODES.length >= 361);
   });
 });
 
