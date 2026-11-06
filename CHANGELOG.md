@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.119.0] – 2026-11-06
+
+- Receptenbank: 100 nieuwe recepten, 50 van Delhaize en 50 van Colruyt (per winkel 15 vis, 20 vegetarisch, 15 vlees), verspreid over alle stijlen, per volwassene, hoogstens 60 minuten en in vier talen. Bij Colruyt zijn de hoeveelheden geschat, want de site vermeldt ze niet. Carrefour is weggelaten omdat de site geen toegang geeft. (WEEK-219)
+- Elk recept onthoudt nu van welke winkel het komt (nieuwe kolom `winkel`: AH, Delhaize of Colruyt), afgeleid uit de bron. 21 nieuwe ingrediënten, onder meer karnemelk, kerstomaten, zeekraal, zure room en zoetzure saus. (WEEK-219)
+
+**Jira:** [WEEK-219](https://proqltc-1791495894841.atlassian.net/browse/WEEK-219) · **Confluence:** [WEEK-219](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21987329)
+
 ## [0.118.0] – 2026-11-06
 
 - Kies een gerecht: filterknoppen vis, vegetarisch en vlees onder het zoekveld (meerdere tegelijk; niets aan = alles). De voorkeur "enkel vegetarisch" van het weekmenu is de startstand. Het zoekveld is leeg bij elk openen van het scherm. (WEEK-216)

@@ -105,3 +105,32 @@ describe('stijlen (WEEK-78)', () => {
     assert.ok(TESTRECEPTEN.every((r) => STIJLEN.includes(r.stijl)), 'elk testrecept heeft een bekende stijl');
   });
 });
+
+describe('nieuwe ingrediënten van de recepten van Delhaize en Colruyt (WEEK-219)', () => {
+  const NIEUW: [IngredientCode, string, string][] = [
+    ['hazelnootburger', 'stuk', 'hazelnootburger'], ['karnemelk', 'ml', 'karnemelk'], ['kerstomaten', 'g', 'kerstomaten'],
+    ['kalfsvlees', 'g', 'kalfslapjes'], ['zeekraal', 'g', 'zeekraal'], ['zure_room', 'g', 'zure room'],
+    ['raapje', 'stuk', 'raapje'], ['rammenas', 'stuk', 'rammenas'], ['zeevruchten', 'g', 'zeevruchten (diepvries)'],
+    ['zoetzure_saus', 'ml', 'zoetzure saus'], ['luikse_siroop', 'g', 'Luikse siroop'], ['saffraan', 'g', 'saffraan'],
+    ['zongedroogde_tomaten', 'g', 'halfgedroogde tomaten in olie'], ['granaatappel', 'stuk', 'granaatappel'],
+  ];
+
+  test('staan in de lijst met de juiste eenheid en naam', () => {
+    for (const [code, eenheid, naam] of NIEUW) {
+      assert.ok(isIngredient(code), code);
+      assert.equal(eenheidVan(code), eenheid, code);
+      assert.equal(ingredientNaam(code, 'nl'), naam, code);
+    }
+  });
+
+  test('geen dubbele varianten in enkelvoud of meervoud', () => {
+    for (const code of ['raapjes', 'zongedroogde_tomaat', 'kerstomaat']) assert.equal(isIngredient(code), false, code);
+    assert.equal(afdelingVan('zeevruchten'), afdelingVan('garnalen'));
+    assert.equal(afdelingVan('karnemelk'), afdelingVan('melk'));
+  });
+
+  test('bestaande ingrediënten blijven bestaan (regressie: enkel toevoegingen, WEEK-215 blijft)', () => {
+    for (const code of ['aardappel', 'kipfilet', 'tong', 'paneer', 'sobanoedels', 'reblochon']) assert.ok(isIngredient(code), code);
+    assert.ok(INGREDIENT_CODES.length >= 382);
+  });
+});

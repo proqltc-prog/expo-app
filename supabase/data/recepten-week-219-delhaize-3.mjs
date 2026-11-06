@@ -102,7 +102,7 @@ export const RECEPTEN = [
     personen: 4, minuten: 25, stijl: 'mexicaans', soort: 'vlees', basis: 'wrap', wijze: 'pan', moeilijkheid: 'makkelijk',
     seizoenen: [], tags: ['fajita', 'kip', 'wraps'],
     titel: { nl: 'Fajita\'s met kip', fr: 'Fajitas au poulet', de: 'Hähnchen-Fajitas', en: 'Chicken fajitas' },
-    ing: [['kipfilet', 600, 'g'], ['tortilla_wrap', 12, 'stuk'], ['cheddar', 150, 'g'], ['avocado', 1, 'stuk'], ['tomaat', 4, 'stuk'], ['sla', 4, 'stuk'], ['yoghurt', 200, 'g'], ['olijfolie', 30, 'ml']],
+    ing: [['kipfilet', 600, 'g'], ['tortilla_wrap', 12, 'stuk'], ['cheddar', 150, 'g'], ['avocado', 1, 'stuk'], ['tomaat', 4, 'stuk'], ['sla', 1, 'stuk'], ['yoghurt', 200, 'g'], ['olijfolie', 30, 'ml']],
     stappen: {
       nl: ['Bak de kip in reepjes al roerend in de olie op middelhoog vuur gaar.', 'Snijd intussen de sla in fijne reepjes, ontpit de tomaten en snijd ze in blokjes en snijd de avocado in blokjes. Kruid de yoghurt met peper en zout en doe de cheddar in een kommetje.', 'Verwarm de wraps afgedekt 3 tot 4 minuten in de microgolfoven.', 'Zet alles apart op tafel. Leg een strook vulling op een wrap, vouw de onderkant naar het midden en sla de zijkanten dicht.'],
       fr: ['Faites cuire le poulet en lanières dans l\'huile à feu moyen-vif en remuant souvent.', 'Pendant ce temps, émincez la laitue, épépinez les tomates et coupez-les en dés, et coupez l\'avocat en dés. Assaisonnez le yaourt et mettez le cheddar dans un bol.', 'Réchauffez les wraps couverts 3 à 4 minutes au micro-ondes.', 'Disposez tout séparément sur la table. Placez une bande de garniture sur un wrap, repliez le bas vers le centre puis rabattez les côtés.'],
