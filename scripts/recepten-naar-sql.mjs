@@ -16,12 +16,16 @@ import * as vega214 from '../supabase/data/recepten-week-214-vega.mjs';
 import * as vlees214 from '../supabase/data/recepten-week-214-vlees.mjs';
 import * as ing215 from '../supabase/data/ingredienten-week-215.mjs';
 import * as w215 from '../supabase/data/recepten-week-215.mjs';
+import * as ing219 from '../supabase/data/ingredienten-week-219.mjs';
+import * as w219 from '../supabase/data/recepten-week-219.mjs';
+import { winkelVanBron } from '../src/lib/receptwinkel.ts';
 
 /** Alle batches: nieuwe ingrediënten en recepten per workitem. */
 export const BATCHES = {
   'week-213': { ingredienten: ing213.NIEUWE_INGREDIENTEN, recepten: [...vis213.VIS, ...vega213.VEGA, ...vlees213.VLEES] },
   'week-214': { ingredienten: ing214.NIEUWE_INGREDIENTEN, recepten: [...vis214.VIS, ...vega214.VEGA, ...vlees214.VLEES] },
   'week-215': { ingredienten: ing215.NIEUWE_INGREDIENTEN, recepten: w215.RECEPTEN },
+  'week-219': { ingredienten: ing219.NIEUWE_INGREDIENTEN, recepten: w219.RECEPTEN },
 };
 
 const argBatch = process.argv.includes('--batch') ? process.argv[process.argv.indexOf('--batch') + 1] : undefined;
@@ -160,7 +164,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 export function batchJsonSql(recepten) {
   const data = recepten.map((r) => ({
     b: r.bron, m: r.minuten, st: r.stijl, so: r.soort, ba: r.basis, w: r.wijze, mo: r.moeilijkheid, se: r.seizoenen, t: r.tags,
-    ti: r.titel, s: r.stappen,
+    ti: r.titel, s: r.stappen, wi: winkelVanBron(r.bron) ?? null,
     i: r.ing.map(([code, totaal, eenheid]) => [code, perVolwassene(totaal, r.personen, eenheid), eenheid]),
   }));
   const json = JSON.stringify(data).replace(/'/g, "''");
@@ -169,9 +173,9 @@ declare r jsonb; rid bigint; taal text; n int;
 begin
   for r in select * from jsonb_array_elements('${json}'::jsonb) loop
     continue when exists (select 1 from public.recepten where bron = r->>'b');
-    insert into public.recepten (porties, kooktijd_min, moment, stijl, stijlen, soort, basis, bereidingswijze, moeilijkheid, tags, bron, status, seizoenen)
+    insert into public.recepten (porties, kooktijd_min, moment, stijl, stijlen, soort, basis, bereidingswijze, moeilijkheid, tags, bron, status, seizoenen, winkel)
     values (1, (r->>'m')::int, 'avond', r->>'st', array[r->>'st'], r->>'so', r->>'ba', r->>'w', r->>'mo',
-      array(select jsonb_array_elements_text(r->'t')), r->>'b', 'goedgekeurd', array(select jsonb_array_elements_text(r->'se')))
+      array(select jsonb_array_elements_text(r->'t')), r->>'b', 'goedgekeurd', array(select jsonb_array_elements_text(r->'se')), r->>'wi')
     returning id into rid;
     insert into public.recept_vertalingen (recept_id, taal, titel) select rid, k, v from jsonb_each_text(r->'ti') as x(k, v);
     insert into public.recept_ingredienten (recept_id, ingredient_id, hoeveelheid, eenheid)
