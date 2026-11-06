@@ -1,16 +1,33 @@
 #!/usr/bin/env node
-// Receptenbatch naar SQL (WEEK-213).
+// Receptenbatch naar SQL (WEEK-213, WEEK-214).
 // Leest de gegevensbestanden in supabase/data/, controleert elk recept en rekent de hoeveelheden om naar
 // 1 volwassene (porties = 1, zie WEEK-212). Schrijft idempotente SQL naar stdout: een recept met dezelfde bron
 // wordt overgeslagen, bestaande ingrediënten blijven ongewijzigd.
-// Gebruik: node scripts/recepten-naar-sql.mjs > batch.sql   (controle zonder SQL: --controle)
+// Gebruik: node scripts/recepten-naar-sql.mjs [--batch week-214] > batch.sql   (controle zonder SQL: --controle)
+// Zonder --batch wordt de laatste batch genomen.
 import { INGREDIENTEN_DB } from '../src/data/ingredienten.gegenereerd.ts';
-import { NIEUWE_INGREDIENTEN } from '../supabase/data/ingredienten-week-213.mjs';
-import { VIS } from '../supabase/data/recepten-week-213-vis.mjs';
-import { VEGA } from '../supabase/data/recepten-week-213-vega.mjs';
-import { VLEES } from '../supabase/data/recepten-week-213-vlees.mjs';
+import * as ing213 from '../supabase/data/ingredienten-week-213.mjs';
+import * as vis213 from '../supabase/data/recepten-week-213-vis.mjs';
+import * as vega213 from '../supabase/data/recepten-week-213-vega.mjs';
+import * as vlees213 from '../supabase/data/recepten-week-213-vlees.mjs';
+import * as ing214 from '../supabase/data/ingredienten-week-214.mjs';
+import * as vis214 from '../supabase/data/recepten-week-214-vis.mjs';
+import * as vega214 from '../supabase/data/recepten-week-214-vega.mjs';
+import * as vlees214 from '../supabase/data/recepten-week-214-vlees.mjs';
 
-export const RECEPTEN = [...VIS, ...VEGA, ...VLEES];
+/** Alle batches: nieuwe ingrediënten en recepten per workitem. */
+export const BATCHES = {
+  'week-213': { ingredienten: ing213.NIEUWE_INGREDIENTEN, recepten: [...vis213.VIS, ...vega213.VEGA, ...vlees213.VLEES] },
+  'week-214': { ingredienten: ing214.NIEUWE_INGREDIENTEN, recepten: [...vis214.VIS, ...vega214.VEGA, ...vlees214.VLEES] },
+};
+
+const argBatch = process.argv.includes('--batch') ? process.argv[process.argv.indexOf('--batch') + 1] : undefined;
+export const BATCH = argBatch ?? Object.keys(BATCHES).at(-1);
+if (!BATCHES[BATCH]) throw new Error(`onbekende batch ${BATCH}`);
+const NIEUWE_INGREDIENTEN = BATCHES[BATCH].ingredienten;
+export const RECEPTEN = BATCHES[BATCH].recepten;
+/** Nieuwe ingrediënten van alle batches (een latere batch mag ingrediënten van een vorige gebruiken). */
+const ALLE_NIEUWE_INGREDIENTEN = Object.values(BATCHES).flatMap((b) => b.ingredienten);
 
 const TALEN = ['nl', 'fr', 'de', 'en'];
 const STIJLEN = ['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'thais', 'japans', 'koreaans', 'frans', 'belgisch', 'indiaas', 'chinees', 'hartig', 'zoet'];
@@ -24,7 +41,7 @@ const MAX_MINUTEN = 60;
 /** Alle gekende ingrediënten: code -> { eenheid, soort? }. */
 export function ingredientenLijst() {
   const lijst = new Map(Object.entries(INGREDIENTEN_DB).map(([code, [, eenheid]]) => [code, { eenheid }]));
-  for (const [code, eenheid, , soort] of NIEUWE_INGREDIENTEN) lijst.set(code, { eenheid, soort });
+  for (const [code, eenheid, , soort] of ALLE_NIEUWE_INGREDIENTEN) lijst.set(code, { eenheid, soort });
   return lijst;
 }
 
@@ -117,7 +134,7 @@ function receptSql(r) {
 }
 
 export function batchSql(recepten = RECEPTEN) {
-  return [`-- WEEK-213: receptenbatch (${recepten.length} recepten), gegenereerd door scripts/recepten-naar-sql.mjs.`, ingredientenSql(), ...recepten.map(receptSql)].join('\n\n') + '\n';
+  return [`-- ${BATCH.toUpperCase()}: receptenbatch (${recepten.length} recepten), gegenereerd door scripts/recepten-naar-sql.mjs.`, ingredientenSql(), ...recepten.map(receptSql)].join('\n\n') + '\n';
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

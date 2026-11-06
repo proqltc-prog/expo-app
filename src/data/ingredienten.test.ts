@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AFDELINGEN, afdelingVan, INGREDIENT_CODES, ingredientNaam, isIngredient } from '@/data/ingredienten';
+import { AFDELINGEN, afdelingVan, eenheidVan, INGREDIENT_CODES, ingredientNaam, isIngredient } from '@/data/ingredienten';
 import { STIJLEN } from '@/data/recept';
 import { TESTRECEPTEN } from '@/lib/planner/testrecepten';
 import { TALEN } from '@/i18n';
@@ -33,6 +33,33 @@ describe('ingrediëntenlijst van de databank (WEEK-205)', () => {
         assert.ok(i.hoeveelheid > 0, `${r.id}: ${i.code}`);
       }
     }
+  });
+});
+
+describe('nieuwe ingrediënten van de receptenbatch (WEEK-214)', () => {
+  const NIEUW: [string, string, string][] = [
+    ['mierikswortel', 'g', 'mierikswortel (pot)'], ['zalm_blik', 'g', 'zalm in blik'], ['ansjovis', 'g', 'ansjovisfilets'],
+    ['pindakaas', 'g', 'pindakaas'], ['vegetarische_kipstukjes', 'g', 'vegetarische kipstukjes'], ['snijbonen', 'g', 'snijbonen'],
+    ['karwijzaad', 'g', 'karwijzaad'], ['nasigroente', 'g', 'nasigroente'], ['hacheekruiden', 'g', 'hacheekruiden'],
+    ['groene_pepersaus', 'ml', 'groene pepersaus'], ['woksaus', 'ml', 'woksaus sesam-soja'], ['beschuit', 'stuk', 'beschuit'],
+  ];
+
+  test('staan in de lijst met de juiste eenheid en naam', () => {
+    for (const [code, eenheid, naam] of NIEUW) {
+      assert.ok(isIngredient(code), code);
+      assert.equal(eenheidVan(code), eenheid, code);
+      assert.equal(ingredientNaam(code, 'nl'), naam, code);
+    }
+  });
+
+  test('vis komt in de visafdeling, groente bij de groenten (regressie op afdelingVoorCategorie)', () => {
+    assert.equal(afdelingVan('zalm_blik'), afdelingVan('zalm'));
+    assert.equal(afdelingVan('snijbonen'), afdelingVan('sperziebonen'));
+  });
+
+  test('bestaande ingrediënten blijven bestaan (regressie: enkel toevoegingen)', () => {
+    for (const code of ['aardappel', 'kipfilet', 'zalm', 'spinazie', 'maïs', 'zwarte_peper']) assert.ok(isIngredient(code), code);
+    assert.ok(INGREDIENT_CODES.length >= 329);
   });
 });
 
