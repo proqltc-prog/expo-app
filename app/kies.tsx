@@ -2,7 +2,7 @@ import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Moment, MOMENTEN, Soort, StijlCode } from '@/data/recept';
+import { Moment, MOMENTEN, Soort, SOORTEN, StijlCode } from '@/data/recept';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { DbPoolRecept, maakDbPool } from '@/lib/planner/dbplan';
@@ -11,8 +11,10 @@ import {
   eigenNaarPlanRecept,
   kiesbareEigenRecepten,
   kiesbarePoolRecepten,
+  startSoorten,
   voegPlanReceptToe,
   vervangDoorPlanRecept,
+  wisselSoort,
 } from '@/lib/planner/kies';
 import { zelfdeDag } from '@/lib/planner/bijwerken';
 import { laadDbRecepten } from '@/opslag/receptenbank';
@@ -23,6 +25,7 @@ import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
+import { padMet } from '@/lib/terug';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 
@@ -51,7 +54,8 @@ export default function Kies() {
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
   const [vermijd, setVermijd] = useState<Vermijd[]>([]);
-  const [enkelVeg, setEnkelVeg] = useState(false);
+  // WEEK-216: filter op soort (vis, vegetarisch, vlees); de voorkeur "enkel vegetarisch" is de startstand.
+  const [soorten, setSoorten] = useState<Soort[]>([]);
   const [zoek, setZoek] = useState('');
   const [bezig, setBezig] = useState(false);
   const [dbPool, setDbPool] = useState<DbPoolRecept[]>([]);
@@ -68,8 +72,9 @@ export default function Kies() {
         setKooktijden(kooktijdNaarDb(k.momenten, k.kooktijden));
         setStijlen(stijlNaarDb(k.stijlen));
         setVermijd(k.vermijd.filter((v): v is Vermijd => (VERMIJDBAAR as readonly string[]).includes(v)));
-        setEnkelVeg(k.enkelVegetarisch === true);
+        setSoorten(startSoorten(k.enkelVegetarisch));
       });
+      setZoek(''); // WEEK-216: elke keer met een leeg zoekveld beginnen
       laadEigenRecepten().then(setEigen);
       // WEEK-197: het profiel en de databankrecepten laden in één keten, zonder het profiel als afhankelijkheid.
       // Het profiel is elke keer een nieuw object; stond het in de afhankelijkheden, dan startte dit scherm zichzelf opnieuw.
@@ -92,7 +97,7 @@ export default function Kies() {
     }, [t, taal])
   );
 
-  const filter = { moment, kooktijden, stijlen, vermijd, enkelVegetarisch: enkelVeg, zoek, taal };
+  const filter = { moment, kooktijden, stijlen, vermijd, soorten, zoek, taal };
 
   const keuzes = useMemo<Keuze[]>(() => {
     if (tab === 'ontdek') {
@@ -112,7 +117,7 @@ export default function Kies() {
       minuten: r.minuten,
       recept: eigenNaarPlanRecept(r, gezin),
     }));
-  }, [tab, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, enkelVeg, zoek, taal]);
+  }, [tab, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, soorten, zoek, taal]);
 
   const kies = async (keuze: Keuze) => {
     if (bezig || geenRecht) return;
@@ -181,7 +186,7 @@ export default function Kies() {
       {tab === 'gezin' && (
         // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
         <View style={s.gezinActies}>
-          <Pressable style={s.nieuw} onPress={() => router.push('/eigen-recept')} accessibilityRole="button">
+          <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
           </Pressable>
           <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
@@ -198,6 +203,23 @@ export default function Kies() {
         autoCorrect={false}
         clearButtonMode="while-editing"
       />
+      <View style={s.soorten} accessibilityRole="toolbar">
+        {SOORTEN.map((soort) => {
+          const aan = soorten.includes(soort);
+          return (
+            <Pressable
+              key={soort}
+              style={[s.soortKnop, { borderColor: SOORT_KLEUR[soort] }, aan && { backgroundColor: SOORT_KLEUR[soort] }]}
+              onPress={() => setSoorten((huidig) => wisselSoort(huidig, soort))}
+              accessibilityRole="button"
+              accessibilityState={{ selected: aan }}
+              accessibilityLabel={t('kies.filterSoort', { soort: t(`soort.${soort}`) })}
+            >
+              <Text style={[s.soortTekst, { color: aan ? '#fff' : SOORT_KLEUR[soort] }]}>{t(`soort.${soort}`)}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
       {bezig && <ActivityIndicator color={KLEUR} style={{ marginVertical: 8 }} />}
       <FlatList
         data={keuzes}
@@ -231,6 +253,9 @@ const s = StyleSheet.create({
   tabTekst: { fontSize: 15, fontWeight: '600', color: KLEUR },
   tabTekstActief: { color: '#fff' },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
+  soorten: { flexDirection: 'row', gap: 8 },
+  soortKnop: { flex: 1, minHeight: 40, borderRadius: 20, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
+  soortTekst: { fontSize: 14, fontWeight: '600' },
   gezinActies: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   nieuw: { backgroundColor: ACCENT, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
   nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },

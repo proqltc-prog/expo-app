@@ -35,6 +35,8 @@ export const de: Vertalingen = {
   'bereiding.ingredienten': 'Zutaten',
   'bereiding.inFrigo': 'Im Kühlschrank',
   'bereiding.deelsInFrigo': 'Teilweise im Kühlschrank',
+  'bereiding.inHuis': 'vorrätig',
+  'bereiding.frigoUitleg': '✓ vorrätig = liegt schon in deinem Kühlschrank. Der Rest muss noch gekauft werden.',
 
   'tab.menu': 'Menü',
   'tab.menu.titel': 'Wochenmenü',
@@ -170,6 +172,7 @@ export const de: Vertalingen = {
   'planning.annuleer': 'Abbrechen',
   'kies.titel': 'Gericht kiezen',
   'kies.zoek': 'Gericht suchen',
+  'kies.filterSoort': 'Filter: {soort}',
   'kies.tabOntdek': 'Entdecken',
   'kies.tabGezin': 'Unsere Familie',
   'kies.gezinLeeg': 'Noch keine Gerichte der Familie.',

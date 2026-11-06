@@ -1,7 +1,7 @@
 // Bereiding (WEEK-81): de voorbereidingsstappen van een bevestigd gerecht, om te raadplegen tijdens het koken.
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { hoeveelheidTekst } from '@/i18n';
 import { bereidingVoor, ingredientenMetFrigo, ingredientenVoor } from '@/lib/bereiding';
@@ -37,15 +37,24 @@ export default function Bereiding() {
   // WEEK-210: het scherm wordt hergebruikt voor een volgend recept; dan begint de bereiding weer bij stap 1.
   useEffect(() => setIndex(0), [id]);
 
-  useEffect(() => {
-    Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[]), laadPlan().catch(() => null), laadFrigo().catch(() => [] as FrigoItem[])]).then(([lijst, dbLijst, huidigPlan, frigoLijst]) => {
-      setEigen(lijst);
-      setDb(dbLijst);
-      setPlan(huidigPlan);
-      setFrigo(frigoLijst);
-      setGeladen(true);
-    });
-  }, []);
+  // WEEK-217: telkens het scherm in beeld komt opnieuw laden, zodat de vinkjes kloppen met de frigo van dat moment
+  // (vroeger enkel bij het openen; na een wijziging in de frigo bleven de oude vinkjes staan).
+  useFocusEffect(
+    useCallback(() => {
+      let actief = true;
+      Promise.all([laadEigenRecepten(), laadDbRecepten().catch(() => [] as DbRecept[]), laadPlan().catch(() => null), laadFrigo().catch(() => [] as FrigoItem[])]).then(([lijst, dbLijst, huidigPlan, frigoLijst]) => {
+        if (!actief) return;
+        setEigen(lijst);
+        setDb(dbLijst);
+        setPlan(huidigPlan);
+        setFrigo(frigoLijst);
+        setGeladen(true);
+      });
+      return () => {
+        actief = false;
+      };
+    }, [])
+  );
 
   const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);
   const laatste = stappen.length - 1;
@@ -89,6 +98,7 @@ export default function Bereiding() {
                 {ing.dekking === 'geheel' ? (
                   <View style={s.ingFrigo} accessibilityLabel={t('bereiding.inFrigo')}>
                     <Ionicons name="checkmark-circle" size={16} color={PETROL} />
+                    <Text style={s.ingFrigoTekst}>{t('bereiding.inHuis')}</Text>
                   </View>
                 ) : ing.dekking === 'deels' ? (
                   <Text style={s.ingDeels}>{t('bereiding.deelsInFrigo')}</Text>
@@ -96,6 +106,7 @@ export default function Bereiding() {
                 <Text style={s.ingHoeveelheid}>{hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
               </View>
             ))}
+            <Text style={s.ingUitleg}>{t('bereiding.frigoUitleg')}</Text>
           </View>
         ) : null}
 
@@ -153,7 +164,9 @@ const s = StyleSheet.create({
   ingKop: { fontSize: 13, fontWeight: '800', color: PETROL, letterSpacing: 0.5, marginBottom: 4 },
   ingRij: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: LIJN, paddingVertical: 7 },
   ingNaam: { flex: 1, minWidth: 0, fontSize: 15, color: INKT },
-  ingFrigo: { marginLeft: 8 },
+  ingFrigo: { marginLeft: 8, flexDirection: 'row', alignItems: 'center', gap: 3 },
+  ingFrigoTekst: { fontSize: 11, fontWeight: '700', color: PETROL },
+  ingUitleg: { marginTop: 8, fontSize: 12, color: MUTED },
   ingDeels: { marginLeft: 8, fontSize: 11, fontWeight: '700', color: MUTED },
   ingHoeveelheid: { fontSize: 15, fontWeight: '700', color: MUTED, marginLeft: 12 },
   lijst: { gap: 12 },

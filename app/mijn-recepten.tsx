@@ -34,7 +34,7 @@ export default function MijnRecepten() {
 
   return (
     <View style={s.scherm}>
-      <Pressable style={s.nieuw} onPress={() => router.push('/eigen-recept')} accessibilityRole="button">
+      <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: '/mijn-recepten' } })} accessibilityRole="button">
         <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
       </Pressable>
       <TextInput
@@ -71,7 +71,7 @@ export default function MijnRecepten() {
         renderItem={({ item }) => (
           <Pressable
             style={s.rij}
-            onPress={() => router.push({ pathname: '/eigen-recept', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: '/eigen-recept', params: { id: item.id, terug: '/mijn-recepten' } })}
             accessibilityRole="button"
           >
             <Text style={s.naam}>{item.naam}</Text>

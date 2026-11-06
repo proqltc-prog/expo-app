@@ -25,7 +25,8 @@ import {
 import { normaliseer } from '@/lib/frigoSheets';
 import type { LosWijziging } from '@/lib/frigo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
-import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
+import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, MAX_KOOKTIJD_MIN, minutenVoorKooktijd } from '@/lib/kooktijd';
+import { terugPad } from '@/lib/terug';
 import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
@@ -57,15 +58,18 @@ const FOUT_TEKST: Record<Fout, string> = {
 
 export default function EigenReceptScherm() {
   const { t, taal } = useTaal();
-  const params = useLocalSearchParams<{ id?: string }>();
+  const params = useLocalSearchParams<{ id?: string; terug?: string }>();
   const id = params.id;
+  // WEEK-218: terug naar het scherm vanwaar dit geopend werd (verborgen tab: router.back() ging naar het beginscherm).
+  const terug = () => router.navigate(terugPad(params.terug, '/mijn-recepten') as never);
   const navigation = useNavigation();
 
   const [geladen, setGeladen] = useState(!id);
   const [bestaand, setBestaand] = useState<EigenRecept | undefined>(undefined);
   const [naam, setNaam] = useState('');
   const [soort, setSoort] = useState<Soort>('vegetarisch');
-  const [minuten, setMinuten] = useState('');
+  // WEEK-218: de minuten volgen uit de gekozen kooktijd (snel als start); er is geen minutenvak meer.
+  const [minuten, setMinuten] = useState(String(KOOKTIJD_SCHATTING_STANDAARD.snel));
   const [stijlen, setStijlen] = useState<StijlKeuze[]>([GEZIN_STIJL]);
   const [seizoenen, setSeizoenen] = useState<Seizoen[]>([]);
   const [rijen, setRijen] = useState<Rij[]>([]);
@@ -182,7 +186,7 @@ export default function EigenReceptScherm() {
   // De gekozen kooktijd volgt uit de minuten; een chip vult de geschatte tijd van die kooktijd in.
   const minutenGetal = Number(minuten.trim());
   const gekozenKooktijd: KooktijdCode | undefined = minuten.trim() && binnenKooktijd(minutenGetal) ? kooktijdVan(minutenGetal) : undefined;
-  const kiesKooktijd = (k: KooktijdCode) => setMinuten(String(schattingen[k]));
+  const kiesKooktijd = (k: KooktijdCode) => setMinuten(String(minutenVoorKooktijd(k, schattingen)));
 
   const toggleStijl = (k: StijlKeuze) =>
     setStijlen((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
@@ -207,7 +211,7 @@ export default function EigenReceptScherm() {
         bijgewerkt: nu.toISOString(),
       };
       await wijzigEigenRecepten((lijst) => bewaarEigen(lijst, recept));
-      router.back();
+      terug();
     } finally {
       setBezig(false);
     }
@@ -222,7 +226,7 @@ export default function EigenReceptScherm() {
         style: 'destructive',
         onPress: async () => {
           await wijzigEigenRecepten((lijst) => verwijderEigen(lijst, bestaand.id));
-          router.back();
+          terug();
         },
       },
     ]);
@@ -250,17 +254,6 @@ export default function EigenReceptScherm() {
         {KOOKTIJDEN.map((k) => (
           <Chip key={k} tekst={t(`kooktijd.${k}`, KOOKTIJD_BEREIK[k])} actief={gekozenKooktijd === k} onPress={() => kiesKooktijd(k)} />
         ))}
-      </View>
-      <View style={s.minutenRij}>
-        <TextInput
-          style={[s.veld, s.minutenVeld]}
-          value={minuten}
-          onChangeText={setMinuten}
-          keyboardType="number-pad"
-          placeholder={t('recept.minuten')}
-          accessibilityLabel={t('recept.minuten')}
-        />
-        <Text style={s.minutenHint}>{t('recept.minutenHint', { max: MAX_KOOKTIJD_MIN })}</Text>
       </View>
       {fout('minuten')}
 
@@ -341,7 +334,7 @@ export default function EigenReceptScherm() {
       {fout('stappen')}
 
       <View style={s.knoppen}>
-        <Pressable style={s.annuleer} onPress={() => router.back()} disabled={bezig} accessibilityRole="button">
+        <Pressable style={s.annuleer} onPress={terug} disabled={bezig} accessibilityRole="button">
           <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
         </Pressable>
         <Pressable style={[s.bewaar, bezig && { opacity: 0.6 }]} onPress={bewaar} disabled={bezig} accessibilityRole="button">
@@ -391,9 +384,6 @@ const s = StyleSheet.create({
   plus: { width: 48, height: 48, borderRadius: 12, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   plusUit: { opacity: 0.4 },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700', lineHeight: 28 },
-  minutenRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  minutenVeld: { width: 96 },
-  minutenHint: { flex: 1, fontSize: 13, color: '#5E6B63', lineHeight: 18 },
   verwijder: { fontSize: 18, color: '#c62828', paddingHorizontal: 6 },
   treffer: { backgroundColor: '#f4f8f5', borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14 },
   trefferTekst: { fontSize: 15, color: '#2e7d4f' },

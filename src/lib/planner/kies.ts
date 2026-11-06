@@ -1,6 +1,6 @@
 // Zelf kiezen en verwijderen van een maaltijd in het weekmenu (WEEK-44).
 // Pure logica: het scherm schrijft het resultaat weg.
-import { Moment, MOMENTEN, StijlCode } from '@/data/recept';
+import { Moment, MOMENTEN, Soort, StijlCode } from '@/data/recept';
 import type { Vermijd } from '@/data/vermijden';
 import type { Taal } from '@/i18n';
 import { afdelingVanEigen, EigenRecept } from '@/lib/eigenrecepten';
@@ -22,11 +22,29 @@ export type KiesFilter = {
   vermijd: readonly Vermijd[];
   /** WEEK-190: enkel vegetarische recepten. */
   enkelVegetarisch?: boolean;
+  /** WEEK-216: enkel deze soorten (vis, vegetarisch, vlees); leeg of weggelaten = alle soorten. */
+  soorten?: readonly Soort[];
   zoek: string;
   taal: Taal;
 };
 
 const momentVolgorde = (m: Moment) => MOMENTEN.indexOf(m);
+
+/** WEEK-216: laat de soort door als er geen soortfilter is, of als de soort erin zit. "Enkel vegetarisch" (WEEK-190) blijft gelden. */
+export function soortToegelaten(soort: Soort, f: Pick<KiesFilter, 'enkelVegetarisch' | 'soorten'>): boolean {
+  if (f.enkelVegetarisch && soort !== 'vegetarisch') return false;
+  return !f.soorten?.length || f.soorten.includes(soort);
+}
+
+/** WEEK-216: de startstand van de soortfilter op het kiesscherm, uit de voorkeur "enkel vegetarisch". */
+export function startSoorten(enkelVegetarisch: boolean | undefined): Soort[] {
+  return enkelVegetarisch ? ['vegetarisch'] : [];
+}
+
+/** WEEK-216: zet een soort aan of uit in de filter. */
+export function wisselSoort(soorten: readonly Soort[], soort: Soort): Soort[] {
+  return soorten.includes(soort) ? soorten.filter((s) => s !== soort) : [...soorten, soort];
+}
 
 /**
  * Recepten uit de databank (WEEK-191, tab "Ontdek"), gefilterd op de voorkeuren en de zoekterm.
@@ -40,7 +58,7 @@ export function kiesbarePoolRecepten(pool: readonly DbPoolRecept[], f: KiesFilte
       (!f.kooktijden.length || f.kooktijden.includes(k.kooktijd)) &&
       (!f.stijlen.length || k.stijlen.some((s) => f.stijlen.includes(s))) &&
       !heeftVermijdNaam(k.recept.ingredienten, f.vermijd) &&
-      (!f.enkelVegetarisch || k.soort === 'vegetarisch') &&
+      soortToegelaten(k.soort, f) &&
       (!zoek || zoeksleutel(k.recept.naam).includes(zoek))
   );
 }
@@ -57,7 +75,7 @@ export function kiesbareEigenRecepten(lijst: readonly EigenRecept[], f: KiesFilt
       (!f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten))) &&
       (!f.stijlen.length || r.gezinStijl === true || r.stijlen.some((s) => f.stijlen.includes(s))) &&
       !heeftVermijdNaam(r.ingredienten, f.vermijd) &&
-      (!f.enkelVegetarisch || r.soort === 'vegetarisch') &&
+      soortToegelaten(r.soort, f) &&
       (!zoek || zoeksleutel(r.naam).includes(zoek))
   );
 }

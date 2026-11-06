@@ -8,6 +8,7 @@ import {
   kooktijdSchattingen,
   kooktijdVan,
   MAX_KOOKTIJD_MIN,
+  minutenVoorKooktijd,
 } from '@/lib/kooktijd';
 
 // WEEK-199: één kooktijdindeling voor de hele app: snel tot 30, gemiddeld 31–45, uitgebreid 46–60 minuten.
@@ -78,5 +79,16 @@ describe('WEEK-199: geschatte tijd per kooktijd uit de databank', () => {
     for (const code of KOOKTIJDEN) {
       assert.ok(uit[code] >= KOOKTIJD_BEREIK[code].van && uit[code] <= KOOKTIJD_BEREIK[code].tot, code);
     }
+  });
+});
+
+describe('WEEK-218: minuten uit de gekozen kooktijd', () => {
+  test('geeft de geschatte tijd van die kooktijd', () => {
+    assert.equal(minutenVoorKooktijd('snel'), 25);
+    assert.equal(minutenVoorKooktijd('gemiddeld', { snel: 20, gemiddeld: 38, uitgebreid: 55 }), 38);
+  });
+
+  test('valt terug op de vaste schatting als de schatting buiten de kooktijd valt (regressie)', () => {
+    assert.equal(minutenVoorKooktijd('snel', { snel: 45, gemiddeld: 40, uitgebreid: 56 }), 25);
   });
 });

@@ -47,3 +47,12 @@ export function kooktijdSchattingen(minutenLijst: readonly number[]): Record<Koo
   }
   return uit;
 }
+
+/**
+ * WEEK-218: op het scherm "Nieuw recept" kiest de gebruiker enkel een kooktijd; de minuten zijn de geschatte tijd ervan.
+ * Een bestaand recept houdt zijn eigen minuten (en dus zijn kooktijd) als die binnen het bereik liggen.
+ */
+export function minutenVoorKooktijd(code: KooktijdCode, schattingen: Record<KooktijdCode, number> = KOOKTIJD_SCHATTING_STANDAARD): number {
+  const m = schattingen[code];
+  return binnenKooktijd(m) && kooktijdVan(m) === code ? m : KOOKTIJD_SCHATTING_STANDAARD[code];
+}

@@ -35,6 +35,8 @@ export const fr: Vertalingen = {
   'bereiding.ingredienten': 'Ingrédients',
   'bereiding.inFrigo': 'Dans le frigo',
   'bereiding.deelsInFrigo': 'Partiellement dans le frigo',
+  'bereiding.inHuis': 'en stock',
+  'bereiding.frigoUitleg': '✓ en stock = déjà dans votre Frigo. Le reste est encore à acheter.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Menu de la semaine',
@@ -170,6 +172,7 @@ export const fr: Vertalingen = {
   'planning.annuleer': 'Annuler',
   'kies.titel': 'Choisir un plat',
   'kies.zoek': 'Chercher un plat',
+  'kies.filterSoort': 'Filtre : {soort}',
   'kies.tabOntdek': 'Découvrir',
   'kies.tabGezin': 'Notre famille',
   'kies.gezinLeeg': 'Pas encore de plats de la famille.',
