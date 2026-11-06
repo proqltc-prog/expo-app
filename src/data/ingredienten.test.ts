@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AFDELINGEN, afdelingVan, eenheidVan, INGREDIENT_CODES, ingredientNaam, isIngredient } from '@/data/ingredienten';
+import { AFDELINGEN, afdelingVan, eenheidVan, INGREDIENT_CODES, ingredientNaam, isIngredient, type IngredientCode } from '@/data/ingredienten';
 import { STIJLEN } from '@/data/recept';
 import { TESTRECEPTEN } from '@/lib/planner/testrecepten';
 import { TALEN } from '@/i18n';
@@ -64,7 +64,7 @@ describe('nieuwe ingrediënten van de receptenbatch (WEEK-214)', () => {
 });
 
 describe('nieuwe ingrediënten van de receptenbatch per stijl (WEEK-215)', () => {
-  const NIEUW: [string, string, string][] = [
+  const NIEUW: [IngredientCode, string, string][] = [
     ['rivierkreeftjes', 'g', 'rivierkreeftjes'], ['paneermeel', 'g', 'paneermeel'], ['paneer', 'g', 'paneer'],
     ['tandoori_pasta', 'g', 'tandoori kruidenpasta'], ['lamsgehakt', 'g', 'lamsgehakt'], ['marsala', 'ml', 'marsala'],
     ['tom_kha_pasta', 'g', 'tom kha-kruidenpasta'], ['tonkatsusaus', 'ml', 'tonkatsusaus'], ['cheddar', 'g', 'cheddar'],
