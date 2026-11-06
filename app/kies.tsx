@@ -25,6 +25,7 @@ import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
+import { padMet } from '@/lib/terug';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 
@@ -185,7 +186,7 @@ export default function Kies() {
       {tab === 'gezin' && (
         // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
         <View style={s.gezinActies}>
-          <Pressable style={s.nieuw} onPress={() => router.push('/eigen-recept')} accessibilityRole="button">
+          <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
           </Pressable>
           <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">

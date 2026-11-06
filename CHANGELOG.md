@@ -12,8 +12,9 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 - Kies een gerecht: filterknoppen vis, vegetarisch en vlees onder het zoekveld (meerdere tegelijk; niets aan = alles). De voorkeur "enkel vegetarisch" van het weekmenu is de startstand. Het zoekveld is leeg bij elk openen van het scherm. (WEEK-216)
 - Bereiding: de vinkjes bij de ingrediënten worden opnieuw berekend telkens het scherm in beeld komt, zodat ze kloppen met de Frigo na een wijziging. Naast het vinkje staat nu "in huis", met een korte uitleg onder de lijst. (WEEK-217)
+- Nieuw recept: het minutenvak en de tekst "Geschatte tijd…" zijn weg; je kiest enkel Snel / Gemiddeld / Uitgebreid en de minuten volgen daaruit. Annuleren, Bewaren en Verwijderen brengen je terug naar het scherm vanwaar je kwam ("Kies een gerecht" of "Mijn recepten") in plaats van naar het beginscherm. (WEEK-218)
 
-**Jira:** [WEEK-216](https://proqltc-1791495894841.atlassian.net/browse/WEEK-216), [WEEK-217](https://proqltc-1791495894841.atlassian.net/browse/WEEK-217) · **Confluence:** [WEEK-216 / WEEK-217](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21823489)
+**Jira:** [WEEK-216](https://proqltc-1791495894841.atlassian.net/browse/WEEK-216), [WEEK-217](https://proqltc-1791495894841.atlassian.net/browse/WEEK-217), [WEEK-218](https://proqltc-1791495894841.atlassian.net/browse/WEEK-218) · **Confluence:** [WEEK-216 / 217 / 218](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/21823489)
 
 ## [0.117.0] – 2026-11-06
 
