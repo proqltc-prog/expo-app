@@ -138,7 +138,7 @@ export const RECEPTEN = [
 
 // [code, eenheid, categorie, soort, allergenen, { nl, fr, de, en }]
 export const NIEUWE_INGREDIENTEN = [
-  ['tong', 'g', 'vis', 'vis', ['vis'], { nl: 'tongfilet (sliptong)', fr: 'filets de sole', de: 'Seezungenfilets', en: 'sole fillets' }],
+  ['tong', 'g', 'vis', 'vis', ['vis'], { nl: 'tong (filet)', fr: 'sole (filets)', de: 'Seezunge (Filets)', en: 'sole (fillets)' }],
   ['camembert', 'g', 'zuivel', 'vegetarisch', ['melk'], { nl: 'camembert', fr: 'camembert', de: 'Camembert', en: 'camembert' }],
   ['geitenkaas', 'g', 'zuivel', 'vegetarisch', ['melk'], { nl: 'geitenkaas', fr: 'fromage de chèvre', de: 'Ziegenkäse', en: 'goat\'s cheese' }],
   ['reblochon', 'g', 'zuivel', 'vegetarisch', ['melk'], { nl: 'reblochon', fr: 'reblochon', de: 'Reblochon', en: 'reblochon' }],
