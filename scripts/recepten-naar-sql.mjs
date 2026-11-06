@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Receptenbatch naar SQL (WEEK-213, WEEK-214).
+// Receptenbatch naar SQL (WEEK-213, WEEK-214, WEEK-215).
 // Leest de gegevensbestanden in supabase/data/, controleert elk recept en rekent de hoeveelheden om naar
 // 1 volwassene (porties = 1, zie WEEK-212). Schrijft idempotente SQL naar stdout: een recept met dezelfde bron
 // wordt overgeslagen, bestaande ingrediënten blijven ongewijzigd.
@@ -14,11 +14,14 @@ import * as ing214 from '../supabase/data/ingredienten-week-214.mjs';
 import * as vis214 from '../supabase/data/recepten-week-214-vis.mjs';
 import * as vega214 from '../supabase/data/recepten-week-214-vega.mjs';
 import * as vlees214 from '../supabase/data/recepten-week-214-vlees.mjs';
+import * as ing215 from '../supabase/data/ingredienten-week-215.mjs';
+import * as w215 from '../supabase/data/recepten-week-215.mjs';
 
 /** Alle batches: nieuwe ingrediënten en recepten per workitem. */
 export const BATCHES = {
   'week-213': { ingredienten: ing213.NIEUWE_INGREDIENTEN, recepten: [...vis213.VIS, ...vega213.VEGA, ...vlees213.VLEES] },
   'week-214': { ingredienten: ing214.NIEUWE_INGREDIENTEN, recepten: [...vis214.VIS, ...vega214.VEGA, ...vlees214.VLEES] },
+  'week-215': { ingredienten: ing215.NIEUWE_INGREDIENTEN, recepten: w215.RECEPTEN },
 };
 
 const argBatch = process.argv.includes('--batch') ? process.argv[process.argv.indexOf('--batch') + 1] : undefined;
@@ -148,6 +151,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const telling = Object.groupBy(RECEPTEN, (r) => r.soort);
   console.error(`${RECEPTEN.length} recepten in orde: ${Object.entries(telling).map(([s, l]) => `${l.length} ${s}`).join(', ')}.`);
+  const perStijl = Object.groupBy(RECEPTEN, (r) => r.stijl);
+  if (Object.keys(perStijl).length > 1) console.error(`per stijl: ${Object.entries(perStijl).map(([s, l]) => `${s} ${l.length}`).join(', ')}.`);
   if (!process.argv.includes('--controle') && !process.argv.includes('--delen')) process.stdout.write(batchSql());
 }
 
