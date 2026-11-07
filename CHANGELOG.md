@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.120.0] – 2026-11-10
+
+- Scanner: het resultaat toont nu eerst het Nutri-Score (A–E) en de NOVA-groep (1–4) als kleurenbalk, zoals Open Food Facts ze levert. Is er geen waarde, dan zegt de app dat.
+- Scanner: onze eigen score staat los van het Nutri-Score (geen dubbele telling) en gebruikt officiële drempels voor vet, verzadigd vet, suikers en zout (richtlijn voedingskleuren van de Britse overheid) en voor vezels en eiwit (Verordening (EG) 1924/2006). Met kleurenschaal en korte uitleg; de punten zelf zijn onze eigen keuze en de app zegt dat.
+- Scanner en frigo-details: tabel per 100 g (drank: per 100 ml) met ook verzadigd vet, koolhydraten en vezels. Additieven staan standaard ingeklapt.
+- Niet inbegrepen, bewust: kankerwaarschuwing en officiële beschrijvingen per additief (toestemming van de bron nodig).
+
+**Jira:** [WEEK-220](https://proqltc-1791495894841.atlassian.net/browse/WEEK-220) · **Confluence:** [WEEK-220 Scanner: Nutri-Score, NOVA en eigen score](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/22315009)
+
 ## [0.119.0] – 2026-11-06
 
 - Receptenbank: 100 nieuwe recepten, 50 van Delhaize en 50 van Colruyt (per winkel 15 vis, 20 vegetarisch, 15 vlees), verspreid over alle stijlen, per volwassene, hoogstens 60 minuten en in vier talen. Bij Colruyt zijn de hoeveelheden geschat, want de site vermeldt ze niet. Carrefour is weggelaten omdat de site geen toegang geeft. (WEEK-219)
