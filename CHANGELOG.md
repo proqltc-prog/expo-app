@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.122.2] – 2026-11-11
+
+- Aanmelden met Google: na het kiezen van je account kom je in de weekplanner. Voorheen stuurde de webversie je terug naar het startscherm, omdat de huidige pagina (/welkom) als terugkeeradres werd meegegeven. In de app ga je na koppelen ook naar de weekplanner in plaats van het gezinsprofiel. (WEEK-230)
+
+**Jira:** [WEEK-230](https://proqltc-1791495894841.atlassian.net/browse/WEEK-230) · **Confluence:** [WEEK-230 Na aanmelden met Google naar de weekplanner](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23527425)
+
 ## [0.122.1] – 2026-11-11
 
 - Privacybeleid versie 5: aanmelden met Google (e-mail, naam, profielfoto en Google-id bij Supabase in de EU; enkel e-mail en profiel, je wachtwoord zien we nooit) staat erin. De AI-planner is eruit, want die bestaat niet meer. Budget en favorieten weg; voornaam en eigen recepten erbij. Gepubliceerd op https://proqltc-prog.github.io/famenu-privacy/ en in docs/privacybeleid. (WEEK-228)

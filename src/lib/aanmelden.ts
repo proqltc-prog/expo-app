@@ -27,10 +27,15 @@ export function isGeldigEmail(adres: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adres.trim());
 }
 
-/** Het adres waarnaar de aanbieder terugkeert: op het web de huidige pagina, in de app het app-schema. */
-export function terugkeerAdres(platform: 'web' | 'native', origin?: string, pad?: string): string {
-  if (platform === 'web') return `${origin ?? ''}${pad ?? ''}`;
-  return 'famenu://';
+/**
+ * Het adres waarnaar de aanbieder terugkeert: in de app het app-schema, op het web de start van de app
+ * (origin + basispad, bv. https://proqltc-prog.github.io/expo-app/). Niet de huidige pagina: anders kom je na
+ * aanmelden terug op het startscherm /welkom in plaats van in de weekplanner (WEEK-230).
+ */
+export function terugkeerAdres(platform: 'web' | 'native', origin?: string, basis?: string): string {
+  if (platform !== 'web') return 'famenu://';
+  const pad = (basis ?? '').replace(/^\/*/, '/').replace(/\/*$/, '/');
+  return `${origin ?? ''}${pad}`;
 }
 
 /**

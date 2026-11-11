@@ -50,13 +50,11 @@ export default function Welkom() {
     await klaar();
     try {
       // Een anoniem toestel koppelt zijn gegevens aan het account; anders meldt het aan bij een bestaand account.
-      if (await isAnoniem()) {
-        await koppel(aanbieder);
-        router.replace(ROUTE_NA_WELKOM);
-      } else {
-        await inlogMet(aanbieder);
-        router.replace(ROUTE_NA_INLOGGEN);
-      }
+      // Daarna altijd naar de weekplanner (WEEK-230). Op het web gaat de pagina eerst naar Google en komt ze terug
+      // op de start van de app (zie terugkeerAdres); deze regel geldt dan niet meer.
+      if (await isAnoniem()) await koppel(aanbieder);
+      else await inlogMet(aanbieder);
+      router.replace(ROUTE_NA_INLOGGEN);
     } catch {
       setAanmeldFout(true);
     } finally {
