@@ -36,8 +36,6 @@ export const nl = {
   'bereiding.ingredienten': 'Ingrediënten',
   'bereiding.inFrigo': 'In de frigo',
   'bereiding.deelsInFrigo': 'Deels in de frigo',
-  'bereiding.inHuis': 'in huis',
-  'bereiding.frigoUitleg': '✓ in huis = ligt al in je Frigo. Wat er niet bij staat, moet je nog kopen.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekmenu',
@@ -501,7 +499,8 @@ export const nl = {
   'pagina.infoKnop': 'Uitleg over deze pagina',
   'pagina.lijstInfo': '**Boodschappen**\nTik op een product om het af te vinken. Wissel tussen per recept en per categorie. Tik op een kop om een groep in of uit te klappen.\n\n**Recepten / Losse producten**\nRecepten zijn de ingrediënten van het weekmenu; losse producten zijn wat je zelf toevoegt.\n\n**Winkels**\nVoor elk winkeltype op je lijst opent Google Maps bij jou in de buurt, met de postcode uit je profiel.',
   'pagina.kiesInfo': 'Kies een recept voor deze maaltijd. Met de filters bovenaan beperk je de lijst; tik op een recept om het op het weekmenu te zetten.\n\n**Ontdek**\nDe recepten van de app.\n\n**Ons gezin**\nDe eigen recepten van het gezin. Met + Nieuw recept voeg je er een toe.',
-  'pagina.frigoInfo': '**Recepten**\nWat er in huis is voor de recepten van de week. Zoek een ingrediënt en geef de hoeveelheid op. De planner gebruikt eerst wat het langst in huis is.\n\n**Losse producten**\nWat je buiten de recepten om hebt. Die tellen niet mee voor de recepten van de week. Met het potloodje wijzig je hoeveelheid, eenheid, categorie en houdbaarheid. De app verwijdert niets automatisch.',
+  'pagina.frigoInfo': '**Recepten**\nWat er in huis is voor de recepten van de week. Zoek een ingrediënt en geef de hoeveelheid op. De planner gebruikt eerst wat het langst in huis is. Met het potloodje pas je de hoeveelheid en de eenheid aan (g, ml, stuks, teentjes).\n\n**Losse producten**\nWat je buiten de recepten om hebt. Die tellen niet mee voor de recepten van de week. Met het potloodje wijzig je hoeveelheid, eenheid, categorie en houdbaarheid. De app verwijdert niets automatisch.',
+  'pagina.bereidingInfo': '**Bereiding**\nDe stappen van het gerecht, één voor één. Tik op een stap of gebruik Vorige en Volgende.\n\n**Vinkjes**\nEen vinkje ✓ bij een ingrediënt betekent dat het al in je Frigo ligt. "Deels in de frigo": er ligt wat, maar niet genoeg. Zonder vinkje moet je het nog kopen.',
   'pagina.scanInfo': 'De app zoekt het product op en toont de voedingswaarden en een oordeel. Je hebt per dag een beperkt aantal gratis scans.',
   'gezin.infoKnop': "Uitleg over de gezinscode",
   'gezin.infoTekst': "Met deze code voegt iemand zich bij jouw gezinsruimte: kies in de app ‘Lid worden’ en vul de code in. Open de app via {link}.",

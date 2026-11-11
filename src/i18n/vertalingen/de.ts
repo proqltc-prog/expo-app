@@ -35,8 +35,6 @@ export const de: Vertalingen = {
   'bereiding.ingredienten': 'Zutaten',
   'bereiding.inFrigo': 'Im Kühlschrank',
   'bereiding.deelsInFrigo': 'Teilweise im Kühlschrank',
-  'bereiding.inHuis': 'vorrätig',
-  'bereiding.frigoUitleg': '✓ vorrätig = liegt schon in deinem Kühlschrank. Der Rest muss noch gekauft werden.',
 
   'tab.menu': 'Menü',
   'tab.menu.titel': 'Wochenmenü',
@@ -500,7 +498,8 @@ export const de: Vertalingen = {
   'pagina.infoKnop': 'Erklärung zu dieser Seite',
   'pagina.lijstInfo': '**Einkauf**\nTippe auf ein Produkt, um es abzuhaken. Wechsle zwischen pro Rezept und pro Kategorie. Tippe auf eine Überschrift, um eine Gruppe auf- oder zuzuklappen.\n\n**Rezepte / Lose Produkte**\nRezepte sind die Zutaten des Wochenplans; lose Produkte sind, was du selbst hinzufügst.\n\n**Geschäfte**\nFür jeden Geschäftstyp auf deiner Liste öffnet Google Maps in deiner Nähe, mit der Postleitzahl aus deinem Profil.',
   'pagina.kiesInfo': 'Wähle ein Rezept für diese Mahlzeit. Mit den Filtern oben engst du die Liste ein; tippe auf ein Rezept, um es in den Wochenplan zu setzen.\n\n**Entdecken**\nDie Rezepte der App.\n\n**Unsere Familie**\nDie eigenen Rezepte der Familie. Mit + Neues Rezept fügst du eines hinzu.',
-  'pagina.frigoInfo': '**Rezepte**\nWas im Haus ist für die Rezepte der Woche. Suche eine Zutat und gib die Menge an. Der Planer verbraucht zuerst, was am längsten da ist.\n\n**Lose Produkte**\nWas du außerhalb der Rezepte hast. Diese zählen nicht für die Rezepte der Woche. Mit dem Stift änderst du Menge, Einheit, Kategorie und Haltbarkeit. Die App löscht nichts automatisch.',
+  'pagina.frigoInfo': '**Rezepte**\nWas im Haus ist für die Rezepte der Woche. Suche eine Zutat und gib die Menge an. Der Planer verbraucht zuerst, was am längsten da ist. Mit dem Stift änderst du Menge und Einheit (g, ml, Stück, Zehen).\n\n**Lose Produkte**\nWas du außerhalb der Rezepte hast. Diese zählen nicht für die Rezepte der Woche. Mit dem Stift änderst du Menge, Einheit, Kategorie und Haltbarkeit. Die App löscht nichts automatisch.',
+  'pagina.bereidingInfo': '**Zubereitung**\nDie Schritte des Gerichts, einer nach dem anderen. Tippe auf einen Schritt oder nutze Zurück und Weiter.\n\n**Häkchen**\nEin Häkchen ✓ bei einer Zutat bedeutet, dass sie schon in deinem Kühlschrank liegt. „Teilweise im Kühlschrank“: Es ist etwas da, aber nicht genug. Ohne Häkchen musst du sie noch kaufen.',
   'pagina.scanInfo': 'Die App sucht das Produkt und zeigt Nährwerte und eine Bewertung. Du hast pro Tag eine begrenzte Anzahl gratis Scans.',
   'gezin.infoKnop': "Erkl\u00e4rung",
   'gezin.infoTekst': "Mit diesem Code tritt jemand deinem Familienbereich bei: Wähle in der App „Beitreten“ und gib den Code ein. Öffne die App unter {link}.",

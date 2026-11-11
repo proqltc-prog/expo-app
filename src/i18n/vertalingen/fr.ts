@@ -35,8 +35,6 @@ export const fr: Vertalingen = {
   'bereiding.ingredienten': 'Ingrédients',
   'bereiding.inFrigo': 'Dans le frigo',
   'bereiding.deelsInFrigo': 'Partiellement dans le frigo',
-  'bereiding.inHuis': 'en stock',
-  'bereiding.frigoUitleg': '✓ en stock = déjà dans votre Frigo. Le reste est encore à acheter.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Menu de la semaine',
@@ -500,7 +498,8 @@ export const fr: Vertalingen = {
   'pagina.infoKnop': 'Explication de cette page',
   'pagina.lijstInfo': '**Courses**\nTouchez un produit pour le cocher. Changez entre par recette et par rayon. Touchez un titre pour ouvrir ou fermer un groupe.\n\n**Recettes / Produits libres**\nLes recettes sont les ingrédients du menu de la semaine ; les produits libres sont ce que vous ajoutez vous-même.\n\n**Magasins**\nPour chaque type de magasin sur votre liste, ouvre Google Maps près de chez vous, avec le code postal de votre profil.',
   'pagina.kiesInfo': 'Choisissez une recette pour ce repas. Les filtres en haut limitent la liste ; touchez une recette pour la mettre sur le menu de la semaine.\n\n**Découvrir**\nLes recettes de l’application.\n\n**Notre famille**\nLes recettes propres à la famille. Avec + Nouvelle recette, vous en ajoutez une.',
-  'pagina.frigoInfo': '**Recettes**\nCe qu’il y a à la maison pour les recettes de la semaine. Cherchez un ingrédient et indiquez la quantité. Le planificateur utilise d’abord ce qui est là depuis le plus longtemps.\n\n**Produits libres**\nCe que vous avez en dehors des recettes. Ils ne comptent pas pour les recettes de la semaine. Avec le crayon, vous modifiez la quantité, l’unité, la catégorie et la date limite. L’app ne supprime rien automatiquement.',
+  'pagina.frigoInfo': '**Recettes**\nCe qu’il y a à la maison pour les recettes de la semaine. Cherchez un ingrédient et indiquez la quantité. Le planificateur utilise d’abord ce qui est là depuis le plus longtemps. Avec le crayon, vous modifiez la quantité et l’unité (g, ml, pièces, gousses).\n\n**Produits libres**\nCe que vous avez en dehors des recettes. Ils ne comptent pas pour les recettes de la semaine. Avec le crayon, vous modifiez la quantité, l’unité, la catégorie et la date limite. L’app ne supprime rien automatiquement.',
+  'pagina.bereidingInfo': '**Préparation**\nLes étapes du plat, une par une. Touchez une étape ou utilisez Précédent et Suivant.\n\n**Coches**\nUne coche ✓ à côté d’un ingrédient signifie qu’il est déjà dans votre Frigo. « Partiellement dans le frigo » : il y en a, mais pas assez. Sans coche, il faut encore l’acheter.',
   'pagina.scanInfo': 'L’application cherche le produit et affiche les valeurs nutritionnelles et un avis. Vous disposez d’un nombre limité de scans gratuits par jour.',
   'gezin.infoKnop': "Explication",
   'gezin.infoTekst': "Avec ce code, une personne rejoint votre espace familial : dans l’application, choisissez « Rejoindre » et saisissez le code. Ouvrez l’application via {link}.",

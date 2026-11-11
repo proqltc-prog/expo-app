@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.124.0] – 2026-11-11
+
+- Weekmenu: de gekozen stijl gaat voor het seizoen. Met bv. Italiaans kwamen er Thaise of Indische herfstgerechten op het menu, terwijl er genoeg Italiaanse recepten zijn. Nu kiest de planner eerst binnen je wensen (seizoen en daarna het hele jaar); pas bij echt te weinig recepten vult hij aan met andere gerechten en toont hij de melding. (WEEK-232)
+- Bereiding: bij een ingrediënt dat al in de frigo ligt, staat enkel nog een vinkje. Rechtsboven staat een info-icoon met uitleg over de pagina en de vinkjes. (WEEK-233)
+- Frigo, tabblad Recepten: met het potloodje pas je de hoeveelheid en de eenheid van een product aan (bv. 6 tomaten in plaats van 3). De info-tekst vermeldt het potloodje. (WEEK-222)
+- Winkels: de knop Supermarkten zoekt in Google Maps enkel nog op "supermarkt". Met "supermarkt levensmiddelen" toonde Google ook kleding- en elektronicawinkels en een pluimveehouderij. (WEEK-234)
+
+**Jira:** [WEEK-232](https://proqltc-1791495894841.atlassian.net/browse/WEEK-232) · [WEEK-233](https://proqltc-1791495894841.atlassian.net/browse/WEEK-233) · [WEEK-222](https://proqltc-1791495894841.atlassian.net/browse/WEEK-222) · [WEEK-234](https://proqltc-1791495894841.atlassian.net/browse/WEEK-234) · **Confluence:** [WEEK-232](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23822337) · [WEEK-233](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23855105) · [WEEK-222](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23494665) · [WEEK-234](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23887873)
+
 ## [0.123.0] – 2026-11-11
 
 - Weekmenu, stap Vermijden: "Alleen vegetarische gerechten" is nu een aparte schakelaar bovenaan, niet meer een keuze tussen de ingrediënten. Staat ze aan, dan verdwijnen varkensvlees, schaaldieren en vis uit de lijst (een eerder aangevinkte keuze ook); zuivel, eieren en noten blijven. (WEEK-221)

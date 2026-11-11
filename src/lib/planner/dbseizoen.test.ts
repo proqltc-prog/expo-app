@@ -114,3 +114,31 @@ describe('vervangDbDag met seizoen (WEEK-156)', () => {
     assert.ok(['db-1', 'db-7'].includes(vervangen.dagen[0].recept.id));
   });
 });
+
+describe('de wensen gaan voor het seizoen (WEEK-232)', () => {
+  // Zes dagen in de herfst; veel Italiaanse recepten van het hele jaar en een paar Thaise herfstrecepten.
+  const herfstDagen = ['2026-11-11', '2026-11-12', '2026-11-13', '2026-11-14', '2026-11-15', '2026-11-16'];
+  const italiaans = [20, 21, 22, 23, 24, 25, 26, 27].map((id) => dbRecept(id, { stijl: 'italiaans', seizoenen: [] }));
+  const italiaansHerfst = dbRecept(30, { stijl: 'italiaans', seizoenen: ['herfst'] });
+  const thaisHerfst = [40, 41, 42, 43].map((id) => dbRecept(id, { stijl: 'thais', seizoenen: ['herfst'] }));
+
+  test('met genoeg Italiaanse recepten komt er geen andere keuken in het plan', () => {
+    const plan = planUitDatabase(verzoek({ stijlen: ['italiaans'], datums: herfstDagen, aantalDagen: 6 }), pool(...italiaans, italiaansHerfst, ...thaisHerfst));
+    assert.ok(plan);
+    assert.equal(plan.dagen.length, 6);
+    assert.ok(plan.dagen.every((d) => d.recept.stijlen.includes('italiaans')), plan.dagen.map((d) => d.recept.stijlen).join(','));
+    assert.equal(plan.versoepeld, undefined);
+  });
+
+  test('het Italiaanse herfstrecept gaat nog altijd voor op een Italiaans recept van het hele jaar', () => {
+    const plan = planUitDatabase(verzoek({ stijlen: ['italiaans'], datums: [herfstDagen[0]], aantalDagen: 1 }), pool(...italiaans, italiaansHerfst, ...thaisHerfst));
+    assert.equal(plan?.dagen[0].recept.id, 'db-30');
+  });
+
+  test('te weinig Italiaanse recepten: aanvullen met een andere keuken en de melding (versoepeld)', () => {
+    const plan = planUitDatabase(verzoek({ stijlen: ['italiaans'], datums: herfstDagen, aantalDagen: 6 }), pool(italiaans[0], italiaans[1], ...thaisHerfst));
+    assert.equal(plan?.dagen.length, 6);
+    assert.equal(plan?.versoepeld, true);
+    assert.equal(plan?.dagen.filter((d) => d.recept.stijlen.includes('italiaans')).length, 2);
+  });
+});
