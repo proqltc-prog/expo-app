@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, Soort } from '@/data/recept';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
@@ -32,6 +32,7 @@ import { dagSleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
+import { vermijdOpties as vermijdKeuzesVoor, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { KOOKTIJD_BEREIK, KooktijdCode } from '@/lib/kooktijd';
 import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
@@ -181,8 +182,8 @@ export default function Weekplanning() {
   const wisselKooktijd = (id: string) => pasKeuzesAan({ ...keuzes, kooktijden: wissel(keuzes.kooktijden, id) });
   const wisselStijl = (id: string) => pasKeuzesAan({ ...keuzes, stijlen: wissel(keuzes.stijlen, id) });
   const wisselVermijdKeuze = (v: Vermijd) => pasKeuzesAan({ ...keuzes, vermijd: wissel(keuzes.vermijd, v) });
-  // WEEK-190: enkel vegetarische recepten uit de databank.
-  const wisselEnkelVegetarisch = () => pasKeuzesAan({ ...keuzes, enkelVegetarisch: !keuzes.enkelVegetarisch });
+  // WEEK-190: enkel vegetarische recepten uit de databank. WEEK-221: aan = vlees- en viskeuzes vallen weg.
+  const zetVegetarisch = (aan: boolean) => pasKeuzesAan(zetEnkelVegetarisch(keuzes, aan));
 
   // Bij elk bezoek opnieuw laden: frigo of lijst kunnen het plan intussen aangepast hebben (WEEK-13).
   useFocusEffect(
@@ -407,7 +408,8 @@ export default function Weekplanning() {
   };
 
   const huidigeStap = FASEN.indexOf(fase);
-  const vermijdOpties = vermijdVoorMomenten(keuzes.momenten).map((o) => o.id as Vermijd);
+  // WEEK-221: met "alleen vegetarische gerechten" staan varkensvlees, schaaldieren en vis er niet meer bij.
+  const vermijdOpties = vermijdKeuzesVoor(vermijdVoorMomenten(keuzes.momenten).map((o) => o.id as Vermijd), keuzes.enkelVegetarisch);
   const stijlOpties = stijlVoorMomenten(keuzes.momenten);
   const kooktijdOpties = kooktijdVoorMomenten(keuzes.momenten);
 
@@ -510,8 +512,25 @@ export default function Weekplanning() {
         <View style={s.blok}>
           {kopStap('planning.kies.vermijd')}
           <Text style={s.hint}>{t('planning.vermijdOptioneel')}</Text>
+          {/* WEEK-221: een eetwijze, geen ingrediënt: aparte schakelaar bovenaan. */}
+          <Pressable
+            style={s.schakelRij}
+            onPress={() => zetVegetarisch(!keuzes.enkelVegetarisch)}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: !!keuzes.enkelVegetarisch }}
+          >
+            <Text style={s.schakelTekst}>{t('planning.enkelVegetarisch')}</Text>
+            <Switch
+              value={!!keuzes.enkelVegetarisch}
+              onValueChange={zetVegetarisch}
+              trackColor={{ true: PETROL, false: '#C9CFC7' }}
+              thumbColor="#fff"
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            />
+          </Pressable>
+          <Text style={s.subkop}>{t('planning.vermijdIngredienten')}</Text>
           <Chips opties={vermijdOpties} gekozen={keuzes.vermijd as Vermijd[]} label={(v) => t(`vermijd.${v}`)} onWissel={wisselVermijdKeuze} />
-          <Chips opties={['vegetarisch'] as const} gekozen={keuzes.enkelVegetarisch ? ['vegetarisch'] as const : []} label={() => t('planning.enkelVegetarisch')} onWissel={wisselEnkelVegetarisch} />
         </View>
       )}
 
@@ -682,6 +701,8 @@ const s = StyleSheet.create({
   chipAan: { backgroundColor: PETROL },
   chipTekst: { color: PETROL, fontWeight: '600', fontSize: 13 },
   chipTekstAan: { color: '#fff' },
+  schakelRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, backgroundColor: PETROL_ZACHT, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14 },
+  schakelTekst: { flex: 1, fontSize: 15, fontWeight: '700', color: PETROL },
   tegels: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   tegel: { width: '48%', borderWidth: 1.5, borderColor: LIJN, borderRadius: 14, overflow: 'hidden', backgroundColor: '#fff' },
   tegelAan: { borderColor: PETROL, borderWidth: 2.5 },
