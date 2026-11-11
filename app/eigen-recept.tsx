@@ -22,6 +22,7 @@ import {
   verwijderEigen,
   zoekIngredienten,
 } from '@/lib/eigenrecepten';
+import { toonGezinsnaam } from '@/lib/gezinbeheer';
 import { normaliseer } from '@/lib/frigoSheets';
 import type { LosWijziging } from '@/lib/frigo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
@@ -114,8 +115,8 @@ export default function EigenReceptScherm() {
     navigation.setOptions({ title: t(bestaand ? 'recept.titelBewerk' : 'recept.titelNieuw') });
   }, [navigation, bestaand, t]);
 
-  // De gezinsstijl heet naar de gezinsruimte; zonder naam heet hij "Ons gezin".
-  const gezinLabel = gezinNaam ?? t('recept.stijlGezinZonderNaam');
+  // De gezinsstijl heet naar de gezinsruimte; zonder eigen naam heet hij vertaald "Ons gezin" (WEEK-243).
+  const gezinLabel = toonGezinsnaam(gezinNaam, t('recept.stijlGezinZonderNaam'));
 
   const zoekTreffers = useMemo(() => (zoek.trim() ? zoekIngredienten(zoek, taal, alle) : []), [zoek, taal, alle]);
   const kanNieuw = zoek.trim().length > 0 && !isExactBekend(zoek, zoekTreffers);

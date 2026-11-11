@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.125.4] – 2026-11-11
+
+- Een gezinsruimte zonder eigen naam heet nu in elke taal juist (bv. "Notre famille" in het Frans) in plaats van het Nederlandse "Gezin", bij een eigen recept en in de gezinsruimte. (WEEK-243)
+
+**Jira:** [WEEK-243](https://proqltc-1791495894841.atlassian.net/browse/WEEK-243) · **Confluence:** [WEEK-243](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24313857)
+
 ## [0.125.3] – 2026-11-11
 
 - Houdbaarheid: je kiest de datum in een kalender in plaats van ze te typen. De datum staat naast het kalendericoon, in het formaat van je toestel; met het kruisje wis je ze. Ook in de popup van Andere producten. (WEEK-242)

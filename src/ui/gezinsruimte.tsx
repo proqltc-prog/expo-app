@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { leesGezinFout, leesGezinscode, toonGezinscode } from '@/lib/sync';
-import { anderenLeden, APP_LINK, ikBeheerder, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
+import { anderenLeden, APP_LINK, GEZINSNAAM_STANDAARD, ikBeheerder, toonGezinsnaam, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { wijsPlanBeheerderAan } from '@/opslag/plan';
 import { laadVoornaam, zetVoornaam } from '@/opslag/voornaam';
 import { valideerVoornaam, VoornaamFout } from '@/lib/voornaam';
@@ -37,8 +37,7 @@ import { useTaal } from '@/ui/taal';
 const KLEUR = '#2e7d4f';
 const GEVAAR = '#c62828';
 
-// WEEK-104: het gezin krijgt een standaardnaam. De voornaam van het lid komt van het toestel (WEEK-163).
-const GEZINSNAAM_STANDAARD = 'Gezin';
+// WEEK-104: het gezin krijgt een standaardnaam (GEZINSNAAM_STANDAARD); getoond wordt hij vertaald (WEEK-243).
 
 /** Een actie die eerst bevestigd moet worden, in de pagina zelf (WEEK-176). */
 type Bevestiging = { actie: 'verlaat' } | { actie: 'heffOp' } | { actie: 'opvolger'; lid: GezinsLid } | { actie: 'beheerder'; lid: GezinsLid };
@@ -267,7 +266,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
           <>
             {/* WEEK-193: naam en verbindingsstatus in een kopregel; de status als pil. */}
             <View style={s.kopRij}>
-              <Text style={s.gedeeld}>{t('gezin.gedeeldMet', { naam: gezin.naam })}</Text>
+              <Text style={s.gedeeld}>{t('gezin.gedeeldMet', { naam: toonGezinsnaam(gezin.naam, t('recept.stijlGezinZonderNaam')) })}</Text>
               <Text style={[s.statusPil, status === 'offline' && s.statusPilOffline]}>{t(`gezin.status.${status}` as Sleutel)}</Text>
             </View>
 
