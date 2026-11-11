@@ -536,6 +536,8 @@ export const nl = {
   'uitleg.winkels.tekst': 'Vind lokale handelaars in de buurt. Zo koop je dichtbij, bespaar je tijd en steun je de streek.',
   'aanmelden.titel': 'Meld je aan',
   'aanmelden.tekst': 'Met een account blijven je gegevens bewaard als je van toestel wisselt.',
+  'aangemeld.bezig': 'Je wordt aangemeld…',
+  'aangemeld.annuleren': 'Annuleren',
   'aanmelden.metGoogle': 'Aanmelden met Google',
   'aanmelden.metApple': 'Aanmelden met Apple',
   'aanmelden.metFacebook': 'Aanmelden met Facebook',

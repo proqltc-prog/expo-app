@@ -1,7 +1,7 @@
 // Koppelen van de anonieme account aan Google (WEEK-166). Enkel de verbinding met Supabase en de terugkeer van de aanbieder.
 import { Linking, Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { leesTokensUitUrl, Aanbieder, terugkeerAdres } from '@/lib/aanmelden';
+import { leesTokensUitUrl, Aanbieder, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
 import { supabase } from './supabase';
 
 /** Is het toestel nog anoniem aangemeld (dus nog niet gekoppeld aan een account)? */
@@ -66,6 +66,26 @@ export async function stuurAanmeldMail(email: string, anoniem: boolean): Promise
   }
   const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
   if (error) throw error;
+}
+
+/**
+ * Wacht tot het toestel aangemeld is met een account (niet meer anoniem), hoogstens `maxMs` (WEEK-231).
+ * Op het web verwerkt Supabase de terugkeer zelf bij het laden; in de app zet luisterNaarTerugkeer de sessie.
+ * Geeft false bij een fout in het terugkeeradres of als de tijd om is (bv. geannuleerd in de browser).
+ */
+export async function wachtOpAanmelding(maxMs: number, stop: () => boolean = () => false): Promise<boolean> {
+  const sb = supabase();
+  if (!sb) return false;
+  const adres = (globalThis as { location?: { href: string } }).location?.href ?? '';
+  if (Platform.OS === 'web' && terugkeerMetFout(adres)) return false;
+  const einde = Date.now() + maxMs;
+  while (Date.now() < einde && !stop()) {
+    const { data } = await sb.auth.getSession();
+    const gebruiker = data.session?.user;
+    if (gebruiker && gebruiker.is_anonymous !== true) return true;
+    await new Promise((klaar) => setTimeout(klaar, 500));
+  }
+  return false;
 }
 
 /** Verwerkt een terugkeeradres van de aanbieder: zet de sessie met de nieuwe tokens. Geeft true bij succes. */

@@ -28,14 +28,19 @@ export function isGeldigEmail(adres: string): boolean {
 }
 
 /**
- * Het adres waarnaar de aanbieder terugkeert: in de app het app-schema, op het web de start van de app
- * (origin + basispad, bv. https://proqltc-prog.github.io/expo-app/). Niet de huidige pagina: anders kom je na
- * aanmelden terug op het startscherm /welkom in plaats van in de weekplanner (WEEK-230).
+ * Het adres waarnaar de aanbieder terugkeert: de tussenpagina "aangemeld" (WEEK-231), die wacht op de aanmelding
+ * en dan de juiste pagina kiest. In de app via het app-schema, op het web onder het basispad van de app
+ * (bv. https://proqltc-prog.github.io/expo-app/aangemeld). Nooit de huidige pagina /welkom (WEEK-230).
  */
 export function terugkeerAdres(platform: 'web' | 'native', origin?: string, basis?: string): string {
-  if (platform !== 'web') return 'famenu://';
+  if (platform !== 'web') return 'famenu://aangemeld';
   const pad = (basis ?? '').replace(/^\/*/, '/').replace(/\/*$/, '/');
-  return `${origin ?? ''}${pad}`;
+  return `${origin ?? ''}${pad}aangemeld`;
+}
+
+/** Bevat het terugkeeradres een foutmelding van de aanbieder of van Supabase (bv. geannuleerd of al gekoppeld)? */
+export function terugkeerMetFout(url: string): boolean {
+  return /[?#&]error(_code|_description)?=/.test(url);
 }
 
 /**

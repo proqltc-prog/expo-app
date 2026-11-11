@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.122.3] – 2026-11-11
+
+- Aanmelden met Google: de weekplanner is niet meer heel even zichtbaar voor Google opent. Na het kiezen van je account toont een tussenpagina "Je wordt aangemeld…" en daarna de juiste pagina: de instellingen met de gezinsruimte als je gezin nog niet ingesteld is, anders de weekplanner. Een bestaand gezin wordt ook op een nieuw toestel opgehaald. Annuleren of een fout brengt je terug naar het startscherm. (WEEK-231)
+
+**Jira:** [WEEK-231](https://proqltc-1791495894841.atlassian.net/browse/WEEK-231) · **Confluence:** [WEEK-231](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23658497)
+
 ## [0.122.2] – 2026-11-11
 
 - Aanmelden met Google: na het kiezen van je account kom je in de weekplanner. Voorheen stuurde de webversie je terug naar het startscherm, omdat de huidige pagina (/welkom) als terugkeeradres werd meegegeven. In de app ga je na koppelen ook naar de weekplanner in plaats van het gezinsprofiel. (WEEK-230)

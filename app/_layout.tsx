@@ -60,6 +60,8 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
     >
       {/* Welkomstscherm (WEEK-79): alleen bij de eerste opening, zonder tabbalk en koptekst. */}
       <Tabs.Screen name="welkom" options={{ headerShown: false, tabBarStyle: { display: 'none' }, href: null }} />
+      {/* Tussenpagina na aanmelden met Google (WEEK-231): zonder tabbalk en koptekst. */}
+      <Tabs.Screen name="aangemeld" options={{ headerShown: false, tabBarStyle: { display: 'none' }, href: null }} />
       <Tabs.Screen name="index" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} />, title: t('tab.menu.titel'), tabBarLabel: t('tab.menu'), headerRight: () => <InstellingenKnop /> }} />
       <Tabs.Screen name="lijst" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart-outline" size={size} color={color} />, title: t('tab.lijst.titel'), tabBarLabel: t('tab.lijst') }} />
       <Tabs.Screen name="frigo" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="snow-outline" size={size} color={color} />, title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
