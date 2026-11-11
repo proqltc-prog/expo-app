@@ -90,6 +90,26 @@ export function aantalSheet(frigo: readonly FrigoItem[], sheet: Sheet): number {
 /** Icoon per sheet (WEEK-96): duidelijke lijnicoontjes in plaats van emoji. Ionicons-namen. */
 export const SHEET_ICOON: Record<Sheet, string> = { planner: 'calendar-outline', los: 'cube-outline' };
 
+/** WEEK-239: vanaf deze schermbreedte (px) staat het icoon in de schakelaar Voor het menu | Andere producten. */
+export const SCHAKELAAR_ICOON_VANAF = 400;
+
+/** WEEK-239: op een smal scherm valt het icoon weg, zodat de langere tabnamen op hoogstens twee regels passen. */
+export function toonSchakelaarIcoon(breedte: number): boolean {
+  return breedte >= SCHAKELAAR_ICOON_VANAF;
+}
+
+/** WEEK-239: het icoon van de tab "In huis" onderaan: een doos (voorraad), niet meer de sneeuwvlok van de frigo. */
+export const IN_HUIS_ICOON = 'archive-outline';
+
+/**
+ * WEEK-239 (optie C): de korte uitleg die een lege tab toont, op de boodschappenlijst of bij In huis.
+ * Zodra er iets in de tab staat, verdwijnt ze; de volledige uitleg zit onder het info-icoon.
+ */
+export function legeTabUitleg(pagina: 'lijst' | 'huis', sheet: Sheet): 'leeg.lijstMenu' | 'leeg.lijstAnder' | 'leeg.huisMenu' | 'leeg.huisAnder' {
+  if (pagina === 'lijst') return sheet === 'planner' ? 'leeg.lijstMenu' : 'leeg.lijstAnder';
+  return sheet === 'planner' ? 'leeg.huisMenu' : 'leeg.huisAnder';
+}
+
 /**
  * Zet een ingrediënt uit de catalogus in de planner-frigo (WEEK-160).
  * Het krijgt de databankcode en de vaste eenheid van het ingrediënt (stuk, teentje, ml of g), zodat het

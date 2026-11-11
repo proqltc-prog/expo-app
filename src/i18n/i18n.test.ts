@@ -182,6 +182,44 @@ describe('Frans: beleefdheidsvorm en vaste woordenlijst (WEEK-238)', () => {
   });
 });
 
+describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-239)', () => {
+  const verwacht = {
+    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Voor het menu', ander: 'Andere producten' },
+    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Pour le menu', ander: 'Autres produits' },
+    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Fürs Menü', ander: 'Andere Produkte' },
+    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'For the menu', ander: 'Other products' },
+  } as const;
+  for (const [taal, w] of Object.entries(verwacht) as [keyof typeof verwacht, (typeof verwacht)['nl']][]) {
+    test(`${taal}: de tabs dragen de nieuwe namen`, () => {
+      assert.equal(vertaal(taal, 'tab.lijst'), w.lijst);
+      assert.equal(vertaal(taal, 'tab.frigo'), w.huis);
+      assert.equal(vertaal(taal, 'lijst.tabBoodschappen'), w.boven);
+      assert.equal(vertaal(taal, 'frigo.sheetPlanner'), w.menu);
+      assert.equal(vertaal(taal, 'frigo.sheetLos'), w.ander);
+    });
+    test(`${taal}: de knop bovenaan heet anders dan de tab onderaan`, () => {
+      assert.notEqual(vertaal(taal, 'lijst.tabBoodschappen'), vertaal(taal, 'tab.lijst'));
+    });
+  }
+  test('nergens nog de oude namen (losse producten, virtuele frigo), behalve de echte koelkast in de profieluitleg', () => {
+    const oud = /losse producten|produits libres|loose products|lose produkte|einzelne produkte|virtuele frigo|frigo virtuel|virtual fridge|virtueller kühlschrank/iu;
+    const naam = /(^|[^\p{L}])(frigo|fridge|kühlschrank)(?=$|[^\p{L}])/iu;
+    const fouten: string[] = [];
+    for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
+      for (const [k, v] of Object.entries(VERTALINGEN[taal] as Record<string, string>)) {
+        if (oud.test(v) || (naam.test(v) && k !== 'profiel.waarom.tekst')) fouten.push(`${taal} ${k}: ${v}`);
+      }
+    }
+    assert.deepEqual(fouten, []);
+  });
+  test('de startuitleg belooft niets wat de app niet kan (geen taken verdelen, geen afvinken in In huis)', () => {
+    for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
+      assert.doesNotMatch(vertaal(taal, 'uitleg.huishouden.tekst'), /taken|tâches|Aufgaben|chores/iu, taal);
+    }
+    assert.doesNotMatch(vertaal('nl', 'howto.frigo'), /vink af wat je al in huis hebt/iu);
+  });
+});
+
 describe('invoerveld losse producten (WEEK-235)', () => {
   test('de lijst heeft een eigen tekst, niet die van de frigo ("al in huis")', () => {
     for (const taal of TALEN) {

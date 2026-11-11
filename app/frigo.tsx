@@ -10,7 +10,7 @@ import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
-import { aantalSheet, CatalogusItem, koppelBronnen, sheets, sheetThema, voegLosToe, voegPlannerToe } from '@/lib/frigoSheets';
+import { aantalSheet, CatalogusItem, koppelBronnen, legeTabUitleg, sheets, sheetThema, voegLosToe, voegPlannerToe } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
 import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { ingredientNaam, dbCodeVan } from '@/data/ingredienten';
@@ -193,7 +193,6 @@ export default function Frigo() {
 
   const kop = (
     <View>
-      {sheet === 'planner' && <Text style={s.uitleg}>{t('frigo.plannerUitleg')}</Text>}
       <ProductInvoer
         sheet={sheet}
         accent={thema.accent}
@@ -208,7 +207,8 @@ export default function Frigo() {
           </Pressable>
         }
       />
-      <Text style={s.teller}>{aantal ? tn('frigo.teller', aantal) : t('frigo.leeg')}</Text>
+      {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
+      {aantal ? <Text style={s.teller}>{tn('frigo.teller', aantal)}</Text> : <Text style={s.uitleg}>{t(legeTabUitleg('huis', sheet))}</Text>}
     </View>
   );
 

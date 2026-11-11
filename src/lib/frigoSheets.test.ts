@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aantalSheet, catalogus, inCatalogus, inDatabank, koppelBronnen, normaliseer, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus, zoekDatabank } from '@/lib/frigoSheets';
+import { aantalSheet, catalogus, IN_HUIS_ICOON, legeTabUitleg, toonSchakelaarIcoon, inCatalogus, inDatabank, koppelBronnen, normaliseer, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus, zoekDatabank } from '@/lib/frigoSheets';
 import { FrigoItem, voegZelfToe } from '@/lib/frigo';
 
 const nu = new Date('2026-10-18T10:00:00.000Z');
@@ -255,5 +255,23 @@ describe('WEEK-205: oude codes worden bij het inlezen databankcodes', () => {
       for (const taal of ['nl', 'fr', 'de', 'en'] as const) assert.ok(ingredientNaam(code, taal).trim().length > 0, `${code} ${taal}`);
       assert.ok((AFDELINGEN as string[]).includes(afdelingVan(code)), code);
     }
+  });
+});
+
+describe('lege tab en In huis (WEEK-239)', () => {
+  test('elke lege tab heeft een eigen korte uitleg, per pagina en per tab', () => {
+    assert.equal(legeTabUitleg('lijst', 'planner'), 'leeg.lijstMenu');
+    assert.equal(legeTabUitleg('lijst', 'los'), 'leeg.lijstAnder');
+    assert.equal(legeTabUitleg('huis', 'planner'), 'leeg.huisMenu');
+    assert.equal(legeTabUitleg('huis', 'los'), 'leeg.huisAnder');
+  });
+  test('op een smal scherm (320, 375 px) valt het icoon in de schakelaar weg, op een tablet niet', () => {
+    assert.equal(toonSchakelaarIcoon(320), false);
+    assert.equal(toonSchakelaarIcoon(375), false);
+    assert.equal(toonSchakelaarIcoon(768), true);
+  });
+  test('In huis is een doos, niet meer de sneeuwvlok, en verschilt van het icoon van Andere producten', () => {
+    assert.equal(IN_HUIS_ICOON, 'archive-outline');
+    assert.notEqual(IN_HUIS_ICOON, SHEET_ICOON.los);
   });
 });
