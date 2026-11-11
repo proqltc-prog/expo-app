@@ -31,8 +31,16 @@ describe('aanmelden (WEEK-166, WEEK-185, WEEK-225)', () => {
     assert.equal(isGeldigEmail('na am@voorbeeld.be'), false);
   });
 
-  test('op het web keert de aanbieder terug naar de huidige pagina', () => {
+  test('op het web keert de aanbieder terug naar de start van de app, met of zonder schuine strepen (WEEK-230)', () => {
+    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app'), 'https://proqltc-prog.github.io/expo-app/');
     assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app/'), 'https://proqltc-prog.github.io/expo-app/');
+    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', 'expo-app'), 'https://proqltc-prog.github.io/expo-app/');
+  });
+
+  test('regressie: zonder basispad (lokaal testen) de wortel van de site, nooit de pagina /welkom', () => {
+    assert.equal(terugkeerAdres('web', 'http://localhost:8081'), 'http://localhost:8081/');
+    assert.equal(terugkeerAdres('web', 'http://localhost:8081', ''), 'http://localhost:8081/');
+    assert.ok(!terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app').includes('welkom'));
   });
 
   test('in de app keert de aanbieder terug naar het app-schema famenu', () => {

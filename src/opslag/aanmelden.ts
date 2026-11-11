@@ -1,5 +1,6 @@
 // Koppelen van de anonieme account aan Google (WEEK-166). Enkel de verbinding met Supabase en de terugkeer van de aanbieder.
 import { Linking, Platform } from 'react-native';
+import Constants from 'expo-constants';
 import { leesTokensUitUrl, Aanbieder, terugkeerAdres } from '@/lib/aanmelden';
 import { supabase } from './supabase';
 
@@ -13,8 +14,10 @@ export async function isAnoniem(): Promise<boolean> {
 
 function terugkeer(): { web: boolean; redirectTo: string } {
   const web = Platform.OS === 'web';
-  const pagina = (globalThis as { location?: { origin: string; pathname: string } }).location;
-  return { web, redirectTo: terugkeerAdres(web ? 'web' : 'native', pagina?.origin, pagina?.pathname) };
+  const pagina = (globalThis as { location?: { origin: string } }).location;
+  // Basispad van de webversie (app.json → experiments.baseUrl, bv. /expo-app): terug naar de start, niet naar /welkom (WEEK-230).
+  const basis = (Constants.expoConfig?.experiments as { baseUrl?: string } | undefined)?.baseUrl;
+  return { web, redirectTo: terugkeerAdres(web ? 'web' : 'native', pagina?.origin, basis) };
 }
 
 async function openAanbieder(data: { url?: string } | null | undefined, web: boolean): Promise<void> {
