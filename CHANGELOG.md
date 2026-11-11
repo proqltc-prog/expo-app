@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.122.1] – 2026-11-11
+
+- Privacybeleid versie 5: aanmelden met Google (e-mail, naam, profielfoto en Google-id bij Supabase in de EU; enkel e-mail en profiel, je wachtwoord zien we nooit) staat erin. De AI-planner is eruit, want die bestaat niet meer. Budget en favorieten weg; voornaam en eigen recepten erbij. Gepubliceerd op https://proqltc-prog.github.io/famenu-privacy/ en in docs/privacybeleid. (WEEK-228)
+
+**Jira:** [WEEK-228](https://proqltc-1791495894841.atlassian.net/browse/WEEK-228) · **Confluence:** [WEEK-225 Aanmelden met Google en zonder account](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23166977)
+
 ## [0.122.0] – 2026-11-11
 
 - Aanmelden met Google werkt: Google staat nu aan in Supabase (eigen Google Cloud-project Famenu), de app (`famenu://`) en de testversie op het web staan op de lijst van terugkeeradressen, en het koppelen van een toestel zonder account aan Google staat aan, zodat de gegevens bewaard blijven.
