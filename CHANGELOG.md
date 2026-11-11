@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.125.2] – 2026-11-11
+
+- In huis: het potloodje bij een ingrediënt voor de weekplanner heet "Ingrediënt wijzigen". Enkel de hoeveelheid is aan te passen; de eenheid is vast. (WEEK-241)
+- "teentje" heet nu "teentje(s)" (fr "gousse(s)", de "Zehe(n)", en "clove(s)"). (WEEK-241)
+
+**Jira:** [WEEK-241](https://proqltc-1791495894841.atlassian.net/browse/WEEK-241) · **Confluence:** [WEEK-241](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23986215)
+
 ## [0.125.1] – 2026-11-11
 
 - In huis: de dubbele titel boven de tabs is weg. (WEEK-240)

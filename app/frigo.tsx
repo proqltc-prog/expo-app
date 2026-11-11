@@ -2,7 +2,7 @@ import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { aantalProducten, eenhedenVoorRecept, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
 import { houdbaarStatus, leesDatum } from '@/lib/houdbaarheid';
 import { beoordeel, Product } from '@/lib/openfoodfacts';
 import { ScanBlokken } from '@/ui/scanBlokken';
@@ -102,22 +102,21 @@ export default function Frigo() {
     });
   };
 
-  // WEEK-222: het potloodje bij een receptingrediënt: enkel hoeveelheid en eenheid (bv. 6 tomaten in plaats van 3).
-  // De categorie blijft die van de app; de houdbaarheid heeft haar eigen link onder het product.
+  // WEEK-222/241: het potloodje bij een receptingrediënt: enkel de hoeveelheid (bv. 6 tomaten in plaats van 3).
+  // De eenheid staat er als vaste tekst; de categorie blijft die van de app; de houdbaarheid heeft haar eigen link.
   const openBewerkRecept = (regel: FrigoRegel) => {
     setBewerkIds(regel.ids);
     setBewerkRecept(true);
     setLosPopup({
       sleutel: `recept-${regel.sleutel}-${Date.now()}`,
-      titel: t('frigo.bewerkKop'),
+      titel: t('frigo.bewerkIngredientKop'),
       naam: regel.naam,
       hoeveelheid: regel.hoeveelheid,
       eenheid: regel.eenheid,
       afdeling: regel.afdeling,
-      toonEenheid: true,
+      toonEenheid: false,
       toonCategorie: false,
       toonHoudbaar: false,
-      eenheden: eenhedenVoorRecept(regel.eenheid),
       hoeveelheidVerplicht: true,
       accent: KLEUR,
     });
@@ -132,7 +131,7 @@ export default function Frigo() {
     setBewerkRecept(false);
     if (!opties) return;
     if (ids && recept) {
-      if (w.hoeveelheid !== undefined) setFrigo(await wijzigFrigo((f) => wijzigReceptHoeveelheid(f, ids, w.hoeveelheid as number, w.eenheid)));
+      if (w.hoeveelheid !== undefined) setFrigo(await wijzigFrigo((f) => wijzigReceptHoeveelheid(f, ids, w.hoeveelheid as number)));
       return;
     }
     if (ids) {

@@ -411,27 +411,17 @@ export function wijzigLos(frigo: readonly FrigoItem[], ids: readonly string[], w
   });
 }
 
-/** Eenheden om uit te kiezen bij een receptingrediënt in de frigo (WEEK-222). */
-export const RECEPT_EENHEDEN = ['g', 'ml', 'stuk', 'teentje'] as const;
-
-/** De eenheden voor de popup: de vaste lijst, plus de huidige eenheid als die er niet in staat (bv. "bol"). */
-export function eenhedenVoorRecept(huidig: string | undefined): string[] {
-  const lijst: string[] = [...RECEPT_EENHEDEN];
-  return huidig && !lijst.includes(huidig) ? [...lijst, huidig] : lijst;
-}
-
 /**
- * Past de hoeveelheid en eenheid van een receptingrediënt in de frigo aan (WEEK-222), bv. 6 tomaten in plaats van 3.
+ * Past de hoeveelheid van een receptingrediënt in de frigo aan (WEEK-222), bv. 6 tomaten in plaats van 3.
+ * De eenheid is vast en komt van het ingrediënt (WEEK-241).
  * De hoeveelheid is het totaal van de regel en komt op het eerste exemplaar; de rest houdt geen hoeveelheid.
- * Al de rest blijft: code, categorie, bron, koppeling met de lijst en houdbaarheid.
+ * Al de rest blijft: code, eenheid, categorie, bron, koppeling met de lijst en houdbaarheid.
  */
-export function wijzigReceptHoeveelheid(frigo: readonly FrigoItem[], ids: readonly string[], hoeveelheid: number, eenheid: string | undefined): FrigoItem[] {
+export function wijzigReceptHoeveelheid(frigo: readonly FrigoItem[], ids: readonly string[], hoeveelheid: number): FrigoItem[] {
   return frigo.map((f) => {
     if (!ids.includes(f.id)) return f;
     const kopie: FrigoItem = { ...f };
     delete kopie.hoeveelheid;
-    delete kopie.eenheid;
-    if (eenheid) kopie.eenheid = eenheid;
     if (f.id === ids[0]) kopie.hoeveelheid = hoeveelheid;
     return kopie;
   });

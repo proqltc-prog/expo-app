@@ -238,6 +238,24 @@ describe('uitleg Andere producten en invoervelden (WEEK-240)', () => {
   });
 });
 
+describe('ingrediënt wijzigen (WEEK-241)', () => {
+  test('eigen titel voor een ingrediënt, anders dan voor een product', () => {
+    assert.equal(vertaal('nl', 'frigo.bewerkIngredientKop'), 'Ingrediënt wijzigen');
+    for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
+      assert.notEqual(vertaal(taal, 'frigo.bewerkIngredientKop'), vertaal(taal, 'frigo.bewerkKop'), taal);
+    }
+  });
+  test('teentje staat als enkelvoud en meervoud: teentje(s), gousse(s), Zehe(n), clove(s)', () => {
+    assert.equal(vertaal('nl', 'recept.eenheid.teentje'), 'teentje(s)');
+    assert.equal(vertaal('fr', 'recept.eenheid.teentje'), 'gousse(s)');
+    assert.equal(vertaal('de', 'recept.eenheid.teentje'), 'Zehe(n)');
+    assert.equal(vertaal('en', 'recept.eenheid.teentje'), 'clove(s)');
+  });
+  test('de info van In huis belooft niet meer dat je de eenheid kunt wijzigen', () => {
+    assert.doesNotMatch(vertaal('nl', 'pagina.frigoInfo'), /hoeveelheid en de eenheid aan/);
+  });
+});
+
 describe('invoerveld losse producten (WEEK-235)', () => {
   test('de lijst heeft een eigen tekst, niet die van de frigo ("al in huis")', () => {
     for (const taal of TALEN) {
