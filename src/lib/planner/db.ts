@@ -28,6 +28,8 @@ export type DbRecept = {
   stijl: StijlCode;
   soort: Soort;
   basis: Basis | null;
+  /** WEEK-244: de foto van het recept in de opslag van Supabase (bestandsnaam), of niets. */
+  fotoPad?: string;
   titels: Vertalingen;
   ingredienten: DbIngredient[];
   /** Bereidingsstappen per taal (WEEK-121). Ontbreekt het veld, dan zijn er geen stappen. */
@@ -74,6 +76,7 @@ export function naarPlanRecept(r: DbRecept, taal: Taal, gezin: Gezin): PlanRecep
     minuten: r.kooktijdMin,
     stijlen: [r.stijl],
     basis: r.basis ?? undefined,
+    ...(r.fotoPad ? { foto: r.fotoPad } : {}),
     ingredienten,
     titels: r.titels,
   };
@@ -96,6 +99,7 @@ export function leesDbRecept(ruw: unknown): DbRecept | undefined {
     stijl: r.stijl as StijlCode,
     soort: r.soort as Soort,
     basis: (r.basis as Basis | null) ?? null,
+    ...(typeof r.foto_pad === 'string' && r.foto_pad ? { fotoPad: r.foto_pad } : {}),
     titels: vertalingen,
     ingredienten,
     bereidingen: leesBereidingen(r.recept_bereidingen),

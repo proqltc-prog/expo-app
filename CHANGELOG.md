@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.126.0] – 2026-11-11
+
+- Weekmenu en stijlkeuze: echte foto's van gerechten in plaats van de getekende logo's. Elke keuken heeft een foto van een traditioneel gerecht; in het weekmenu past de foto bij de keuken en het soort gerecht (bv. Thais + curry, Frans + soep, Italiaans + pasta), met 2 à 3 varianten per groep zodat een weekmenu minder dubbel toont. Recepten van het gezin krijgen de foto van hun keuken of een gezinsfoto. (WEEK-244)
+- De foto's (148 gratis foto's van Pexels) staan in de databank (Supabase) en worden op het toestel bewaard: een foto die je al hebt, wordt niet opnieuw gedownload. Een nieuwe foto in de databank wordt wel opgehaald. (WEEK-244)
+- In de hoek staat de vlag van de keuken, getekend door de app; mediterraan toont een olijfblad, Aziatisch stokjes. De foto's zijn gratis foto's van Pexels. (WEEK-244)
+
+**Jira:** [WEEK-244](https://proqltc-1791495894841.atlassian.net/browse/WEEK-244) · **Confluence:** [WEEK-244](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24281108)
+
 ## [0.125.4] – 2026-11-11
 
 - Een gezinsruimte zonder eigen naam heet nu in elke taal juist (bv. "Notre famille" in het Frans) in plaats van het Nederlandse "Gezin", bij een eigen recept en in de gezinsruimte. (WEEK-243)
