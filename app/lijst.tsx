@@ -3,7 +3,7 @@ import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'reac
 import { router, useFocusEffect } from 'expo-router';
 import { alleenHuidigPlan, bewerkLijstItem, eigenItem, lijstInTaal, LijstItem, LijstRegel, LijstSectie, magBewerken, opSheet, planSleutel, receptItem, secties as maakSecties, sectieKeuze, staatOpLijst, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
 import { eenheidVan } from '@/data/ingredienten';
-import { CatalogusItem, Sheet, sheetThema } from '@/lib/frigoSheets';
+import { CatalogusItem, legeTabUitleg, Sheet, sheetThema } from '@/lib/frigoSheets';
 import { inTaal } from '@/lib/planner/vertaal';
 import { FrigoItem, LosWijziging } from '@/lib/frigo';
 import type { DagCode, Weekplan } from '@/lib/planner/types';
@@ -331,8 +331,9 @@ export default function Lijst() {
               {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
             </Text>
           )}
+          {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
           <Text style={s.teller}>
-            {totaal ? t('lijst.teller', { open, totaal }) : t('lijst.leeg')}
+            {totaal ? t('lijst.teller', { open, totaal }) : t(legeTabUitleg('lijst', sheet))}
           </Text>
           <SectionList
             sections={data}

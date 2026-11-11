@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.125.0] – 2026-11-11
+
+- Duidelijkere namen: de tab "Lijst" heet "Boodschappen", de "Frigo" heet "In huis" (met een doos als icoon), en bovenaan de boodschappen staan "Winkels" en "Te kopen". (WEEK-239)
+- Op Boodschappen en In huis heten de tabs nu "Voor het menu" en "Andere producten". Een lege tab legt kort uit waarvoor hij dient; het info-icoon geeft de volledige uitleg, met een stuk per tab. (WEEK-239)
+- Nieuwe teksten voor "Hoe werkt het?" en de startschermen, zonder beloftes die de app niet waarmaakt. Op een smal scherm passen de tabnamen netjes. (WEEK-239)
+
+**Jira:** [WEEK-239](https://proqltc-1791495894841.atlassian.net/browse/WEEK-239) · **Confluence:** [WEEK-239](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24150017)
+
 ## [0.124.1] – 2026-11-11
 
 - Frigo en lijst, tabblad Recepten: de eenheid bij een ingrediënt staat in de taal van de app (bv. "pièces" in plaats van "stuk"). (WEEK-237)

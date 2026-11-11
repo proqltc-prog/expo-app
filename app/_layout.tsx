@@ -9,6 +9,7 @@ import { luisterNaarTerugkeer } from '@/opslag/aanmelden';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
 import { gaatNaarMenu, sluitAppOp } from '@/lib/terugknop';
+import { IN_HUIS_ICOON } from '@/lib/frigoSheets';
 
 const KLEUR = '#2e7d4f';
 
@@ -64,7 +65,7 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
       <Tabs.Screen name="aangemeld" options={{ headerShown: false, tabBarStyle: { display: 'none' }, href: null }} />
       <Tabs.Screen name="index" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} />, title: t('tab.menu.titel'), tabBarLabel: t('tab.menu'), headerRight: () => <InstellingenKnop /> }} />
       <Tabs.Screen name="lijst" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart-outline" size={size} color={color} />, title: t('tab.lijst.titel'), tabBarLabel: t('tab.lijst') }} />
-      <Tabs.Screen name="frigo" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="snow-outline" size={size} color={color} />, title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
+      <Tabs.Screen name="frigo" options={{ tabBarIcon: ({ color, size }) => <Ionicons name={IN_HUIS_ICOON} size={size} color={color} />, title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
       <Tabs.Screen name="scan" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="scan-outline" size={size} color={color} />, title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
       {/* Gezinsprofiel (WEEK-39): geen eigen tabblad meer, bereikbaar via het instellingen-icoon. */}
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null }} />
