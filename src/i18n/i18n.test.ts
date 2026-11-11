@@ -4,6 +4,7 @@ import {
   categorieNaam,
   dagSleutel,
   datumKort,
+  eenheidNaam,
   hoeveelheidTekst,
   getal,
   isTaal,
@@ -157,6 +158,51 @@ describe('hoeveelheidTekst', () => {
     assert.equal(hoeveelheidTekst('nl', undefined, 'g'), '');
     assert.equal(hoeveelheidTekst('nl', 0, 'g'), '');
     assert.equal(hoeveelheidTekst('de', 2, 'EL'), '2 EL');
+  });
+});
+
+describe('Frans: beleefdheidsvorm en vaste woordenlijst (WEEK-238)', () => {
+  const fr = VERTALINGEN.fr as Record<string, string>;
+  const zoek = (re: RegExp) => Object.entries(fr).filter(([, v]) => re.test(v)).map(([k, v]) => `${k}: ${v}`);
+
+  test('overal vous, nergens tu/ton/ta/tes/toi/te', () => {
+    assert.deepEqual(zoek(/(^|[^\p{L}])(tu|ton|ta|tes|toi|te|t’)(?=$|[^\p{L}])/iu), []);
+  });
+  test('geen gebiedende wijs in de tu-vorm', () => {
+    assert.deepEqual(zoek(/(^|[^\p{L}])(réessaie|vérifie|choisis|ajoute|utilise des|crée|trouve|mange|scanne|planifie|connecte-toi|saisis|ouvre-le|cherche un)(?=$|[^\p{L}])/iu), []);
+  });
+  test('één woord per begrip: application, menu de la semaine, gestionnaire, famille', () => {
+    assert.deepEqual(zoek(/(^|[^\p{L}])app(?=$|[^\p{L}])/iu), [], 'app → application');
+    assert.deepEqual(zoek(/planning/iu), [], 'planning → menu de la semaine');
+    assert.deepEqual(zoek(/administrateur/iu), [], 'administrateur → gestionnaire');
+    assert.deepEqual(zoek(/foyer/iu), [], 'foyer → famille');
+  });
+  test('typografische apostrof (’), geen rechte', () => {
+    assert.deepEqual(zoek(/'/), []);
+  });
+});
+
+describe('invoerveld losse producten (WEEK-235)', () => {
+  test('de lijst heeft een eigen tekst, niet die van de frigo ("al in huis")', () => {
+    for (const taal of TALEN) {
+      assert.notEqual(vertaal(taal, 'lijst.toevoegen'), vertaal(taal, 'frigo.toevoegen'), taal);
+    }
+  });
+});
+
+describe('eenheidNaam (WEEK-237)', () => {
+  test('stuk en teentje volgen de taal van de app, nooit de Nederlandse code', () => {
+    for (const taal of TALEN) {
+      assert.equal(eenheidNaam(taal, 'stuk'), vertaal(taal, 'frigo.stuks'));
+      assert.equal(eenheidNaam(taal, 'teentje'), vertaal(taal, 'recept.eenheid.teentje'));
+    }
+    assert.notEqual(eenheidNaam('fr', 'stuk'), 'stuk');
+    assert.notEqual(eenheidNaam('en', 'teentje'), 'teentje');
+  });
+  test('meeteenheden en onbekende eenheden blijven ongewijzigd', () => {
+    assert.equal(eenheidNaam('fr', 'g'), 'g');
+    assert.equal(eenheidNaam('de', 'ml'), 'ml');
+    assert.equal(eenheidNaam('en', 'EL'), 'EL');
   });
 });
 

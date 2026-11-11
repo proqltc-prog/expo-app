@@ -550,7 +550,7 @@ export default function Weekplanning() {
               {kaarten.versoepeld && <Text style={s.melding}>{t('planning.versoepeld')}</Text>}
               {kaarten.dagen.map(({ dag, datum, moment, recept, gedaan, bevestigd, ontbreekt, uitFrigo }, index) => {
                 const wijzigbaar = magDagWijzigen(kaarten.dagen[index]);
-                // Het icoon verschijnt bij elk bevestigd gerecht (WEEK-81, WEEK-113).
+                // Het boekje verschijnt bij elk gerecht, ook vóór bevestigen (WEEK-81, WEEK-113, WEEK-236).
                 const heeftBereiding = toonBereidingsIcoon(bevestigd);
                 return (
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>

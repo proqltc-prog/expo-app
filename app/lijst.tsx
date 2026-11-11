@@ -303,6 +303,7 @@ export default function Lijst() {
             staatOp={(code) => staatOpLijst(items, code)}
             onReceptKies={voegReceptToe}
             onLosPlus={openNieuwLos}
+            losTekst={t('lijst.toevoegen')}
           />
 
           {/* Groeperen per recept of per categorie. */}

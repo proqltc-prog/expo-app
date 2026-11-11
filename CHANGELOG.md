@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.124.1] – 2026-11-11
+
+- Frigo en lijst, tabblad Recepten: de eenheid bij een ingrediënt staat in de taal van de app (bv. "pièces" in plaats van "stuk"). (WEEK-237)
+- Lijst, tabblad Losse producten: het invoerveld zegt nu "Iets toevoegen dat je moet kopen…" in plaats van "…dat al in huis is". (WEEK-235)
+- Weekmenu: het boekje om het recept te bekijken (ingrediënten en stappen) staat er ook vóór je het gerecht bevestigt. (WEEK-236)
+- Frans: overal de beleefdheidsvorm (vous), één woord per begrip (bv. menu de la semaine, application, gestionnaire, rayon) en taalfouten verbeterd. (WEEK-238)
+
+**Jira:** [WEEK-237](https://proqltc-1791495894841.atlassian.net/browse/WEEK-237) · [WEEK-235](https://proqltc-1791495894841.atlassian.net/browse/WEEK-235) · [WEEK-236](https://proqltc-1791495894841.atlassian.net/browse/WEEK-236) · [WEEK-238](https://proqltc-1791495894841.atlassian.net/browse/WEEK-238) · **Confluence:** [WEEK-237](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23986177) · [WEEK-235](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24018945) · [WEEK-236](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24051713) · [WEEK-238](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24084481)
+
 ## [0.124.0] – 2026-11-11
 
 - Weekmenu: de gekozen stijl gaat voor het seizoen. Met bv. Italiaans kwamen er Thaise of Indische herfstgerechten op het menu, terwijl er genoeg Italiaanse recepten zijn. Nu kiest de planner eerst binnen je wensen (seizoen en daarna het hele jaar); pas bij echt te weinig recepten vult hij aan met andere gerechten en toont hij de melding. (WEEK-232)

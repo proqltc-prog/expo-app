@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { leesLosInvoer, LosWijziging, ZELF_EENHEDEN } from '@/lib/frigo';
-import { Sleutel } from '@/i18n';
+import { eenheidNaam, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
 const ORANJE = '#E8680F';
@@ -63,7 +63,7 @@ function naarInvoer(iso: string | undefined): string {
 }
 
 function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: () => void; onBewaar: (w: LosWijziging) => void }) {
-  const { t } = useTaal();
+  const { t, taal } = useTaal();
   const [hoeveelheid, setHoeveelheid] = useState(opties.hoeveelheid !== undefined ? String(opties.hoeveelheid).replace('.', ',') : '');
   const [eenheid, setEenheid] = useState<string | undefined>(opties.eenheid);
   const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>(opties.afdeling);
@@ -72,7 +72,7 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
 
   const accent = opties.accent ?? ORANJE;
   const eenheden = opties.eenheden ?? ZELF_EENHEDEN;
-  const eenheidLabel = (e: string) => (e === 'stuk' ? t('frigo.stuks') : e === 'teentje' ? t('recept.eenheid.teentje') : e);
+  const eenheidLabel = (e: string) => eenheidNaam(taal, e);
 
   const bewaar = () => {
     const invoer = leesLosInvoer(hoeveelheid, opties.toonHoudbaar ? houdbaar : '');

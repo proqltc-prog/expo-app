@@ -25,7 +25,7 @@ export const de: Vertalingen = {
   'aanmelden.fout': 'Verknüpfen fehlgeschlagen. Bitte erneut versuchen.',
   'welkom.stap': 'Schritt 1 von 4: Sprache · Name · Konto · Menü',
   'bereiding.titel': 'Zubereitung',
-  'bereiding.icoon': 'Zubereitungsschritte anzeigen',
+  'bereiding.icoon': 'Rezept ansehen',
   'bereiding.stap': 'Schritt {n} von {m}',
   'bereiding.vorige': 'Zurück',
   'bereiding.volgende': 'Weiter',
@@ -217,7 +217,7 @@ export const de: Vertalingen = {
   'stijl.comfort': 'Wohlfühlessen',
   'stijl.licht': 'Leicht / frisch',
 
-  'lijst.toevoegen': 'Etwas hinzufügen…',
+  'lijst.toevoegen': 'Etwas zum Einkaufen hinzufügen…',
   'lijst.scanProduct': 'Dieses Produkt scannen',
   'lijst.verwijderNaam': '{naam} von der Liste entfernen',
   'lijst.teller': 'Noch {open} von {totaal} zu kaufen',
