@@ -35,8 +35,6 @@ export const en: Vertalingen = {
   'bereiding.ingredienten': 'Ingredients',
   'bereiding.inFrigo': 'In the fridge',
   'bereiding.deelsInFrigo': 'Partly in the fridge',
-  'bereiding.inHuis': 'in stock',
-  'bereiding.frigoUitleg': '✓ in stock = already in your Fridge. Anything without it still needs buying.',
 
   'tab.menu': 'Menu',
   'tab.menu.titel': 'Weekly menu',
@@ -500,7 +498,8 @@ export const en: Vertalingen = {
   'pagina.infoKnop': 'About this page',
   'pagina.lijstInfo': '**Shopping**\nTap a product to tick it off. Switch between per recipe and per category. Tap a heading to open or close a group.\n\n**Recipes / Loose products**\nRecipes are the ingredients of the week menu; loose products are what you add yourself.\n\n**Stores**\nFor each store type on your list, opens Google Maps near you, using the postcode from your profile.',
   'pagina.kiesInfo': 'Choose a recipe for this meal. The filters at the top narrow the list; tap a recipe to put it on the week menu.\n\n**Discover**\nThe app’s recipes.\n\n**Our family**\nThe family’s own recipes. Use + New recipe to add one.',
-  'pagina.frigoInfo': '**Recipes**\nWhat is at home for this week’s recipes. Search for an ingredient and enter the amount. The planner uses what has been in the house longest first.\n\n**Loose products**\nWhat you have outside the recipes. They do not count for this week’s recipes. With the pencil you change amount, unit, category and best-before date. The app deletes nothing automatically.',
+  'pagina.frigoInfo': '**Recipes**\nWhat is at home for this week’s recipes. Search for an ingredient and enter the amount. The planner uses what has been in the house longest first. Use the pencil to change the amount and the unit (g, ml, pieces, cloves).\n\n**Loose products**\nWhat you have outside the recipes. They do not count for this week’s recipes. With the pencil you change amount, unit, category and best-before date. The app deletes nothing automatically.',
+  'pagina.bereidingInfo': '**Preparation**\nThe steps of the dish, one at a time. Tap a step or use Previous and Next.\n\n**Ticks**\nA tick ✓ next to an ingredient means it is already in your Fridge. "Partly in the fridge": there is some, but not enough. Without a tick you still need to buy it.',
   'pagina.scanInfo': 'The app looks up the product and shows the nutrition values and a rating. You get a limited number of free scans per day.',
   'gezin.infoKnop': "Family code info",
   'gezin.infoTekst': "With this code someone joins your family space: in the app choose “Join” and enter the code. Open the app at {link}.",

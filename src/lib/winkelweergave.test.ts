@@ -90,9 +90,14 @@ describe('googleZoekUrl (WEEK-175)', () => {
   });
 });
 
-describe('googleZoekUrl supermarkt (WEEK-187)', () => {
-  test('de zoekterm noemt levensmiddelen, zodat Google geen garages toont', () => {
+describe('googleZoekUrl supermarkt (WEEK-234)', () => {
+  test('de zoekterm is enkel supermarkt: met extra woorden toonde Google ook kleding- en elektrozaken', () => {
     const url = googleZoekUrl('supermarkt', '1760', 'Roosdaal');
-    assert.match(url, /supermarkt%20levensmiddelen%201760%20Roosdaal%20Belgi/);
+    assert.match(url, /query=supermarkt%201760%20Roosdaal%20Belgi/);
+    assert.doesNotMatch(url, /levensmiddelen/);
+  });
+  test('regressie: de andere winkeltypes houden hun eigen woord', () => {
+    assert.match(googleZoekUrl('slager', '1760', 'Roosdaal'), /query=slager%201760%20Roosdaal/);
+    assert.match(googleZoekUrl('bakker', '1760', 'Roosdaal'), /query=bakker%201760%20Roosdaal/);
   });
 });

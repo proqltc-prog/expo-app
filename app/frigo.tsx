@@ -2,7 +2,7 @@ import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
+import { aantalProducten, eenhedenVoorRecept, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
 import { houdbaarStatus, leesDatum } from '@/lib/houdbaarheid';
 import { beoordeel, Product } from '@/lib/openfoodfacts';
 import { ScanBlokken } from '@/ui/scanBlokken';
@@ -48,6 +48,8 @@ export default function Frigo() {
   // De popup voor een los product (WEEK-181/182): nieuw of bewerken; null = dicht. bewerkIds leeg = nieuw product.
   const [losPopup, setLosPopup] = useState<PopupOpties | null>(null);
   const [bewerkIds, setBewerkIds] = useState<string[] | null>(null);
+  // WEEK-222: de popup bewerkt een receptingrediënt (enkel hoeveelheid en eenheid) in plaats van een los product.
+  const [bewerkRecept, setBewerkRecept] = useState(false);
   // Welk product de details open heeft staan (WEEK-49); één tegelijk.
   const [open, setOpen] = useState<string | null>(null);
   // Welke afdelingen open staan (WEEK-124); standaard is alles ingeklapt.
@@ -85,6 +87,7 @@ export default function Frigo() {
   // Het potloodje naast een los product (WEEK-181): dezelfde popup, met de huidige waarden.
   const openBewerk = (regel: FrigoRegel) => {
     setBewerkIds(regel.ids);
+    setBewerkRecept(false);
     setLosPopup({
       sleutel: `bewerk-${regel.sleutel}-${Date.now()}`,
       titel: t('frigo.bewerkKop'),
@@ -99,12 +102,39 @@ export default function Frigo() {
     });
   };
 
+  // WEEK-222: het potloodje bij een receptingrediënt: enkel hoeveelheid en eenheid (bv. 6 tomaten in plaats van 3).
+  // De categorie blijft die van de app; de houdbaarheid heeft haar eigen link onder het product.
+  const openBewerkRecept = (regel: FrigoRegel) => {
+    setBewerkIds(regel.ids);
+    setBewerkRecept(true);
+    setLosPopup({
+      sleutel: `recept-${regel.sleutel}-${Date.now()}`,
+      titel: t('frigo.bewerkKop'),
+      naam: regel.naam,
+      hoeveelheid: regel.hoeveelheid,
+      eenheid: regel.eenheid,
+      afdeling: regel.afdeling,
+      toonEenheid: true,
+      toonCategorie: false,
+      toonHoudbaar: false,
+      eenheden: eenhedenVoorRecept(regel.eenheid),
+      hoeveelheidVerplicht: true,
+      accent: KLEUR,
+    });
+  };
+
   // Bewaren uit de popup: een nieuw los product, of de wijziging van een bestaand product.
   const bewaarLos = async (w: LosWijziging) => {
     const opties = losPopup;
     const ids = bewerkIds;
+    const recept = bewerkRecept;
     setLosPopup(null);
+    setBewerkRecept(false);
     if (!opties) return;
+    if (ids && recept) {
+      if (w.hoeveelheid !== undefined) setFrigo(await wijzigFrigo((f) => wijzigReceptHoeveelheid(f, ids, w.hoeveelheid as number, w.eenheid)));
+      return;
+    }
     if (ids) {
       setFrigo(await wijzigFrigo((f) => wijzigLos(f, ids, w)));
       return;
@@ -231,17 +261,16 @@ export default function Frigo() {
                   })()}
                 </View>
                 {item.hoeveelheid ? <Text style={s.hoeveelheid}>{hoeveelheidTekst(taal, item.hoeveelheid, item.eenheid)}</Text> : null}
-                {sheet === 'los' && (
-                  <Pressable
-                    style={s.potlood}
-                    onPress={() => openBewerk(item)}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('frigo.bewerkNaam', { naam: item.naam })}
-                    hitSlop={8}
-                  >
-                    <Ionicons name="create-outline" size={18} color={ORANJE} />
-                  </Pressable>
-                )}
+                {/* Potloodje: los product (WEEK-181) of receptingrediënt, enkel hoeveelheid en eenheid (WEEK-222). */}
+                <Pressable
+                  style={[s.potlood, sheet === 'planner' && s.potloodRecept]}
+                  onPress={() => (sheet === 'los' ? openBewerk(item) : openBewerkRecept(item))}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('frigo.bewerkNaam', { naam: item.naam })}
+                  hitSlop={8}
+                >
+                  <Ionicons name="create-outline" size={18} color={sheet === 'los' ? ORANJE : KLEUR} />
+                </Pressable>
                 <Pressable
                   style={s.weg}
                   onPress={() => verwijder(item.ids)}
@@ -336,6 +365,7 @@ const s = StyleSheet.create({
   sinds: { fontSize: 12, color: MUTED, marginTop: 2 },
   hoeveelheid: { fontSize: 14, color: '#777' },
   potlood: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: ORANJE_ZACHT },
+  potloodRecept: { backgroundColor: '#D5EDEA' },
   weg: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f1f1' },
   wegTekst: { fontSize: 18, color: '#888', fontWeight: '700', lineHeight: 20 },
   rijLink: { color: KLEUR, fontWeight: '600', fontSize: 13, marginBottom: 6 },

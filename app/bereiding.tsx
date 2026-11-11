@@ -14,6 +14,7 @@ import { laadPlan } from '@/opslag/plan';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { useTaal } from '@/ui/taal';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -24,6 +25,8 @@ const LIJN = '#E4E8E1';
 
 export default function Bereiding() {
   const { t, taal } = useTaal();
+  // WEEK-233: info-icoon rechtsboven met uitleg over de pagina en de vinkjes.
+  const { popup } = usePaginaInfo({ tekst: t('pagina.bereidingInfo'), kleur: PETROL, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const { id, naam, minuten } = useLocalSearchParams<{ id: string; naam: string; minuten?: string }>();
   const [eigen, setEigen] = useState<EigenRecept[]>([]);
   // WEEK-121: databankrecepten hebben hun stappen in de databank; een netwerkfout laat ze gewoon leeg.
@@ -78,6 +81,7 @@ export default function Bereiding() {
 
   return (
     <View style={s.scherm}>
+      {popup}
       <Pressable onPress={sluit} accessibilityRole="button" accessibilityLabel={t('bereiding.sluit')} style={s.sluit} hitSlop={8}>
         <Ionicons name="close" size={22} color={INKT} />
       </Pressable>
@@ -96,9 +100,9 @@ export default function Bereiding() {
               <View key={n} style={s.ingRij}>
                 <Text style={s.ingNaam}>{ing.naam}</Text>
                 {ing.dekking === 'geheel' ? (
+                  // WEEK-233: enkel het vinkje; de uitleg staat in het info-icoon rechtsboven.
                   <View style={s.ingFrigo} accessibilityLabel={t('bereiding.inFrigo')}>
-                    <Ionicons name="checkmark-circle" size={16} color={PETROL} />
-                    <Text style={s.ingFrigoTekst}>{t('bereiding.inHuis')}</Text>
+                    <Ionicons name="checkmark-circle" size={18} color={PETROL} />
                   </View>
                 ) : ing.dekking === 'deels' ? (
                   <Text style={s.ingDeels}>{t('bereiding.deelsInFrigo')}</Text>
@@ -106,7 +110,6 @@ export default function Bereiding() {
                 <Text style={s.ingHoeveelheid}>{hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
               </View>
             ))}
-            <Text style={s.ingUitleg}>{t('bereiding.frigoUitleg')}</Text>
           </View>
         ) : null}
 
@@ -165,8 +168,6 @@ const s = StyleSheet.create({
   ingRij: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: LIJN, paddingVertical: 7 },
   ingNaam: { flex: 1, minWidth: 0, fontSize: 15, color: INKT },
   ingFrigo: { marginLeft: 8, flexDirection: 'row', alignItems: 'center', gap: 3 },
-  ingFrigoTekst: { fontSize: 11, fontWeight: '700', color: PETROL },
-  ingUitleg: { marginTop: 8, fontSize: 12, color: MUTED },
   ingDeels: { marginLeft: 8, fontSize: 11, fontWeight: '700', color: MUTED },
   ingHoeveelheid: { fontSize: 15, fontWeight: '700', color: MUTED, marginLeft: 12 },
   lijst: { gap: 12 },

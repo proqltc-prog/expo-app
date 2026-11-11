@@ -27,8 +27,9 @@ export function googleMapsUrl(w: Winkel): string {
 
 /** Zoekwoord per winkeltype voor Google Maps (WEEK-175). */
 const ZOEKWOORD: Record<WinkelSoort, string> = {
-  // WEEK-187: met 'levensmiddelen' toont Google geen garages of elektrozaken.
-  supermarkt: 'supermarkt levensmiddelen',
+  // WEEK-234: enkel 'supermarkt'. Met 'levensmiddelen' erbij (WEEK-187) zocht Google op elk woord apart en toonde het
+  // ook pluimveehouderijen, kleding- en elektrozaken; met het ene woord blijft Google bij de categorie Supermarkt.
+  supermarkt: 'supermarkt',
   slager: 'slager',
   bakker: 'bakker',
   groenteboer: 'groenteboer',

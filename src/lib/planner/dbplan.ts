@@ -102,11 +102,14 @@ function kiesVoorPlek(
 }
 
 /**
- * Kiest een recept voor een plek op een dag met een seizoen (WEEK-156). Volgorde:
- * 1. seizoensrecept dat past bij de kooktijd, 2. recept van het hele jaar of het seizoen dat past bij de kooktijd,
- * 3. seizoensrecept ongeacht de kooktijd, 4. recept van het hele jaar of het seizoen ongeacht de kooktijd.
+ * Kiest een recept voor een plek op een dag met een seizoen (WEEK-156). De wensen gaan voor het seizoen (WEEK-232):
+ * 1. seizoensrecept met alle wensen (kooktijd en stijl), 2. recept van het hele jaar met alle wensen,
+ * 3. seizoensrecept met de juiste kooktijd (andere stijl), 4. recept van het hele jaar met de juiste kooktijd,
+ * 5. seizoensrecept ongeacht de wensen, 6. recept van het hele jaar ongeacht de wensen.
+ * Voorheen liet stap 1 de stijl al los, waardoor een Thais herfstrecept voorging op een Italiaans recept van het
+ * hele jaar, ook als er genoeg Italiaanse recepten waren.
  * Recepten van een ander seizoen komen nooit op de dag. Zonder seizoen (geen datum) gedraagt het zich als voorheen.
- * Met alleenWensen blijven enkel de stappen 1 en 2 over: de keuze blijft binnen de wensen van de weekplanner.
+ * Met alleenWensen blijven enkel de stappen 1 en 2 over: de keuze blijft binnen alle wensen van de weekplanner.
  */
 function kiesVoorSeizoen(
   pool: DbPoolRecept[],
@@ -117,19 +120,15 @@ function kiesVoorSeizoen(
   seizoen: Seizoen | undefined,
   alleenWensen = false,
 ): { recept: PlanRecept; versoepeld: boolean } | undefined {
-  if (!seizoen) return kiesVoorPlek(pool, moment, verzoek, gebruikt, random, alleenWensen ? 1 : 3);
+  if (!seizoen) return kiesVoorPlek(pool, moment, verzoek, gebruikt, random, alleenWensen ? 0 : 3);
   const metSeizoen = pool.filter((k) => k.seizoenen.includes(seizoen));
   const passend = pool.filter((k) => seizoenPasst(k.seizoenen, seizoen));
-  const stappen: (() => { recept: PlanRecept; versoepeld: boolean } | undefined)[] = [
-    () => kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random, 1),
-    () => kiesVoorPlek(passend, moment, verzoek, gebruikt, random, 1),
-  ];
-  if (!alleenWensen) {
-    stappen.push(
-      () => kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random),
-      () => kiesVoorPlek(passend, moment, verzoek, gebruikt, random),
-    );
-  }
+  // Per niveau eerst het seizoen, dan het hele jaar: 0 = alle wensen, 1 = juiste kooktijd, 3 = alles.
+  const niveaus = alleenWensen ? [0] : [0, 1, 3];
+  const stappen = niveaus.flatMap((niveau) => [
+    () => kiesVoorPlek(metSeizoen, moment, verzoek, gebruikt, random, niveau),
+    () => kiesVoorPlek(passend, moment, verzoek, gebruikt, random, niveau),
+  ]);
   for (const stap of stappen) {
     const keuze = stap();
     if (keuze) return keuze;

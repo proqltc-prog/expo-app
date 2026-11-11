@@ -1,5 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { eenhedenVoorRecept, wijzigReceptHoeveelheid } from '@/lib/frigo';
 import { aantalProducten, frigoItemUitLijst, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesLosInvoer, leesProduct, MAX_LOS_HOEVEELHEID, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
 import { beoordeel, type Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
@@ -517,5 +518,45 @@ describe('lijst naar frigo bij afvinken (WEEK-182)', () => {
   test('een databankproduct zonder recept (uit Recepten gekozen) komt in de planner-frigo', () => {
     const f = frigoItemUitLijst({ id: 'e1', naam: 'Melk', categorie: 'extra', afgevinkt: true, code: 'melk', eenheid: 'ml' }, nu);
     assert.equal(f.bron, 'planner');
+  });
+});
+
+describe('receptingrediënt in de frigo aanpassen (WEEK-222)', () => {
+  const nu = '2026-11-11T10:00:00.000Z';
+  const tomaat = (id: string, h?: number): FrigoItem => ({ id, naam: 'tomaat', code: 'tomaat', hoeveelheid: h, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: nu, bron: 'planner', lijstId: 'l-' + id, houdbaarTot: '2026-11-20' });
+
+  test('3 tomaten worden er 6: de hoeveelheid komt op het eerste exemplaar, de rest blijft', () => {
+    const uit = wijzigReceptHoeveelheid([tomaat('a', 3)], ['a'], 6, 'stuk');
+    assert.deepEqual(uit, [{ ...tomaat('a', 6) }]);
+  });
+
+  test('code, categorie, bron, lijstkoppeling en houdbaarheid blijven bewaard', () => {
+    const [t] = wijzigReceptHoeveelheid([tomaat('a', 3)], ['a'], 500, 'g');
+    assert.equal(t.code, 'tomaat');
+    assert.equal(t.afdeling, 'groenten-fruit');
+    assert.equal(t.bron, 'planner');
+    assert.equal(t.lijstId, 'l-a');
+    assert.equal(t.houdbaarTot, '2026-11-20');
+    assert.equal(t.eenheid, 'g');
+    assert.equal(t.hoeveelheid, 500);
+  });
+
+  test('een regel met twee exemplaren: totaal op het eerste, het tweede zonder hoeveelheid', () => {
+    const uit = wijzigReceptHoeveelheid([tomaat('a', 2), tomaat('b', 1)], ['a', 'b'], 6, 'stuk');
+    assert.equal(uit[0].hoeveelheid, 6);
+    assert.equal(uit[1].hoeveelheid, undefined);
+    assert.equal(uit[1].eenheid, 'stuk');
+  });
+
+  test('andere producten blijven ongemoeid (regressie)', () => {
+    const ander: FrigoItem = { id: 'x', naam: 'ui', hoeveelheid: 2, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: nu, bron: 'planner' };
+    const uit = wijzigReceptHoeveelheid([tomaat('a', 3), ander], ['a'], 6, 'stuk');
+    assert.deepEqual(uit[1], ander);
+  });
+
+  test('eenheden: g, ml, stuks, teentjes, plus de huidige als die afwijkt', () => {
+    assert.deepEqual(eenhedenVoorRecept('teentje'), ['g', 'ml', 'stuk', 'teentje']);
+    assert.deepEqual(eenhedenVoorRecept(undefined), ['g', 'ml', 'stuk', 'teentje']);
+    assert.deepEqual(eenhedenVoorRecept('bol'), ['g', 'ml', 'stuk', 'teentje', 'bol']);
   });
 });
