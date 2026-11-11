@@ -46,3 +46,24 @@ export function houdbaarStatus(houdbaarTot: string | undefined, nu: Date): Houdb
   if (dagen <= WAARSCHUW_DAGEN) return 'bijnaVerlopen';
   return 'ok';
 }
+
+/**
+ * WEEK-242: een datum (yyyy-mm-dd) in het formaat van het toestel, bv. "20 nov 2026" of "Nov 20, 2026".
+ * Zonder locale volgt hij de instelling van het toestel. Ongeldige datum: lege tekst.
+ */
+export function datumToestel(iso: string, locale?: string): string {
+  if (!isoDatum(iso)) return '';
+  const d = new Date(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)), 12);
+  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
+}
+
+/** WEEK-242: de maand waarmee de datumkiezer opent (maand 0-gebaseerd): die van de gekozen datum, anders die van vandaag. */
+export function startMaand(waarde: string | undefined, vandaagIso: string): { jaar: number; maand: number } {
+  const iso = isoDatum(waarde) ?? vandaagIso;
+  return { jaar: Number(iso.slice(0, 4)), maand: Number(iso.slice(5, 7)) - 1 };
+}
+
+/** WEEK-242: yyyy-mm-dd naar het oude invoerformaat dd-mm-jjjj (voor de popup); leeg zonder datum. */
+export function naarInvoerDatum(iso: string | undefined): string {
+  return iso && isoDatum(iso) ? `${iso.slice(8, 10)}-${iso.slice(5, 7)}-${iso.slice(0, 4)}` : '';
+}

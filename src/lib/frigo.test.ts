@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { eenhedenVoorRecept, wijzigReceptHoeveelheid } from '@/lib/frigo';
+import { wijzigReceptHoeveelheid } from '@/lib/frigo';
 import { aantalProducten, frigoItemUitLijst, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesLosInvoer, leesProduct, MAX_LOS_HOEVEELHEID, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
 import { beoordeel, type Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
@@ -526,23 +526,30 @@ describe('receptingrediënt in de frigo aanpassen (WEEK-222)', () => {
   const tomaat = (id: string, h?: number): FrigoItem => ({ id, naam: 'tomaat', code: 'tomaat', hoeveelheid: h, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: nu, bron: 'planner', lijstId: 'l-' + id, houdbaarTot: '2026-11-20' });
 
   test('3 tomaten worden er 6: de hoeveelheid komt op het eerste exemplaar, de rest blijft', () => {
-    const uit = wijzigReceptHoeveelheid([tomaat('a', 3)], ['a'], 6, 'stuk');
+    const uit = wijzigReceptHoeveelheid([tomaat('a', 3)], ['a'], 6);
     assert.deepEqual(uit, [{ ...tomaat('a', 6) }]);
   });
 
-  test('code, categorie, bron, lijstkoppeling en houdbaarheid blijven bewaard', () => {
-    const [t] = wijzigReceptHoeveelheid([tomaat('a', 3)], ['a'], 500, 'g');
+  test('code, categorie, bron, lijstkoppeling, houdbaarheid en eenheid blijven bewaard', () => {
+    const [t] = wijzigReceptHoeveelheid([tomaat('a', 3)], ['a'], 5);
     assert.equal(t.code, 'tomaat');
     assert.equal(t.afdeling, 'groenten-fruit');
     assert.equal(t.bron, 'planner');
     assert.equal(t.lijstId, 'l-a');
     assert.equal(t.houdbaarTot, '2026-11-20');
-    assert.equal(t.eenheid, 'g');
-    assert.equal(t.hoeveelheid, 500);
+    assert.equal(t.eenheid, 'stuk');
+    assert.equal(t.hoeveelheid, 5);
+  });
+
+  test('WEEK-241: de eenheid van een ingrediënt is vast en verandert nooit', () => {
+    const look: FrigoItem = { id: 'k', naam: 'knoflook', code: 'knoflook', hoeveelheid: 2, eenheid: 'teentje', afdeling: 'groenten-fruit', toegevoegdOp: nu, bron: 'planner' };
+    const [k] = wijzigReceptHoeveelheid([look], ['k'], 4);
+    assert.equal(k.eenheid, 'teentje');
+    assert.equal(k.hoeveelheid, 4);
   });
 
   test('een regel met twee exemplaren: totaal op het eerste, het tweede zonder hoeveelheid', () => {
-    const uit = wijzigReceptHoeveelheid([tomaat('a', 2), tomaat('b', 1)], ['a', 'b'], 6, 'stuk');
+    const uit = wijzigReceptHoeveelheid([tomaat('a', 2), tomaat('b', 1)], ['a', 'b'], 6);
     assert.equal(uit[0].hoeveelheid, 6);
     assert.equal(uit[1].hoeveelheid, undefined);
     assert.equal(uit[1].eenheid, 'stuk');
@@ -550,13 +557,7 @@ describe('receptingrediënt in de frigo aanpassen (WEEK-222)', () => {
 
   test('andere producten blijven ongemoeid (regressie)', () => {
     const ander: FrigoItem = { id: 'x', naam: 'ui', hoeveelheid: 2, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: nu, bron: 'planner' };
-    const uit = wijzigReceptHoeveelheid([tomaat('a', 3), ander], ['a'], 6, 'stuk');
+    const uit = wijzigReceptHoeveelheid([tomaat('a', 3), ander], ['a'], 6);
     assert.deepEqual(uit[1], ander);
-  });
-
-  test('eenheden: g, ml, stuks, teentjes, plus de huidige als die afwijkt', () => {
-    assert.deepEqual(eenhedenVoorRecept('teentje'), ['g', 'ml', 'stuk', 'teentje']);
-    assert.deepEqual(eenhedenVoorRecept(undefined), ['g', 'ml', 'stuk', 'teentje']);
-    assert.deepEqual(eenhedenVoorRecept('bol'), ['g', 'ml', 'stuk', 'teentje', 'bol']);
   });
 });

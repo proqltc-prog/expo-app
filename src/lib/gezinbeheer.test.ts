@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { anderenLeden, APP_LINK, ikBeheerder, magGezinsprofielWijzigen, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
+import { anderenLeden, APP_LINK, GEZINSNAAM_STANDAARD, ikBeheerder, magGezinsprofielWijzigen, toonGezinsnaam, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { leesGezinFout } from '@/lib/sync';
 
 const leden = [
@@ -58,5 +58,18 @@ describe('magGezinsprofielWijzigen (WEEK-168)', () => {
 describe('gezinscode-link (WEEK-173)', () => {
   it('verwijst naar de webversie zolang de Play-app nog niet bestaat', () => {
     assert.equal(APP_LINK, 'https://proqltc-prog.github.io/expo-app/');
+  });
+});
+
+describe('naam van het gezin tonen (WEEK-243)', () => {
+  it('zonder eigen naam: de vertaalde tekst, nooit het Nederlandse "Gezin"', () => {
+    assert.equal(toonGezinsnaam(GEZINSNAAM_STANDAARD, 'Notre famille'), 'Notre famille');
+    assert.equal(toonGezinsnaam('', 'Notre famille'), 'Notre famille');
+    assert.equal(toonGezinsnaam(undefined, 'Our family'), 'Our family');
+    assert.equal(toonGezinsnaam('  Gezin ', 'Unsere Familie'), 'Unsere Familie');
+  });
+  it('een zelf gekozen naam blijft zoals hij is (regressie)', () => {
+    assert.equal(toonGezinsnaam('Famille Dupont', 'Notre famille'), 'Famille Dupont');
+    assert.equal(toonGezinsnaam('Gezin De Ridder', 'Ons gezin'), 'Gezin De Ridder');
   });
 });

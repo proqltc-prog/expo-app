@@ -1,6 +1,6 @@
 {
   "name": "gezond-boodschappen",
-  "version": "0.125.0",
+  "version": "0.126.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -22,6 +22,7 @@
     "expo": "~54.0.0",
     "expo-camera": "~17.0.0",
     "expo-constants": "~18.0.0",
+    "expo-image": "~3.0.11",
     "expo-linking": "~8.0.0",
     "expo-localization": "~17.0.0",
     "expo-router": "~6.0.0",

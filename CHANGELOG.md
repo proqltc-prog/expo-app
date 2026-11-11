@@ -8,6 +8,42 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.126.0] – 2026-11-11
+
+- Weekmenu en stijlkeuze: echte foto's van gerechten in plaats van de getekende logo's. Elke keuken heeft een foto van een traditioneel gerecht; in het weekmenu past de foto bij de keuken en het soort gerecht (bv. Thais + curry, Frans + soep, Italiaans + pasta), met 2 à 3 varianten per groep zodat een weekmenu minder dubbel toont. Recepten van het gezin krijgen de foto van hun keuken of een gezinsfoto. (WEEK-244)
+- De foto's (148 gratis foto's van Pexels) staan in de databank (Supabase) en worden op het toestel bewaard: een foto die je al hebt, wordt niet opnieuw gedownload. Een nieuwe foto in de databank wordt wel opgehaald. (WEEK-244)
+- In de hoek staat de vlag van de keuken, getekend door de app; mediterraan toont een olijfblad, Aziatisch stokjes. De foto's zijn gratis foto's van Pexels. (WEEK-244)
+
+**Jira:** [WEEK-244](https://proqltc-1791495894841.atlassian.net/browse/WEEK-244) · **Confluence:** [WEEK-244](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24281108)
+
+## [0.125.4] – 2026-11-11
+
+- Een gezinsruimte zonder eigen naam heet nu in elke taal juist (bv. "Notre famille" in het Frans) in plaats van het Nederlandse "Gezin", bij een eigen recept en in de gezinsruimte. (WEEK-243)
+
+**Jira:** [WEEK-243](https://proqltc-1791495894841.atlassian.net/browse/WEEK-243) · **Confluence:** [WEEK-243](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24313857)
+
+## [0.125.3] – 2026-11-11
+
+- Houdbaarheid: je kiest de datum in een kalender in plaats van ze te typen. De datum staat naast het kalendericoon, in het formaat van je toestel; met het kruisje wis je ze. Ook in de popup van Andere producten. (WEEK-242)
+
+**Jira:** [WEEK-242](https://proqltc-1791495894841.atlassian.net/browse/WEEK-242) · **Confluence:** [WEEK-242](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24281089)
+
+## [0.125.2] – 2026-11-11
+
+- In huis: het potloodje bij een ingrediënt voor de weekplanner heet "Ingrediënt wijzigen". Enkel de hoeveelheid is aan te passen; de eenheid is vast. (WEEK-241)
+- "teentje" heet nu "teentje(s)" (fr "gousse(s)", de "Zehe(n)", en "clove(s)"). (WEEK-241)
+
+**Jira:** [WEEK-241](https://proqltc-1791495894841.atlassian.net/browse/WEEK-241) · **Confluence:** [WEEK-241](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23986215)
+
+## [0.125.1] – 2026-11-11
+
+- In huis: de dubbele titel boven de tabs is weg. (WEEK-240)
+- De tab "Voor het menu" heet nu "Voor de weekplanner" (fr "Pour le planificateur"). (WEEK-240)
+- De uitleg bij Andere producten geeft betere voorbeelden (drank, ontbijt, snacks, verzorging, poetsmiddelen) in plaats van enkel wc-papier. (WEEK-240)
+- Kortere invoervelden: "Typ hier…" en "Typ om te zoeken…". (WEEK-240)
+
+**Jira:** [WEEK-240](https://proqltc-1791495894841.atlassian.net/browse/WEEK-240) · **Confluence:** [WEEK-240](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23986196)
+
 ## [0.125.0] – 2026-11-11
 
 - Duidelijkere namen: de tab "Lijst" heet "Boodschappen", de "Frigo" heet "In huis" (met een doos als icoon), en bovenaan de boodschappen staan "Winkels" en "Te kopen". (WEEK-239)

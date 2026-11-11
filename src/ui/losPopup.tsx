@@ -3,6 +3,9 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { leesLosInvoer, LosWijziging, ZELF_EENHEDEN } from '@/lib/frigo';
 import { eenheidNaam, Sleutel } from '@/i18n';
+import { datumToestel, naarInvoerDatum, vandaag } from '@/lib/houdbaarheid';
+import { Ionicons } from '@expo/vector-icons';
+import { DatumKiezer } from '@/ui/datumKiezer';
 import { useTaal } from '@/ui/taal';
 
 const ORANJE = '#E8680F';
@@ -55,19 +58,14 @@ export function LosPopup({ opties, onSluit, onBewaar }: Props) {
   );
 }
 
-/** Houdbaar tot als ISO-datum (yyyy-mm-dd) in het invoerformaat dd-mm-jjjj. */
-function naarInvoer(iso: string | undefined): string {
-  if (!iso) return '';
-  const [j, m, d] = iso.split('-');
-  return `${d}-${m}-${j}`;
-}
-
 function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: () => void; onBewaar: (w: LosWijziging) => void }) {
   const { t, taal } = useTaal();
   const [hoeveelheid, setHoeveelheid] = useState(opties.hoeveelheid !== undefined ? String(opties.hoeveelheid).replace('.', ',') : '');
   const [eenheid, setEenheid] = useState<string | undefined>(opties.eenheid);
   const [afdeling, setAfdeling] = useState<Afdeling | 'overig'>(opties.afdeling);
-  const [houdbaar, setHoudbaar] = useState(naarInvoer(opties.houdbaarTot));
+  // WEEK-242: de houdbaarheid als yyyy-mm-dd uit de kalender; voor de controle gaat ze terug naar dd-mm-jjjj.
+  const [houdbaar, setHoudbaar] = useState<string | undefined>(opties.houdbaarTot);
+  const [kalender, setKalender] = useState(false);
   const [fout, setFout] = useState<'hoeveelheid' | 'houdbaar' | 'verplicht' | undefined>(undefined);
 
   const accent = opties.accent ?? ORANJE;
@@ -75,7 +73,7 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
   const eenheidLabel = (e: string) => eenheidNaam(taal, e);
 
   const bewaar = () => {
-    const invoer = leesLosInvoer(hoeveelheid, opties.toonHoudbaar ? houdbaar : '');
+    const invoer = leesLosInvoer(hoeveelheid, opties.toonHoudbaar ? naarInvoerDatum(houdbaar) : '');
     if (invoer.fout) {
       setFout(invoer.fout);
       return;
@@ -153,20 +151,34 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
         <Text style={s.vast}>{`${t('frigo.bewerkCategorie')}: ${t(`afdeling.${opties.afdeling}` as Sleutel)}`}</Text>
       ) : null}
 
+      {/* WEEK-242: houdbaarheid via een kalender; de datum staat in het formaat van het toestel. */}
       {opties.toonHoudbaar && (
         <>
           <Text style={s.label}>{t('frigo.bewerkHoudbaar')}</Text>
-          <TextInput
-            style={[s.veld, fout === 'houdbaar' && s.veldFout]}
-            value={houdbaar}
-            onChangeText={(x) => {
-              setHoudbaar(x);
-              setFout(undefined);
-            }}
-            placeholder={t('frigo.houdbaarPlaceholder')}
-            accessibilityLabel={t('frigo.bewerkHoudbaar')}
-          />
-          {fout === 'houdbaar' && <Text style={s.fout}>{t('frigo.houdbaarFout')}</Text>}
+          <View style={s.datumRij}>
+            <Pressable style={[s.datumKnop, { borderColor: accent }]} onPress={() => setKalender(true)} accessibilityRole="button" accessibilityLabel={t('frigo.bewerkHoudbaar')}>
+              <Ionicons name="calendar-outline" size={18} color={accent} />
+              <Text style={[s.datumTekst, !houdbaar && s.datumLeeg]}>{houdbaar ? datumToestel(houdbaar) : t('frigo.houdbaarGeen')}</Text>
+            </Pressable>
+            {houdbaar ? (
+              <Pressable onPress={() => setHoudbaar(undefined)} accessibilityRole="button" accessibilityLabel={t('frigo.houdbaarWis')} hitSlop={8}>
+                <Ionicons name="close-circle-outline" size={20} color={MUTED} />
+              </Pressable>
+            ) : null}
+          </View>
+          {kalender && (
+            <DatumKiezer
+              waarde={houdbaar}
+              vandaag={vandaag(new Date())}
+              titel={t('frigo.houdbaarheid')}
+              kleur={accent}
+              onKies={(iso) => {
+                setHoudbaar(iso);
+                setKalender(false);
+              }}
+              onSluit={() => setKalender(false)}
+            />
+          )}
         </>
       )}
 
@@ -197,6 +209,10 @@ const s = StyleSheet.create({
   chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: '#fff' },
   chipTekst: { color: '#444' },
   chipTekstAan: { color: '#fff', fontWeight: '700' },
+  datumRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  datumKnop: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
+  datumTekst: { color: INKT, fontSize: 15 },
+  datumLeeg: { color: MUTED },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 14 },
   knop: { flex: 1, height: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   knopLicht: { borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff' },

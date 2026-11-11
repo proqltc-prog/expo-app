@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Te
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, Soort } from '@/data/recept';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
-import { beeldVoorReceptStijl } from '@/lib/planner/stijlbeeld';
+import { GerechtFoto, heeftStijlFoto, useStijlFotos } from '@/ui/gerechtFoto';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
 import { planSleutel, voegPlanToe } from '@/lib/lijst';
 import { inTaal } from '@/lib/planner/vertaal';
@@ -411,6 +411,8 @@ export default function Weekplanning() {
   // WEEK-221: met "alleen vegetarische gerechten" staan varkensvlees, schaaldieren en vis er niet meer bij.
   const vermijdOpties = vermijdKeuzesVoor(vermijdVoorMomenten(keuzes.momenten).map((o) => o.id as Vermijd), keuzes.enkelVegetarisch);
   const stijlOpties = stijlVoorMomenten(keuzes.momenten);
+  // WEEK-244: de stijlfoto's uit Supabase (één vraag per sessie; de foto's zelf blijven op het toestel).
+  const stijlFotos = useStijlFotos();
   const kooktijdOpties = kooktijdVoorMomenten(keuzes.momenten);
 
   const kopStap = (sleutel: 'planning.kies.periode' | 'planning.kies.kooktijd' | 'planning.kies.stijl' | 'planning.kies.vermijd' | 'planning.kies.plan') => (
@@ -499,7 +501,8 @@ export default function Weekplanning() {
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: aan }}
                 >
-                  <Stijlbeeld id={o.id} vol />
+                  {/* WEEK-244: een foto van een traditioneel gerecht met de vlag; hartig/zoet houden de illustratie. */}
+                  {heeftStijlFoto(o.id) ? <GerechtFoto stijl={o.id} stijlFotos={stijlFotos} vol /> : <Stijlbeeld id={o.id} vol />}
                   <Text style={[s.tegelTekst, aan && s.tegelTekstAan]}>{t(STIJL_SLEUTEL[o.id as keyof typeof STIJL_SLEUTEL] ?? 'stijlOptie.hartig')}</Text>
                 </Pressable>
               );
@@ -556,7 +559,8 @@ export default function Weekplanning() {
                   <View key={`${index}-${dag}`} style={[s.kaart, bevestigd && s.kaartBevestigd, gedaan && s.kaartGedaan]}>
                     <View style={s.kaartRij}>
                     <View style={s.kaartLinks}>
-                    <Stijlbeeld id={beeldVoorReceptStijl(recept.stijlen[0]) ?? 'belgisch'} />
+                    {/* WEEK-244: foto van keuken en soort gerecht, met de vlag van de keuken. */}
+                    <GerechtFoto pad={recept.foto} stijl={recept.stijlen[0]} stijlFotos={stijlFotos} />
                       {wijzigbaar && (
                         <View style={s.actieRij}>
                           <ActieIcoon

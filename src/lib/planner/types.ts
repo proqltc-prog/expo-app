@@ -35,6 +35,8 @@ export type PlanRecept = {
   minuten: number;
   stijlen: StijlCode[];
   basis?: Basis;
+  /** WEEK-244: de foto van het recept in de opslag van Supabase (bestandsnaam). Ontbreekt bij oude plannen en eigen recepten. */
+  foto?: string;
   ingredienten: PlanIngredient[];
   /** De titel in elke taal, vastgelegd bij het maken van het plan (WEEK-154). Ontbreekt bij oude plannen. */
   titels?: Partial<Record<Taal, string>>;
