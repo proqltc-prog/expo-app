@@ -82,12 +82,12 @@ describe('icoon bereidingsstappen (WEEK-113)', () => {
     assert.equal(toonBereidingsIcoon(true), true);
   });
 
-  test('een niet-bevestigd gerecht toont het icoon niet', () => {
-    assert.equal(toonBereidingsIcoon(false), false);
+  test('WEEK-236: een nog niet bevestigd gerecht toont het icoon ook, om het recept vóór bevestigen te bekijken', () => {
+    assert.equal(toonBereidingsIcoon(false), true);
   });
 
-  test('een gerecht zonder bevestigd-vlag (undefined) toont het icoon niet', () => {
-    assert.equal(toonBereidingsIcoon(undefined), false);
+  test('WEEK-236: een gerecht zonder bevestigd-vlag (undefined) toont het icoon ook', () => {
+    assert.equal(toonBereidingsIcoon(undefined), true);
   });
 
   test('regressie: een gerecht zonder bekende stappen geeft null (de pagina Bereiding toont dan de melding)', () => {

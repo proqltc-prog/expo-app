@@ -25,7 +25,7 @@ export const en: Vertalingen = {
   'aanmelden.fout': 'Linking failed. Please try again.',
   'welkom.stap': 'Step 1 of 4: language · name · account · menu',
   'bereiding.titel': 'Preparation',
-  'bereiding.icoon': 'Show preparation steps',
+  'bereiding.icoon': 'View recipe',
   'bereiding.stap': 'Step {n} of {m}',
   'bereiding.vorige': 'Previous',
   'bereiding.volgende': 'Next',
@@ -217,7 +217,7 @@ export const en: Vertalingen = {
   'stijl.comfort': 'Comfort food',
   'stijl.licht': 'Light / fresh',
 
-  'lijst.toevoegen': 'Add something…',
+  'lijst.toevoegen': 'Add something to buy…',
   'lijst.scanProduct': 'Scan this product',
   'lijst.verwijderNaam': 'Remove {naam} from the list',
   'lijst.teller': '{open} of {totaal} still to buy',

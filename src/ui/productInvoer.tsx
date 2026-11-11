@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { eenheidVan, IngredientCode } from '@/data/ingredienten';
 import { CatalogusItem, zoekDatabank, Sheet } from '@/lib/frigoSheets';
 import { leesHoeveelheid } from '@/lib/frigo';
+import { eenheidNaam } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
 const INKT = '#17201A';
@@ -19,14 +20,17 @@ type Props = {
   onLosPlus: (naam: string) => void;
   /** Extra knop naast het losse-veld (de scanner op de frigo). */
   scanKnop?: ReactNode;
+  /** WEEK-235: tekst in het losse-veld; standaard die van de frigo ("wat al in huis is"), de lijst geeft een eigen tekst. */
+  losTekst?: string;
 };
 
 /**
  * Invoer van de boodschappen- of frigo-pagina (WEEK-182): voor Recepten een zoekveld met een keuzelijst
  * uit de productdatabank (enkel de hoeveelheid is in te geven); voor Losse producten een naamveld dat via + de popup opent.
  */
-export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKies, onLosPlus, scanKnop }: Props) {
+export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKies, onLosPlus, scanKnop, losTekst }: Props) {
   const { t, taal } = useTaal();
+  const losLabel = losTekst ?? t('frigo.toevoegen');
   const [zoek, setZoek] = useState('');
   const [gekozen, setGekozen] = useState<CatalogusItem | null>(null);
   const [hoeveelheid, setHoeveelheid] = useState('');
@@ -38,7 +42,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
       <View style={s.invoer}>
         <TextInput
           style={[s.veld, s.veldFlex]}
-          placeholder={t('frigo.toevoegen')}
+          placeholder={losLabel}
           value={nieuw}
           onChangeText={setNieuw}
           onSubmitEditing={() => {
@@ -46,7 +50,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
             setNieuw('');
           }}
           returnKeyType="done"
-          accessibilityLabel={t('frigo.toevoegen')}
+          accessibilityLabel={losLabel}
         />
         <Pressable
           style={[s.plus, { backgroundColor: accent }]}
@@ -55,7 +59,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
             setNieuw('');
           }}
           accessibilityRole="button"
-          accessibilityLabel={t('frigo.toevoegen')}
+          accessibilityLabel={losLabel}
         >
           <Text style={s.plusTekst}>+</Text>
         </Pressable>
@@ -92,7 +96,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
                     accessibilityState={{ disabled: erop, expanded: open }}
                   >
                     <Text style={[s.naam, erop && { color: accent }]}>{`${erop ? '✓ ' : ''}${item.naam}`}</Text>
-                    <Text style={s.eenheid}>{eenheidVan(item.code)}</Text>
+                    <Text style={s.eenheid}>{eenheidNaam(taal, eenheidVan(item.code))}</Text>
                   </Pressable>
                   {open && (
                     <View style={s.hoeveelheidRij}>
@@ -104,7 +108,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
                         keyboardType="decimal-pad"
                         accessibilityLabel={t('frigo.hoeveelheid')}
                       />
-                      <Text style={s.eenheid}>{eenheidVan(item.code)}</Text>
+                      <Text style={s.eenheid}>{eenheidNaam(taal, eenheidVan(item.code))}</Text>
                       <Pressable style={[s.plus, { backgroundColor: accent }]} onPress={voegToe} accessibilityRole="button" accessibilityLabel={t('frigo.toevoegen')}>
                         <Text style={s.plusTekst}>+</Text>
                       </Pressable>

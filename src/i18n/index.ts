@@ -111,6 +111,16 @@ export function hoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, ee
   return `${n} ${eenheid}`;
 }
 
+/**
+ * Leesbare naam van een eenheid in de taal van de app (WEEK-237): "stuk" → "pièces", "teentje" → "gousse".
+ * Meeteenheden (g, ml, …) en onbekende eenheden worden ongewijzigd getoond.
+ */
+export function eenheidNaam(taal: Taal, eenheid: string): string {
+  if (eenheid === 'stuk') return vertaal(taal, 'frigo.stuks');
+  if (eenheid === 'teentje') return vertaal(taal, 'recept.eenheid.teentje');
+  return eenheid;
+}
+
 /** Korte datum volgens de taal, bv. "10 okt." (nl) of "10 Oct" (en). Ongeldige datum geeft lege tekst. */
 export function datumKort(taal: Taal, iso: string): string {
   const d = new Date(iso);

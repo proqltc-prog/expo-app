@@ -26,7 +26,7 @@ export const nl = {
   'aanmelden.fout': 'Koppelen mislukt. Probeer het opnieuw.',
   'welkom.stap': 'Stap 1 van 4: taal · naam · account · menu',
   'bereiding.titel': 'Bereiding',
-  'bereiding.icoon': 'Bereidingsstappen tonen',
+  'bereiding.icoon': 'Recept bekijken',
   'bereiding.stap': 'Stap {n} van {m}',
   'bereiding.vorige': 'Vorige',
   'bereiding.volgende': 'Volgende',
@@ -218,7 +218,7 @@ export const nl = {
   'stijl.comfort': 'Comfortfood',
   'stijl.licht': 'Licht / fris',
 
-  'lijst.toevoegen': 'Iets toevoegen…',
+  'lijst.toevoegen': 'Iets toevoegen dat je moet kopen…',
   'lijst.scanProduct': 'Scan dit product',
   'lijst.verwijderNaam': '{naam} van de lijst halen',
   'lijst.teller': '{open} van {totaal} nog te kopen',

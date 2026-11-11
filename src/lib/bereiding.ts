@@ -26,11 +26,11 @@ export function bereidingVoor(
 }
 
 /**
- * Het icoon om de bereidingsstappen te openen (WEEK-113): altijd zichtbaar bij een bevestigd gerecht.
- * Heeft het gerecht geen stappen, dan toont de pagina Bereiding zelf een melding.
+ * Het icoon om de ingrediënten en bereidingsstappen te openen (WEEK-113). Sinds WEEK-236 ook vóór het bevestigen,
+ * zodat je eerst kunt bekijken wat het gerecht is. Heeft het gerecht geen stappen, dan toont de pagina Bereiding zelf een melding.
  */
-export function toonBereidingsIcoon(bevestigd?: boolean): boolean {
-  return bevestigd === true;
+export function toonBereidingsIcoon(_bevestigd?: boolean): boolean {
+  return true;
 }
 
 /** Eén ingrediënt voor de bereidingspagina: de hoeveelheid is al voor het gezin omgerekend (WEEK-146). */
