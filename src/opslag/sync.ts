@@ -560,6 +560,20 @@ async function herstelKoppeling(): Promise<void> {
   if (gezin) await koppel(gezin);
 }
 
+/**
+ * Na aanmelden met Google (WEEK-231): is dit account al lid van een gezin, dan wordt dat gezin opgehaald,
+ * ook op een nieuw toestel. Zo zijn het gezinsprofiel en de rest gekend voor de app een pagina kiest.
+ * Al gekoppeld: gewoon bijwerken. Fouten (geen netwerk) stoppen de aanmelding niet.
+ */
+export async function haalGezinNaAanmelden(): Promise<void> {
+  try {
+    if (await laadGezin()) await startSync();
+    else await herstelKoppeling();
+  } catch {
+    // Zonder gezin of zonder netwerk gaat de app gewoon verder; de gezinsruimte kan later.
+  }
+}
+
 /** Maakt een nieuwe gezinsruimte en deelt de gegevens van dit toestel. */
 export async function maakGezin(naam: string, lidNaam: string): Promise<Gezin> {
   const sb = supabase();

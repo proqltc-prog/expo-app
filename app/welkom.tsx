@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Sleutel } from '@/i18n';
 import { zetWelkomGezien } from '@/opslag/welkom';
 import { inlogMet, isAnoniem, koppel, stuurAanmeldMail } from '@/opslag/aanmelden';
 import { AANBIEDERS, AANMELDEN_MET_MAIL, Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
-import { ROUTE_NA_INLOGGEN, ROUTE_NA_WELKOM, UITLEG_SCHERMEN } from '@/lib/welkom';
+import { ROUTE_AANGEMELD, ROUTE_NA_WELKOM, UITLEG_SCHERMEN } from '@/lib/welkom';
 import { useTaal } from '@/ui/taal';
 
 const KLEUR = '#0F6B66';
@@ -50,14 +50,13 @@ export default function Welkom() {
     await klaar();
     try {
       // Een anoniem toestel koppelt zijn gegevens aan het account; anders meldt het aan bij een bestaand account.
-      // Daarna altijd naar de weekplanner (WEEK-230). Op het web gaat de pagina eerst naar Google en komt ze terug
-      // op de start van de app (zie terugkeerAdres); deze regel geldt dan niet meer.
       if (await isAnoniem()) await koppel(aanbieder);
       else await inlogMet(aanbieder);
-      router.replace(ROUTE_NA_INLOGGEN);
+      // WEEK-231: op het web vertrekt de pagina nu naar Google en komt ze terug op /aangemeld; hier niets meer
+      // tonen, anders is de weekplanner even zichtbaar. In de app opent Google in de browser: wacht op /aangemeld.
+      if (Platform.OS !== 'web') router.replace(ROUTE_AANGEMELD);
     } catch {
       setAanmeldFout(true);
-    } finally {
       setBezig(false);
     }
   };

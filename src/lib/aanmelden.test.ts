@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AANBIEDERS, AANMELDEN_MET_MAIL, aanmeldWijze, isGeldigEmail, leesTokensUitUrl, terugkeerAdres } from '@/lib/aanmelden';
+import { AANBIEDERS, AANMELDEN_MET_MAIL, aanmeldWijze, isGeldigEmail, leesTokensUitUrl, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
 
 describe('aanmelden (WEEK-166, WEEK-185, WEEK-225)', () => {
   test('het aanmeldscherm biedt enkel Google aan (Apple: WEEK-227, Facebook bewust niet)', () => {
@@ -31,20 +31,27 @@ describe('aanmelden (WEEK-166, WEEK-185, WEEK-225)', () => {
     assert.equal(isGeldigEmail('na am@voorbeeld.be'), false);
   });
 
-  test('op het web keert de aanbieder terug naar de start van de app, met of zonder schuine strepen (WEEK-230)', () => {
-    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app'), 'https://proqltc-prog.github.io/expo-app/');
-    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app/'), 'https://proqltc-prog.github.io/expo-app/');
-    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', 'expo-app'), 'https://proqltc-prog.github.io/expo-app/');
+  test('op het web keert de aanbieder terug naar de tussenpagina aangemeld onder het basispad (WEEK-230, WEEK-231)', () => {
+    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app'), 'https://proqltc-prog.github.io/expo-app/aangemeld');
+    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app/'), 'https://proqltc-prog.github.io/expo-app/aangemeld');
+    assert.equal(terugkeerAdres('web', 'https://proqltc-prog.github.io', 'expo-app'), 'https://proqltc-prog.github.io/expo-app/aangemeld');
   });
 
-  test('regressie: zonder basispad (lokaal testen) de wortel van de site, nooit de pagina /welkom', () => {
-    assert.equal(terugkeerAdres('web', 'http://localhost:8081'), 'http://localhost:8081/');
-    assert.equal(terugkeerAdres('web', 'http://localhost:8081', ''), 'http://localhost:8081/');
+  test('regressie: zonder basispad (lokaal testen) onder de wortel van de site, nooit de pagina /welkom', () => {
+    assert.equal(terugkeerAdres('web', 'http://localhost:8081'), 'http://localhost:8081/aangemeld');
+    assert.equal(terugkeerAdres('web', 'http://localhost:8081', ''), 'http://localhost:8081/aangemeld');
     assert.ok(!terugkeerAdres('web', 'https://proqltc-prog.github.io', '/expo-app').includes('welkom'));
   });
 
-  test('in de app keert de aanbieder terug naar het app-schema famenu', () => {
-    assert.equal(terugkeerAdres('native'), 'famenu://');
+  test('in de app keert de aanbieder terug naar de tussenpagina via het app-schema famenu (valt onder famenu://** in Supabase)', () => {
+    assert.equal(terugkeerAdres('native'), 'famenu://aangemeld');
+  });
+
+  test('een foutmelding in het terugkeeradres wordt herkend', () => {
+    assert.equal(terugkeerMetFout('https://x/expo-app/aangemeld#error=access_denied&error_description=x'), true);
+    assert.equal(terugkeerMetFout('https://x/expo-app/aangemeld?error_code=identity_already_exists'), true);
+    assert.equal(terugkeerMetFout('https://x/expo-app/aangemeld#access_token=a&refresh_token=r'), false);
+    assert.equal(terugkeerMetFout('famenu://aangemeld'), false);
   });
 
   test('access- en refreshtoken uit het fragment', () => {

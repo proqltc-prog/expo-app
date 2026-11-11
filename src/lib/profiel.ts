@@ -30,6 +30,11 @@ export function aantalPersonen(p: Profiel): number {
   return p.volwassenen + p.kinderen;
 }
 
+/** Is het gezin ingesteld? Zo ja, dan kan de weekplanner meteen getoond worden (WEEK-231). */
+export function isProfielIngesteld(p: Profiel): boolean {
+  return valideerProfiel(p).length === 0;
+}
+
 /** Fouten die bij bewaren getoond worden. Het adres is verplicht (WEEK-99). */
 export type ProfielFout = 'volwassenen' | 'kinderen' | 'postcodeLeeg' | 'postcode' | 'gemeente' | 'land';
 

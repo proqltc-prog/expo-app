@@ -535,6 +535,8 @@ export const de: Vertalingen = {
   'uitleg.winkels.tekst': 'Finde lokale Händler in der Nähe. So kaufst du in der Nähe, sparst Zeit und unterstützt die Region.',
   'aanmelden.titel': 'Melde dich an',
   'aanmelden.tekst': 'Mit einem Konto bleiben deine Daten erhalten, wenn du das Gerät wechselst.',
+  'aangemeld.bezig': 'Du wirst angemeldet…',
+  'aangemeld.annuleren': 'Abbrechen',
   'aanmelden.metGoogle': 'Mit Google anmelden',
   'aanmelden.metApple': 'Mit Apple anmelden',
   'aanmelden.metFacebook': 'Mit Facebook anmelden',

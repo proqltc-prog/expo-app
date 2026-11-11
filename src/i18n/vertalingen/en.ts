@@ -535,6 +535,8 @@ export const en: Vertalingen = {
   'uitleg.winkels.tekst': 'Find local merchants near you. Buy close to home, save time and support the region.',
   'aanmelden.titel': 'Sign in',
   'aanmelden.tekst': 'With an account your data stays available when you switch device.',
+  'aangemeld.bezig': 'Signing you in…',
+  'aangemeld.annuleren': 'Cancel',
   'aanmelden.metGoogle': 'Continue with Google',
   'aanmelden.metApple': 'Continue with Apple',
   'aanmelden.metFacebook': 'Continue with Facebook',

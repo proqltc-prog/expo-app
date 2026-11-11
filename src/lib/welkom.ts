@@ -7,6 +7,20 @@ export const ROUTE_NA_WELKOM = '/profiel';
 /** Na inloggen op een bestaand account: het weekmenu. */
 export const ROUTE_NA_INLOGGEN = '/';
 
+/** Tussenpagina na aanmelden met Google (WEEK-231): wacht op de aanmelding en kiest dan de juiste pagina. */
+export const ROUTE_AANGEMELD = '/aangemeld';
+
+/**
+ * Waar je na aanmelden met Google heen gaat (WEEK-231):
+ *  - aanmelden mislukt of geannuleerd: terug naar het startscherm;
+ *  - gezin nog niet ingesteld (eerste keer): de instellingen met de gezinsruimte;
+ *  - gezin al ingesteld en gekend: de weekplanner.
+ */
+export function bestemmingNaAanmelden(aangemeld: boolean, gezinIngesteld: boolean): string {
+  if (!aangemeld) return ROUTE_WELKOM;
+  return gezinIngesteld ? ROUTE_NA_INLOGGEN : ROUTE_NA_WELKOM;
+}
+
 /** Het startscherm verschijnt enkel bij de eerste opening; daarna gaat de app naar het menu. */
 export function welkomNodig(gezien: boolean): boolean {
   return !gezien;
