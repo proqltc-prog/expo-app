@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.125.3] – 2026-11-11
+
+- Houdbaarheid: je kiest de datum in een kalender in plaats van ze te typen. De datum staat naast het kalendericoon, in het formaat van je toestel; met het kruisje wis je ze. Ook in de popup van Andere producten. (WEEK-242)
+
+**Jira:** [WEEK-242](https://proqltc-1791495894841.atlassian.net/browse/WEEK-242) · **Confluence:** [WEEK-242](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24281089)
+
 ## [0.125.2] – 2026-11-11
 
 - In huis: het potloodje bij een ingrediënt voor de weekplanner heet "Ingrediënt wijzigen". Enkel de hoeveelheid is aan te passen; de eenheid is vast. (WEEK-241)
