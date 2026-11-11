@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.125.1] – 2026-11-11
+
+- In huis: de dubbele titel boven de tabs is weg. (WEEK-240)
+- De tab "Voor het menu" heet nu "Voor de weekplanner" (fr "Pour le planificateur"). (WEEK-240)
+- De uitleg bij Andere producten geeft betere voorbeelden (drank, ontbijt, snacks, verzorging, poetsmiddelen) in plaats van enkel wc-papier. (WEEK-240)
+- Kortere invoervelden: "Typ hier…" en "Typ om te zoeken…". (WEEK-240)
+
+**Jira:** [WEEK-240](https://proqltc-1791495894841.atlassian.net/browse/WEEK-240) · **Confluence:** [WEEK-240](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23986196)
+
 ## [0.125.0] – 2026-11-11
 
 - Duidelijkere namen: de tab "Lijst" heet "Boodschappen", de "Frigo" heet "In huis" (met een doos als icoon), en bovenaan de boodschappen staan "Winkels" en "Te kopen". (WEEK-239)

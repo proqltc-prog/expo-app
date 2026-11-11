@@ -218,8 +218,7 @@ export default function Frigo() {
       <LosPopup opties={losPopup} onSluit={() => setLosPopup(null)} onBewaar={bewaarLos} />
       {/* Tabbladen bovenaan: altijd zichtbaar, ook als de lijst scrolt. */}
       {/* Schakelaar met een verhoogd actief vlak; de kleurstreep eronder hoort bij de actieve sheet (WEEK-75). */}
-      {/* Subtiele paginatitel boven de sheets (WEEK-96). */}
-      <Text style={s.paginaTitel}>{t('tab.frigo.titel')}</Text>
+      {/* WEEK-240: geen tweede paginatitel meer; de titel staat al bovenaan het scherm. */}
       <SheetSchakelaar
         sheet={sheet}
         onKies={setSheet}
@@ -387,7 +386,6 @@ const s = StyleSheet.create({
   ico: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   icoTekst: { fontSize: 16 },
   keuzeTekst: { color: MUTED, fontWeight: '700', fontSize: 14, flexShrink: 1 },
-  paginaTitel: { color: MUTED, fontSize: 12, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginTop: 12 },
   keuzeTekstAan: { color: INKT },
   tellerBlok: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
   tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },

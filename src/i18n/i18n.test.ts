@@ -184,10 +184,10 @@ describe('Frans: beleefdheidsvorm en vaste woordenlijst (WEEK-238)', () => {
 
 describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-239)', () => {
   const verwacht = {
-    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Voor het menu', ander: 'Andere producten' },
-    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Pour le menu', ander: 'Autres produits' },
-    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Fürs Menü', ander: 'Andere Produkte' },
-    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'For the menu', ander: 'Other products' },
+    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Voor de weekplanner', ander: 'Andere producten' },
+    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Pour le planificateur', ander: 'Autres produits' },
+    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Für den Wochenplaner', ander: 'Andere Produkte' },
+    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'For the meal planner', ander: 'Other products' },
   } as const;
   for (const [taal, w] of Object.entries(verwacht) as [keyof typeof verwacht, (typeof verwacht)['nl']][]) {
     test(`${taal}: de tabs dragen de nieuwe namen`, () => {
@@ -217,6 +217,24 @@ describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-23
       assert.doesNotMatch(vertaal(taal, 'uitleg.huishouden.tekst'), /taken|tâches|Aufgaben|chores/iu, taal);
     }
     assert.doesNotMatch(vertaal('nl', 'howto.frigo'), /vink af wat je al in huis hebt/iu);
+  });
+});
+
+describe('uitleg Andere producten en invoervelden (WEEK-240)', () => {
+  test('de uitleg noemt meer dan één soort product, niet enkel wc-papier', () => {
+    for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
+      for (const k of ['leeg.lijstAnder', 'leeg.huisAnder', 'pagina.lijstInfo', 'pagina.frigoInfo'] as const) {
+        const v = vertaal(taal, k);
+        assert.doesNotMatch(v, /wc-papier|papier toilette|Toilettenpapier|toilet paper/iu, `${taal} ${k}`);
+        assert.ok(v.split(',').length >= 3, `${taal} ${k}: meerdere voorbeelden`);
+      }
+    }
+  });
+  test('korte invoervelden: Typ hier en Typ om te zoeken', () => {
+    assert.equal(vertaal('nl', 'frigo.toevoegen'), 'Typ hier…');
+    assert.equal(vertaal('nl', 'frigo.zoekIngredient'), 'Typ om te zoeken…');
+    assert.equal(vertaal('fr', 'frigo.toevoegen'), 'Tapez ici…');
+    assert.equal(vertaal('fr', 'frigo.zoekIngredient'), 'Tapez pour chercher…');
   });
 });
 
