@@ -1,48 +1,24 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { afdelingUitCategorieen, beoordeel, Product, productNaam, scanNaam } from '@/lib/openfoodfacts';
+import { afdelingUitCategorieen, beoordeel, isDrank, Product, productNaam, scanNaam } from '@/lib/openfoodfacts';
 
 const basis: Product = { barcode: '1', naam: 'Test', additieven: [] };
 
 describe('beoordeel', () => {
-  test('Nutri-Score A zonder minpunten is Goed', () => {
-    const o = beoordeel({ ...basis, nutriscore: 'a' });
-    assert.equal(o.score, 100);
-    assert.equal(o.label, 'goed');
-    assert.deepEqual(o.redenen, [{ code: 'nutriscore', waarde: 'A' }]);
+  test('gebruikt de drempels voor drank bij een drank (per 100 ml)', () => {
+    // 5 g suikers: voor voeding laag, voor drank midden (grens 2,5 g)
+    assert.equal(beoordeel({ ...basis, suikers: 5 }).score, 100);
+    assert.equal(beoordeel({ ...basis, suikers: 5, categorieen: ['en:beverages'] }).score, 90);
   });
 
-  test('zonder Nutri-Score start de score op 60 (Matig)', () => {
-    const o = beoordeel(basis);
-    assert.equal(o.score, 60);
-    assert.equal(o.label, 'matig');
+  test('het Nutri-Score telt niet mee in onze score (geen dubbele telling)', () => {
+    assert.equal(beoordeel({ ...basis, nutriscore: 'e' }).score, beoordeel({ ...basis, nutriscore: 'a' }).score);
   });
 
-  test('ultrabewerkt, veel additieven, suiker en zout trekken af', () => {
-    const o = beoordeel({ ...basis, nutriscore: 'c', nova: 4, additieven: ['E1', 'E2', 'E3'], suikers: 30, zout: 2 });
-    assert.equal(o.score, 60 - 15 - 10 - 10 - 5);
-    assert.equal(o.label, 'slecht');
-    assert.deepEqual(o.redenen.map((r) => r.code), ['nutriscore', 'nova4', 'additieven', 'suiker', 'zout']);
-    assert.deepEqual(o.redenen.find((r) => r.code === 'suiker'), { code: 'suiker', waarde: 30 });
-  });
-
-  test('eiwitrijk geeft een bonus, maar de score blijft maximaal 100', () => {
-    const o = beoordeel({ ...basis, nutriscore: 'a', eiwitten: 20 });
-    assert.equal(o.score, 100);
-  });
-
-  test('de score zakt nooit onder 0', () => {
-    const o = beoordeel({ ...basis, nutriscore: 'e', nova: 4, additieven: ['a', 'b', 'c'], suikers: 50, zout: 5 });
-    assert.equal(o.score, 0);
-  });
-
-  test('grenzen van de labels: 65 = goed, 40 = matig, 35 = slecht', () => {
-    // b (80) - 15 (NOVA 4) = 65
-    assert.equal(beoordeel({ ...basis, nutriscore: 'b', nova: 4 }).label, 'goed');
-    // geen nutriscore (60) - 15 - 5 = 40
-    assert.equal(beoordeel({ ...basis, nova: 4, zout: 2 }).label, 'matig');
-    // d (35) = slecht
-    assert.equal(beoordeel({ ...basis, nutriscore: 'd' }).label, 'slecht');
+  test('isDrank herkent dranken en laat voeding met rust', () => {
+    assert.equal(isDrank({ categorieen: ['en:beverages', 'en:sodas'] }), true);
+    assert.equal(isDrank({ categorieen: ['en:biscuits'] }), false);
+    assert.equal(isDrank({}), false);
   });
 });
 

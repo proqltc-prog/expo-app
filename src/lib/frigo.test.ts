@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { aantalProducten, frigoItemUitLijst, FrigoItem, frigoSecties, herstel, hoortInFrigo, leesHoeveelheid, leesLosInvoer, leesProduct, MAX_LOS_HOEVEELHEID, normaliseerFrigo, pasFrigoAan, verbruik, verwijderUitFrigo, voegProductToe, voegZelfToe, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
-import type { Product } from '@/lib/openfoodfacts';
+import { beoordeel, type Product } from '@/lib/openfoodfacts';
 import { LijstItem, samenvoegen, vinkAf } from '@/lib/lijst';
 
 const nu = new Date('2026-10-10T18:00:00Z');
@@ -212,7 +212,7 @@ describe('verbruik (WEEK-19)', () => {
     assert.equal(verbruik([f('x', 'pasta', 500, 'g', OUD)], [{ naam: 'pasta', hoeveelheid: 1, eenheid: 'stuk' }]).verbruikt.length, 0, 'pasta heeft geen stukgewicht');
   });
 
-  test('ingrediënten die niet in de frigo zitten, veranderen niets', () => {
+  test('ingrediÃ«nten die niet in de frigo zitten, veranderen niets', () => {
     const frigo = [f('a', 'pasta', 500, 'g', OUD)];
     const r = verbruik(frigo, [{ naam: 'zalm', hoeveelheid: 200, eenheid: 'g' }]);
     assert.deepEqual(r.frigo, frigo);
@@ -283,7 +283,7 @@ describe('zelf toevoegen met details (WEEK-35)', () => {
   });
 });
 
-// ── Productdetails bij de frigo (WEEK-49) ──
+// â”€â”€ Productdetails bij de frigo (WEEK-49) â”€â”€
 
 const yoghurt: Product = {
   barcode: '5410188011234',
@@ -351,6 +351,16 @@ describe('productdetails bij zelf toevoegen en opslag', () => {
     assert.deepEqual(p, { barcode: '1', naam: 'x', additieven: ['E1'] });
   });
 
+  test('leesProduct bewaart alle voedingswaarden van de scanner, ook verzadigd vet, koolhydraten en vezels (WEEK-220)', () => {
+    const ruw = { barcode: '1', naam: 'x', additieven: [], nutriscore: 'e', nova: 4, kcal: 390, vet: 0.5, verzadigd: 0.1, koolhydraten: 92, suikers: 65, vezels: 0, eiwitten: 4, zout: 0.05 };
+    assert.deepEqual(leesProduct(ruw), ruw);
+  });
+
+  test('regressie: een product uit de frigo geeft dezelfde score als op het scanscherm', () => {
+    const ruw: Product = { barcode: '1', naam: 'x', additieven: [], vet: 2, verzadigd: 6, suikers: 1, zout: 0.1, vezels: 7, eiwitten: 10, kcal: 300 };
+    assert.deepEqual(beoordeel(leesProduct(ruw)!), beoordeel(ruw));
+  });
+
   test('leesProduct geeft niets voor geen object', () => {
     assert.equal(leesProduct(null), undefined);
     assert.equal(leesProduct('yoghurt'), undefined);
@@ -358,7 +368,7 @@ describe('productdetails bij zelf toevoegen en opslag', () => {
 });
 
 describe('productdetails op het frigo-scherm', () => {
-  test('een regel met één gescand exemplaar draagt de details', () => {
+  test('een regel met Ã©Ã©n gescand exemplaar draagt de details', () => {
     const [f] = voegZelfToe([], 'yoghurt', nu, { product: yoghurt });
     const [regel] = frigoSecties([f])[0].regels;
     assert.deepEqual(regel.product, yoghurt);
@@ -379,7 +389,7 @@ describe('productdetails op het frigo-scherm', () => {
   });
 });
 
-// ── Houdbaarheid (WEEK-20) ──
+// â”€â”€ Houdbaarheid (WEEK-20) â”€â”€
 
 describe('houdbaarheid op de frigo (WEEK-20)', () => {
   test('zetHoudbaarheid zet de datum op het juiste item en wist ze weer', () => {
@@ -496,7 +506,7 @@ describe('los product bewerken (WEEK-181)', () => {
 
 describe('lijst naar frigo bij afvinken (WEEK-182)', () => {
   const nu = new Date('2026-11-02T10:00:00Z');
-  test('een afgevinkt recept-ingrediënt komt in de planner-frigo', () => {
+  test('een afgevinkt recept-ingrediÃ«nt komt in de planner-frigo', () => {
     const f = frigoItemUitLijst({ id: 'r1', naam: 'Ui', categorie: 'avondeten', afgevinkt: true, code: 'ui', recept: { dag: 'maandag', naam: 'Pasta' } }, nu);
     assert.equal(f.bron, 'planner');
   });

@@ -4,14 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, zetHoudbaarheid } from '@/lib/frigo';
 import { houdbaarStatus, leesDatum } from '@/lib/houdbaarheid';
-import { beoordeel, Oordeel, Product } from '@/lib/openfoodfacts';
+import { beoordeel, Product } from '@/lib/openfoodfacts';
+import { ScanBlokken } from '@/ui/scanBlokken';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { aantalSheet, CatalogusItem, koppelBronnen, sheets, sheetThema, voegLosToe, voegPlannerToe } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
-import { datumKort, getal, hoeveelheidTekst, Sleutel } from '@/i18n';
+import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { ingredientNaam, dbCodeVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
@@ -27,42 +28,12 @@ const ORANJE_ZACHT = '#FDE8D6';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';
 type IoniconNaam = ComponentProps<typeof Ionicons>['name'];
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#0F6B66', matig: '#E8680F', slecht: '#B23A05' };
 
-/** Productdetails van een gescand frigo-item (WEEK-49): oordeel, voeding per 100 g en additieven. */
+/** Productdetails van een gescand frigo-item (WEEK-49): dezelfde blokken als het scanscherm (WEEK-220). */
 function ProductDetails({ product: p }: { product: Product }) {
-  const { t, taal } = useTaal();
-  const oordeel = beoordeel(p);
-  const waarde = (v?: number, eenheid = 'g') => (v === undefined ? '–' : `${getal(taal, v)} ${eenheid}`);
-  const rijen: [string, string][] = [
-    [t('voeding.kcal'), waarde(p.kcal, 'kcal')],
-    [t('voeding.suikers'), waarde(p.suikers)],
-    [t('voeding.eiwitten'), waarde(p.eiwitten)],
-    [t('voeding.vet'), waarde(p.vet)],
-    [t('voeding.zout'), waarde(p.zout)],
-  ];
   return (
     <View style={s.productBlok}>
-      <View style={[s.oordeel, { backgroundColor: LABEL_KLEUR[oordeel.label] }]}>
-        <Text style={s.score}>{oordeel.score}</Text>
-        <Text style={s.label}>{t(`oordeel.${oordeel.label}`)}</Text>
-      </View>
-      {oordeel.redenen.map((r) => (
-        <Text key={r.code} style={s.reden}>
-          • {t(`reden.${r.code}` as Sleutel, { waarde: typeof r.waarde === 'number' ? getal(taal, r.waarde) : r.waarde ?? '' })}
-        </Text>
-      ))}
-      <Text style={s.productKop}>{t('scan.per100')}</Text>
-      <View style={s.tabel}>
-        {rijen.map(([k, v]) => (
-          <View key={k} style={s.tabelRij}>
-            <Text>{k}</Text>
-            <Text style={{ fontWeight: '600' }}>{v}</Text>
-          </View>
-        ))}
-      </View>
-      <Text style={s.productKop}>{t('scan.additieven')}</Text>
-      <Text style={s.tekst}>{p.additieven.length ? p.additieven.join(', ') : t('scan.geenAdditieven')}</Text>
+      <ScanBlokken product={p} oordeel={beoordeel(p)} />
     </View>
   );
 }
@@ -369,11 +340,6 @@ const s = StyleSheet.create({
   wegTekst: { fontSize: 18, color: '#888', fontWeight: '700', lineHeight: 20 },
   rijLink: { color: KLEUR, fontWeight: '600', fontSize: 13, marginBottom: 6 },
   productBlok: { gap: 6, marginBottom: 12 },
-  oordeel: { borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 14, marginVertical: 6 },
-  score: { color: '#fff', fontSize: 32, fontWeight: '800' },
-  label: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  reden: { color: '#444' },
-  productKop: { fontWeight: '700', marginTop: 8 },
   houdbaar: { fontSize: 12, color: '#777', marginTop: 2 },
   bijna: { color: ORANJE, fontWeight: '700' },
   verlopen: { color: '#B23A05', fontWeight: '700' },
@@ -385,9 +351,6 @@ const s = StyleSheet.create({
   houdbaarKnopTekst: { color: '#fff', fontWeight: '700' },
   houdbaarWis: { height: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ccc', alignItems: 'center', justifyContent: 'center' },
   houdbaarWisTekst: { color: '#444' },
-  tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5' },
-  tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#e5e5e5' },
-  tekst: { color: '#444' },
   schakelaar: { flexDirection: 'row', backgroundColor: '#EEF1EC', borderRadius: 18, padding: 5, marginTop: 12 },
   keuze: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 14 },
   keuzeAan: { backgroundColor: '#fff', shadowColor: INKT, shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },

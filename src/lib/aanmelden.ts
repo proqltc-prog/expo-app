@@ -1,9 +1,16 @@
 // Aanmelden met Google, Apple, Facebook of e-mail (WEEK-166, WEEK-185). Pure logica, zonder React Native of Supabase-imports.
 
-/** De aanbieders die op het aanmeldscherm staan. Apple en Facebook werken pas als de aanbieder in de backend aanstaat. */
+/** De aanbieders die de code kent. Een aanbieder werkt pas als hij ook in Supabase aanstaat. */
 export type Aanbieder = 'google' | 'apple' | 'facebook';
 
-export const AANBIEDERS: readonly Aanbieder[] = ['google', 'apple', 'facebook'];
+/**
+ * De aanbieders die op het aanmeldscherm staan (WEEK-225): enkel Google, want enkel die staat in Supabase aan.
+ * Apple volgt met WEEK-227; Facebook bewust niet.
+ */
+export const AANBIEDERS: readonly Aanbieder[] = ['google'];
+
+/** Aanmelden met e-mail staat uit tot er een eigen mailserver is (WEEK-226). */
+export const AANMELDEN_MET_MAIL = false;
 
 /**
  * Een anoniem toestel koppelt zijn gegevens aan het nieuwe account, zodat ze bewaard blijven.

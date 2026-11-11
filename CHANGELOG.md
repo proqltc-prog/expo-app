@@ -14,6 +14,30 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 **Jira:** [WEEK-228](https://proqltc-1791495894841.atlassian.net/browse/WEEK-228) · **Confluence:** [WEEK-225 Aanmelden met Google en zonder account](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23166977)
 
+## [0.122.0] – 2026-11-11
+
+- Aanmelden met Google werkt: Google staat nu aan in Supabase (eigen Google Cloud-project Famenu), de app (`famenu://`) en de testversie op het web staan op de lijst van terugkeeradressen, en het koppelen van een toestel zonder account aan Google staat aan, zodat de gegevens bewaard blijven.
+- Het aanmeldscherm toont enkel nog Aanmelden met Google en verder zonder account. Apple, Facebook en e-mail zijn verborgen tot ze werken (e-mail: WEEK-226, Apple: WEEK-227, Facebook bewust niet). (WEEK-225)
+
+**Jira:** [WEEK-225](https://proqltc-1791495894841.atlassian.net/browse/WEEK-225) · **Confluence:** [WEEK-225 Aanmelden met Google en zonder account](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23166977)
+
+## [0.121.0] – 2026-11-11
+
+- Scanner en frigo-details: ook met de additieven ingeklapt zie je meteen of er een additief tussen zit waar de EU-wet iets over zegt. Een balk met driehoekje toont "n met verplichte EU-waarschuwing" (oranje: E102, E104, E110, E122, E124, E129, Verordening (EG) 1333/2008) of "n niet meer toegelaten in de EU" (rood: E171, E128, E216, E217), en de kaart krijgt een gekleurde rand.
+- Uitgeklapt staan die additieven bovenaan, met de wettelijke tekst en de bron. Enkel de Europese wet als bron, geen eigen oordeel. (WEEK-224)
+
+**Jira:** [WEEK-224](https://proqltc-1791495894841.atlassian.net/browse/WEEK-224) · **Confluence:** [WEEK-224 Scanner: waarschuwing bij additieven volgens de EU-wet](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23134209)
+
+## [0.120.0] – 2026-11-11
+
+- Scanner: onze eigen score staat bovenaan, met kleurenschaal en zonder uitleg. Ze staat los van het Nutri-Score (geen dubbele telling) en gebruikt officiële drempels voor vet, verzadigd vet, suikers en zout (richtlijn voedingskleuren van de Britse overheid) en voor vezels en eiwit (Verordening (EG) 1924/2006). De punten zelf zijn onze eigen keuze; de kaart heet daarom "Onze berekening".
+- Scanner: daaronder het Nutri-Score (A–E) en de NOVA-groep (1–4) als kleurenbalk, zoals Open Food Facts ze levert. Is er geen waarde, dan zegt de app dat.
+- Scanner en frigo-details: de tabel per 100 g (drank: per 100 ml) is gegroepeerd in Pluspunten, Minpunten (eerst te veel, dan gemiddeld) en Overige. Elke rij heeft een icoontje, een gekleurd label en de grens die geldt, bv. "te veel: meer dan 22,5 g". Een lege groep verdwijnt. Additieven staan standaard ingeklapt.
+- Frigo-details: een gescand product in de frigo bewaart nu ook verzadigd vet, koolhydraten en vezels, zodat tabel en score dezelfde zijn als op het scanscherm (gevonden bij de eindtest van 11 november).
+- Niet inbegrepen, bewust: kankerwaarschuwing en officiële beschrijvingen per additief (toestemming van de bron nodig).
+
+**Jira:** [WEEK-220](https://proqltc-1791495894841.atlassian.net/browse/WEEK-220) · **Confluence:** [WEEK-220 Scanner: Nutri-Score, NOVA en eigen score](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/22315009)
+
 ## [0.119.0] – 2026-11-06
 
 - Receptenbank: 100 nieuwe recepten, 50 van Delhaize en 50 van Colruyt (per winkel 15 vis, 20 vegetarisch, 15 vlees), verspreid over alle stijlen, per volwassene, hoogstens 60 minuten en in vier talen. Bij Colruyt zijn de hoeveelheden geschat, want de site vermeldt ze niet. Carrefour is weggelaten omdat de site geen toegang geeft. (WEEK-219)
