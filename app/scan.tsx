@@ -14,11 +14,10 @@ import { pasFrigoAan, type FrigoItem } from '@/lib/frigo';
 import { vinkAf, type LijstItem } from '@/lib/lijst';
 import { passendeNamen, zoekOpLijst } from '@/lib/scanLijst';
 import { werkOntbrekendBij } from '@/lib/planner/status';
-import { additiefWeergave } from '@/data/additieven';
 import { wijzigPlan } from '@/opslag/plan';
-import { getal, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
+import { ScanBlokken } from '@/ui/scanBlokken';
 import { Ionicons } from '@expo/vector-icons';
 import { scanTerug } from '@/lib/scanBestemming';
 
@@ -29,7 +28,6 @@ const ORANJE = '#E8680F';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';
 const LIJN = '#E4E8E1';
-const LABEL_KLEUR: Record<Oordeel['label'], string> = { goed: '#0F6B66', matig: '#E8680F', slecht: '#B23A05' };
 
 type Status =
   | { soort: 'scannen' }
@@ -227,51 +225,14 @@ function ScanInhoud() {
   }
 
   const { product: p, oordeel } = status;
-  const waarde = (v?: number, eenheid = 'g') => (v === undefined ? '–' : `${getal(taal, v)} ${eenheid}`);
 
   return (
     <ScrollView contentContainerStyle={s.resultaat}>
       <Text style={s.productNaam}>{p.naam || t('scan.onbekend')}</Text>
       {p.merk ? <Text style={s.merk}>{p.merk}</Text> : null}
 
-      <View style={[s.oordeel, { backgroundColor: LABEL_KLEUR[oordeel.label] }]}>
-        <Text style={s.score}>{oordeel.score}</Text>
-        <Text style={s.label}>{t(`oordeel.${oordeel.label}`)}</Text>
-      </View>
-      {oordeel.redenen.map((r) => (
-        <Text key={r.code} style={s.reden}>
-          • {t(`reden.${r.code}` as Sleutel, { waarde: typeof r.waarde === 'number' ? getal(taal, r.waarde) : r.waarde ?? '' })}
-        </Text>
-      ))}
-
-      <Text style={s.kop}>{t('scan.per100')}</Text>
-      <View style={s.tabel}>
-        {[
-          [t('voeding.kcal'), waarde(p.kcal, 'kcal')],
-          [t('voeding.suikers'), waarde(p.suikers)],
-          [t('voeding.eiwitten'), waarde(p.eiwitten)],
-          [t('voeding.vet'), waarde(p.vet)],
-          [t('voeding.zout'), waarde(p.zout)],
-        ].map(([k, v]) => (
-          <View key={k} style={s.tabelRij}><Text>{k}</Text><Text style={{ fontWeight: '600' }}>{v}</Text></View>
-        ))}
-      </View>
-
-      {/* Uitleg per additief (WEEK-71): het E-nummer, met naam en functie als het bekend is. */}
-      <Text style={s.kop}>{t('scan.additieven')}</Text>
-      {p.additieven.length ? (
-        p.additieven.map((tag) => {
-          const { code, omschrijving } = additiefWeergave(tag, taal);
-          return (
-            <View key={tag} style={s.additief}>
-              <Text style={s.additiefCode}>{code}</Text>
-              <Text style={s.tekstLinks}>{omschrijving ?? ''}</Text>
-            </View>
-          );
-        })
-      ) : (
-        <Text style={s.tekstLinks}>{t('scan.geenAdditieven')}</Text>
-      )}
+      {/* WEEK-220: Nutri-Score, NOVA, onze berekening, tabel en additieven (standaard ingeklapt). */}
+      <ScanBlokken product={p} oordeel={oordeel} />
 
       {/* Per product (WEEK-70): het gescande product gaat enkel naar het lijstitem waarvandaan gescand werd. */}
       {van === 'lijst' && lijstItem && (() => {
@@ -343,7 +304,6 @@ function ScanInhoud() {
 const s = StyleSheet.create({
   midden: { flex: 1, backgroundColor: PAPIER, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
   tekst: { fontSize: 16, textAlign: 'center', color: INKT },
-  tekstLinks: { fontSize: 15, color: INKT },
   knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
@@ -353,15 +313,6 @@ const s = StyleSheet.create({
   resultaat: { padding: 16, gap: 8, backgroundColor: PAPIER },
   productNaam: { fontSize: 22, fontWeight: '700' },
   merk: { color: MUTED },
-  oordeel: { borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginVertical: 8 },
-  score: { color: '#fff', fontSize: 36, fontWeight: '800' },
-  label: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  reden: { color: INKT },
-  kop: { fontWeight: '700', marginTop: 12 },
-  tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: LIJN },
-  tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: LIJN },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
   bron: { color: MUTED, fontSize: 12, marginTop: 12, textAlign: 'center' },
-  additief: { flexDirection: 'row', gap: 10, alignItems: 'baseline', paddingVertical: 2 },
-  additiefCode: { fontWeight: '700', color: KLEUR, minWidth: 64 },
 });

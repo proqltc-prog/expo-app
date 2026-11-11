@@ -209,7 +209,8 @@ export function leesProduct(ruw: unknown): Product | undefined {
   };
   if (typeof ruw.merk === 'string' && ruw.merk) p.merk = ruw.merk;
   if (typeof ruw.nutriscore === 'string' && ruw.nutriscore) p.nutriscore = ruw.nutriscore;
-  for (const k of ['nova', 'kcal', 'suikers', 'eiwitten', 'vet', 'zout'] as const) {
+  // Ook verzadigd vet, koolhydraten en vezels (WEEK-220), anders toont de frigo ze als onbekend en klopt de score niet.
+  for (const k of ['nova', 'kcal', 'suikers', 'eiwitten', 'vet', 'zout', 'verzadigd', 'koolhydraten', 'vezels'] as const) {
     const v = ruw[k];
     if (typeof v === 'number' && Number.isFinite(v)) p[k] = v;
   }

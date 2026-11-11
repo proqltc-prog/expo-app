@@ -1,4 +1,7 @@
 import type { Afdeling } from '@/data/ingredienten';
+import { berekenScore, type Oordeel } from '@/lib/score';
+
+export type { Oordeel, OordeelLabel, Reden, RedenCode } from '@/lib/score';
 
 export type Product = {
   barcode: string;
@@ -11,22 +14,12 @@ export type Product = {
   suikers?: number; // g per 100 g
   eiwitten?: number; // g per 100 g
   vet?: number;
+  verzadigd?: number; // g verzadigd vet per 100 g
+  koolhydraten?: number; // g per 100 g
+  vezels?: number; // g per 100 g
   zout?: number;
   /** Categorieën van Open Food Facts (bv. "en:dairies"), om de winkelafdeling te bepalen (WEEK-35). */
   categorieen?: string[];
-};
-
-export type RedenCode = 'nutriscore' | 'nova4' | 'additieven' | 'suiker' | 'zout' | 'eiwit';
-
-/** Een reden is taalonafhankelijk; het scherm vertaalt ze (sleutel `reden.<code>`). */
-export type Reden = { code: RedenCode; waarde?: string | number };
-
-export type OordeelLabel = 'goed' | 'matig' | 'slecht';
-
-export type Oordeel = {
-  score: number; // 0–100, hoger = gezonder
-  label: OordeelLabel;
-  redenen: Reden[];
 };
 
 const BASIS = 'https://world.openfoodfacts.org/api/v2/product';
@@ -72,28 +65,22 @@ export async function zoekProduct(barcode: string, taal = 'nl'): Promise<Product
     suikers: getal(n.sugars_100g),
     eiwitten: getal(n.proteins_100g),
     vet: getal(n.fat_100g),
+    verzadigd: getal(n['saturated-fat_100g']),
+    koolhydraten: getal(n.carbohydrates_100g),
+    vezels: getal(n.fiber_100g),
     zout: getal(n.salt_100g),
     categorieen: Array.isArray(p.categories_tags) ? p.categories_tags.filter((c: unknown) => typeof c === 'string') : [],
   };
 }
 
-const NUTRI_PUNTEN: Record<string, number> = { a: 100, b: 80, c: 60, d: 35, e: 15 };
+/** Of het product een drank is (dan gelden de drempels per 100 ml). */
+export function isDrank(p: Pick<Product, 'categorieen'>): boolean {
+  return afdelingUitCategorieen(p.categorieen) === 'dranken';
+}
 
-/** Eenvoudige, uitlegbare gezondheidsscore. Geen medisch advies. */
+/** Onze eigen score (WEEK-220), los van het Nutri-Score; zie src/lib/score.ts. Geen medisch advies. */
 export function beoordeel(p: Product): Oordeel {
-  const redenen: Reden[] = [];
-  let score = p.nutriscore ? NUTRI_PUNTEN[p.nutriscore] : 60;
-  if (p.nutriscore) redenen.push({ code: 'nutriscore', waarde: p.nutriscore.toUpperCase() });
-
-  if (p.nova === 4) { score -= 15; redenen.push({ code: 'nova4' }); }
-  if (p.additieven.length >= 3) { score -= 10; redenen.push({ code: 'additieven', waarde: p.additieven.length }); }
-  if ((p.suikers ?? 0) > 22.5) { score -= 10; redenen.push({ code: 'suiker', waarde: p.suikers }); }
-  if ((p.zout ?? 0) > 1.5) { score -= 5; redenen.push({ code: 'zout', waarde: p.zout }); }
-  if ((p.eiwitten ?? 0) >= 10) { score += 5; redenen.push({ code: 'eiwit', waarde: p.eiwitten }); }
-
-  score = Math.max(0, Math.min(100, Math.round(score)));
-  const label: OordeelLabel = score >= 65 ? 'goed' : score >= 40 ? 'matig' : 'slecht';
-  return { score, label, redenen };
+  return berekenScore(p, isDrank(p));
 }
 
 /**
