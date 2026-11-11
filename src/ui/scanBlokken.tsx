@@ -1,17 +1,19 @@
-// Het resultaat van een gescand product (WEEK-220): Nutri-Score, NOVA, onze eigen berekening, de tabel en de additieven.
+// Het resultaat van een gescand product (WEEK-220): onze eigen berekening bovenaan, dan Nutri-Score en NOVA,
+// de voedingstabel gegroepeerd in plus- en minpunten, en de additieven (ingeklapt).
 // Gedeeld door het scanscherm en de productdetails in de frigo.
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { additiefWeergave } from '@/data/additieven';
 import { getal, Sleutel } from '@/i18n';
 import { isDrank, type Oordeel, type Product } from '@/lib/openfoodfacts';
+import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
 
 const INKT = '#17201A';
 const MUTED = '#5E6B63';
 const LIJN = '#E3E3DC';
 const ACCENT = '#A9472A';
-const ACCENT_ZACHT = '#F6E0D3';
 
 // Kleuren van de officiële Nutri-Score; tekst donker op de lichte vakken voor het contrast.
 const NUTRI: { letter: string; bg: string; tekst: string }[] = [
@@ -28,6 +30,25 @@ const NOVA: { groep: number; bg: string; tekst: string }[] = [
   { groep: 4, bg: '#B3402A', tekst: '#fff' },
 ];
 const SCHAAL = { slecht: '#B3402A', matig: '#E8A33D', goed: '#2e7d4f' };
+
+// Icoon en kleur per beoordeling in de tabel: vierkantje met icoon en een gekleurd label voor de waarde.
+const STIJL: Record<Beoordeling, { icoon: keyof typeof Ionicons.glyphMap; bg: string; tekst: string }> = {
+  goed: { icoon: 'checkmark', bg: '#DCEFE3', tekst: '#1D5A38' },
+  gemiddeld: { icoon: 'remove', bg: '#FBEBCF', tekst: '#7A4A06' },
+  teVeel: { icoon: 'arrow-up', bg: '#F8DCD3', tekst: '#8A2C14' },
+  info: { icoon: 'information', bg: '#EEEEE8', tekst: MUTED },
+};
+
+const LABEL: Record<RijSleutel, Sleutel> = {
+  kcal: 'voeding.kcal',
+  vet: 'voeding.vet',
+  verzadigd: 'voeding.waarvanVerzadigd',
+  koolhydraten: 'voeding.koolhydraten',
+  suikers: 'voeding.waarvanSuikers',
+  vezels: 'voeding.vezels',
+  eiwitten: 'voeding.eiwitten',
+  zout: 'voeding.zout',
+};
 
 function Balk({ vakken, actief }: { vakken: { sleutel: string; tekst: string; bg: string; kleur: string }[]; actief?: string }) {
   return (
@@ -48,9 +69,9 @@ function Balk({ vakken, actief }: { vakken: { sleutel: string; tekst: string; bg
   );
 }
 
-function Kaart({ titel, kant, children }: { titel: string; kant?: string; children: React.ReactNode }) {
+function Kaart({ titel, kant, nadruk, children }: { titel: string; kant?: string; nadruk?: boolean; children: React.ReactNode }) {
   return (
-    <View style={s.kaart}>
+    <View style={[s.kaart, nadruk && s.kaartNadruk]}>
       <View style={s.kaartKop}>
         <Text style={s.kaartTitel}>{titel}</Text>
         {kant ? <Text style={s.kant}>{kant}</Text> : null}
@@ -64,20 +85,69 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
   const { t, taal } = useTaal();
   const [additievenOpen, setAdditievenOpen] = useState(false); // standaard ingeklapt
   const drank = isDrank(p);
-  const waarde = (v?: number, eenheid = 'g') => (v === undefined ? '–' : `${getal(taal, v)} ${eenheid}`);
-  const rijen: [string, string][] = [
-    [t('voeding.kcal'), waarde(p.kcal, 'kcal')],
-    [t('voeding.vet'), waarde(p.vet)],
-    [t('voeding.waarvanVerzadigd'), waarde(p.verzadigd)],
-    [t('voeding.koolhydraten'), waarde(p.koolhydraten)],
-    [t('voeding.waarvanSuikers'), waarde(p.suikers)],
-    [t('voeding.vezels'), waarde(p.vezels)],
-    [t('voeding.eiwitten'), waarde(p.eiwitten)],
-    [t('voeding.zout'), waarde(p.zout)],
+  const tabel = voedingstabel(p, drank);
+  const g = (n: number) => getal(taal, n);
+
+  const waarde = (r: TabelRij) => (r.waarde === undefined ? '–' : `${g(r.waarde)} ${r.sleutel === 'kcal' ? 'kcal' : 'g'}`);
+  const grensTekst = (grens: Grens) => {
+    switch (grens.code) {
+      case 'laag': return t('grens.laag', { max: g(grens.max) });
+      case 'midden': return t('grens.midden', { min: g(grens.min), max: g(grens.max) });
+      case 'hoog': return t('grens.hoog', { min: g(grens.min) });
+      case 'vezels': return t('grens.vezels', { min: g(grens.min) });
+      case 'eiwit': return t('grens.eiwit', { procent: grens.procent });
+    }
+  };
+
+  const Rij = ({ r }: { r: TabelRij }) => {
+    const stijl = STIJL[r.beoordeling];
+    return (
+      <View style={s.rij} accessibilityLabel={`${t(LABEL[r.sleutel])}: ${waarde(r)}${r.grens ? `, ${grensTekst(r.grens)}` : ''}`}>
+        <View style={[s.icoon, { backgroundColor: stijl.bg }]}>
+          <Ionicons name={stijl.icoon} size={17} color={stijl.tekst} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={s.rijNaam}>{t(LABEL[r.sleutel])}</Text>
+          {r.grens ? <Text style={s.rijGrens}>{grensTekst(r.grens)}</Text> : null}
+        </View>
+        <View style={[s.waarde, r.beoordeling !== 'info' && { backgroundColor: stijl.bg }]}>
+          <Text style={[s.waardeTekst, r.beoordeling !== 'info' && { color: stijl.tekst }]}>{waarde(r)}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const groepen: { sleutel: keyof typeof tabel; titel: Sleutel; kleur: string }[] = [
+    { sleutel: 'plus', titel: 'scan.groepPlus', kleur: STIJL.goed.tekst },
+    { sleutel: 'min', titel: 'scan.groepMin', kleur: STIJL.teVeel.tekst },
+    { sleutel: 'overig', titel: 'scan.groepOverig', kleur: MUTED },
   ];
+  const zichtbaar = groepen.filter((gr) => tabel[gr.sleutel].length > 0); // een lege groep verdwijnt
 
   return (
     <View style={s.root}>
+      <Kaart titel={t('scan.eigenTitel')} kant={t('scan.eigenLabel')} nadruk>
+        <View style={s.scoreRij}>
+          <Text style={s.score}>{oordeel.score}</Text>
+          <Text style={s.uitleg}>{t('scan.eigenVan')} · </Text>
+          <Text style={[s.scoreLabel, { color: SCHAAL[oordeel.label] }]}>{t(`oordeel.${oordeel.label}`)}</Text>
+        </View>
+        <View style={s.schaalWrap}>
+          <View style={s.schaal}>
+            <View style={{ flex: 40, backgroundColor: SCHAAL.slecht }} />
+            <View style={{ flex: 25, backgroundColor: SCHAAL.matig }} />
+            <View style={{ flex: 35, backgroundColor: SCHAAL.goed }} />
+          </View>
+          <Text style={[s.pijl, { left: `${oordeel.score}%` }]}>▼</Text>
+        </View>
+        <View style={s.schaalGetallen}>
+          <Text style={s.klein}>0</Text>
+          <Text style={s.klein}>40</Text>
+          <Text style={s.klein}>65</Text>
+          <Text style={s.klein}>100</Text>
+        </View>
+      </Kaart>
+
       <Kaart titel={t('scan.nutriscoreTitel')} kant={t('scan.bronOff')}>
         {p.nutriscore ? (
           <Balk
@@ -102,45 +172,12 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
         <Text style={s.uitleg}>{t('scan.novaUitleg')}</Text>
       </Kaart>
 
-      <Kaart titel={t('scan.eigenTitel')} kant={t('scan.eigenLabel')}>
-        <View style={s.scoreRij}>
-          <Text style={s.score}>{oordeel.score}</Text>
-          <Text style={s.uitleg}>{t('scan.eigenVan')} · </Text>
-          <Text style={[s.scoreLabel, { color: SCHAAL[oordeel.label] }]}>{t(`oordeel.${oordeel.label}`)}</Text>
-        </View>
-        <View style={s.schaalWrap}>
-          <View style={s.schaal}>
-            <View style={{ flex: 40, backgroundColor: SCHAAL.slecht }} />
-            <View style={{ flex: 25, backgroundColor: SCHAAL.matig }} />
-            <View style={{ flex: 35, backgroundColor: SCHAAL.goed }} />
-          </View>
-          <Text style={[s.pijl, { left: `${oordeel.score}%` }]}>▼</Text>
-        </View>
-        <View style={s.schaalGetallen}>
-          <Text style={s.klein}>0</Text>
-          <Text style={s.klein}>40</Text>
-          <Text style={s.klein}>65</Text>
-          <Text style={s.klein}>100</Text>
-        </View>
-        <Text style={s.uitleg}>{t('scan.eigenUitleg')}</Text>
-        <View style={s.chips}>
-          {oordeel.redenen.map((r) => (
-            <View key={r.code} style={[s.chip, r.punten > 0 && s.chipPlus]}>
-              <Text style={[s.chipTekst, r.punten > 0 && s.chipPlusTekst]}>
-                {r.punten > 0 ? '+' : '−'}
-                {Math.abs(r.punten)} {t(`reden.${r.code}` as Sleutel, { waarde: typeof r.waarde === 'number' ? getal(taal, r.waarde) : '' })}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </Kaart>
-
       <Text style={s.kop}>{t(drank ? 'scan.per100ml' : 'scan.per100')}</Text>
       <View style={s.tabel}>
-        {rijen.map(([k, v]) => (
-          <View key={k} style={s.tabelRij}>
-            <Text style={{ color: INKT }}>{k}</Text>
-            <Text style={{ fontWeight: '600', color: INKT }}>{v}</Text>
+        {zichtbaar.map((gr, i) => (
+          <View key={gr.sleutel} style={i > 0 && s.groepScheiding}>
+            <Text style={[s.groepTitel, { color: gr.kleur }]} accessibilityRole="header">{t(gr.titel)}</Text>
+            {tabel[gr.sleutel].map((r) => <Rij key={r.sleutel} r={r} />)}
           </View>
         ))}
       </View>
@@ -153,7 +190,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
           accessibilityState={{ expanded: additievenOpen }}
         >
           <Text style={s.kaartTitel}>{t('scan.additievenAantal', { n: p.additieven.length })}</Text>
-          <Text style={s.klein}>{additievenOpen ? '▴' : '▾'}</Text>
+          <Ionicons name={additievenOpen ? 'chevron-up' : 'chevron-down'} size={18} color={MUTED} />
         </Pressable>
         {additievenOpen &&
           (p.additieven.length ? (
@@ -177,6 +214,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
 const s = StyleSheet.create({
   root: { gap: 12 },
   kaart: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: LIJN, padding: 14, gap: 10 },
+  kaartNadruk: { borderWidth: 2, borderColor: INKT },
   kaartKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   kaartTitel: { fontSize: 15, fontWeight: '700', color: INKT },
   kant: { fontSize: 12, color: MUTED },
@@ -193,14 +231,16 @@ const s = StyleSheet.create({
   schaal: { flexDirection: 'row', height: 14, borderRadius: 7, overflow: 'hidden' },
   pijl: { position: 'absolute', top: 0, marginLeft: -7, fontSize: 14, color: INKT },
   schaalGetallen: { flexDirection: 'row', justifyContent: 'space-between' },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  chip: { backgroundColor: ACCENT_ZACHT, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 10 },
-  chipTekst: { fontSize: 13, color: '#7A2F18' },
-  chipPlus: { backgroundColor: '#DCEFE3' },
-  chipPlusTekst: { color: '#1D5A38' },
   kop: { fontSize: 16, fontWeight: '700', color: INKT, marginTop: 4 },
-  tabel: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: LIJN },
-  tabelRij: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: LIJN },
+  tabel: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: LIJN, paddingBottom: 6 },
+  groepScheiding: { borderTopWidth: StyleSheet.hairlineWidth, borderColor: LIJN, marginHorizontal: 12, marginTop: 6 },
+  groepTitel: { fontSize: 12, fontWeight: '700', letterSpacing: 0.5, textTransform: 'uppercase', paddingHorizontal: 12, paddingTop: 10, paddingBottom: 4 },
+  rij: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 12 },
+  icoon: { width: 28, height: 28, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
+  rijNaam: { fontSize: 14, color: INKT },
+  rijGrens: { fontSize: 11, color: MUTED, marginTop: 1 },
+  waarde: { borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 },
+  waardeTekst: { fontSize: 13, fontWeight: '700', color: INKT },
   additievenKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   additief: { flexDirection: 'row', alignItems: 'baseline', gap: 10, paddingVertical: 4 },
   additiefCode: { minWidth: 64, fontWeight: '800', color: ACCENT },

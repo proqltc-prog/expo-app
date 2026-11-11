@@ -20,7 +20,7 @@ export type RedenCode =
   | 'zoutMidden' | 'zoutHoog'
   | 'nova4' | 'vezels' | 'eiwit';
 
-/** Een reden is taalonafhankelijk; het scherm vertaalt ze (sleutel `reden.<code>`). */
+/** Een reden is taalonafhankelijk. Het scherm toont ze niet meer apart: de voedingstabel (`voedingstabel.ts`) zegt per stof waarom. */
 export type Reden = { code: RedenCode; punten: number; waarde?: number };
 export type OordeelLabel = 'goed' | 'matig' | 'slecht';
 export type Oordeel = { score: number; label: OordeelLabel; redenen: Reden[] };

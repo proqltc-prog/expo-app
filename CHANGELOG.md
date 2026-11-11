@@ -8,11 +8,11 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
-## [0.120.0] – 2026-11-10
+## [0.120.0] – 2026-11-11
 
-- Scanner: het resultaat toont nu eerst het Nutri-Score (A–E) en de NOVA-groep (1–4) als kleurenbalk, zoals Open Food Facts ze levert. Is er geen waarde, dan zegt de app dat.
-- Scanner: onze eigen score staat los van het Nutri-Score (geen dubbele telling) en gebruikt officiële drempels voor vet, verzadigd vet, suikers en zout (richtlijn voedingskleuren van de Britse overheid) en voor vezels en eiwit (Verordening (EG) 1924/2006). Met kleurenschaal en korte uitleg; de punten zelf zijn onze eigen keuze en de app zegt dat.
-- Scanner en frigo-details: tabel per 100 g (drank: per 100 ml) met ook verzadigd vet, koolhydraten en vezels. Additieven staan standaard ingeklapt.
+- Scanner: onze eigen score staat bovenaan, met kleurenschaal en zonder uitleg. Ze staat los van het Nutri-Score (geen dubbele telling) en gebruikt officiële drempels voor vet, verzadigd vet, suikers en zout (richtlijn voedingskleuren van de Britse overheid) en voor vezels en eiwit (Verordening (EG) 1924/2006). De punten zelf zijn onze eigen keuze; de kaart heet daarom "Onze berekening".
+- Scanner: daaronder het Nutri-Score (A–E) en de NOVA-groep (1–4) als kleurenbalk, zoals Open Food Facts ze levert. Is er geen waarde, dan zegt de app dat.
+- Scanner en frigo-details: de tabel per 100 g (drank: per 100 ml) is gegroepeerd in Pluspunten, Minpunten (eerst te veel, dan gemiddeld) en Overige. Elke rij heeft een icoontje, een gekleurd label en de grens die geldt, bv. "te veel: meer dan 22,5 g". Een lege groep verdwijnt. Additieven staan standaard ingeklapt.
 - Niet inbegrepen, bewust: kankerwaarschuwing en officiële beschrijvingen per additief (toestemming van de bron nodig).
 
 **Jira:** [WEEK-220](https://proqltc-1791495894841.atlassian.net/browse/WEEK-220) · **Confluence:** [WEEK-220 Scanner: Nutri-Score, NOVA en eigen score](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/22315009)
