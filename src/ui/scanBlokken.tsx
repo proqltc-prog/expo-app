@@ -1,10 +1,11 @@
 // Het resultaat van een gescand product (WEEK-220): onze eigen berekening bovenaan, dan Nutri-Score en NOVA,
-// de voedingstabel gegroepeerd in plus- en minpunten, en de additieven (ingeklapt).
+// de voedingstabel gegroepeerd in plus- en minpunten, en de additieven (ingeklapt, met EU-waarschuwing: WEEK-224).
 // Gedeeld door het scanscherm en de productdetails in de frigo.
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { additiefWeergave } from '@/data/additieven';
+import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditieven';
 import { getal, Sleutel } from '@/i18n';
 import { isDrank, type Oordeel, type Product } from '@/lib/openfoodfacts';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
@@ -37,6 +38,12 @@ const STIJL: Record<Beoordeling, { icoon: keyof typeof Ionicons.glyphMap; bg: st
   gemiddeld: { icoon: 'remove', bg: '#FBEBCF', tekst: '#7A4A06' },
   teVeel: { icoon: 'arrow-up', bg: '#F8DCD3', tekst: '#8A2C14' },
   info: { icoon: 'information', bg: '#EEEEE8', tekst: MUTED },
+};
+
+// Additieven waar de EU-wet iets over zegt (WEEK-224): rood = niet meer toegelaten, oranje = verplichte waarschuwing.
+const EU_STIJL: Record<EuStatus, { rand: string; bg: string; tekst: string }> = {
+  verboden: { rand: '#B3402A', bg: '#F8DCD3', tekst: '#8A2C14' },
+  waarschuwing: { rand: '#E8A33D', bg: '#FBEBCF', tekst: '#7A4A06' },
 };
 
 const LABEL: Record<RijSleutel, Sleutel> = {
@@ -82,8 +89,10 @@ function Kaart({ titel, kant, nadruk, children }: { titel: string; kant?: string
 }
 
 export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel: Oordeel }) {
-  const { t, taal } = useTaal();
+  const { t, tn, taal } = useTaal();
   const [additievenOpen, setAdditievenOpen] = useState(false); // standaard ingeklapt
+  const telling = telEuRegels(p.additieven);
+  const ernst: EuStatus | null = telling.verboden ? 'verboden' : telling.waarschuwing ? 'waarschuwing' : null;
   const drank = isDrank(p);
   const tabel = voedingstabel(p, drank);
   const g = (n: number) => getal(taal, n);
@@ -182,7 +191,8 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
         ))}
       </View>
 
-      <View style={s.kaart}>
+      {/* WEEK-224: ook ingeklapt zie je of er een additief tussen zit waar de EU-wet iets over zegt. */}
+      <View style={[s.kaart, ernst && { borderColor: EU_STIJL[ernst].rand, borderWidth: 1.5 }]}>
         <Pressable
           style={s.additievenKop}
           onPress={() => setAdditievenOpen((o) => !o)}
@@ -192,14 +202,42 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
           <Text style={s.kaartTitel}>{t('scan.additievenAantal', { n: p.additieven.length })}</Text>
           <Ionicons name={additievenOpen ? 'chevron-up' : 'chevron-down'} size={18} color={MUTED} />
         </Pressable>
+        {(['verboden', 'waarschuwing'] as const).map((status) =>
+          telling[status] ? (
+            <View key={status} style={[s.euBalk, { backgroundColor: EU_STIJL[status].bg }]}>
+              <Ionicons name="warning-outline" size={17} color={EU_STIJL[status].tekst} />
+              <Text style={[s.euBalkTekst, { color: EU_STIJL[status].tekst }]}>
+                {tn(status === 'verboden' ? 'scan.euVerboden' : 'scan.euWaarschuwing', telling[status])}
+              </Text>
+            </View>
+          ) : null,
+        )}
         {additievenOpen &&
           (p.additieven.length ? (
-            p.additieven.map((tag) => {
+            additievenMetRegel(p.additieven).map(({ tag, regel }) => {
               const { code, omschrijving } = additiefWeergave(tag, taal);
+              if (!regel) {
+                return (
+                  <View key={tag} style={s.additief}>
+                    <Text style={s.additiefCode}>{code}</Text>
+                    <Text style={s.additiefTekst}>{omschrijving ?? ''}</Text>
+                  </View>
+                );
+              }
+              const stijl = EU_STIJL[regel.status];
               return (
-                <View key={tag} style={s.additief}>
-                  <Text style={s.additiefCode}>{code}</Text>
-                  <Text style={s.additiefTekst}>{omschrijving ?? ''}</Text>
+                <View key={tag} style={[s.euAdditief, { backgroundColor: stijl.bg }]}>
+                  <View style={[s.euIcoon, { backgroundColor: stijl.rand }]}>
+                    <Ionicons name="warning-outline" size={15} color="#fff" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.additiefTekst}>
+                      <Text style={{ fontWeight: '800', color: ACCENT }}>{code} </Text>
+                      {omschrijving ?? ''}
+                    </Text>
+                    <Text style={[s.euTekst, { color: stijl.tekst }]}>{t(`eu.${regel.status}`)}</Text>
+                    <Text style={s.klein}>{t(`eu.bron.${regel.bron}` as Sleutel)}</Text>
+                  </View>
                 </View>
               );
             })
@@ -245,4 +283,9 @@ const s = StyleSheet.create({
   additief: { flexDirection: 'row', alignItems: 'baseline', gap: 10, paddingVertical: 4 },
   additiefCode: { minWidth: 64, fontWeight: '800', color: ACCENT },
   additiefTekst: { flex: 1, color: INKT },
+  euBalk: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 8, paddingVertical: 7, paddingHorizontal: 10 },
+  euBalkTekst: { flex: 1, fontSize: 13, fontWeight: '600' },
+  euAdditief: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 8, padding: 10 },
+  euIcoon: { width: 24, height: 24, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
+  euTekst: { fontSize: 13, marginTop: 2 },
 });

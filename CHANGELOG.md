@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.121.0] – 2026-11-11
+
+- Scanner en frigo-details: ook met de additieven ingeklapt zie je meteen of er een additief tussen zit waar de EU-wet iets over zegt. Een balk met driehoekje toont "n met verplichte EU-waarschuwing" (oranje: E102, E104, E110, E122, E124, E129, Verordening (EG) 1333/2008) of "n niet meer toegelaten in de EU" (rood: E171, E128, E216, E217), en de kaart krijgt een gekleurde rand.
+- Uitgeklapt staan die additieven bovenaan, met de wettelijke tekst en de bron. Enkel de Europese wet als bron, geen eigen oordeel. (WEEK-224)
+
+**Jira:** [WEEK-224](https://proqltc-1791495894841.atlassian.net/browse/WEEK-224) · **Confluence:** [WEEK-224 Scanner: waarschuwing bij additieven volgens de EU-wet](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23134209)
+
 ## [0.120.0] – 2026-11-11
 
 - Scanner: onze eigen score staat bovenaan, met kleurenschaal en zonder uitleg. Ze staat los van het Nutri-Score (geen dubbele telling) en gebruikt officiële drempels voor vet, verzadigd vet, suikers en zout (richtlijn voedingskleuren van de Britse overheid) en voor vezels en eiwit (Verordening (EG) 1924/2006). De punten zelf zijn onze eigen keuze; de kaart heet daarom "Onze berekening".
