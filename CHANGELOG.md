@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.122.0] – 2026-11-11
+
+- Aanmelden met Google werkt: Google staat nu aan in Supabase (eigen Google Cloud-project Famenu), de app (`famenu://`) en de testversie op het web staan op de lijst van terugkeeradressen, en het koppelen van een toestel zonder account aan Google staat aan, zodat de gegevens bewaard blijven.
+- Het aanmeldscherm toont enkel nog Aanmelden met Google en verder zonder account. Apple, Facebook en e-mail zijn verborgen tot ze werken (e-mail: WEEK-226, Apple: WEEK-227, Facebook bewust niet). (WEEK-225)
+
+**Jira:** [WEEK-225](https://proqltc-1791495894841.atlassian.net/browse/WEEK-225) · **Confluence:** [WEEK-225 Aanmelden met Google en zonder account](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23166977)
+
 ## [0.119.0] – 2026-11-06
 
 - Receptenbank: 100 nieuwe recepten, 50 van Delhaize en 50 van Colruyt (per winkel 15 vis, 20 vegetarisch, 15 vlees), verspreid over alle stijlen, per volwassene, hoogstens 60 minuten en in vier talen. Bij Colruyt zijn de hoeveelheden geschat, want de site vermeldt ze niet. Carrefour is weggelaten omdat de site geen toegang geeft. (WEEK-219)
