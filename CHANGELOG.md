@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.123.0] – 2026-11-11
+
+- Weekmenu, stap Vermijden: "Alleen vegetarische gerechten" is nu een aparte schakelaar bovenaan, niet meer een keuze tussen de ingrediënten. Staat ze aan, dan verdwijnen varkensvlees, schaaldieren en vis uit de lijst (een eerder aangevinkte keuze ook); zuivel, eieren en noten blijven. (WEEK-221)
+
+**Jira:** [WEEK-221](https://proqltc-1791495894841.atlassian.net/browse/WEEK-221) · **Confluence:** [WEEK-221](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/23756801)
+
 ## [0.122.3] – 2026-11-11
 
 - Aanmelden met Google: de weekplanner is niet meer heel even zichtbaar voor Google opent. Na het kiezen van je account toont een tussenpagina "Je wordt aangemeld…" en daarna de juiste pagina: de instellingen met de gezinsruimte als je gezin nog niet ingesteld is, anders de weekplanner. Een bestaand gezin wordt ook op een nieuw toestel opgehaald. Annuleren of een fout brengt je terug naar het startscherm. (WEEK-231)

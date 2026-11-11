@@ -1,6 +1,26 @@
 // Ingrediënten die de gebruiker wil vermijden (WEEK-41). Pure logica, gebruikt door de planner en de receptenlijst.
 import { VERMIJDBAAR, VERMIJD_WOORDEN, Vermijd } from '@/data/vermijden';
 
+/** Keuzes die overbodig zijn als het gezin enkel vegetarisch eet (WEEK-221). */
+export const NIET_VEGETARISCH: readonly Vermijd[] = ['varkensvlees', 'schaaldieren', 'vis'];
+
+/** De ingrediënten die je nog kunt vermijden: met "alleen vegetarisch" vallen vlees en vis weg (WEEK-221). */
+export function vermijdOpties(opties: readonly Vermijd[], enkelVegetarisch: boolean | undefined): Vermijd[] {
+  return enkelVegetarisch ? opties.filter((v) => !NIET_VEGETARISCH.includes(v)) : [...opties];
+}
+
+/**
+ * Zet "alleen vegetarische gerechten" aan of uit (WEEK-221). Aan: aangevinkte vlees- en viskeuzes vallen weg,
+ * zodat er niets verborgen aangevinkt blijft. Uit: de rest van de keuzes blijft zoals ze was.
+ */
+export function zetEnkelVegetarisch<K extends { vermijd: string[]; enkelVegetarisch?: boolean }>(keuzes: K, aan: boolean): K {
+  return {
+    ...keuzes,
+    enkelVegetarisch: aan,
+    vermijd: aan ? keuzes.vermijd.filter((v) => !(NIET_VEGETARISCH as readonly string[]).includes(v)) : keuzes.vermijd,
+  };
+}
+
 /** Leest de keuzes uit opgeslagen of binnenkomende data; onbekende waarden vallen weg. */
 export function normaliseerVermijd(ruw: unknown): Vermijd[] {
   return Array.isArray(ruw) ? VERMIJDBAAR.filter((v) => ruw.includes(v)) : [];

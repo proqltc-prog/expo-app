@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { heeftVermijdNaam, normaliseerVermijd, vermijdVoorNaam } from '@/lib/planner/vermijden';
+import { heeftVermijdNaam, normaliseerVermijd, NIET_VEGETARISCH, vermijdOpties, vermijdVoorNaam, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
+import { VERMIJDBAAR } from '@/data/vermijden';
 import { testPool } from '@/lib/planner/testrecepten';
 
 describe('vermijden: keuzes lezen (WEEK-41)', () => {
@@ -77,5 +78,31 @@ describe('vermijden: databankrecepten (WEEK-41, WEEK-208)', () => {
   test('er blijven genoeg recepten over als enkel varkensvlees of noten gevraagd wordt', () => {
     const over = pool.filter((k) => !vermijdt(k, ['varkensvlees', 'noten']));
     assert.ok(over.length >= pool.length - 2);
+  });
+});
+
+describe('alleen vegetarische gerechten (WEEK-221)', () => {
+  test('zonder de schakelaar: alle zes ingrediënten', () => {
+    assert.deepEqual(vermijdOpties(VERMIJDBAAR, false), ['varkensvlees', 'schaaldieren', 'zuivel', 'vis', 'eieren', 'noten']);
+    assert.deepEqual(vermijdOpties(VERMIJDBAAR, undefined), [...VERMIJDBAAR]);
+  });
+
+  test('met de schakelaar: varkensvlees, schaaldieren en vis verdwijnen; zuivel, eieren en noten blijven', () => {
+    assert.deepEqual(vermijdOpties(VERMIJDBAAR, true), ['zuivel', 'eieren', 'noten']);
+    assert.deepEqual([...NIET_VEGETARISCH], ['varkensvlees', 'schaaldieren', 'vis']);
+  });
+
+  test('aanzetten haalt aangevinkte vlees- en viskeuzes weg, de rest blijft', () => {
+    const k = zetEnkelVegetarisch({ vermijd: ['vis', 'zuivel', 'varkensvlees', 'noten'], enkelVegetarisch: false, stijlen: ['italiaans'] }, true);
+    assert.deepEqual(k, { vermijd: ['zuivel', 'noten'], enkelVegetarisch: true, stijlen: ['italiaans'] });
+  });
+
+  test('aan en weer uit: vis staat niet meer aangevinkt (geen verborgen keuze)', () => {
+    const uit = zetEnkelVegetarisch(zetEnkelVegetarisch({ vermijd: ['vis'], enkelVegetarisch: false }, true), false);
+    assert.deepEqual(uit, { vermijd: [], enkelVegetarisch: false });
+  });
+
+  test('regressie: uitzetten verandert de andere keuzes niet', () => {
+    assert.deepEqual(zetEnkelVegetarisch({ vermijd: ['eieren'], enkelVegetarisch: true }, false), { vermijd: ['eieren'], enkelVegetarisch: false });
   });
 });
