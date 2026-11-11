@@ -1,10 +1,14 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AANBIEDERS, aanmeldWijze, isGeldigEmail, leesTokensUitUrl, terugkeerAdres } from '@/lib/aanmelden';
+import { AANBIEDERS, AANMELDEN_MET_MAIL, aanmeldWijze, isGeldigEmail, leesTokensUitUrl, terugkeerAdres } from '@/lib/aanmelden';
 
-describe('aanmelden (WEEK-166, WEEK-185)', () => {
-  test('het aanmeldscherm biedt Google, Apple en Facebook aan', () => {
-    assert.deepEqual(AANBIEDERS, ['google', 'apple', 'facebook']);
+describe('aanmelden (WEEK-166, WEEK-185, WEEK-225)', () => {
+  test('het aanmeldscherm biedt enkel Google aan (Apple: WEEK-227, Facebook bewust niet)', () => {
+    assert.deepEqual(AANBIEDERS, ['google']);
+  });
+
+  test('aanmelden met e-mail staat uit tot WEEK-226', () => {
+    assert.equal(AANMELDEN_MET_MAIL, false);
   });
 
   test('een anoniem toestel koppelt zijn gegevens aan het account', () => {

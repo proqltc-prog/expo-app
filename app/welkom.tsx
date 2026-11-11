@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Sleutel } from '@/i18n';
 import { zetWelkomGezien } from '@/opslag/welkom';
 import { inlogMet, isAnoniem, koppel, stuurAanmeldMail } from '@/opslag/aanmelden';
-import { Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
+import { AANBIEDERS, AANMELDEN_MET_MAIL, Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
 import { ROUTE_NA_INLOGGEN, ROUTE_NA_WELKOM, UITLEG_SCHERMEN } from '@/lib/welkom';
 import { useTaal } from '@/ui/taal';
 
@@ -18,6 +18,13 @@ const LIJN = '#E4E8E1';
 const FOUT = '#B3261E';
 
 type Stap = 'start' | 'uitleg' | 'aanmelden' | 'mail';
+
+// Icoon en tekst per aanbieder; welke er op het scherm staan, bepaalt AANBIEDERS (WEEK-225).
+const KNOP: Record<Aanbieder, { icoon: 'logo-google' | 'logo-apple' | 'logo-facebook'; tekst: Sleutel }> = {
+  google: { icoon: 'logo-google', tekst: 'aanmelden.metGoogle' },
+  apple: { icoon: 'logo-apple', tekst: 'aanmelden.metApple' },
+  facebook: { icoon: 'logo-facebook', tekst: 'aanmelden.metFacebook' },
+};
 
 /**
  * Opstart bij de eerste opening (WEEK-79, WEEK-185): startscherm met Get started en Login,
@@ -199,7 +206,7 @@ export default function Welkom() {
     );
   }
 
-  // stap 'aanmelden': Google, Apple, Facebook of e-mail, en het alternatief zonder account.
+  // stap 'aanmelden': de aanbieders die aanstaan (WEEK-225: enkel Google), e-mail als dat aanstaat, en zonder account.
   return (
     <ScrollView contentContainerStyle={s.schermContainer}>
       <Pressable onPress={() => setStap('start')} accessibilityRole="button" hitSlop={12}>
@@ -215,22 +222,24 @@ export default function Welkom() {
         </Text>
       )}
       <View style={s.onderaan}>
-        <Pressable style={[s.knopMetIcoon, bezig && s.uit]} onPress={() => metAanbieder('google')} disabled={bezig} accessibilityRole="button">
-          <Ionicons name="logo-google" size={18} color="#fff" />
-          <Text style={s.knopTekst}>{t('aanmelden.metGoogle')}</Text>
-        </Pressable>
-        <Pressable style={[s.knopMetIcoon, bezig && s.uit]} onPress={() => metAanbieder('apple')} disabled={bezig} accessibilityRole="button">
-          <Ionicons name="logo-apple" size={18} color="#fff" />
-          <Text style={s.knopTekst}>{t('aanmelden.metApple')}</Text>
-        </Pressable>
-        <Pressable style={[s.knopMetIcoon, bezig && s.uit]} onPress={() => metAanbieder('facebook')} disabled={bezig} accessibilityRole="button">
-          <Ionicons name="logo-facebook" size={18} color="#fff" />
-          <Text style={s.knopTekst}>{t('aanmelden.metFacebook')}</Text>
-        </Pressable>
-        <Pressable style={[s.knopZacht, bezig && s.uit]} onPress={() => setStap('mail')} disabled={bezig} accessibilityRole="button">
-          <Ionicons name="mail-outline" size={18} color={KLEUR} />
-          <Text style={s.knopZachtTekst}>{t('aanmelden.metMail')}</Text>
-        </Pressable>
+        {AANBIEDERS.map((aanbieder) => (
+          <Pressable
+            key={aanbieder}
+            style={[s.knopMetIcoon, bezig && s.uit]}
+            onPress={() => metAanbieder(aanbieder)}
+            disabled={bezig}
+            accessibilityRole="button"
+          >
+            <Ionicons name={KNOP[aanbieder].icoon} size={18} color="#fff" />
+            <Text style={s.knopTekst}>{t(KNOP[aanbieder].tekst)}</Text>
+          </Pressable>
+        ))}
+        {AANMELDEN_MET_MAIL && (
+          <Pressable style={[s.knopZacht, bezig && s.uit]} onPress={() => setStap('mail')} disabled={bezig} accessibilityRole="button">
+            <Ionicons name="mail-outline" size={18} color={KLEUR} />
+            <Text style={s.knopZachtTekst}>{t('aanmelden.metMail')}</Text>
+          </Pressable>
+        )}
       </View>
 
       <View style={s.alternatief}>
