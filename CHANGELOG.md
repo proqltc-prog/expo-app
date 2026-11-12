@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.137.0] – 2026-11-12
+
+- Zonder ingesteld en bewaard gezin (volwassenen en adres) maakt "Plan mijn week" geen recepten meer en is er geen weekmenu: de kaarten verdwijnen, een melding met de knop "Gezin invullen" leidt naar het gezinsprofiel. (WEEK-261)
+- Staat er nog een bevestigd recept dat niet gekookt is, dan maakt "Plan mijn week" geen nieuw menu maar toont een infomelding: zet je bevestigde recepten eerst op Gekookt. Is alles gekookt, dan komt er meteen een nieuw weekmenu, zonder het oude bevestigingsvenster dat op het web niet werkte. (WEEK-262)
+- Bevat ook 0.136.0 (recept inlezen als kaart met twee tegels, WEEK-260) en 0.135.1 (één terugpijl linksboven, WEEK-259).
+
+**Jira:** [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.136.0] – 2026-11-12
 
 - Recept inlezen is mooier en duidelijker: één kaart "Recept inlezen" met twee tegels (Via een link, Via een foto), en panelen met een kop en dezelfde terugpijl als in de rest van de app; grote knoppen met icoon (Foto nemen, Foto kiezen, Inlezen). (WEEK-260)

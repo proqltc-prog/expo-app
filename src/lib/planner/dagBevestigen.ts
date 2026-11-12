@@ -74,3 +74,19 @@ export function planZonderHoeveelheden(plan: Pick<Weekplan, 'dagen'> | null | un
   const ingredienten = plan?.dagen.flatMap((d) => d.recept.ingredienten) ?? [];
   return ingredienten.length > 0 && ingredienten.every((i) => !(i.hoeveelheid > 0));
 }
+
+/** Waarom "Plan mijn week" (nog) geen nieuw weekmenu maakt (WEEK-261/262). */
+export type NieuwPlanBlokkade = 'gezin' | 'nietGekookt';
+
+/**
+ * Mag "Plan mijn week" een nieuw weekmenu maken?
+ * - 'gezin' (WEEK-261): het gezin is nog niet ingesteld en bewaard (volwassenen, postcode, gemeente); zonder gezin geen recepten.
+ * - 'nietGekookt' (WEEK-262): op het weekmenu staat nog een bevestigd recept dat niet gekookt is; eerst koken.
+ * - undefined: een nieuw weekmenu maken mag.
+ */
+export function blokkadeNieuwPlan(plan: Weekplan | null, gezinIngesteld: boolean): NieuwPlanBlokkade | undefined {
+  if (!gezinIngesteld) return 'gezin';
+  const zichtbaar = zichtbaarWeekmenu(plan);
+  if (zichtbaar && openBevestigdeDagen(zichtbaar).length > 0) return 'nietGekookt';
+  return undefined;
+}

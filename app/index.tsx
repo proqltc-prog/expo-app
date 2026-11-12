@@ -22,7 +22,7 @@ import { Weekplan } from '@/lib/planner/types';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { bereikDatums, dagenTussen, kortDatum, vandaagIso } from '@/lib/planner/datums';
 import { Kalender } from '@/ui/kalender';
-import { aantalPersonen, heeftGezin, Profiel } from '@/lib/profiel';
+import { aantalPersonen, heeftGezin, isProfielIngesteld, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
@@ -35,7 +35,7 @@ import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorM
 import { vermijdOpties as vermijdKeuzesVoor, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { KOOKTIJD_BEREIK, KooktijdCode } from '@/lib/kooktijd';
-import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, blokkadeNieuwPlan, openBevestigdeDagen, planZonderHoeveelheden, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -117,6 +117,8 @@ export default function Weekplanning() {
   const [profiel, setProfiel] = useState<Profiel | null>(null);
   const [plan, setPlan] = useState<Weekplan | null>(null);
   const [bezig, setBezig] = useState(false);
+  // WEEK-262: infomelding na een klik op "Plan mijn week" terwijl er nog bevestigde recepten niet gekookt zijn.
+  const [eerstKoken, setEerstKoken] = useState(false);
   const [bezigDag, setBezigDag] = useState<number | null>(null);
   const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
   const [keuzes, setKeuzes] = useState<Keuzes>(STANDAARD_KEUZES);
@@ -203,7 +205,10 @@ export default function Weekplanning() {
   // Mag ik dit plan wijzigen? Zonder plan (nog) wel: het nieuwe plan wordt dan van mij (WEEK-30).
   const mag = !plan || magPlanWijzigen(plan, mijnId);
   // WEEK-139: het weekmenu toont kaarten enkel als er een plan gegenereerd is en niet alles gekookt is.
-  const kaarten = zichtbaarWeekmenu(plan);
+  // WEEK-261: zonder ingesteld en bewaard gezin (volwassenen en adres) geen weekmenu en geen recepten.
+  const gezinIngesteld = !!profiel && isProfielIngesteld(profiel);
+  const kaarten = gezinIngesteld ? zichtbaarWeekmenu(plan) : null;
+  const toonEerstKoken = eerstKoken && blokkadeNieuwPlan(plan, gezinIngesteld) === 'nietGekookt';
   const beheerTekst = plan?.beheerder
     ? beheerderNaam(leden, plan.beheerder)
       ? t('planning.alleenBeheerder', { naam: beheerderNaam(leden, plan.beheerder) ?? '' })
@@ -260,21 +265,20 @@ export default function Weekplanning() {
   };
 
   const vraagNieuwPlan = () => {
-    // WEEK-249: zonder gezin worden alle hoeveelheden 0; eerst het gezin invullen.
-    if (profiel && !heeftGezin(profiel)) return router.navigate('/profiel');
-    // WEEK-143: de bevestiging enkel bij zichtbare, bevestigde recepten.
-    if (!vraagtBevestigingVoorNieuwPlan(plan)) return maakPlan(false);
-    Alert.alert(t('planning.plan'), t('planning.resetVraag'), [
-      { text: t('planning.annuleer'), style: 'cancel' },
-      { text: t('planning.resetBevestig'), style: 'destructive', onPress: () => maakPlan(true) },
-    ]);
+    const blokkade = blokkadeNieuwPlan(plan, gezinIngesteld);
+    // WEEK-249/261: zonder ingesteld gezin geen recepten; eerst het gezin invullen.
+    if (blokkade === 'gezin') return router.navigate('/profiel');
+    // WEEK-262: nog bevestigde recepten die niet gekookt zijn: eerst koken (infomelding, geen nieuw menu).
+    if (blokkade === 'nietGekookt') return setEerstKoken(true);
+    setEerstKoken(false);
+    return maakPlan(false);
   };
 
   // Enkel die ene dag krijgt een nieuw recept; de rest van de week blijft staan.
   // WEEK-184: het recept dat er nu op staat, komt de rest van de week niet meer terug.
   const herdoeDag = async (index: number) => {
     if (!plan || !profiel || bezigDag !== null || !mag || !magDagWijzigen(plan.dagen[index])) return;
-    if (!heeftGezin(profiel)) return router.navigate('/profiel');
+    if (!isProfielIngesteld(profiel)) return router.navigate('/profiel');
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
@@ -543,14 +547,27 @@ export default function Weekplanning() {
       {fase === 'plan' && (
         <View style={s.blok}>
           {kopStap('planning.kies.plan')}
-          {profiel && !heeftGezin(profiel) && <Text style={s.melding}>{t('planning.geenGezin')}</Text>}
-          {profiel && heeftGezin(profiel) && planZonderHoeveelheden(plan) && (
+          {profiel && !gezinIngesteld && (
+            <View style={s.gezinVak}>
+              <Text style={s.melding}>{t('planning.geenGezin')}</Text>
+              <Pressable style={s.tweedeKnop} onPress={() => router.navigate('/profiel')} accessibilityRole="button">
+                <Text style={s.tweedeKnopTekst}>{t('planning.gezinInvullen')}</Text>
+              </Pressable>
+            </View>
+          )}
+          {gezinIngesteld && planZonderHoeveelheden(plan) && (
             <Text style={s.melding}>{t('planning.zonderHoeveelheden')}</Text>
           )}
           <Pressable style={[s.knop, bezig && s.uit]} onPress={vraagNieuwPlan} disabled={bezig || !profiel || !mag}>
             {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
           </Pressable>
-          {!kaarten && !bezig && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
+          {toonEerstKoken && (
+            <View style={s.infoVak} accessibilityRole="alert">
+              <Ionicons name="information-circle" size={20} color={PETROL} />
+              <Text style={s.infoTekst}>{t('planning.eerstKoken')}</Text>
+            </View>
+          )}
+          {!kaarten && !bezig && gezinIngesteld && <Text style={s.leeg}>{t('planning.leeg')}</Text>}
           {plan && !mag && <Text style={s.melding}>{beheerTekst}</Text>}
 
           {kaarten && (
@@ -721,6 +738,10 @@ const s = StyleSheet.create({
   tegelTekstAan: { color: PETROL },
   melding: { backgroundColor: ORANJE_ZACHT, color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   leeg: { color: MUTED, textAlign: 'center', marginTop: 8 },
+  // WEEK-261/262
+  gezinVak: { gap: 8 },
+  infoVak: { flexDirection: 'row', gap: 8, alignItems: 'flex-start', backgroundColor: '#E6F1F3', borderRadius: 10, padding: 10 },
+  infoTekst: { flex: 1, color: PETROL, fontSize: 13, lineHeight: 18 },
   kaart: { backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: LIJN },
   kaartBevestigd: { borderColor: PETROL, borderWidth: 1.5 },
   statusAan: { color: PETROL, fontSize: 12, fontWeight: '700' },
