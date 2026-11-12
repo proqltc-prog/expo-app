@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.143.2] – 2026-11-12
+
+- De eenheid "zakje" staat niet meer in de keuzelijst: één vast gewicht (8 g) klopt niet voor spinazie, rozijnen of noten. Bosje, takje, snuifje en blaadje blijven. (WEEK-278)
+- Bevat ook 0.135.1 tot en met 0.143.1 (WEEK-259 tot WEEK-277).
+
+**Jira:** [WEEK-278](https://proqltc-1791495894841.atlassian.net/browse/WEEK-278) · **Confluence:** [WEEK-278](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067541)
+
 ## [0.143.1] – 2026-11-12
 
 - package-lock.json staat in .gitignore: de repo heeft bewust geen lockfile (WEEK-38, WEEK-220). Geen wijziging aan de app. (WEEK-277)

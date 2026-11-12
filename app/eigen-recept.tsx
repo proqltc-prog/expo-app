@@ -213,7 +213,7 @@ export default function EigenReceptScherm() {
     const code = popupDoel.code;
     const eenheid = (code ? standaardEenheid(code) : w.eenheid && (EENHEDEN as readonly string[]).includes(w.eenheid) ? w.eenheid : 'g') as Eenheid;
     const afdeling: Afdeling | undefined = !code && w.afdeling !== 'overig' ? w.afdeling : undefined;
-    // WEEK-270: een gekozen keukeneenheid (el, zakje, dl …) wordt omgerekend naar de basis; de keuze zelf blijft bewaard om te tonen.
+    // WEEK-270: een gekozen keukeneenheid (el, bosje, dl …) wordt omgerekend naar de basis; de keuze zelf blijft bewaard om te tonen.
     const perStuk = code ? gewichtPerStuk(code) : undefined;
     const gekozen = isKeukenEenheid(w.eenheid) && pastBij(w.eenheid, eenheid, perStuk) && w.eenheid !== eenheid ? w.eenheid : undefined;
     const rij: Rij = {

@@ -1,4 +1,4 @@
-// WEEK-270: keukeneenheden. Bij een ingrediënt kies je een eenheid zoals in een kookboek (2 el, 1 zakje, 1 dl).
+// WEEK-270: keukeneenheden. Bij een ingrediënt kies je een eenheid zoals in een kookboek (2 el, 1 bosje, 1 dl).
 // De app rekent die om naar de basiseenheid van het ingrediënt (g, ml, stuk, teentje), zodat de boodschappenlijst
 // en "In huis" blijven optellen. Het gerecht en de bereiding tonen wat je koos.
 // Pure logica zonder React Native.
@@ -16,7 +16,6 @@ export type KeukenEenheid =
   | 'kl'
   | 'snuifje'
   | 'scheutje'
-  | 'zakje'
   | 'blaadje'
   | 'takje'
   | 'bosje';
@@ -31,7 +30,6 @@ const FACTOR: Record<Exclude<KeukenEenheid, Basiseenheid>, number> = {
   kl: 5,
   snuifje: 0.5,
   scheutje: 10,
-  zakje: 8,
   blaadje: 0.2,
   takje: 1,
   bosje: 20,
@@ -39,14 +37,15 @@ const FACTOR: Record<Exclude<KeukenEenheid, Basiseenheid>, number> = {
 
 /** Welke keukeneenheden passen bij een basiseenheid, in de volgorde van de keuzelijst. */
 const KEUZE: Record<Basiseenheid, readonly KeukenEenheid[]> = {
-  g: ['g', 'kg', 'el', 'kl', 'snuifje', 'zakje', 'blaadje', 'takje', 'bosje'],
+  // WEEK-278: geen "zakje": een zakje kruiden en een zakje spinazie wegen heel anders; eerst een gewicht per ingrediënt.
+  g: ['g', 'kg', 'el', 'kl', 'snuifje', 'blaadje', 'takje', 'bosje'],
   ml: ['ml', 'cl', 'dl', 'l', 'el', 'kl', 'scheutje'],
   stuk: ['stuk'],
   teentje: ['teentje'],
 };
 
 export const ALLE_KEUKENEENHEDEN: readonly KeukenEenheid[] = [
-  'g', 'kg', 'ml', 'cl', 'dl', 'l', 'el', 'kl', 'snuifje', 'scheutje', 'zakje', 'blaadje', 'takje', 'bosje', 'stuk', 'teentje',
+  'g', 'kg', 'ml', 'cl', 'dl', 'l', 'el', 'kl', 'snuifje', 'scheutje', 'blaadje', 'takje', 'bosje', 'stuk', 'teentje',
 ];
 
 export function isKeukenEenheid(x: unknown): x is KeukenEenheid {
@@ -70,7 +69,7 @@ export function pastBij(eenheid: KeukenEenheid, basis: Basiseenheid, perStuk?: n
 const rond = (n: number) => Math.round(n * 100) / 100;
 
 /**
- * Rekent een hoeveelheid in een keukeneenheid om naar de basiseenheid: 2 el olie → 30 ml, 1 zakje → 8 g.
+ * Rekent een hoeveelheid in een keukeneenheid om naar de basiseenheid: 2 el olie → 30 ml, 1 bosje → 20 g.
  * Past de eenheid niet bij de basis, dan blijft de hoeveelheid ongewijzigd (geen gok).
  */
 export function naarBasis(hoeveelheid: number, eenheid: KeukenEenheid, basis: Basiseenheid, perStuk?: number): number {

@@ -69,7 +69,6 @@ export const fr: Vertalingen = {
   'eenheid.kl': "c. à c.",
   'eenheid.snuifje': "pincée",
   'eenheid.scheutje': "trait",
-  'eenheid.zakje': "sachet",
   'eenheid.blaadje': "feuille",
   'eenheid.takje': "brin",
   'eenheid.bosje': "botte",

@@ -69,7 +69,6 @@ export const en: Vertalingen = {
   'eenheid.kl': "tsp",
   'eenheid.snuifje': "pinch",
   'eenheid.scheutje': "dash",
-  'eenheid.zakje': "sachet",
   'eenheid.blaadje': "leaf",
   'eenheid.takje': "sprig",
   'eenheid.bosje': "bunch",

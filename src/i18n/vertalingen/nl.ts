@@ -70,7 +70,6 @@ export const nl = {
   'eenheid.kl': "kl",
   'eenheid.snuifje': "snuifje",
   'eenheid.scheutje': "scheutje",
-  'eenheid.zakje': "zakje",
   'eenheid.blaadje': "blaadje",
   'eenheid.takje': "takje",
   'eenheid.bosje': "bosje",

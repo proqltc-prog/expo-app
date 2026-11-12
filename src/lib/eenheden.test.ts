@@ -21,8 +21,13 @@ describe('keukeneenheden kiezen (WEEK-270)', () => {
   test('bij een ingrediënt in ml: ml, cl, dl, l, el, kl, scheutje', () => {
     assert.deepEqual([...keuzeEenheden('ml')], ['ml', 'cl', 'dl', 'l', 'el', 'kl', 'scheutje']);
   });
-  test('bij een ingrediënt in gram: g, kg, el, kl, snuifje, zakje, blaadje, takje, bosje', () => {
-    assert.deepEqual([...keuzeEenheden('g')], ['g', 'kg', 'el', 'kl', 'snuifje', 'zakje', 'blaadje', 'takje', 'bosje']);
+  test('bij een ingrediënt in gram: g, kg, el, kl, snuifje, blaadje, takje, bosje', () => {
+    assert.deepEqual([...keuzeEenheden('g')], ['g', 'kg', 'el', 'kl', 'snuifje', 'blaadje', 'takje', 'bosje']);
+  });
+  test('WEEK-278: "zakje" wordt nergens aangeboden en een bewaard "zakje" valt terug op de basis', () => {
+    assert.ok(!keuzeEenheden('g').includes('zakje' as never));
+    assert.ok(!keuzeEenheden('g', 120).includes('zakje' as never));
+    assert.equal(normaliseerKeukenMaat({ eenheid: 'zakje', hoeveelheid: 1 }, 'g'), undefined);
   });
   test('met een gekend stukgewicht kan je bij gram ook "stuk" kiezen', () => {
     assert.ok(keuzeEenheden('g', 120).includes('stuk'));
@@ -48,8 +53,7 @@ describe('omrekenen naar de basiseenheid (WEEK-270)', () => {
     assert.equal(naarBasis(0.25, 'l', 'ml'), 250);
     assert.equal(naarBasis(0.5, 'kg', 'g'), 500);
   });
-  test('richtwaarden: zakje, snuifje, blaadje, takje, bosje', () => {
-    assert.equal(naarBasis(1, 'zakje', 'g'), 8);
+  test('richtwaarden: snuifje, blaadje, takje, bosje', () => {
     assert.equal(naarBasis(1, 'snuifje', 'g'), 0.5);
     assert.equal(naarBasis(2, 'blaadje', 'g'), 0.4);
     assert.equal(naarBasis(3, 'takje', 'g'), 3);
@@ -167,8 +171,7 @@ describe('keukeneenheden in elke taal (WEEK-270)', () => {
     assert.equal(hoeveelheidTekst('de', 1, 'kl'), '1 TL');
     assert.equal(hoeveelheidTekst('en', 1.5, 'el'), '1.5 tbsp');
   });
-  test('zakje, bosje, blaadje', () => {
-    assert.equal(eenheidNaam('fr', 'zakje'), 'sachet');
+  test('bosje, blaadje', () => {
     assert.equal(eenheidNaam('de', 'bosje'), 'Bund');
     assert.equal(eenheidNaam('en', 'blaadje'), 'leaf');
   });
