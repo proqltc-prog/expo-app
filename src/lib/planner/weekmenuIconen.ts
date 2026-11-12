@@ -16,8 +16,7 @@ export const WEEKMENU_ICONEN: readonly WeekmenuIcoon[] = [
   { icoon: 'checkmark-circle-outline', vorm: 'rond', sleutel: 'bevestigen' },
   { icoon: 'refresh-outline', vorm: 'rond', sleutel: 'anderGerecht' },
   { icoon: 'create-outline', vorm: 'rond', sleutel: 'zelfKiezen' },
-  { icoon: 'trash-outline', vorm: 'rond', sleutel: 'verwijderen' },
-  { icoon: 'book-outline', vorm: 'vak', sleutel: 'recept' },
+  { icoon: 'book-outline', vorm: 'rond', sleutel: 'recept' },
   { icoon: 'ellipse-outline', vorm: 'knop', sleutel: 'gekookt' },
 ];
 

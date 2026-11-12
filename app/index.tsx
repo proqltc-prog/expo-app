@@ -11,7 +11,6 @@ import { voegAfgewezenToe } from '@/lib/planner/afwijzen';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
-import { verwijderDag, zonderReceptVanLijst } from '@/lib/planner/kies';
 import { receptStatus } from '@/lib/planner/status';
 import { neemVertrekUitGezinsprofielVlag, startFase } from '@/lib/planner/startfase';
 import { laadFrigo } from '@/opslag/frigo';
@@ -356,39 +355,6 @@ export default function Weekplanning() {
     }
   };
 
-  // Gerecht verwijderen (WEEK-44): het gerecht gaat uit het plan, de ingrediënten ook van de lijst.
-  // Niet voor een bevestigde of gekookt gerecht; enkel de items van dat recept op die dag gaan weg.
-  const verwijderMaaltijd = (index: number) => {
-    const dag = plan?.dagen[index];
-    if (!plan || !dag || !magDagWijzigen(dag) || !mag) return;
-    const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: dag.recept.naam };
-    Alert.alert(t('planning.verwijderen'), t('planning.verwijderVraag'), [
-      { text: t('planning.annuleer'), style: 'cancel' },
-      {
-        text: t('planning.verwijderen'),
-        style: 'destructive',
-        onPress: async () => {
-          let gewijzigd = false;
-          const bewaard = await wijzigPlan((huidig) => {
-            const nieuw = verwijderDag(huidig, index, verwacht);
-            gewijzigd = nieuw !== huidig;
-            return nieuw;
-          });
-          if (!bewaard || !gewijzigd) return;
-          setPlan(bewaard);
-          // Melding enkel als er ingrediënten van de lijst gingen.
-          let n = 0;
-          await wijzigLijst((items) => {
-            const r = zonderReceptVanLijst(items, dag.dag, dag.recept.naam);
-            n = r.verwijderd;
-            return r.over;
-          });
-          if (n) Alert.alert(t('planning.verwijderen'), t('planning.verwijderdVanLijst', { n }));
-        },
-      },
-    ]);
-  };
-
   // Zelf kiezen (WEEK-44): een ander gerecht uit de databank of de eigen recepten voor deze dag.
   const kiesZelf = (index: number) => {
     const dag = plan?.dagen[index];
@@ -590,32 +556,37 @@ export default function Weekplanning() {
                     <View style={s.kaartLinks}>
                     {/* WEEK-244: foto van keuken en soort gerecht, met de vlag van de keuken. */}
                     <GerechtFoto pad={recept.foto} stijl={recept.stijlen[0]} stijlFotos={stijlFotos} />
-                      {wijzigbaar && (
-                        <View style={s.actieRij}>
+                      {/* WEEK-269: geen vuilbakje meer; het boekje (Bereiding) staat als rond icoon in de rij en is altijd zichtbaar. */}
+                      <View style={s.actieRij}>
+                        {wijzigbaar && (
+                          <>
+                            <ActieIcoon
+                              naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
+                              label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
+                              aan={!!bevestigd}
+                              onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer())}
+                            />
+                            <ActieIcoon
+                              naam="refresh-outline"
+                              label={t('planning.reset', { dag: t(dagSleutel(dag)) })}
+                              bezig={bezigDag === index}
+                              onPress={() => (mag ? herdoeDag(index) : toonBeheer())}
+                            />
+                            <ActieIcoon
+                              naam="create-outline"
+                              label={t('planning.zelfKiezen')}
+                              onPress={() => (mag ? kiesZelf(index) : toonBeheer())}
+                            />
+                          </>
+                        )}
+                        {heeftBereiding && (
                           <ActieIcoon
-                            naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
-                            label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
-                            aan={!!bevestigd}
-                            onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer())}
+                            naam="book-outline"
+                            label={t('bereiding.icoon')}
+                            onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
                           />
-                          <ActieIcoon
-                            naam="refresh-outline"
-                            label={t('planning.reset', { dag: t(dagSleutel(dag)) })}
-                            bezig={bezigDag === index}
-                            onPress={() => (mag ? herdoeDag(index) : toonBeheer())}
-                          />
-                          <ActieIcoon
-                            naam="create-outline"
-                            label={t('planning.zelfKiezen')}
-                            onPress={() => (mag ? kiesZelf(index) : toonBeheer())}
-                          />
-                          <ActieIcoon
-                            naam="trash-outline"
-                            label={t('planning.verwijderen')}
-                            onPress={() => (mag ? verwijderMaaltijd(index) : toonBeheer())}
-                          />
-                        </View>
-                      )}
+                        )}
+                      </View>
                     </View>
                     <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
@@ -648,17 +619,6 @@ export default function Weekplanning() {
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
-                      {heeftBereiding && (
-                        <Pressable
-                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
-                          accessibilityRole="button"
-                          accessibilityLabel={t('bereiding.icoon')}
-                          hitSlop={8}
-                          style={s.bereidingKnop}
-                        >
-                          <Ionicons name="book-outline" size={20} color={PETROL} />
-                        </Pressable>
-                      )}
                     </View>
                     {/* WEEK-114: de knop Gekookt op een eigen regel, links uitgelijnd, zodat hij nooit buiten de kaart valt. */}
                     {bevestigd && (
@@ -760,7 +720,6 @@ const s = StyleSheet.create({
   kaartKop: { flexDirection: 'column', alignItems: 'flex-start', gap: 2 },
   naam: { fontSize: 17, fontWeight: '700', marginTop: 2, color: INKT },
   bevestigdTekst: { color: PETROL, fontWeight: '700', fontSize: 13, marginTop: 4 },
-  bereidingKnop: { width: 40, height: 40, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
   rij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-start', gap: 8, marginTop: 8 },
   gedaanRij: { flexDirection: 'row', justifyContent: 'flex-start', marginTop: 6 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
