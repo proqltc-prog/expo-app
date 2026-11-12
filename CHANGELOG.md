@@ -8,9 +8,9 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
-## [0.143.3] – 2026-11-12
+## [0.144.0] – 2026-11-12
 
-Deze release bundelt 0.135.1 tot en met 0.143.3. Overzicht:
+Deze release bundelt 0.135.1 tot en met 0.144.0. Overzicht:
 
 **Weekmenu**
 - Geen weekmenu zonder ingesteld gezin; "Plan mijn week" uitgegrijsd en het gezinsicoon licht op. (WEEK-261, WEEK-268)
@@ -24,6 +24,8 @@ Deze release bundelt 0.135.1 tot en met 0.143.3. Overzicht:
 - Keukeneenheden (el, kl, cl, dl, l, kg, stuk, bosje, takje, snuifje, blaadje) met omrekening voor de boodschappenlijst; "zakje" voorlopig niet. (WEEK-270, WEEK-278)
 - Eigen gerechten worden weer gedeeld in de gezinsruimte; enkel de beheerder beheert ze. (WEEK-275, WEEK-276)
 
+- Reclamefilmpje vóór het inlezen van een recept in de app; gesloten vóór het einde = niet inlezen, geen filmpje beschikbaar = toch inlezen. Niet op de website. (WEEK-280)
+
 **Teksten en navigatie**
 - Eén terugpijl linksboven in de hele app. (WEEK-259)
 - Eén woord per begrip in alle talen (gerecht, weekmenu, favorieten, In huis), spelling nagekeken in 4 talen. (WEEK-266, WEEK-279)
@@ -32,7 +34,7 @@ Deze release bundelt 0.135.1 tot en met 0.143.3. Overzicht:
 **Onderhoud**
 - Oude code opgeruimd; package-lock.json in .gitignore. (WEEK-273, WEEK-277)
 
-**Jira:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-268](https://proqltc-1791495894841.atlassian.net/browse/WEEK-268), [WEEK-269](https://proqltc-1791495894841.atlassian.net/browse/WEEK-269), [WEEK-270](https://proqltc-1791495894841.atlassian.net/browse/WEEK-270), [WEEK-271](https://proqltc-1791495894841.atlassian.net/browse/WEEK-271), [WEEK-272](https://proqltc-1791495894841.atlassian.net/browse/WEEK-272), [WEEK-273](https://proqltc-1791495894841.atlassian.net/browse/WEEK-273), [WEEK-274](https://proqltc-1791495894841.atlassian.net/browse/WEEK-274), [WEEK-275](https://proqltc-1791495894841.atlassian.net/browse/WEEK-275), [WEEK-276](https://proqltc-1791495894841.atlassian.net/browse/WEEK-276), [WEEK-277](https://proqltc-1791495894841.atlassian.net/browse/WEEK-277), [WEEK-278](https://proqltc-1791495894841.atlassian.net/browse/WEEK-278), [WEEK-279](https://proqltc-1791495894841.atlassian.net/browse/WEEK-279) · **Confluence:** [WEEK-279](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24969259) en de pagina's per workitem onder "Workitems".
+**Jira:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-268](https://proqltc-1791495894841.atlassian.net/browse/WEEK-268), [WEEK-269](https://proqltc-1791495894841.atlassian.net/browse/WEEK-269), [WEEK-270](https://proqltc-1791495894841.atlassian.net/browse/WEEK-270), [WEEK-271](https://proqltc-1791495894841.atlassian.net/browse/WEEK-271), [WEEK-272](https://proqltc-1791495894841.atlassian.net/browse/WEEK-272), [WEEK-273](https://proqltc-1791495894841.atlassian.net/browse/WEEK-273), [WEEK-274](https://proqltc-1791495894841.atlassian.net/browse/WEEK-274), [WEEK-275](https://proqltc-1791495894841.atlassian.net/browse/WEEK-275), [WEEK-276](https://proqltc-1791495894841.atlassian.net/browse/WEEK-276), [WEEK-277](https://proqltc-1791495894841.atlassian.net/browse/WEEK-277), [WEEK-278](https://proqltc-1791495894841.atlassian.net/browse/WEEK-278), [WEEK-279](https://proqltc-1791495894841.atlassian.net/browse/WEEK-279), [WEEK-280](https://proqltc-1791495894841.atlassian.net/browse/WEEK-280) · **Confluence:** [WEEK-280](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25362433), [WEEK-279](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24969259) en de pagina's per workitem onder "Workitems".
 
 ## [0.143.2] – 2026-11-12
 

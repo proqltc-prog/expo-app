@@ -8,6 +8,7 @@ import mobileAds, {
   TestIds,
 } from 'react-native-google-mobile-ads';
 import { ECHTE_BELONING_EENHEDEN, kiesEenheid } from '@/lib/advertentie';
+import type { FilmpjeUitkomst } from '@/lib/inlezenFilmpje';
 
 const WACHTTIJD_MS = 15000;
 
@@ -35,18 +36,32 @@ function startAdvertenties(): Promise<boolean> {
  * bij een fout, een time-out of als het sluiten vóór het einde gebeurt, false.
  */
 export async function bekijkBeloondFilmpje(): Promise<boolean> {
-  if (!(await startAdvertenties())) return false;
+  return (await speelFilmpje()) === 'bekeken';
+}
+
+/** WEEK-280: het filmpje vóór het inlezen van een recept, met de drie mogelijke uitkomsten. */
+export function toonFilmpjeVoorInlezen(): Promise<FilmpjeUitkomst> {
+  return speelFilmpje();
+}
+
+/**
+ * Speelt één beloond filmpje af. "niet_beschikbaar": geen toestemming, geen filmpje of een fout vóór het tonen;
+ * "afgebroken": getoond maar gesloten vóór het einde; "bekeken": volledig bekeken.
+ */
+async function speelFilmpje(): Promise<FilmpjeUitkomst> {
+  if (!(await startAdvertenties())) return 'niet_beschikbaar';
   const platform: 'android' | 'ios' = Platform.OS === 'ios' ? 'ios' : 'android';
   const eenheid = kiesEenheid(ECHTE_BELONING_EENHEDEN[platform], TestIds.REWARDED);
   const filmpje = RewardedAd.createForAdRequest(eenheid);
 
-  return new Promise<boolean>((resolve) => {
+  return new Promise<FilmpjeUitkomst>((resolve) => {
     let beloond = false;
+    let getoond = false;
     let klaarMet = false;
     const uit: Array<() => void> = [];
-    const timer = setTimeout(() => eindig(false), WACHTTIJD_MS);
+    const timer = setTimeout(() => eindig(getoond ? 'afgebroken' : 'niet_beschikbaar'), WACHTTIJD_MS);
 
-    function eindig(uitkomst: boolean) {
+    function eindig(uitkomst: FilmpjeUitkomst) {
       if (klaarMet) return;
       klaarMet = true;
       clearTimeout(timer);
@@ -55,13 +70,14 @@ export async function bekijkBeloondFilmpje(): Promise<boolean> {
     }
 
     uit.push(filmpje.addAdEventListener(RewardedAdEventType.LOADED, () => {
-      filmpje.show().catch(() => eindig(false));
+      getoond = true;
+      filmpje.show().catch(() => eindig('niet_beschikbaar'));
     }));
     uit.push(filmpje.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
       beloond = true;
     }));
-    uit.push(filmpje.addAdEventListener(AdEventType.CLOSED, () => eindig(beloond)));
-    uit.push(filmpje.addAdEventListener(AdEventType.ERROR, () => eindig(false)));
+    uit.push(filmpje.addAdEventListener(AdEventType.CLOSED, () => eindig(beloond ? 'bekeken' : 'afgebroken')));
+    uit.push(filmpje.addAdEventListener(AdEventType.ERROR, () => eindig(getoond ? 'afgebroken' : 'niet_beschikbaar')));
     filmpje.load();
   });
 }

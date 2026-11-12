@@ -41,6 +41,8 @@ import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
 import { TerugKnop } from '@/ui/terugKnop';
 import { useMagGerechtenBeheren } from '@/ui/magGerechten';
+import { toonFilmpjeVoorInlezen } from '@/opslag/advertentie';
+import { magInlezenNaFilmpje } from '@/lib/inlezenFilmpje';
 import { koppelOnbekend } from '@/opslag/ingredientKoppel';
 import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } from '@/lib/ingredientKoppel';
 
@@ -119,13 +121,13 @@ export default function EigenReceptScherm() {
   const [linkOpen, setLinkOpen] = useState(false);
   const [link, setLink] = useState('');
   const [linkBezig, setLinkBezig] = useState(false);
-  const [linkFout, setLinkFout] = useState<LinkFout | undefined>(undefined);
+  const [linkFout, setLinkFout] = useState<LinkFout | 'filmpje' | undefined>(undefined);
   const [linkMelding, setLinkMelding] = useState<LinkMelding | undefined>(undefined);
   const [nakijken, setNakijken] = useState<NakijkRegel[]>([]);
   // WEEK-251: een recept inlezen via een foto (Google Gemini via de Supabase-functie recept-foto).
   const [fotoOpen, setFotoOpen] = useState(false);
   const [fotoBezig, setFotoBezig] = useState(false);
-  const [fotoFout, setFotoFout] = useState<FotoFout | 'geenToestemming' | undefined>(undefined);
+  const [fotoFout, setFotoFout] = useState<FotoFout | 'geenToestemming' | 'filmpje' | undefined>(undefined);
   // WEEK-254: een onbekend ingrediënt laten opzoeken of toevoegen (Gemini, via de Supabase-functie ingredient-koppel).
   const [nieuwBezig, setNieuwBezig] = useState(false);
   const [nieuwFout, setNieuwFout] = useState<NieuwFout | undefined>(undefined);
@@ -245,6 +247,11 @@ export default function EigenReceptScherm() {
     setLinkFout(undefined);
     setLinkBezig(true);
     try {
+      // WEEK-280: eerst het filmpje (in de app); vroegtijdig gesloten = niet inlezen.
+      if (!magInlezenNaFilmpje(await toonFilmpjeVoorInlezen())) {
+        setLinkFout('filmpje');
+        return;
+      }
       const r = await haalReceptOp(url);
       if (!r.ok) {
         setLinkFout(r.fout);
@@ -296,6 +303,11 @@ export default function EigenReceptScherm() {
     if (!foto) return;
     setFotoBezig(true);
     try {
+      // WEEK-280: eerst het filmpje (in de app); vroegtijdig gesloten = niet inlezen.
+      if (!magInlezenNaFilmpje(await toonFilmpjeVoorInlezen())) {
+        setFotoFout('filmpje');
+        return;
+      }
       const r = await leesReceptUitFoto(foto);
       if (!r.ok) {
         setFotoFout(r.fout);
@@ -512,7 +524,7 @@ export default function EigenReceptScherm() {
           </View>
           <Text style={s.paneelUitleg}>{t('recept.foto.uitleg')}</Text>
           {/* WEEK-258: de AI is tijdelijk onbereikbaar: duidelijk zeggen en de andere werkwijzen aanbieden. */}
-          {fotoTijdelijkOnbereikbaar(fotoFout) ? (
+          {fotoTijdelijkOnbereikbaar(fotoFout === 'filmpje' ? undefined : fotoFout) ? (
             <View style={s.tijdelijkVak}>
               <Text style={s.fout}>{t('recept.foto.tijdelijk')}</Text>
               <View style={s.rijChips}>
