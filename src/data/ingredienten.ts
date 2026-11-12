@@ -47,6 +47,14 @@ let LIJST: Readonly<Record<string, IngredientInfo>> = INGREDIENTEN_DB;
 let lijstVersie = 0;
 /** Wat uit de databank bovenop de ingebouwde lijst komt (WEEK-252/254). */
 let UIT_DATABANK: Record<string, IngredientInfo> = {};
+/** WEEK-255: codes van samengevoegde dubbels en de code die ze nu hebben (uit de databank, tabel ingredient_aliassen). */
+let ALIASSEN: Record<string, string> = {};
+
+/** Zet de doorverwijzingen van samengevoegde ingrediënten (WEEK-255). */
+export function zetIngredientAliassen(aliassen: Readonly<Record<string, string>>): void {
+  ALIASSEN = { ...aliassen };
+  lijstVersie++;
+}
 
 export function isIngredient(code: string): code is IngredientCode {
   return Object.prototype.hasOwnProperty.call(LIJST, code);
@@ -54,7 +62,9 @@ export function isIngredient(code: string): code is IngredientCode {
 
 /** Categorie, eenheid en namen van een ingrediënt, of undefined als de app de code niet kent. */
 export function ingredientInfo(code: string): IngredientInfo | undefined {
-  return isIngredient(code) ? LIJST[code] : undefined;
+  // WEEK-255: een samengevoegde dubbel (bv. in een eigen recept of op de lijst van een toestel) toont het behouden ingrediënt.
+  const c = ALIASSEN[code] ? naarDbCode(code) : code;
+  return isIngredient(c) ? LIJST[c] : undefined;
 }
 
 /** Stijgt telkens de lijst verandert; zo weten afgeleide gegevens (bv. de zoekindex bij het inlezen) dat ze opnieuw moeten. */
@@ -173,7 +183,11 @@ const OUDE_CODE_NAAR_DB: Readonly<Record<string, IngredientCode>> = {
 
 /** Zet een (oude) code om naar de databankcode; een databankcode blijft gelijk. */
 export function naarDbCode(code: string): string {
-  return OUDE_CODE_NAAR_DB[code] ?? code;
+  const oud = OUDE_CODE_NAAR_DB[code] ?? code;
+  // WEEK-255: een samengevoegde dubbel verwijst naar het behouden ingrediënt (hoogstens een paar stappen ver).
+  let c = oud;
+  for (let i = 0; i < 5 && ALIASSEN[c]; i++) c = ALIASSEN[c];
+  return c;
 }
 
 /**

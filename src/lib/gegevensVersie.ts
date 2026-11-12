@@ -70,3 +70,15 @@ export function uitBlokken<T>(blokken: readonly unknown[], verwacht: number): T[
   if (blokken.length !== verwacht || blokken.some((b) => !Array.isArray(b))) return undefined;
   return (blokken as T[][]).flat();
 }
+
+/** WEEK-255: de doorverwijzingen van samengevoegde ingrediënten ([{oud, nieuw}] → oud → nieuw); ongeldige rijen vallen weg. */
+export function leesAliassen(rijen: unknown): Record<string, string> {
+  const uit: Record<string, string> = {};
+  if (!Array.isArray(rijen)) return uit;
+  for (const r of rijen) {
+    if (!r || typeof r !== 'object') continue;
+    const { oud, nieuw } = r as { oud?: unknown; nieuw?: unknown };
+    if (typeof oud === 'string' && typeof nieuw === 'string' && oud !== nieuw && GELDIGE_CODE.test(oud) && GELDIGE_CODE.test(nieuw)) uit[oud] = nieuw;
+  }
+  return uit;
+}

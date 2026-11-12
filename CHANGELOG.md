@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.134.0] – 2026-11-12
+
+- Dubbele ingrediënten kunnen veilig samengevoegd worden: receptregels gaan naar het behouden ingrediënt (hoeveelheden samengeteld), en de oude code blijft een doorverwijzing die de app meekrijgt, zodat eigen recepten, boodschappenlijsten, frigo's en weekmenu's op de toestellen blijven werken. Elke dag kijkt een geplande taak de automatisch toegevoegde ingrediënten streng na (vertalingen, eenheid, allergenen, dubbels). (WEEK-255)
+
+**Jira:** [WEEK-255](https://proqltc-1791495894841.atlassian.net/browse/WEEK-255) · **Confluence:** [WEEK-255](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24936449)
+
 ## [0.133.0] – 2026-11-12
 
 - Onbekende ingrediënten blokkeren de gebruiker niet meer: na het inlezen via link of foto, en bij zelf invullen ("Toevoegen als nieuw ingrediënt"), zoekt een Supabase-functie het ingrediënt op. Eerst letterlijk in de databank, daarna met Gemini: een bestaand ingrediënt wordt gebruikt (geen dubbels), een nieuw wordt automatisch toegevoegd (met vertalingen, eenheid, categorie en allergenen, nog na te kijken door de eigenaar). Limieten: 20 per gebruiker per dag, 300 samen, 50 nieuwe ingrediënten per dag. (WEEK-254)

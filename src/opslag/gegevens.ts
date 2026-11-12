@@ -2,12 +2,13 @@
 // Bij het opstarten: eerst wat op het toestel staat gebruiken (werkt ook zonder internet), dan één kleine vraag naar
 // Supabase (tabel data_versie). Enkel als een versie veranderd is, wordt die soort opnieuw opgehaald en bewaard.
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { type IngredientInfo, zetIngredientenUitDatabank } from '@/data/ingredienten';
-import { leesIngredientRijen, leesVersies, moetOphalen, type Versies } from '@/lib/gegevensVersie';
+import { type IngredientInfo, zetIngredientAliassen, zetIngredientenUitDatabank } from '@/data/ingredienten';
+import { leesAliassen, leesIngredientRijen, leesVersies, moetOphalen, type Versies } from '@/lib/gegevensVersie';
 import { SLEUTEL } from './sleutels';
 import { supabase } from './supabase';
 
-type BewaardeIngredienten = { versie: number; lijst: Record<string, IngredientInfo> };
+/** Op het toestel: de lijst uit de databank en (WEEK-255) de doorverwijzingen van samengevoegde dubbels. */
+type BewaardeIngredienten = { versie: number; lijst: Record<string, IngredientInfo>; aliassen?: Record<string, string> };
 
 let versies: Promise<Versies | undefined> | undefined;
 
@@ -45,6 +46,7 @@ export function startIngredienten(): Promise<void> {
     ingredientenKlaar = (async () => {
       const bewaard = await leesBewaard<BewaardeIngredienten>(SLEUTEL.ingredientenDb);
       if (bewaard?.lijst) zetIngredientenUitDatabank(leesIngredientRijenUitBewaard(bewaard.lijst));
+      if (bewaard?.aliassen) zetIngredientAliassen(leesAliassen(Object.entries(bewaard.aliassen).map(([oud, nieuw]) => ({ oud, nieuw }))));
       const inDatabank = (await versiesInDatabank())?.ingredienten;
       if (inDatabank === undefined || !moetOphalen(bewaard?.versie, inDatabank)) return;
       const sb = supabase();
@@ -54,8 +56,14 @@ export function startIngredienten(): Promise<void> {
       const lijst = leesIngredientRijen(data);
       // Een lege of verminkte lijst nooit bewaren: dan blijft de vorige kopie.
       if (!Object.keys(lijst).length) return;
+      // WEEK-255: de doorverwijzingen horen bij dezelfde versie; lukt dat niet, dan zonder (volgende start opnieuw).
+      const al = await sb.from('ingredient_aliassen').select('oud, nieuw');
       zetIngredientenUitDatabank(lijst);
-      await AsyncStorage.setItem(SLEUTEL.ingredientenDb, JSON.stringify({ versie: inDatabank, lijst } satisfies BewaardeIngredienten));
+      // Lukt het ophalen van de doorverwijzingen niet, dan blijven de vorige staan en wordt er niets bewaard.
+      if (al.error) return;
+      const aliassen = leesAliassen(al.data);
+      zetIngredientAliassen(aliassen);
+      await AsyncStorage.setItem(SLEUTEL.ingredientenDb, JSON.stringify({ versie: inDatabank, lijst, aliassen } satisfies BewaardeIngredienten));
     })().catch(() => undefined);
   }
   return ingredientenKlaar;
