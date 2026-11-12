@@ -5,7 +5,7 @@
 //  - elke ingrediëntregel wordt ontleed (hoeveelheid, eenheid, naam) en gekoppeld aan de ingrediëntenlijst van de app.
 //    Een dubbel of synoniem (meervoud, "rijpe", "verse", andere taal) gebruikt altijd het bestaande ingrediënt: geen dubbels;
 //  - hoeveelheden worden omgerekend naar de eenheid van de app en naar één volwassene.
-import { eenheidVan, gewichtPerStuk, ingredientenLijstVersie, ingredientInfo, ingredientNaam, INGREDIENT_CODES, IngredientCode, isVoorraad } from '@/data/ingredienten';
+import { eenheidVan, gewichtPerStuk, ingredientenLijstVersie, ingredientInfo, ingredientNaam, INGREDIENT_CODES, IngredientCode, isIngredient as isIngredientCode, isVoorraad } from '@/data/ingredienten';
 import type { Eenheid, Soort } from '@/data/recept';
 import { TALEN, Taal } from '@/i18n';
 import type { EigenIngredient } from '@/lib/eigenrecepten';
@@ -588,7 +588,11 @@ export function splitsRegel(regel: string, talen: readonly Taal[]): string[] {
 }
 
 /** Verwerkt een ingelezen recept tot het formulier: gekoppelde ingrediënten, regels om na te kijken, stappen en kooktijd. */
-export function verwerkRecept(ruw: RuwRecept, appTaal: Taal): IngelezenRecept {
+/**
+ * @param koppelingen WEEK-254: namen die de functie ingredient-koppel al aan een code koppelde (kern van de naam → code);
+ * die gaan voor op het eigen koppelen.
+ */
+export function verwerkRecept(ruw: RuwRecept, appTaal: Taal, koppelingen: Readonly<Record<string, IngredientCode>> = {}): IngelezenRecept {
   const personen = ruw.personen ?? STANDAARD_PERSONEN;
   const talen: Taal[] = [...new Set([...(ruw.taal ? [ruw.taal] : []), appTaal])];
   const taal = talen[0];
@@ -597,7 +601,8 @@ export function verwerkRecept(ruw: RuwRecept, appTaal: Taal): IngelezenRecept {
   for (const tekst of ruw.ingredienten.flatMap((r) => splitsRegel(r, talen))) {
     const o = ontleedRegel(tekst);
     const naam = o.naam || tekst;
-    const k = koppelIngredient(naam, talen);
+    const gekoppeld = koppelingen[kernNaam(naam)];
+    const k: Koppeling | undefined = gekoppeld && isIngredientCode(gekoppeld) ? { code: gekoppeld, zeker: true } : koppelIngredient(naam, talen);
     if (!k) {
       nakijken.push({ tekst, naam, taal, reden: 'onbekend' });
       continue;

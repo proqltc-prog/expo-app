@@ -45,6 +45,8 @@ const VOLGORDE: Taal[] = ['nl', 'fr', 'de', 'en'];
 /** De lijst die de app nu gebruikt: de ingebouwde lijst, aangevuld met de databank (WEEK-252). */
 let LIJST: Readonly<Record<string, IngredientInfo>> = INGREDIENTEN_DB;
 let lijstVersie = 0;
+/** Wat uit de databank bovenop de ingebouwde lijst komt (WEEK-252/254). */
+let UIT_DATABANK: Record<string, IngredientInfo> = {};
 
 export function isIngredient(code: string): code is IngredientCode {
   return Object.prototype.hasOwnProperty.call(LIJST, code);
@@ -125,12 +127,22 @@ export const INGREDIENT_CODES: IngredientCode[] = Object.keys(INGREDIENTEN_DB);
  * terug dat de ingebouwde lijst niet kende.
  */
 export function zetIngredientenUitDatabank(uitDatabank: Readonly<Record<string, IngredientInfo>>): number {
+  UIT_DATABANK = { ...uitDatabank };
   LIJST = { ...INGREDIENTEN_DB, ...uitDatabank };
   const ingebouwd = Object.keys(INGREDIENTEN_DB);
   const nieuw = Object.keys(uitDatabank).filter((c) => !Object.prototype.hasOwnProperty.call(INGREDIENTEN_DB, c)).sort();
   INGREDIENT_CODES.splice(0, INGREDIENT_CODES.length, ...ingebouwd, ...nieuw);
   lijstVersie++;
   return nieuw.length;
+}
+
+/**
+ * WEEK-254: voegt enkele ingrediënten toe die net (automatisch) in de databank gekomen zijn, bovenop wat er al uit de
+ * databank kwam. Zo zijn ze meteen bruikbaar, nog voor de volgende start ze ophaalt.
+ */
+export function voegIngredientenToe(extra: Readonly<Record<string, IngredientInfo>>): void {
+  if (!Object.keys(extra).length) return;
+  zetIngredientenUitDatabank({ ...UIT_DATABANK, ...extra });
 }
 
 /**

@@ -34,11 +34,13 @@ import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
-import { NakijkRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
+import { NakijkRegel, omrekenen, ontleedRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
 import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
 import type { FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
+import { koppelOnbekend } from '@/opslag/ingredientKoppel';
+import { koppelingenUit, type KoppelResultaat } from '@/lib/ingredientKoppel';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
@@ -58,7 +60,10 @@ type Rij = EigenIngredient;
 type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string; nakijk?: number };
 
 /** Wat er na het inlezen via een link (WEEK-247) of een foto (WEEK-251) getoond wordt. */
-type LinkMelding = { bron: 'link' | 'foto'; aantal: number; personen: number; vanSite: boolean; teLang?: number };
+type LinkMelding = { bron: 'link' | 'foto'; aantal: number; personen: number; vanSite: boolean; teLang?: number; nieuw?: number };
+
+/** WEEK-254: waarom opzoeken of toevoegen van een ingrediënt niet lukte. */
+type NieuwFout = 'geen' | 'druk' | 'limiet' | 'niet_bereikbaar' | 'geen_verbinding';
 
 const FOUT_TEKST: Record<Fout, string> = {
   naam: 'recept.fout.naam',
@@ -105,6 +110,9 @@ export default function EigenReceptScherm() {
   const [fotoOpen, setFotoOpen] = useState(false);
   const [fotoBezig, setFotoBezig] = useState(false);
   const [fotoFout, setFotoFout] = useState<FotoFout | 'geenToestemming' | undefined>(undefined);
+  // WEEK-254: een onbekend ingrediënt laten opzoeken of toevoegen (Gemini, via de Supabase-functie ingredient-koppel).
+  const [nieuwBezig, setNieuwBezig] = useState(false);
+  const [nieuwFout, setNieuwFout] = useState<NieuwFout | undefined>(undefined);
   const [schattingen, setSchattingen] = useState<Record<KooktijdCode, number>>(KOOKTIJD_SCHATTING_STANDAARD);
 
   useEffect(() => {
@@ -213,7 +221,7 @@ export default function EigenReceptScherm() {
         setLinkFout(r.fout);
         return;
       }
-      pasToe(r.recept, 'link');
+      await pasToe(r.recept, 'link');
       setLinkOpen(false);
       setLink('');
     } finally {
@@ -222,8 +230,21 @@ export default function EigenReceptScherm() {
   };
 
   /** Vult het formulier met een ingelezen recept (link of foto); wat niet zeker is, komt bij "nog na te kijken". */
-  const pasToe = (recept: RuwRecept, bron: LinkMelding['bron']) => {
-    const ingelezen = verwerkRecept(recept, taal);
+  const pasToe = async (recept: RuwRecept, bron: LinkMelding['bron']) => {
+    let ingelezen = verwerkRecept(recept, taal);
+    // WEEK-254: wat de app niet kent, wordt meteen opgezocht: een bestaand ingrediënt of een nieuw (automatisch toegevoegd).
+    let nieuw = 0;
+    const onbekend = ingelezen.nakijken.filter((n) => n.reden === 'onbekend');
+    if (onbekend.length) {
+      const r = await koppelOnbekend(
+        onbekend.map((n) => n.naam),
+        onbekend[0].taal
+      );
+      if (r.ok && r.resultaten.some((x) => x.code)) {
+        ingelezen = verwerkRecept(recept, taal, koppelingenUit(r.resultaten));
+        nieuw = r.resultaten.filter((x) => x.status === 'nieuw').length;
+      }
+    }
     if (ingelezen.naam) setNaam(ingelezen.naam);
     setSoort(ingelezen.soort);
     const teLang = ingelezen.minuten !== undefined && ingelezen.minuten > MAX_KOOKTIJD_MIN ? ingelezen.minuten : undefined;
@@ -231,7 +252,7 @@ export default function EigenReceptScherm() {
     if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
     setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
     setNakijken(ingelezen.nakijken);
-    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}) });
+    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(nieuw ? { nieuw } : {}) });
   };
 
   /** WEEK-251: een foto nemen of kiezen en laten lezen; één vraag per foto. */
@@ -251,7 +272,7 @@ export default function EigenReceptScherm() {
         setFotoFout(r.fout);
         return;
       }
-      pasToe(r.recept, 'foto');
+      await pasToe(r.recept, 'foto');
       setFotoOpen(false);
     } finally {
       setFotoBezig(false);
@@ -282,6 +303,58 @@ export default function EigenReceptScherm() {
   const zoekNakijk = (index: number) => {
     setZoek(nakijken[index]?.naam ?? '');
     haalNakijkWeg(index);
+  };
+
+  /** De reden waarom een opzoeking niets bruikbaars gaf, voor de melding. */
+  const redenVan = (r: { ok: true; resultaten: KoppelResultaat[] } | { ok: false; fout: string }): NieuwFout => {
+    if (!r.ok) return r.fout === 'limiet' ? 'limiet' : r.fout === 'geen_verbinding' ? 'geen_verbinding' : 'niet_bereikbaar';
+    const s0 = r.resultaten[0]?.status;
+    return s0 === 'druk' ? 'druk' : s0 === 'limiet' ? 'limiet' : 'geen';
+  };
+
+  /** WEEK-254: een onbekende regel opnieuw laten opzoeken (bv. als Gemini eerst overbelast was). */
+  const zoekNakijkOpnieuw = async (index: number) => {
+    const n = nakijken[index];
+    if (!n || nieuwBezig) return;
+    setNieuwFout(undefined);
+    setNieuwBezig(true);
+    try {
+      const r = await koppelOnbekend([n.naam], n.taal);
+      const code = r.ok ? r.resultaten.find((x) => x.code)?.code : undefined;
+      if (!code) {
+        setNieuwFout(redenVan(r));
+        return;
+      }
+      const hoeveelheid = omrekenen(ontleedRegel(n.tekst), code, linkMelding?.personen ?? 1);
+      if (hoeveelheid !== undefined) {
+        setRijen((rij) => voegSamen(rij, { code, naam: ingredientNaam(code, taal), hoeveelheid, eenheid: standaardEenheid(code) }));
+        haalNakijkWeg(index);
+      } else {
+        setNakijken((l) => l.map((x, i) => (i === index ? { ...x, reden: 'hoeveelheid', code } : x)));
+      }
+    } finally {
+      setNieuwBezig(false);
+    }
+  };
+
+  /** WEEK-254: een ingrediënt dat de zoeklijst niet kent, laten opzoeken of toevoegen; daarna de hoeveelheid invullen. */
+  const voegNieuwToe = async () => {
+    const naamNieuw = zoek.trim();
+    if (!naamNieuw || nieuwBezig) return;
+    setNieuwFout(undefined);
+    setNieuwBezig(true);
+    try {
+      const r = await koppelOnbekend([naamNieuw], taal);
+      const code = r.ok ? r.resultaten.find((x) => x.code)?.code : undefined;
+      if (!code) {
+        setNieuwFout(redenVan(r));
+        return;
+      }
+      setZoek('');
+      openPopup({ code, naam: ingredientNaam(code, taal) });
+    } finally {
+      setNieuwBezig(false);
+    }
   };
 
   const verwijderRij = (index: number) => setRijen((r) => r.filter((_, i) => i !== index));
@@ -432,6 +505,7 @@ export default function EigenReceptScherm() {
           <Text style={s.uitlegTekst}>{t('recept.link.klaar', { aantal: linkMelding.aantal })}</Text>
           <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
           {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
+          {linkMelding.nieuw !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.nieuw', { n: linkMelding.nieuw })}</Text>}
         </View>
       )}
       <Text style={s.label}>{t('recept.naam')}</Text>
@@ -490,6 +564,11 @@ export default function EigenReceptScherm() {
                     <Text style={[s.chipTekst, s.chipTekstActief]}>{n.hoeveelheid === undefined ? t('recept.link.hoeveelheid') : t('recept.link.gebruik')}</Text>
                   </Pressable>
                 )}
+                {!n.code && (
+                  <Pressable style={s.chip} onPress={() => zoekNakijkOpnieuw(i)} disabled={nieuwBezig} accessibilityRole="button">
+                    <Text style={s.chipTekst}>{t('recept.link.opnieuw')}</Text>
+                  </Pressable>
+                )}
                 <Pressable style={s.chip} onPress={() => zoekNakijk(i)} accessibilityRole="button">
                   <Text style={s.chipTekst}>{t('recept.link.zoek')}</Text>
                 </Pressable>
@@ -535,6 +614,14 @@ export default function EigenReceptScherm() {
         </Pressable>
       ))}
       {nietsGevonden && <Text style={s.geenTreffer}>{t('frigo.geenIngredient')}</Text>}
+      {/* WEEK-254: niet gevonden: laten opzoeken of als nieuw ingrediënt toevoegen. */}
+      {nietsGevonden && (
+        <Pressable style={[s.linkKnop, nieuwBezig && { opacity: 0.6 }]} onPress={voegNieuwToe} disabled={nieuwBezig} accessibilityRole="button">
+          {nieuwBezig ? <ActivityIndicator color={KLEUR} /> : <Ionicons name="add-circle-outline" size={18} color={KLEUR} />}
+          <Text style={s.linkKnopTekst}>{nieuwBezig ? t('recept.nieuwBezig') : t('recept.nieuwIngredient', { naam: zoek.trim() })}</Text>
+        </Pressable>
+      )}
+      {nieuwFout && <Text style={s.fout}>{t(`recept.nieuwFout.${nieuwFout}` as Sleutel)}</Text>}
 
       <Text style={s.label}>{t('recept.stappen')}</Text>
       {stappen.map((stap, i) => (

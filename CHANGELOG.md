@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.133.0] – 2026-11-12
+
+- Onbekende ingrediënten blokkeren de gebruiker niet meer: na het inlezen via link of foto, en bij zelf invullen ("Toevoegen als nieuw ingrediënt"), zoekt een Supabase-functie het ingrediënt op. Eerst letterlijk in de databank, daarna met Gemini: een bestaand ingrediënt wordt gebruikt (geen dubbels), een nieuw wordt automatisch toegevoegd (met vertalingen, eenheid, categorie en allergenen, nog na te kijken door de eigenaar). Limieten: 20 per gebruiker per dag, 300 samen, 50 nieuwe ingrediënten per dag. (WEEK-254)
+
+**Jira:** [WEEK-254](https://proqltc-1791495894841.atlassian.net/browse/WEEK-254) · **Confluence:** [WEEK-254](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24903681)
+
 ## [0.132.0] – 2026-11-12
 
 - De recepten blijven op het toestel bewaard en worden enkel opnieuw opgehaald als de databank gewijzigd is: geen download van alle recepten meer bij elke start, nieuwe recepten zonder nieuwe APK, en de receptenbank werkt ook zonder internet. De download is kleiner (ingrediëntnamen komen uit de ingrediëntenlijst) en de ingrediënten van databankrecepten hebben nu ook een Duitse naam. (WEEK-253)
