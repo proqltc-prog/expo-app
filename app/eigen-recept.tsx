@@ -34,8 +34,10 @@ import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
-import { NakijkRegel, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
+import { NakijkRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
 import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
+import type { FotoFout } from '@/lib/receptFoto';
+import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
@@ -55,8 +57,8 @@ type Rij = EigenIngredient;
 /** Waarvoor de popup open staat: een nieuw ingrediënt (met of zonder code) of een bestaande rij. */
 type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string; nakijk?: number };
 
-/** Wat er na het inlezen via een link getoond wordt (WEEK-247). */
-type LinkMelding = { aantal: number; personen: number; vanSite: boolean; teLang?: number };
+/** Wat er na het inlezen via een link (WEEK-247) of een foto (WEEK-251) getoond wordt. */
+type LinkMelding = { bron: 'link' | 'foto'; aantal: number; personen: number; vanSite: boolean; teLang?: number };
 
 const FOUT_TEKST: Record<Fout, string> = {
   naam: 'recept.fout.naam',
@@ -99,6 +101,10 @@ export default function EigenReceptScherm() {
   const [linkFout, setLinkFout] = useState<LinkFout | undefined>(undefined);
   const [linkMelding, setLinkMelding] = useState<LinkMelding | undefined>(undefined);
   const [nakijken, setNakijken] = useState<NakijkRegel[]>([]);
+  // WEEK-251: een recept inlezen via een foto (Google Gemini via de Supabase-functie recept-foto).
+  const [fotoOpen, setFotoOpen] = useState(false);
+  const [fotoBezig, setFotoBezig] = useState(false);
+  const [fotoFout, setFotoFout] = useState<FotoFout | 'geenToestemming' | undefined>(undefined);
   const [schattingen, setSchattingen] = useState<Record<KooktijdCode, number>>(KOOKTIJD_SCHATTING_STANDAARD);
 
   useEffect(() => {
@@ -207,19 +213,48 @@ export default function EigenReceptScherm() {
         setLinkFout(r.fout);
         return;
       }
-      const ingelezen = verwerkRecept(r.recept, taal);
-      if (ingelezen.naam) setNaam(ingelezen.naam);
-      setSoort(ingelezen.soort);
-      const teLang = ingelezen.minuten !== undefined && ingelezen.minuten > MAX_KOOKTIJD_MIN ? ingelezen.minuten : undefined;
-      if (ingelezen.minuten !== undefined && !teLang) setMinuten(String(ingelezen.minuten));
-      if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
-      setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
-      setNakijken(ingelezen.nakijken);
-      setLinkMelding({ aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}) });
+      pasToe(r.recept, 'link');
       setLinkOpen(false);
       setLink('');
     } finally {
       setLinkBezig(false);
+    }
+  };
+
+  /** Vult het formulier met een ingelezen recept (link of foto); wat niet zeker is, komt bij "nog na te kijken". */
+  const pasToe = (recept: RuwRecept, bron: LinkMelding['bron']) => {
+    const ingelezen = verwerkRecept(recept, taal);
+    if (ingelezen.naam) setNaam(ingelezen.naam);
+    setSoort(ingelezen.soort);
+    const teLang = ingelezen.minuten !== undefined && ingelezen.minuten > MAX_KOOKTIJD_MIN ? ingelezen.minuten : undefined;
+    if (ingelezen.minuten !== undefined && !teLang) setMinuten(String(ingelezen.minuten));
+    if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
+    setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
+    setNakijken(ingelezen.nakijken);
+    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}) });
+  };
+
+  /** WEEK-251: een foto nemen of kiezen en laten lezen; één vraag per foto. */
+  const leesFoto = async (bron: FotoBron) => {
+    if (fotoBezig) return;
+    setFotoFout(undefined);
+    const foto = await kiesFoto(bron).catch(() => undefined);
+    if (foto === 'geen_toestemming') {
+      setFotoFout('geenToestemming');
+      return;
+    }
+    if (!foto) return;
+    setFotoBezig(true);
+    try {
+      const r = await leesReceptUitFoto(foto);
+      if (!r.ok) {
+        setFotoFout(r.fout);
+        return;
+      }
+      pasToe(r.recept, 'foto');
+      setFotoOpen(false);
+    } finally {
+      setFotoBezig(false);
     }
   };
 
@@ -320,11 +355,42 @@ export default function EigenReceptScherm() {
       </View>
 
       {/* WEEK-247: een recept inlezen via de link van een receptensite. */}
-      {!bestaand && !linkOpen && (
+      {!bestaand && !linkOpen && !fotoOpen && (
         <Pressable style={s.linkKnop} onPress={() => setLinkOpen(true)} accessibilityRole="button">
           <Ionicons name="link-outline" size={18} color={KLEUR} />
           <Text style={s.linkKnopTekst}>{t('recept.link.knop')}</Text>
         </Pressable>
+      )}
+      {/* WEEK-251: een recept inlezen via een foto. */}
+      {!bestaand && !linkOpen && !fotoOpen && (
+        <Pressable style={s.linkKnop} onPress={() => setFotoOpen(true)} accessibilityRole="button">
+          <Ionicons name="camera-outline" size={18} color={KLEUR} />
+          <Text style={s.linkKnopTekst}>{t('recept.foto.knop')}</Text>
+        </Pressable>
+      )}
+      {!bestaand && fotoOpen && (
+        <View style={s.linkVak}>
+          <Text style={s.linkUitleg}>{t('recept.foto.uitleg')}</Text>
+          {fotoFout && <Text style={s.fout}>{t(fotoFout === 'geenToestemming' ? 'recept.foto.geenToestemming' : (`recept.foto.fout.${fotoFout}` as Sleutel))}</Text>}
+          {fotoBezig ? (
+            <View style={s.fotoBezig} accessibilityLiveRegion="polite">
+              <ActivityIndicator color={KLEUR} />
+              <Text style={s.linkUitleg}>{t('recept.foto.bezig')}</Text>
+            </View>
+          ) : (
+            <View style={s.knoppen}>
+              <Pressable style={s.annuleer} onPress={() => leesFoto('camera')} accessibilityRole="button">
+                <Text style={s.annuleerTekst}>{t('recept.foto.camera')}</Text>
+              </Pressable>
+              <Pressable style={s.annuleer} onPress={() => leesFoto('galerij')} accessibilityRole="button">
+                <Text style={s.annuleerTekst}>{t('recept.foto.galerij')}</Text>
+              </Pressable>
+            </View>
+          )}
+          <Pressable onPress={() => { setFotoOpen(false); setFotoFout(undefined); }} disabled={fotoBezig} accessibilityRole="button" style={s.fotoAnnuleer}>
+            <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
+          </Pressable>
+        </View>
       )}
       {!bestaand && linkOpen && (
         <View style={s.linkVak}>
@@ -364,7 +430,7 @@ export default function EigenReceptScherm() {
       {linkMelding && (
         <View style={s.uitleg}>
           <Text style={s.uitlegTekst}>{t('recept.link.klaar', { aantal: linkMelding.aantal })}</Text>
-          <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
+          <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
           {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
         </View>
       )}
@@ -577,6 +643,8 @@ const s = StyleSheet.create({
   verwijderTekst: { color: '#c62828', fontWeight: '600' },
   linkKnop: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14, backgroundColor: '#fff' },
   linkKnopTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
+  fotoBezig: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
+  fotoAnnuleer: { alignSelf: 'center', paddingVertical: 6 },
   linkVak: { borderWidth: 1, borderColor: '#cfe3d6', borderRadius: 14, padding: 12, gap: 8, backgroundColor: '#fff' },
   linkUitleg: { color: '#333', fontSize: 14, lineHeight: 20 },
   nakijkVak: { borderWidth: 1, borderColor: '#f0d9a8', backgroundColor: '#fff9ec', borderRadius: 14, padding: 12, gap: 8 },

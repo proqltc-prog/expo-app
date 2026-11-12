@@ -32,6 +32,13 @@ describe('app-configuratie (WEEK-37)', () => {
     assert.equal(camera[1].recordAudioAndroid, false);
   });
 
+  test('WEEK-251: foto kiezen zonder microfoon, met uitleg voor camera en foto’s', () => {
+    const kiezer = app.plugins.find((p: unknown) => Array.isArray(p) && p[0] === 'expo-image-picker');
+    assert.ok(kiezer, 'expo-image-picker ontbreekt in de plugins');
+    assert.equal(kiezer[1].microphonePermission, false);
+    assert.ok(kiezer[1].photosPermission && kiezer[1].cameraPermission);
+  });
+
   test('react en react-dom op dezelfde vaste versie (anders faalt de installatie bij EAS)', () => {
     const d = pakket.dependencies;
     assert.match(d.react, /^\d+\.\d+\.\d+$/);
