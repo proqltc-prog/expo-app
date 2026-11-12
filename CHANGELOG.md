@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.138.0] – 2026-11-12
+
+- Nieuw: een infoknop (i) rechts van "Je weekmenu" legt de icoontjes op de kaarten uit (Bevestigen, Ander gerecht, Zelf kiezen, Verwijderen, Recept bekijken, Gekookt), elk zoals het op de kaart staat. (WEEK-264)
+- Infovenster op Kies een gerecht: "Met nieuw recept voeg je er een toe." staat op een eigen regel, zonder plusteken en zonder hoofdletter. (WEEK-263)
+- Bevat ook 0.137.0 (geen weekmenu zonder gezin, eerst koken; WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.137.0] – 2026-11-12
 
 - Zonder ingesteld en bewaard gezin (volwassenen en adres) maakt "Plan mijn week" geen recepten meer en is er geen weekmenu: de kaarten verdwijnen, een melding met de knop "Gezin invullen" leidt naar het gezinsprofiel. (WEEK-261)

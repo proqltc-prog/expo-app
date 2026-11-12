@@ -17,6 +17,8 @@ import { neemVertrekUitGezinsprofielVlag, startFase } from '@/lib/planner/startf
 import { laadFrigo } from '@/opslag/frigo';
 import { toonBereidingsIcoon } from '@/lib/bereiding';
 import { Ionicons } from '@expo/vector-icons';
+import { IconenUitleg } from '@/ui/iconenUitleg';
+import { WEEKMENU_ICONEN } from '@/lib/planner/weekmenuIconen';
 import { trekFrigoAf } from '@/lib/frigo';
 import { Weekplan } from '@/lib/planner/types';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
@@ -546,7 +548,11 @@ export default function Weekplanning() {
 
       {fase === 'plan' && (
         <View style={s.blok}>
-          {kopStap('planning.kies.plan')}
+          {/* WEEK-264: infoknop rechts van de titel die de icoontjes op de kaarten uitlegt. */}
+          <View style={s.kopRijInfo}>
+            {kopStap('planning.kies.plan')}
+            {kaarten && <IconenUitleg iconen={WEEKMENU_ICONEN} t={(k) => t(k as never)} kleur={PETROL} kleurZacht={PETROL_ZACHT} />}
+          </View>
           {profiel && !gezinIngesteld && (
             <View style={s.gezinVak}>
               <Text style={s.melding}>{t('planning.geenGezin')}</Text>
@@ -718,6 +724,7 @@ const s = StyleSheet.create({
   blok: { gap: 12, backgroundColor: '#fff', borderRadius: 18, padding: 16, borderWidth: 1, borderColor: LIJN },
   kopRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   kop: { fontSize: 18, fontWeight: '800', color: INKT, flexShrink: 1 },
+  kopRijInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   subkop: { fontWeight: '700', color: MUTED, marginTop: 4 },
   hint: { color: MUTED, fontSize: 13 },
   kalender: { width: 48, height: 48, borderRadius: 12, backgroundColor: PETROL_ZACHT, alignItems: 'center', justifyContent: 'center' },
