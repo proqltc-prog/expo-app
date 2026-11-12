@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.142.2] – 2026-11-12
+
+- Scanner zonder vensters (die op de website niet verschenen): "afgevinkt" en "van je lijst gehaald" zijn weg (je ziet het op de lijst); "staat bij In huis" staat kort bovenaan de scanner. Op de website na 10 scans geen filmpjesknop maar "Morgen kan je weer 10 keer scannen." De app blijft ongewijzigd. (WEEK-274)
+- Bevat ook 0.135.1 tot en met 0.142.1 (WEEK-259 tot WEEK-273).
+
+**Jira:** [WEEK-274](https://proqltc-1791495894841.atlassian.net/browse/WEEK-274) · **Confluence:** [WEEK-274](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25329665)
+
 ## [0.142.1] – 2026-11-12
 
 - Opgeruimd: de oude code voor "gerecht toevoegen" in Zelf kiezen (de knop bestond niet meer), met de twee meldingen en teksten die daarbij hoorden. De gebruiker merkt niets. (WEEK-273)

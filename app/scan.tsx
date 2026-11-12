@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TerugKnop } from '@/ui/terugKnop';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
@@ -58,6 +58,8 @@ function ScanInhoud() {
   const [teller, setTeller] = useState<ScanTeller | null>(null);
   // Reclamefilmpje voor extra scans (WEEK-38): knop uitgeschakeld tijdens het laden.
   const [filmpjeBezig, setFilmpjeBezig] = useState(false);
+  // WEEK-274: korte bevestiging bovenaan de scanner (bv. "Melk staat bij In huis."); weg bij de volgende scan.
+  const [bevestiging, setBevestiging] = useState<string | null>(null);
   // Gescand vanaf de boodschappenlijst (WEEK-46): dan kan een product direct afgevinkt worden.
   // Met `item` (WEEK-49) worden de details van een product dat al in de frigo staat, gescand.
   const { van, item, lijstItem } = useLocalSearchParams<{ van?: string; item?: string; lijstItem?: string }>();
@@ -85,6 +87,7 @@ function ScanInhoud() {
   }
 
   const opScan = async ({ data }: BarcodeScanningResult) => {
+    setBevestiging(null);
     if (bezig.current) return;
     bezig.current = true;
     if (!magScannen(teller, new Date())) {
@@ -119,8 +122,8 @@ function ScanInhoud() {
   const naarFrigo = async (product: Product) => {
     const naam = scanNaam(product, t('scan.onbekend'));
     await wijzigFrigo((f) => voegZelfToe(f, naam, new Date(), { afdeling: afdelingUitCategorieen(product.categorieen) }));
-    Alert.alert(t('scan.inFrigo'), t('scan.inFrigoGedaan', { naam }));
     opnieuw(); // WEEK-120: de gebruiker blijft op de scanner
+    setBevestiging(t('scan.inFrigoGedaan', { naam }));
   };
 
   // Details van een product dat al in de frigo staat (WEEK-49): het item krijgt de gescande gegevens.
@@ -139,7 +142,7 @@ function ScanInhoud() {
       matches.reduce((na, i) => voegProductToe(na, `lijst:${i.id}`, product), pasFrigoAan(f, matches, true, new Date()))
     );
     await wijzigPlan((plan) => werkOntbrekendBij(plan, frigo));
-    Alert.alert(naam, t('scan.afgevinkt', { naam }));
+    // WEEK-274: geen melding; het vinkje staat op de boodschappenlijst.
     opnieuw();
     router.navigate('/lijst');
   };
@@ -148,7 +151,7 @@ function ScanInhoud() {
   const verwijderVanLijst = async (naam: string, matches: LijstItem[]) => {
     const ids = matches.map((i) => i.id);
     await wijzigLijst((huidig) => huidig.filter((i) => !ids.includes(i.id)));
-    Alert.alert(naam, t('scan.verwijderdVanLijst', { naam }));
+    // WEEK-274: geen melding; je ziet het op de boodschappenlijst.
     opnieuw();
     router.navigate('/lijst');
   };
@@ -169,6 +172,14 @@ function ScanInhoud() {
 
   if (status.soort === 'scannen' && rest === 0) {
     // WEEK-149: geen reset meer om middernacht; het filmpje is de enige weg om verder te scannen.
+    // WEEK-274: op de website bestaan geen reclamefilmpjes; daar enkel de uitleg dat de teller morgen opnieuw begint.
+    if (Platform.OS === 'web') {
+      return (
+        <View style={s.midden}>
+          <Text style={s.tekst}>{t('scan.limietWeb', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
+        </View>
+      );
+    }
     return (
       <View style={s.midden}>
         <Text style={s.tekst}>{t('scan.limiet', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
@@ -188,6 +199,12 @@ function ScanInhoud() {
           barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
           onBarcodeScanned={opScan}
         />
+        {bevestiging && (
+          <View style={s.bevestiging} pointerEvents="none" accessibilityRole="alert">
+            <Ionicons name="checkmark-circle" size={20} color="#fff" />
+            <Text style={s.bevestigingTekst}>{bevestiging}</Text>
+          </View>
+        )}
         <View style={s.overlay} pointerEvents="none">
           <View style={s.kader} />
           <Text style={s.hint}>{t('scan.richt')}</Text>
@@ -295,6 +312,8 @@ function ScanInhoud() {
 }
 
 const s = StyleSheet.create({
+  bevestiging: { position: 'absolute', top: 16, left: 64, right: 16, zIndex: 2, flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(15,107,102,0.92)', borderRadius: 12, paddingVertical: 10, paddingHorizontal: 12 },
+  bevestigingTekst: { color: '#fff', fontWeight: '700', fontSize: 14, flex: 1 },
   midden: { flex: 1, backgroundColor: PAPIER, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
   tekst: { fontSize: 16, textAlign: 'center', color: INKT },
   knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
