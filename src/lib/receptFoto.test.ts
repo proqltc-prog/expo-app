@@ -2,7 +2,7 @@
 // de tests gebruiken zelfgemaakte antwoorden en roepen nooit de echte dienst aan.
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alsFotoFout, FOTO_MAX_ZIJDE, leesFotoRecept, MAX_INGREDIENTEN, MAX_STAPPEN, verkleinMaat } from './receptFoto';
+import { alsFotoFout, FOTO_MAX_ZIJDE, fotoTijdelijkOnbereikbaar, leesFotoRecept, MAX_INGREDIENTEN, MAX_STAPPEN, verkleinMaat } from './receptFoto';
 import { verwerkRecept } from './receptLink';
 import { teMelden } from './ingredientMelding';
 
@@ -97,5 +97,14 @@ describe('WEEK-251: zelfde verwerking als een link (regressie WEEK-247/248)', ()
     const onbekend = r.nakijken.find((n) => n.tekst.includes('drakenpoeder'));
     assert.ok(onbekend);
     assert.deepEqual(teMelden(onbekend!), { naam: 'drakenpoeder', taal: 'nl' });
+  });
+});
+
+describe('WEEK-258: foto lezen tijdelijk onbereikbaar', () => {
+  test('druk, niet bereikbaar of niet ingesteld: alternatieven tonen', () => {
+    for (const f of ['druk', 'niet_bereikbaar', 'niet_ingesteld'] as const) assert.equal(fotoTijdelijkOnbereikbaar(f), true);
+  });
+  test('andere fouten: hun eigen melding', () => {
+    for (const f of ['geen_recept', 'limiet', 'te_groot', 'geen_foto', 'geenToestemming', undefined] as const) assert.equal(fotoTijdelijkOnbereikbaar(f), false);
   });
 });

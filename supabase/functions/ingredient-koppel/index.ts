@@ -98,7 +98,8 @@ async function bestaandeLijst(): Promise<Bestaand[]> {
   return rijen.map((r) => ({ code: r.code, categorie: r.categorie, eenheid: r.eenheid, namen: Object.fromEntries(r.ingredient_vertalingen.map((v) => [v.taal, v.naam])) }));
 }
 
-async function voegToe(v: Record<string, unknown>, code: string): Promise<string | null> {
+/** De code van het (nieuwe of bestaande) ingrediënt, 'limiet' (50 nieuwe per dag bereikt) of 'fout' (databank). */
+async function voegToe(v: Record<string, unknown>, code: string): Promise<string | 'limiet' | 'fout'> {
   const service = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   const res = await fetch(`${URL_()}/rest/v1/rpc/famenu_voeg_ingredient_toe`, {
     method: 'POST',
@@ -117,9 +118,10 @@ async function voegToe(v: Record<string, unknown>, code: string): Promise<string
   });
   if (!res.ok) {
     console.error(`toevoegen ${res.status}: ${(await res.text()).slice(0, 200)}`);
-    return null;
+    return 'fout';
   }
-  return (await res.json()) as string | null;
+  const code_ = (await res.json()) as string | null;
+  return code_ ?? 'limiet';
 }
 
 async function vraagGemini(sleutel: string, model: string, tekst: string): Promise<Response | undefined> {
@@ -239,8 +241,9 @@ Deno.serve(async (req) => {
     const allergenen = (Array.isArray(v.allergenen) ? v.allergenen : []).filter((a): a is string => ALLERGENEN.includes(a as string));
     const getal = (x: unknown) => (typeof x === 'number' && Number.isFinite(x) && x >= 0 && x <= 1000 ? Math.round(x * 10) / 10 : null);
     const toegevoegd = await voegToe({ ...v, allergenen, kcal: getal(v.kcal), eiwit: getal(v.eiwit), vezels: getal(v.vezels) }, code);
-    if (!toegevoegd) {
-      resultaten.push({ naam, status: 'limiet' });
+    // WEEK-258: een fout in de databank is tijdelijk ("druk"), geen limiet van de gebruiker.
+    if (toegevoegd === 'limiet' || toegevoegd === 'fout') {
+      resultaten.push({ naam, status: toegevoegd === 'limiet' ? 'limiet' : 'druk' });
       continue;
     }
     const info: Info = [v.categorie as string, v.eenheid as string, [v.nl as string, v.fr as string, v.de as string, v.en as string].map((x) => x.trim()) as Info[2]];

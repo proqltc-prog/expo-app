@@ -61,3 +61,8 @@ export function leesFotoRecept(x: unknown): RuwRecept | undefined {
     ...(taal ? { taal } : {}),
   };
 }
+
+/** WEEK-258: fouten waarbij het lezen van foto's tijdelijk niet beschikbaar is (de AI of de dienst); dan alternatieven tonen. */
+export function fotoTijdelijkOnbereikbaar(fout: FotoFout | 'geenToestemming' | undefined): boolean {
+  return fout === 'druk' || fout === 'niet_bereikbaar' || fout === 'niet_ingesteld';
+}

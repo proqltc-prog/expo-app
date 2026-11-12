@@ -36,11 +36,11 @@ import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
 import { NakijkRegel, omrekenen, ontleedRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
 import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
-import type { FotoFout } from '@/lib/receptFoto';
+import { fotoTijdelijkOnbereikbaar, type FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
 import { koppelOnbekend } from '@/opslag/ingredientKoppel';
-import { koppelingenUit, type KoppelResultaat } from '@/lib/ingredientKoppel';
+import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } from '@/lib/ingredientKoppel';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
@@ -60,7 +60,16 @@ type Rij = EigenIngredient;
 type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string; nakijk?: number };
 
 /** Wat er na het inlezen via een link (WEEK-247) of een foto (WEEK-251) getoond wordt. */
-type LinkMelding = { bron: 'link' | 'foto'; aantal: number; personen: number; vanSite: boolean; teLang?: number; nieuw?: number };
+type LinkMelding = {
+  bron: 'link' | 'foto';
+  aantal: number;
+  personen: number;
+  vanSite: boolean;
+  teLang?: number;
+  nieuw?: number;
+  /** WEEK-258: onbekende ingrediënten konden niet opgezocht worden (AI tijdelijk onbereikbaar). */
+  opzoekenTijdelijk?: boolean;
+};
 
 /** WEEK-254: waarom opzoeken of toevoegen van een ingrediënt niet lukte. */
 type NieuwFout = 'geen' | 'druk' | 'limiet' | 'niet_bereikbaar' | 'geen_verbinding';
@@ -234,12 +243,14 @@ export default function EigenReceptScherm() {
     let ingelezen = verwerkRecept(recept, taal);
     // WEEK-254: wat de app niet kent, wordt meteen opgezocht: een bestaand ingrediënt of een nieuw (automatisch toegevoegd).
     let nieuw = 0;
+    let opzoekenTijdelijk = false;
     const onbekend = ingelezen.nakijken.filter((n) => n.reden === 'onbekend');
     if (onbekend.length) {
       const r = await koppelOnbekend(
         onbekend.map((n) => n.naam),
         onbekend[0].taal
       );
+      opzoekenTijdelijk = opzoekenTijdelijkOnbereikbaar(r);
       if (r.ok && r.resultaten.some((x) => x.code)) {
         ingelezen = verwerkRecept(recept, taal, koppelingenUit(r.resultaten));
         nieuw = r.resultaten.filter((x) => x.status === 'nieuw').length;
@@ -252,7 +263,7 @@ export default function EigenReceptScherm() {
     if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
     setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
     setNakijken(ingelezen.nakijken);
-    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(nieuw ? { nieuw } : {}) });
+    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(nieuw ? { nieuw } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk } : {}) });
   };
 
   /** WEEK-251: een foto nemen of kiezen en laten lezen; één vraag per foto. */
@@ -444,7 +455,37 @@ export default function EigenReceptScherm() {
       {!bestaand && fotoOpen && (
         <View style={s.linkVak}>
           <Text style={s.linkUitleg}>{t('recept.foto.uitleg')}</Text>
-          {fotoFout && <Text style={s.fout}>{t(fotoFout === 'geenToestemming' ? 'recept.foto.geenToestemming' : (`recept.foto.fout.${fotoFout}` as Sleutel))}</Text>}
+          {/* WEEK-258: de AI is tijdelijk onbereikbaar: duidelijk zeggen en de andere werkwijzen aanbieden. */}
+          {fotoTijdelijkOnbereikbaar(fotoFout) ? (
+            <View style={s.tijdelijkVak}>
+              <Text style={s.fout}>{t('recept.foto.tijdelijk')}</Text>
+              <View style={s.rijChips}>
+                <Pressable
+                  style={s.chip}
+                  onPress={() => {
+                    setFotoOpen(false);
+                    setFotoFout(undefined);
+                    setLinkOpen(true);
+                  }}
+                  accessibilityRole="button"
+                >
+                  <Text style={s.chipTekst}>{t('recept.foto.viaLink')}</Text>
+                </Pressable>
+                <Pressable
+                  style={s.chip}
+                  onPress={() => {
+                    setFotoOpen(false);
+                    setFotoFout(undefined);
+                  }}
+                  accessibilityRole="button"
+                >
+                  <Text style={s.chipTekst}>{t('recept.foto.zelf')}</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            fotoFout && <Text style={s.fout}>{t(fotoFout === 'geenToestemming' ? 'recept.foto.geenToestemming' : (`recept.foto.fout.${fotoFout}` as Sleutel))}</Text>
+          )}
           {fotoBezig ? (
             <View style={s.fotoBezig} accessibilityLiveRegion="polite">
               <ActivityIndicator color={KLEUR} />
@@ -506,6 +547,7 @@ export default function EigenReceptScherm() {
           <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
           {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
           {linkMelding.nieuw !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.nieuw', { n: linkMelding.nieuw })}</Text>}
+          {linkMelding.opzoekenTijdelijk && <Text style={s.uitlegTekst}>{t('recept.link.opzoekenTijdelijk')}</Text>}
         </View>
       )}
       <Text style={s.label}>{t('recept.naam')}</Text>
@@ -736,6 +778,7 @@ const s = StyleSheet.create({
   linkKnopTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
   fotoBezig: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
   fotoAnnuleer: { alignSelf: 'center', paddingVertical: 6 },
+  tijdelijkVak: { gap: 8, marginTop: 4 },
   linkVak: { borderWidth: 1, borderColor: '#cfe3d6', borderRadius: 14, padding: 12, gap: 8, backgroundColor: '#fff' },
   linkUitleg: { color: '#333', fontSize: 14, lineHeight: 20 },
   nakijkVak: { borderWidth: 1, borderColor: '#f0d9a8', backgroundColor: '#fff9ec', borderRadius: 14, padding: 12, gap: 8 },

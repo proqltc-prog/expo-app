@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.135.0] – 2026-11-12
+
+- Allergenen aangevuld: elk ingrediënt nagekeken tegen de 14 EU-allergenen (streng bij kant-en-klare producten, pinda apart van noten); 167 ingrediënten hebben nu allergenen (was 71). (WEEK-257)
+- Is de AI (Gemini) tijdelijk onbereikbaar, dan zegt de app dat duidelijk in alle talen en biedt ze alternatieven aan: bij een foto "Via een link inlezen" of "Zelf invullen", bij een nieuw ingrediënt een gelijkaardig ingrediënt kiezen, na het inlezen "Opnieuw opzoeken", "Zelf zoeken" of "Overslaan". Opgelost: automatisch een nieuw ingrediënt toevoegen faalde altijd door een fout in de databankfunctie. (WEEK-258)
+
+**Jira:** [WEEK-257](https://proqltc-1791495894841.atlassian.net/browse/WEEK-257), [WEEK-258](https://proqltc-1791495894841.atlassian.net/browse/WEEK-258) · **Confluence:** [WEEK-257](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24969217), [WEEK-258](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25001985)
+
 ## [0.134.1] – 2026-11-12
 
 - Opgelost: met Vermijden "Vis" kwamen toch visgerechten met witvis in het weekmenu. Nu wordt elk visgerecht vermeden, ook als geen ingrediëntnaam met "vis" begint. De melding "Opzoeken lukt nu even niet" verdwijnt bij een nieuwe zoekterm. (WEEK-256)

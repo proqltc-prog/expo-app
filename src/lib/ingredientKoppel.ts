@@ -51,3 +51,15 @@ export function koppelingenUit(resultaten: readonly KoppelResultaat[]): Record<s
 export function infoUit(resultaten: readonly KoppelResultaat[]): Record<string, IngredientInfo> {
   return Object.fromEntries(resultaten.filter((r) => r.code && r.info).map((r) => [r.code as string, r.info as IngredientInfo]));
 }
+
+/**
+ * WEEK-258: kon het opzoeken niet gebeuren omdat de AI (Gemini) of de functie tijdelijk onbereikbaar was?
+ * Dan krijgt de gebruiker een duidelijke melding met de andere mogelijkheden. Een daglimiet of "geen ingrediënt" is
+ * geen onbereikbaarheid.
+ */
+export function opzoekenTijdelijkOnbereikbaar(
+  r: { ok: true; resultaten: readonly KoppelResultaat[] } | { ok: false; fout: KoppelFout }
+): boolean {
+  if (!r.ok) return r.fout !== 'limiet';
+  return r.resultaten.some((x) => x.status === 'druk');
+}

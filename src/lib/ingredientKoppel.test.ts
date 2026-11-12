@@ -2,7 +2,7 @@
 import { afterEach, describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ingredientNaam, isIngredient, voegIngredientenToe, zetIngredientenUitDatabank } from '@/data/ingredienten';
-import { infoUit, koppelingenUit, leesKoppelAntwoord } from './ingredientKoppel';
+import { infoUit, koppelingenUit, leesKoppelAntwoord, opzoekenTijdelijkOnbereikbaar } from './ingredientKoppel';
 import { verwerkRecept } from './receptLink';
 
 const YUZU_INFO = ['fruit', 'stuk', ['yuzu', 'yuzu', 'Yuzu', 'yuzu']];
@@ -87,5 +87,20 @@ describe('WEEK-254: verwerkRecept met koppelingen van de functie', () => {
   test('een koppeling naar een code die de app niet kent, wordt genegeerd', () => {
     const r = verwerkRecept(recept, 'nl', { yuzu: 'bestaat_niet' });
     assert.ok(r.nakijken.some((n) => n.tekst === '2 yuzu' && n.reden === 'onbekend'));
+  });
+});
+
+describe('WEEK-258: AI tijdelijk onbereikbaar', () => {
+  test('druk, niet bereikbaar of geen verbinding: tijdelijk onbereikbaar (melding met alternatieven)', () => {
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: true, resultaten: [{ naam: 'yuzu', status: 'druk' }] }), true);
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: false, fout: 'niet_bereikbaar' }), true);
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: false, fout: 'niet_ingesteld' }), true);
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: false, fout: 'geen_verbinding' }), true);
+  });
+  test('gelukt, geen ingrediënt of daglimiet: geen onbereikbaarheid', () => {
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: true, resultaten: [{ naam: 'yuzu', status: 'nieuw', code: 'yuzu' }] }), false);
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: true, resultaten: [{ naam: 'liefde', status: 'geen' }] }), false);
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: false, fout: 'limiet' }), false);
+    assert.equal(opzoekenTijdelijkOnbereikbaar({ ok: true, resultaten: [] }), false);
   });
 });
