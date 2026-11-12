@@ -14,6 +14,7 @@ import {
   startSoorten,
   voegPlanReceptToe,
   vervangDoorPlanRecept,
+  verwijderDag,
   wisselSoort,
 } from '@/lib/planner/kies';
 import { zelfdeDag } from '@/lib/planner/bijwerken';
@@ -21,6 +22,7 @@ import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadProfiel } from '@/opslag/profiel';
 import { laadKeuzes, laadPlan, wijzigPlan } from '@/opslag/plan';
+import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
 import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
@@ -119,6 +121,20 @@ export default function Kies() {
     }));
   }, [tab, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, soorten, zoek, taal]);
 
+  // WEEK-272: geen gerecht op deze dag. Ingrediënten op de boodschappenlijst gaan weg; wat al in huis is, blijft.
+  const geenGerecht = async () => {
+    if (bezig || geenRecht || index === undefined) return;
+    setBezig(true);
+    try {
+      const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
+      const bewaard = await wijzigPlan((huidig) => verwijderDag(huidig, index, verwacht));
+      if (bewaard) await zetLijstBijPlan(bewaard, taal);
+      router.navigate('/');
+    } finally {
+      setBezig(false);
+    }
+  };
+
   const kies = async (keuze: Keuze) => {
     if (bezig || geenRecht) return;
     setBezig(true);
@@ -126,7 +142,9 @@ export default function Kies() {
       if (index !== undefined) {
         // Bestaande dag vervangen; enkel als die dag nog hetzelfde is als toen het scherm opende.
         const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
-        await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorPlanRecept(huidig, index, keuze.recept) : huidig));
+        const bewaard = await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorPlanRecept(huidig, index, keuze.recept) : huidig));
+        // WEEK-272: was het vorige gerecht bevestigd, dan gaan zijn ingrediënten van de boodschappenlijst.
+        if (bewaard) await zetLijstBijPlan(bewaard, taal);
         router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
         return;
       }
@@ -167,6 +185,11 @@ export default function Kies() {
     <View style={s.scherm}>
       {popup}
       <Text style={s.moment}>{t(`moment.${moment}`)}</Text>
+      {index !== undefined && (
+        <Pressable style={s.geenGerecht} onPress={geenGerecht} disabled={bezig} accessibilityRole="button">
+          <Text style={s.geenGerechtTekst}>{t('kies.geenGerecht')}</Text>
+        </Pressable>
+      )}
       <View style={s.tabs} accessibilityRole="tablist">
         {(['ontdek', 'gezin'] as const).map((k) => {
           const actief = tab === k;
@@ -247,6 +270,8 @@ const s = StyleSheet.create({
   scherm: { flex: 1, padding: 16, gap: 12 },
   moment: { fontSize: 13, color: '#777', fontWeight: '600' },
   melding: { fontSize: 15, lineHeight: 22, color: '#333', backgroundColor: '#fff8e1', padding: 14, borderRadius: 12 },
+  geenGerecht: { borderWidth: 1.5, borderColor: '#B4472B', borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  geenGerechtTekst: { color: '#B4472B', fontWeight: '700', fontSize: 15 },
   tabs: { flexDirection: 'row', gap: 8 },
   tab: { flex: 1, paddingVertical: 10, minHeight: 44, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   tabActief: { backgroundColor: KLEUR },

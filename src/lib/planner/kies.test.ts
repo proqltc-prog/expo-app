@@ -129,10 +129,16 @@ describe('vervangDoorPlanRecept', () => {
     assert.equal(nieuw.dagen[0].recept.id, avond2.recept.id);
   });
 
-  test('voortgang (gekookt) van het oude recept gaat weg', () => {
+  test('WEEK-272: een gekookt gerecht blijft vast en wordt niet vervangen', () => {
     const p = plan([{ ...dag('maandag', avond), gedaan: true }]);
+    assert.equal(vervangDoorPlanRecept(p, 0, avond2.recept), p);
+  });
+
+  test('WEEK-272: een bevestigd, niet-gekookt gerecht vervangen wist de bevestiging', () => {
+    const p = plan([{ ...dag('maandag', avond), bevestigd: true }]);
     const nieuw = vervangDoorPlanRecept(p, 0, avond2.recept);
-    assert.equal(nieuw.dagen[0].gedaan, undefined);
+    assert.equal(nieuw.dagen[0].recept.naam, avond2.recept.naam);
+    assert.equal(nieuw.dagen[0].bevestigd, undefined);
   });
 
   test('een avondrecept blijft zonder moment-veld (regressie)', () => {
@@ -231,5 +237,24 @@ describe('zonderReceptVanLijst', () => {
     const res = zonderReceptVanLijst(items, 'zondag', 'Pasta');
     assert.equal(res.verwijderd, 0);
     assert.deepEqual(res.over, items);
+  });
+});
+
+describe('WEEK-272: geen gerecht deze dag (verwijderDag)', () => {
+  const verwacht = (p: ReturnType<typeof plan>) => ({ gemaaktOp: p.gemaaktOp, receptNaam: p.dagen[0].recept.naam });
+  test('een bevestigd, niet-gekookt gerecht gaat van het weekmenu', () => {
+    const p = plan([{ ...dag('maandag', avond), bevestigd: true }, dag('dinsdag', avond2)]);
+    const nieuw = verwijderDag(p, 0, verwacht(p));
+    assert.equal(nieuw.dagen.length, 1);
+    assert.equal(nieuw.dagen[0].dag, 'dinsdag');
+  });
+  test('een gekookt gerecht blijft staan', () => {
+    const p = plan([{ ...dag('maandag', avond), bevestigd: true, gedaan: true }]);
+    assert.equal(verwijderDag(p, 0, verwacht(p)), p);
+  });
+  test('een ander weekmenu of een ander gerecht ondertussen: niets gebeurt', () => {
+    const p = plan([dag('maandag', avond)]);
+    assert.equal(verwijderDag(p, 0, { gemaaktOp: 'ander', receptNaam: p.dagen[0].recept.naam }), p);
+    assert.equal(verwijderDag(p, 0, { gemaaktOp: p.gemaaktOp, receptNaam: 'ander' }), p);
   });
 });

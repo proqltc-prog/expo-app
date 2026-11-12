@@ -25,6 +25,7 @@ import { bereikDatums, dagenTussen, kortDatum, vandaagIso } from '@/lib/planner/
 import { Kalender } from '@/ui/kalender';
 import { aantalPersonen, heeftGezin, isProfielIngesteld, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
+import { zetLijstBijPlan as zetLijstBijPlanOpslag } from '@/opslag/lijstBijPlan';
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
@@ -36,7 +37,7 @@ import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorM
 import { vermijdOpties as vermijdKeuzesVoor, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { KOOKTIJD_BEREIK, KooktijdCode } from '@/lib/kooktijd';
-import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, blokkadeNieuwPlan, openBevestigdeDagen, planZonderHoeveelheden, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, magZelfKiezen, blokkadeNieuwPlan, openBevestigdeDagen, planZonderHoeveelheden, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -329,12 +330,7 @@ export default function Weekplanning() {
   };
 
   // WEEK-134: de lijst bevat enkel de ingrediënten van bevestigde recepten die nog niet gekookt zijn.
-  const zetLijstBijPlan = async (p: Weekplan) => {
-    const frigo = await laadFrigo();
-    await wijzigLijst((bestaand) =>
-      voegPlanToe(bestaand, openBevestigdeDagen(p), taal, (items) => trekFrigoAf(items, frigo), planSleutel(p))
-    );
-  };
+  const zetLijstBijPlan = (p: Weekplan) => zetLijstBijPlanOpslag(p, taal);
 
   // Gekookt (WEEK-19): de ingrediënten gaan uit de frigo; nog eens tikken zet alles terug.
   // Plan en frigo samen in één stap op de nieuwste versie; de knop is uitgeschakeld tot het klaar is (WEEK-28).
@@ -359,7 +355,7 @@ export default function Weekplanning() {
   // Zelf kiezen (WEEK-44): een ander gerecht uit de databank of de eigen recepten voor deze dag.
   const kiesZelf = (index: number) => {
     const dag = plan?.dagen[index];
-    if (!plan || !dag || !mag || !magDagWijzigen(dag)) return;
+    if (!plan || !dag || !mag || !magZelfKiezen(dag)) return;
     router.push(
       `/kies?moment=${dag.moment ?? 'avond'}&index=${index}&gemaaktOp=${encodeURIComponent(plan.gemaaktOp)}&naam=${encodeURIComponent(dag.recept.naam)}`
     );
@@ -584,12 +580,15 @@ export default function Weekplanning() {
                               bezig={bezigDag === index}
                               onPress={() => (mag ? herdoeDag(index) : toonBeheer(index))}
                             />
-                            <ActieIcoon
-                              naam="create-outline"
-                              label={t('planning.zelfKiezen')}
-                              onPress={() => (mag ? kiesZelf(index) : toonBeheer(index))}
-                            />
                           </>
+                        )}
+                        {/* WEEK-272: zelf kiezen (of geen gerecht deze dag) ook na bevestigen, zolang het niet gekookt is. */}
+                        {magZelfKiezen(kaarten.dagen[index]) && (
+                          <ActieIcoon
+                            naam="create-outline"
+                            label={t('planning.zelfKiezen')}
+                            onPress={() => (mag ? kiesZelf(index) : toonBeheer(index))}
+                          />
                         )}
                         {heeftBereiding && (
                           <ActieIcoon

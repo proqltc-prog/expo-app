@@ -180,11 +180,11 @@ describe('planrecepten op het weekmenu', () => {
   });
 
   test('een planrecept vervangen houdt dag en moment en wist de voortgang', () => {
-    const p = plan([{ dag: 'woensdag', moment: 'avond', recept: r1, gedaan: true }]);
+    const p = plan([{ dag: 'woensdag', moment: 'avond', recept: r1, bevestigd: true }]);
     const nieuw = vervangDoorPlanRecept(p, 0, r2);
     assert.equal(nieuw.dagen[0].dag, 'woensdag');
     assert.equal(nieuw.dagen[0].recept.id, 'y');
-    assert.equal(nieuw.dagen[0].gedaan, undefined);
+    assert.equal(nieuw.dagen[0].bevestigd, undefined);
   });
 
   test('WEEK-204: een planrecept vervangen houdt de datum van de dag', () => {

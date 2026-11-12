@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.142.0] – 2026-11-12
+
+- "Geen gerecht deze dag" bovenaan in Zelf kiezen: haalt een gerecht van het weekmenu, ook als het al bevestigd is (niet als het gekookt is). Wat nog op de boodschappenlijst staat, gaat eraf; wat al in huis is, blijft. (WEEK-272)
+- Bevat ook 0.135.1 tot en met 0.141.1 (WEEK-259 tot WEEK-271).
+
+**Jira:** [WEEK-272](https://proqltc-1791495894841.atlassian.net/browse/WEEK-272) · **Confluence:** [WEEK-272](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25264129)
+
 ## [0.141.1] – 2026-11-12
 
 - Weekmenu: meldingen (geen verbinding, niet genoeg gerechten, alle gerechten gezien, weekmenu van een ander gezinslid) staan op de pagina in plaats van in een venster dat op het web niet verscheen. Korte teksten; bij "alle gerechten gezien" de knop "Zelf kiezen". (WEEK-271)

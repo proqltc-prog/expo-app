@@ -14,6 +14,14 @@ export function magDagWijzigen(dag: PlanDag): boolean {
   return !dag.bevestigd && !dag.gedaan;
 }
 
+/**
+ * WEEK-272: zelf een ander gerecht kiezen of het gerecht weghalen ("Geen gerecht deze dag") mag zolang het niet gekookt is,
+ * ook na bevestigen. Gekookt blijft vast.
+ */
+export function magZelfKiezen(dag: PlanDag | undefined): boolean {
+  return !!dag && !dag.gedaan;
+}
+
 /** De dagen die bevestigd zijn: enkel die horen op de boodschappenlijst. */
 export function bevestigdeDagen(plan: Weekplan): PlanDag[] {
   return plan.dagen.filter((d) => d.bevestigd);

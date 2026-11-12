@@ -104,7 +104,8 @@ export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
 /** Zet een ander recept op dezelfde plek: dag, moment en datum blijven, de voortgang (gekookt, frigo) gaat weg. */
 export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: PlanRecept): Weekplan {
   const huidig = plan.dagen[index];
-  if (!huidig) return plan;
+  // WEEK-272: een gekookt gerecht blijft vast.
+  if (!huidig || huidig.gedaan) return plan;
   const nieuw: PlanDag = {
     dag: huidig.dag,
     ...(huidig.moment ? { moment: huidig.moment } : {}),
