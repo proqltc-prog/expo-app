@@ -22,6 +22,7 @@ import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadProfiel } from '@/opslag/profiel';
 import { laadKeuzes, laadPlan, wijzigPlan } from '@/opslag/plan';
 import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
+import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
@@ -135,6 +136,8 @@ export default function Kies() {
   };
 
   // Zelf kiezen vervangt altijd het gerecht van één dag (WEEK-273: "gerecht toevoegen" bestaat niet meer).
+  const magBeheren = useMagGerechtenBeheren();
+
   const kies = async (keuze: Keuze) => {
     if (bezig || geenRecht || index === undefined) return;
     setBezig(true);
@@ -187,9 +190,9 @@ export default function Kies() {
       {tab === 'gezin' && (
         // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
         <View style={s.gezinActies}>
-          <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
+          {magBeheren && <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
-          </Pressable>
+          </Pressable>}
           <Pressable style={s.beheer} onPress={() => router.push({ pathname: '/mijn-recepten', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
           </Pressable>

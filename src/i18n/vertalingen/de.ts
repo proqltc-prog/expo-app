@@ -150,6 +150,7 @@ export const de: Vertalingen = {
   'scan.productWeigeren': 'Ablehnen (weitersuchen)',
   'recept.titelNieuw': 'Neues Gericht',
   'recept.titelBewerk': 'Gericht bearbeiten',
+  'recept.alleenBeheerder': 'Nur die verwaltende Person des Familienraums kann Gerichte ändern. Du kannst sie ansehen.',
   'recept.naam': 'Name',
   'recept.minuten': 'Minuten',
   'recept.kooktijd': 'Kochzeit',

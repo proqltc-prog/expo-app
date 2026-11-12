@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.143.0] – 2026-11-12
+
+- Gezinsruimte hersteld: de databank weigerde eigen gerechten en daardoor werden ook de boodschappenlijst, In huis en het weekmenu niet meer gedeeld. Eigen gerechten zijn nu toegelaten en elke soort wordt apart doorgestuurd. (WEEK-275)
+- Enkel de beheerder van de gezinsruimte beheert de eigen gerechten (maken, bewerken, verwijderen, inlezen); de andere leden kunnen ze bekijken. Ook de databank dwingt dit af. (WEEK-276)
+- Bevat ook 0.135.1 tot en met 0.142.2 (WEEK-259 tot WEEK-274).
+
+**Jira:** [WEEK-275](https://proqltc-1791495894841.atlassian.net/browse/WEEK-275), [WEEK-276](https://proqltc-1791495894841.atlassian.net/browse/WEEK-276) · **Confluence:** [WEEK-275 / WEEK-276](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133101)
+
 ## [0.142.2] – 2026-11-12
 
 - Scanner zonder vensters (die op de website niet verschenen): "afgevinkt" en "van je lijst gehaald" zijn weg (je ziet het op de lijst); "staat bij In huis" staat kort bovenaan de scanner. Op de website na 10 scans geen filmpjesknop maar "Morgen kan je weer 10 keer scannen." De app blijft ongewijzigd. (WEEK-274)

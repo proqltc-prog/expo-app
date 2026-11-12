@@ -40,6 +40,7 @@ import { fotoTijdelijkOnbereikbaar, type FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
 import { TerugKnop } from '@/ui/terugKnop';
+import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { koppelOnbekend } from '@/opslag/ingredientKoppel';
 import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } from '@/lib/ingredientKoppel';
 
@@ -447,17 +448,22 @@ export default function EigenReceptScherm() {
 
   // WEEK-246: een getoonde melding verdwijnt zodra het probleem opgelost is.
   const getoond = nogGeldigeFouten(fouten, { naam, soort, minuten, stijlen, seizoenen, ingredienten: rijen, stappen });
+  // WEEK-276: enkel de beheerder beheert de gerechten; de andere leden kunnen ze enkel lezen.
+  const magBeheren = useMagGerechtenBeheren();
+
   const fout = (f: Fout) => (getoond.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
 
   return (
     <ScrollView contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
+      {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
+      <View style={s.formulier} pointerEvents={magBeheren ? 'auto' : 'none'}>
       {/* WEEK-245: de hoeveelheden zijn voor één volwassene; de app rekent om voor het gezin. */}
       <View style={s.uitleg}>
         <Text style={s.uitlegTekst}>{t('recept.uitlegVolwassene')}</Text>
       </View>
 
       {/* WEEK-247/251/260: een recept inlezen via de link van een receptensite of via een foto: één kaart, twee tegels. */}
-      {!bestaand && !linkOpen && !fotoOpen && (
+      {magBeheren && !bestaand && !linkOpen && !fotoOpen && (
         <View style={s.inlezenKaart}>
           <Text style={s.inlezenTitel}>{t('recept.inlezen.titel')}</Text>
           <Text style={s.inlezenSub}>{t('recept.inlezen.sub')}</Text>
@@ -747,7 +753,9 @@ export default function EigenReceptScherm() {
         </Pressable>
       )}
       {fout('stappen')}
+      </View>
 
+      {magBeheren && (
       <View style={s.knoppen}>
         <Pressable style={s.annuleer} onPress={terug} disabled={bezig} accessibilityRole="button">
           <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
@@ -756,12 +764,13 @@ export default function EigenReceptScherm() {
           <Text style={s.bewaarTekst}>{t('recept.bewaar')}</Text>
         </Pressable>
       </View>
-      {bestaand && !bevestigVerwijder && (
+      )}
+      {magBeheren && bestaand && !bevestigVerwijder && (
         <Pressable style={s.verwijderKnop} onPress={() => setBevestigVerwijder(true)} accessibilityRole="button">
           <Text style={s.verwijderTekst}>{t('recept.verwijder')}</Text>
         </Pressable>
       )}
-      {bestaand && bevestigVerwijder && (
+      {magBeheren && bestaand && bevestigVerwijder && (
         <View style={s.bevestig}>
           <Text style={s.bevestigTekst}>{t('recept.verwijderVraag')}</Text>
           <View style={s.knoppen}>
@@ -793,6 +802,9 @@ function Chip({ tekst, actief, onPress }: { tekst: string; actief: boolean; onPr
 }
 
 const s = StyleSheet.create({
+  // WEEK-276
+  formulier: { gap: 14 },
+  alleenLezen: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   // WEEK-203: dezelfde maten als Kies en Mijn recepten: zijmarge 16, velden en knoppen met hoekstraal 12, chips zoals in het weekmenu.
   scherm: { padding: 16, gap: 8, paddingBottom: 48 },
   label: { fontSize: 14, fontWeight: '700', color: '#333', marginTop: 10 },

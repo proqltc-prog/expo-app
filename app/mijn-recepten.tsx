@@ -7,6 +7,7 @@ import { EigenRecept, SOORTEN } from '@/lib/eigenrecepten';
 import { kiesbareEigenRecepten, KiesFilter } from '@/lib/planner/kies';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { useTaal } from '@/ui/taal';
+import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { Soort } from '@/data/recept';
 
 // Mijn recepten (WEEK-192): het overzicht van de recepten van het gezin, met zoeken en een filter op soort.
@@ -36,11 +37,18 @@ export default function MijnRecepten() {
     return kiesbareEigenRecepten(lijst, f).filter((r) => !soort || r.soort === soort);
   }, [lijst, zoek, soort, taal]);
 
+  // WEEK-276: enkel de beheerder maakt nieuwe gerechten; de andere leden kunnen ze openen om te bekijken.
+  const magBeheren = useMagGerechtenBeheren();
+
   return (
     <View style={s.scherm}>
-      <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: hier } })} accessibilityRole="button">
-        <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
-      </Pressable>
+      {magBeheren ? (
+        <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: hier } })} accessibilityRole="button">
+          <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
+        </Pressable>
+      ) : (
+        <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>
+      )}
       <TextInput
         style={s.zoek}
         value={zoek}
@@ -91,6 +99,7 @@ export default function MijnRecepten() {
 }
 
 const s = StyleSheet.create({
+  alleenLezen: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   scherm: { flex: 1, padding: 16, gap: 12 },
   nieuw: { backgroundColor: ACCENT, borderRadius: 12, padding: 12, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },

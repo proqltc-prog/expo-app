@@ -150,6 +150,7 @@ export const en: Vertalingen = {
   'scan.productWeigeren': 'Decline (keep searching)',
   'recept.titelNieuw': 'New dish',
   'recept.titelBewerk': 'Edit dish',
+  'recept.alleenBeheerder': 'Only the manager of the family space can change dishes. You can still view them.',
   'recept.naam': 'Name',
   'recept.minuten': 'Minutes',
   'recept.kooktijd': 'Cooking time',

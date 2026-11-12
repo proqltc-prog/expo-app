@@ -151,6 +151,7 @@ export const nl = {
   'scan.productWeigeren': 'Weigeren (zoek verder)',
   'recept.titelNieuw': 'Nieuw gerecht',
   'recept.titelBewerk': 'Gerecht bewerken',
+  'recept.alleenBeheerder': 'Enkel de beheerder van de gezinsruimte kan gerechten wijzigen. Je kan ze wel bekijken.',
   'recept.naam': 'Naam',
   'recept.minuten': 'Minuten',
   'recept.kooktijd': 'Kooktijd',

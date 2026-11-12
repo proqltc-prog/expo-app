@@ -150,6 +150,7 @@ export const fr: Vertalingen = {
   'scan.productWeigeren': 'Refuser (chercher ailleurs)',
   'recept.titelNieuw': 'Nouveau plat',
   'recept.titelBewerk': 'Modifier le plat',
+  'recept.alleenBeheerder': 'Seul le gestionnaire de l’espace familial peut modifier les plats. Vous pouvez les consulter.',
   'recept.naam': 'Nom',
   'recept.minuten': 'Minutes',
   'recept.kooktijd': 'Temps de cuisson',
