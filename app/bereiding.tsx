@@ -105,7 +105,7 @@ export default function Bereiding() {
                 ) : ing.dekking === 'deels' ? (
                   <Text style={s.ingDeels}>{t('bereiding.deelsInFrigo')}</Text>
                 ) : null}
-                <Text style={s.ingHoeveelheid}>{hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
+                <Text style={s.ingHoeveelheid}>{ing.keuken ? hoeveelheidTekst(taal, ing.keuken.hoeveelheid, ing.keuken.eenheid) : hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
               </View>
             ))}
           </View>

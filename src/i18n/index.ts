@@ -103,11 +103,16 @@ export function dagSleutel(dag: string): Sleutel {
  * Leesbare hoeveelheid: "330 g", "1,5 l"-stijl getallen volgens de taal, "2 ×" voor stuks,
  * "1 teentje" / "2 teentjes". Onbekende eenheden (bv. van de AI) worden letterlijk getoond.
  */
+/** WEEK-270: keukeneenheden met een eigen naam per taal (de metrische g, kg, ml, cl, dl, l blijven zoals ze zijn). */
+const KEUKEN_SLEUTEL: ReadonlySet<string> = new Set(['el', 'kl', 'snuifje', 'scheutje', 'zakje', 'blaadje', 'takje', 'bosje']);
+
 export function hoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, eenheid: string | undefined): string {
   if (hoeveelheid === undefined || hoeveelheid <= 0) return '';
   const n = getal(taal, hoeveelheid, 2);
   if (!eenheid || eenheid === 'stuk') return `${n} ×`;
   if (eenheid === 'teentje') return vulIn(vertaal(taal, hoeveelheid === 1 ? 'eenheid.teentje_1' : 'eenheid.teentje_n'), { n });
+  // WEEK-270: keukeneenheden (el, kl, zakje, …) in de taal van de app.
+  if (KEUKEN_SLEUTEL.has(eenheid)) return `${n} ${vertaal(taal, `eenheid.${eenheid}` as Sleutel)}`;
   return `${n} ${eenheid}`;
 }
 
@@ -118,6 +123,7 @@ export function hoeveelheidTekst(taal: Taal, hoeveelheid: number | undefined, ee
 export function eenheidNaam(taal: Taal, eenheid: string): string {
   if (eenheid === 'stuk') return vertaal(taal, 'frigo.stuks');
   if (eenheid === 'teentje') return vertaal(taal, 'recept.eenheid.teentje');
+  if (KEUKEN_SLEUTEL.has(eenheid)) return vertaal(taal, `eenheid.${eenheid}` as Sleutel);
   return eenheid;
 }
 

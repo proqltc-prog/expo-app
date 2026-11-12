@@ -37,6 +37,10 @@ export function normaliseerIngredient(ruw: unknown): PlanIngredient | null {
   if (tekst(ruw.code)) ingredient.code = naarDbCode(tekst(ruw.code)); // WEEK-205: oude catalogus-codes worden databankcodes
   const namen = normaliseerVertalingen(ruw.namen);
   if (namen) ingredient.namen = namen;
+  // WEEK-270: de keukenmaat blijft enkel als ze geldig is.
+  if (isObject(ruw.keuken) && tekst(ruw.keuken.eenheid) && typeof ruw.keuken.hoeveelheid === 'number' && Number.isFinite(ruw.keuken.hoeveelheid) && ruw.keuken.hoeveelheid >= 0) {
+    ingredient.keuken = { eenheid: tekst(ruw.keuken.eenheid), hoeveelheid: ruw.keuken.hoeveelheid };
+  }
   return ingredient;
 }
 

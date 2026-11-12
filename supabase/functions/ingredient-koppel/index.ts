@@ -42,7 +42,7 @@ Geef voor elke naam één resultaat, in dezelfde volgorde:
   een gewone variant, bv. "sojabonen" voor "edamame" als het hetzelfde product is). Zet dan code = de bestaande code.
 - oordeel "nieuw" als het een echt ander, gewoon te koop zijnd voedingsmiddel is. Stel dan voor:
   code (kleine letters, underscores, Nederlandstalig, bv. "yuzu" of "verse_koriander"), categorie (${CATEGORIEEN.join(', ')}),
-  eenheid (g voor vaste producten, ml voor vloeistoffen, stuk voor producten die je per stuk koopt zoals fruit, teentje enkel voor knoflook),
+  eenheid (stuk voor alles wat je telt of per stuk of portie koopt: fruit, eieren, broodjes, wraps, en vis- of vleesporties zoals filets, haasjes, burgers en worsten; g enkel voor wat je afweegt; ml voor vloeistoffen; teentje enkel voor knoflook),
   soort (vlees, vis, vegetarisch), allergenen (enkel uit: ${ALLERGENEN.join(', ')}; leeg als er geen zijn),
   kcal, eiwit en vezels per 100 g (schatting), en de naam in het Nederlands (Vlaams), Frans, Duits en Engels (enkelvoud, kleine letters behalve Duitse zelfstandige naamwoorden).
 - oordeel "geen" als het geen ingrediënt is (bv. "naar smaak", "liefde", een keukengerei of een zin).`;

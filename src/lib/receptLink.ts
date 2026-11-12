@@ -5,6 +5,7 @@
 //  - elke ingrediëntregel wordt ontleed (hoeveelheid, eenheid, naam) en gekoppeld aan de ingrediëntenlijst van de app.
 //    Een dubbel of synoniem (meervoud, "rijpe", "verse", andere taal) gebruikt altijd het bestaande ingrediënt: geen dubbels;
 //  - hoeveelheden worden omgerekend naar de eenheid van de app en naar één volwassene.
+import { keukenMaatUitBron, telKeukenMaatOp } from '@/lib/eenheden';
 import { eenheidVan, gewichtPerStuk, ingredientenLijstVersie, ingredientInfo, ingredientNaam, INGREDIENT_CODES, IngredientCode, isIngredient as isIngredientCode, isVoorraad } from '@/data/ingredienten';
 import type { Eenheid, Soort } from '@/data/recept';
 import { TALEN, Taal } from '@/i18n';
@@ -573,7 +574,13 @@ export type IngelezenRecept = {
 export function voegSamen(lijst: readonly EigenIngredient[], nieuw: EigenIngredient): EigenIngredient[] {
   const i = nieuw.code ? lijst.findIndex((x) => x.code === nieuw.code) : -1;
   if (i < 0) return [...lijst, nieuw];
-  return lijst.map((x, j) => (j === i ? { ...x, hoeveelheid: rondAf(x.hoeveelheid + nieuw.hoeveelheid, x.eenheid) } : x));
+  return lijst.map((x, j) => {
+    if (j !== i) return x;
+    // WEEK-270: zelfde keukeneenheid → samentellen; anders valt de keukenmaat weg en telt de basis.
+    const { keuken: _oud, ...rest } = x;
+    const keuken = telKeukenMaatOp(x.keuken, nieuw.keuken);
+    return { ...rest, hoeveelheid: rondAf(x.hoeveelheid + nieuw.hoeveelheid, x.eenheid), ...(keuken ? { keuken } : {}) };
+  });
 }
 
 /**
@@ -613,7 +620,9 @@ export function verwerkRecept(ruw: RuwRecept, appTaal: Taal, koppelingen: Readon
     } else if (hoeveelheid === undefined) {
       nakijken.push({ tekst, naam, taal, reden: 'hoeveelheid', code: k.code });
     } else {
-      ingredienten = voegSamen(ingredienten, { code: k.code, naam: ingredientNaam(k.code, appTaal), hoeveelheid, eenheid: doelEenheid(k.code) });
+      const eenheid = doelEenheid(k.code);
+      const keuken = keukenMaatUitBron(o.bron, o.hoeveelheid, eenheid, personen);
+      ingredienten = voegSamen(ingredienten, { code: k.code, naam: ingredientNaam(k.code, appTaal), hoeveelheid, eenheid, ...(keuken ? { keuken } : {}) });
     }
   }
   const codes = [...ingredienten.flatMap((i) => (i.code ? [i.code] : [])), ...nakijken.flatMap((n) => (n.code ? [n.code] : []))];

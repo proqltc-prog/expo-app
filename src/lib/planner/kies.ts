@@ -5,7 +5,8 @@ import type { Vermijd } from '@/data/vermijden';
 import type { Taal } from '@/i18n';
 import { afdelingVanEigen, EigenRecept } from '@/lib/eigenrecepten';
 import type { LijstItem } from '@/lib/lijst';
-import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
+import { geschaaldeHoeveelheid, Gezin, schaalFactor } from '@/lib/schaal';
+import { schaalKeukenMaat } from '@/lib/eenheden';
 import type { DbPoolRecept } from './dbplan';
 import { kooktijdVan, DagCode, KooktijdCode, PlanDag, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 import { momentVan } from './moment';
@@ -94,6 +95,8 @@ export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
       eenheid: i.eenheid,
       ...(afdelingVanEigen(i) ? { afdeling: afdelingVanEigen(i) } : {}),
       ...(i.code ? { code: i.code } : {}),
+      // WEEK-270: de gekozen keukeneenheid schaalt mee met het gezin (2 el per volwassene → 5 el voor 2,5 porties).
+      ...(i.keuken ? { keuken: schaalKeukenMaat(i.keuken, schaalFactor(gezin)) } : {}),
     })),
   };
 }

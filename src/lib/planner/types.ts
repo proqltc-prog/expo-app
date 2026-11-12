@@ -24,6 +24,8 @@ export type PlanIngredient = {
   code?: string;
   /** De naam in elke taal, vastgelegd bij het maken van het plan (WEEK-154). */
   namen?: Partial<Record<Taal, string>>;
+  /** WEEK-270: de keukeneenheid van een eigen gerecht (bv. 5 el voor het gezin), om te tonen in de bereiding. */
+  keuken?: { eenheid: string; hoeveelheid: number };
 };
 
 /** Een recept zoals het in een weekplan staat: namen al in de taal van de gebruiker, hoeveelheden voor het hele gezin. */

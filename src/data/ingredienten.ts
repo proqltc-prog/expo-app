@@ -208,6 +208,8 @@ const GEWICHT_PER_STUK: Readonly<Record<string, number>> = {
   komkommer: 300, bloemkool: 600, broccoli: 300, witlof: 150, spitskool: 1000, witte_kool: 1200, knolselderij: 500,
   koolraap: 300, pastinaak: 150, selderij: 150, citroen: 100, sjalot: 30, mango: 350, pruimen: 60, andijvie: 400,
   paksoi: 400, ananas: 1000, eieren: 60, appel: 150, banaan: 120, kiwi: 80, avocado: 170, sinaasappel: 180, limoen: 60, peer: 170,
+  // WEEK-270: porties vis en vlees, en knollen, zodat je in een gerecht ook "stuk" kunt kiezen (de lijst blijft in gram).
+  kipfilet: 150, kalkoen: 150, varkensfilet: 150, zalm: 125, kabeljauw: 125, tong: 100, schelvishaasjes: 125, aardappel: 150, zoete_aardappel: 250, lente_ui: 15,
 };
 
 /** Gemiddeld gewicht van één stuk in gram, van een (oude) code of databankcode. Undefined als het niet bekend is. */

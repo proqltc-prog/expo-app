@@ -2,10 +2,10 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { Afdeling, ingredientNaam } from '@/data/ingredienten';
+import { Afdeling, gewichtPerStuk, ingredientNaam } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
-import type { Sleutel } from '@/i18n';
+import { eenheidNaam, type Sleutel } from '@/i18n';
 import {
   afdelingVanEigen,
   bewaarEigen,
@@ -55,7 +55,13 @@ import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } f
 const KLEUR = '#2e7d4f';
 
 /** Een ingrediënt in het formulier; de hoeveelheid komt uit de popup en is altijd ingevuld. */
+import { isKeukenEenheid, KeukenEenheid, keuzeEenheden, naarBasis, pastBij } from '@/lib/eenheden';
+
 type Rij = EigenIngredient;
+
+/** WEEK-270: hoeveelheid en eenheid zoals de gebruiker ze ziet: de gekozen keukenmaat, anders de basis. */
+const zichtbareMaat = (r: Pick<Rij, 'hoeveelheid' | 'eenheid' | 'keuken'>): { hoeveelheid: number; eenheid: KeukenEenheid } =>
+  r.keuken ? { hoeveelheid: r.keuken.hoeveelheid, eenheid: r.keuken.eenheid } : { hoeveelheid: r.hoeveelheid, eenheid: r.eenheid };
 
 /** Waarvoor de popup open staat: een nieuw ingrediënt (met of zonder code) of een bestaande rij. */
 type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string; nakijk?: number };
@@ -163,22 +169,25 @@ export default function EigenReceptScherm() {
   /** Opent de popup voor een ingrediënt: met code liggen eenheid en categorie vast (zoals de lijst en de frigo), anders kies je ze. */
   const openPopup = (doel: PopupDoel, bestaande?: Rij) => {
     const code = doel.code;
-    const eenheid = bestaande?.eenheid ?? standaardEenheid(code);
+    const basis = bestaande?.eenheid ?? standaardEenheid(code);
+    // WEEK-270: de popup toont wat de gebruiker koos (2 el), niet de omgerekende basis (30 ml).
+    const zichtbaar = bestaande ? zichtbareMaat(bestaande) : undefined;
+    const keuzes = keuzeEenheden(basis, code ? gewichtPerStuk(code) : undefined);
     const afdeling = code ? afdelingVanEigen({ code }) : bestaande?.afdeling;
     setPopupDoel(doel);
     setPopup({
       sleutel: `${doel.index ?? 'nieuw'}-${Date.now()}`,
       titel: t(doel.index === undefined ? 'recept.popupNieuw' : 'recept.popupBewerk'),
       naam: doel.naam,
-      hoeveelheid: bestaande?.hoeveelheid,
-      eenheid,
+      hoeveelheid: zichtbaar?.hoeveelheid,
+      eenheid: zichtbaar?.eenheid ?? basis,
       afdeling: afdeling ?? 'overig',
-      // WEEK-245: enkel de hoeveelheid is in te geven; eenheid en categorie liggen vast.
-      toonEenheid: false,
+      // WEEK-245: de categorie ligt vast. WEEK-270: de eenheid kies je uit de keukeneenheden die bij het ingrediënt passen.
+      toonEenheid: keuzes.length > 1,
       toonCategorie: false,
       toonVasteCategorie: !!code,
       toonHoudbaar: false,
-      eenheden: EENHEDEN,
+      eenheden: keuzes,
       hoeveelheidVerplicht: true,
       accent: KLEUR,
     });
@@ -203,7 +212,17 @@ export default function EigenReceptScherm() {
     const code = popupDoel.code;
     const eenheid = (code ? standaardEenheid(code) : w.eenheid && (EENHEDEN as readonly string[]).includes(w.eenheid) ? w.eenheid : 'g') as Eenheid;
     const afdeling: Afdeling | undefined = !code && w.afdeling !== 'overig' ? w.afdeling : undefined;
-    const rij: Rij = { ...(code ? { code } : {}), naam: popupDoel.naam, hoeveelheid: w.hoeveelheid, eenheid, ...(afdeling ? { afdeling } : {}) };
+    // WEEK-270: een gekozen keukeneenheid (el, zakje, dl …) wordt omgerekend naar de basis; de keuze zelf blijft bewaard om te tonen.
+    const perStuk = code ? gewichtPerStuk(code) : undefined;
+    const gekozen = isKeukenEenheid(w.eenheid) && pastBij(w.eenheid, eenheid, perStuk) && w.eenheid !== eenheid ? w.eenheid : undefined;
+    const rij: Rij = {
+      ...(code ? { code } : {}),
+      naam: popupDoel.naam,
+      hoeveelheid: gekozen ? naarBasis(w.hoeveelheid, gekozen, eenheid, perStuk) : w.hoeveelheid,
+      eenheid,
+      ...(afdeling ? { afdeling } : {}),
+      ...(gekozen ? { keuken: { eenheid: gekozen, hoeveelheid: w.hoeveelheid } } : {}),
+    };
     // WEEK-247: een ingrediënt dat al in het recept staat, wordt niet dubbel toegevoegd; de hoeveelheden worden samengeteld.
     setRijen((r) => (popupDoel.index === undefined ? voegSamen(r, rij) : r.map((x, i) => (i === popupDoel.index ? rij : x))));
     if (popupDoel.nakijk !== undefined) {
@@ -371,7 +390,8 @@ export default function EigenReceptScherm() {
   /** Wat een rij toont naast de naam: hoeveelheid, eenheid en categorie. */
   const rijDetail = (r: Rij) => {
     const afd = afdelingVanEigen(r);
-    return `${String(r.hoeveelheid).replace('.', ',')} ${t(`recept.eenheid.${r.eenheid}`)} · ${t(`afdeling.${afd ?? 'overig'}` as Sleutel)}`;
+    const m = zichtbareMaat(r);
+    return `${String(m.hoeveelheid).replace('.', ',')} ${eenheidNaam(taal, m.eenheid)} · ${t(`afdeling.${afd ?? 'overig'}` as Sleutel)}`;
   };
 
   const wijzigStap = (index: number, tekst: string) => setStappen((s) => s.map((x, i) => (i === index ? tekst : x)));
