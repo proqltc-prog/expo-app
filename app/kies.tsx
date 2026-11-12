@@ -1,6 +1,6 @@
 import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Moment, MOMENTEN, Soort, SOORTEN, StijlCode } from '@/data/recept';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
@@ -12,7 +12,6 @@ import {
   kiesbareEigenRecepten,
   kiesbarePoolRecepten,
   startSoorten,
-  voegPlanReceptToe,
   vervangDoorPlanRecept,
   verwijderDag,
   wisselSoort,
@@ -135,37 +134,16 @@ export default function Kies() {
     }
   };
 
+  // Zelf kiezen vervangt altijd het gerecht van één dag (WEEK-273: "gerecht toevoegen" bestaat niet meer).
   const kies = async (keuze: Keuze) => {
-    if (bezig || geenRecht) return;
+    if (bezig || geenRecht || index === undefined) return;
     setBezig(true);
     try {
-      if (index !== undefined) {
-        // Bestaande dag vervangen; enkel als die dag nog hetzelfde is als toen het scherm opende.
-        const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
-        const bewaard = await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorPlanRecept(huidig, index, keuze.recept) : huidig));
-        // WEEK-272: was het vorige gerecht bevestigd, dan gaan zijn ingrediënten van de boodschappenlijst.
-        if (bewaard) await zetLijstBijPlan(bewaard, taal);
-        router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
-        return;
-      }
-      // Nieuwe maaltijd op de eerste vrije dag voor dit moment.
-      let vol = false;
-      const bewaard = await wijzigPlan((huidig) => {
-        const nieuw = voegPlanReceptToe(huidig, keuze.recept, moment);
-        if (!nieuw) {
-          vol = true;
-          return huidig;
-        }
-        return nieuw;
-      });
-      if (!bewaard) {
-        Alert.alert(t('kies.titel'), t('planning.geenPlan'));
-        return;
-      }
-      if (vol) {
-        Alert.alert(t('kies.titel'), t('planning.geenVrijeDag'));
-        return;
-      }
+      // Enkel als die dag nog hetzelfde is als toen het scherm opende.
+      const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
+      const bewaard = await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorPlanRecept(huidig, index, keuze.recept) : huidig));
+      // WEEK-272: was het vorige gerecht bevestigd, dan gaan zijn ingrediënten van de boodschappenlijst.
+      if (bewaard) await zetLijstBijPlan(bewaard, taal);
       router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
     } finally {
       setBezig(false);

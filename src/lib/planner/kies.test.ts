@@ -11,7 +11,6 @@ import {
   verwijderDag,
   wisselSoort,
   vervangDoorPlanRecept,
-  voegPlanReceptToe,
   zonderReceptVanLijst,
 } from '@/lib/planner/kies';
 
@@ -150,35 +149,6 @@ describe('vervangDoorPlanRecept', () => {
   test('onbekende index laat het plan ongewijzigd', () => {
     const p = plan([dag('maandag', avond)]);
     assert.equal(vervangDoorPlanRecept(p, 5, avond2.recept), p);
-  });
-});
-
-describe('voegPlanReceptToe', () => {
-  test('voegt op de eerste vrije weekdag toe', () => {
-    const res = voegPlanReceptToe(plan([]), avond2.recept, 'avond');
-    assert.equal(res?.dagen.length, 1);
-    assert.equal(res?.dagen[0].dag, 'zondag');
-  });
-
-  test('avond krijgt geen moment-veld (regressie)', () => {
-    const res = voegPlanReceptToe(plan([]), avond.recept, 'avond');
-    assert.equal('moment' in (res?.dagen[0] ?? {}), false);
-  });
-
-  test('slaat dagen over die al bezet zijn', () => {
-    const res = voegPlanReceptToe(plan([dag('zondag', avond)]), avond2.recept, 'avond');
-    assert.equal(res?.dagen.find((d) => d.dag !== 'zondag')?.dag, 'maandag');
-  });
-
-  test('sorteert op weekdag', () => {
-    const p = plan([dag('maandag', avond)]);
-    const res = voegPlanReceptToe(p, avond2.recept, 'avond');
-    assert.deepEqual(res?.dagen.map((d) => d.dag), ['zondag', 'maandag']);
-  });
-
-  test('geeft undefined als alle dagen bezet zijn', () => {
-    const vol = plan((['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'] as const).map((d) => dag(d, avond2)));
-    assert.equal(voegPlanReceptToe(vol, avond.recept, 'avond'), undefined);
   });
 });
 

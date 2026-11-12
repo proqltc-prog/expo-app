@@ -116,26 +116,6 @@ export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: Pla
 }
 
 /**
- * Voegt een maaltijd toe op de eerste vrije weekdag voor dat moment.
- * Geeft undefined als er voor dat moment geen dag meer vrij is.
- */
-export function voegPlanReceptToe(plan: Weekplan, recept: PlanRecept, moment: Moment): Weekplan | undefined {
-  const bezet = new Set<DagCode>(plan.dagen.filter((d) => momentVan(d) === moment).map((d) => d.dag));
-  const dag = WEEKDAGEN.find((d) => !bezet.has(d));
-  if (!dag) return undefined;
-  const nieuw: PlanDag = {
-    dag,
-    ...(moment !== 'avond' ? { moment } : {}),
-    recept,
-  };
-  const dagen = [...plan.dagen, nieuw].sort(
-    (a, b) =>
-      WEEKDAGEN.indexOf(a.dag) - WEEKDAGEN.indexOf(b.dag) || momentVolgorde(momentVan(a)) - momentVolgorde(momentVan(b))
-  );
-  return { ...plan, dagen };
-}
-
-/**
  * Verwijdert de maaltijd op `index`. Enkel als die nog niet gekookt is en nog hetzelfde is als wat het scherm toonde;
  * anders blijft het plan ongewijzigd (een ander gezinslid kan het intussen veranderd hebben).
  */
