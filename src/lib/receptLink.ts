@@ -375,6 +375,22 @@ function woorden(naam: string): string[] {
   return zonderEenheden.length ? zonderEenheden : alle;
 }
 
+/**
+ * De kern van een ingrediëntnaam om te melden (WEEK-248): kleine letters, zonder haakjes, zonder wat na een komma komt
+ * en zonder bijwoorden ("verse", "fijngehakte"), maar mét accenten. Zo worden "Verse dragon" en "dragon" één melding.
+ */
+export function kernNaam(naam: string): string {
+  return naam
+    .normalize('NFC')
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, ' ')
+    .split(/[,;:]/)[0]
+    .split(/\s+/)
+    .filter((w) => w && !BIJWOORDEN.has(NORM(w).replace(/[^a-z0-9ß-]/g, '')))
+    .join(' ')
+    .trim();
+}
+
 /** Synoniemen die niet uit de namen af te leiden zijn: naam (genormaliseerd, enkelvoud of meervoud) → code. */
 const SYNONIEMEN: Readonly<Record<string, IngredientCode>> = {
   look: 'knoflook',
@@ -524,6 +540,8 @@ export type NakijkRegel = {
   /** De naam zonder hoeveelheid en eenheid; om te melden als het ingrediënt onbekend is (WEEK-248). */
   naam: string;
   reden: 'voorstel' | 'onbekend' | 'hoeveelheid';
+  /** De taal van het recept (van de site, anders die van de app): in die taal wordt een onbekend ingrediënt gemeld. */
+  taal: Taal;
   code?: IngredientCode;
   /** De hoeveelheid voor één volwassene in de eenheid van de app, als die te bepalen is. */
   hoeveelheid?: number;
@@ -571,6 +589,7 @@ export function splitsRegel(regel: string, talen: readonly Taal[]): string[] {
 export function verwerkRecept(ruw: RuwRecept, appTaal: Taal): IngelezenRecept {
   const personen = ruw.personen ?? STANDAARD_PERSONEN;
   const talen: Taal[] = [...new Set([...(ruw.taal ? [ruw.taal] : []), appTaal])];
+  const taal = talen[0];
   let ingredienten: EigenIngredient[] = [];
   const nakijken: NakijkRegel[] = [];
   for (const tekst of ruw.ingredienten.flatMap((r) => splitsRegel(r, talen))) {
@@ -578,14 +597,14 @@ export function verwerkRecept(ruw: RuwRecept, appTaal: Taal): IngelezenRecept {
     const naam = o.naam || tekst;
     const k = koppelIngredient(naam, talen);
     if (!k) {
-      nakijken.push({ tekst, naam, reden: 'onbekend' });
+      nakijken.push({ tekst, naam, taal, reden: 'onbekend' });
       continue;
     }
     const hoeveelheid = omrekenen(o, k.code, personen);
     if (!k.zeker) {
-      nakijken.push({ tekst, naam, reden: 'voorstel', code: k.code, ...(hoeveelheid !== undefined ? { hoeveelheid } : {}) });
+      nakijken.push({ tekst, naam, taal, reden: 'voorstel', code: k.code, ...(hoeveelheid !== undefined ? { hoeveelheid } : {}) });
     } else if (hoeveelheid === undefined) {
-      nakijken.push({ tekst, naam, reden: 'hoeveelheid', code: k.code });
+      nakijken.push({ tekst, naam, taal, reden: 'hoeveelheid', code: k.code });
     } else {
       ingredienten = voegSamen(ingredienten, { code: k.code, naam: ingredientNaam(k.code, appTaal), hoeveelheid, eenheid: doelEenheid(k.code) });
     }

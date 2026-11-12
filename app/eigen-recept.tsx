@@ -36,6 +36,7 @@ import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
 import { NakijkRegel, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
 import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
+import { meldOvergeslagen } from '@/opslag/ingredientMelding';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
@@ -235,11 +236,17 @@ export default function EigenReceptScherm() {
       openPopup({ code: n.code, naam: naamApp, nakijk: index });
     }
   };
-  const slaNakijkOver = (index: number) => setNakijken((l) => l.filter((_, i) => i !== index));
-  /** Zelf zoeken: de naam komt in het zoekveld en de regel verdwijnt uit de lijst om na te kijken. */
+  const haalNakijkWeg = (index: number) => setNakijken((l) => l.filter((_, i) => i !== index));
+  /** Overslaan; een onbekend ingrediënt wordt anoniem gemeld, zodat het later aan de lijst toegevoegd kan worden (WEEK-248). */
+  const slaNakijkOver = (index: number) => {
+    const n = nakijken[index];
+    if (n) void meldOvergeslagen(n);
+    haalNakijkWeg(index);
+  };
+  /** Zelf zoeken: de naam komt in het zoekveld en de regel verdwijnt uit de lijst om na te kijken (zonder melding). */
   const zoekNakijk = (index: number) => {
     setZoek(nakijken[index]?.naam ?? '');
-    slaNakijkOver(index);
+    haalNakijkWeg(index);
   };
 
   const verwijderRij = (index: number) => setRijen((r) => r.filter((_, i) => i !== index));

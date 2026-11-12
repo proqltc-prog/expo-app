@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.129.0] – 2026-11-12
+
+- Onbekende ingrediënten melden: slaat een gebruiker bij het inlezen van een recept een ingrediënt over dat de app niet kent, dan wordt het anoniem gemeld (één rij per naam en taal met een teller, met daglimieten). In Supabase toont een overzicht per taal hoeveel ingrediënten gemeld zijn en welke talen ontbreken; goedgekeurde ingrediënten worden in één keer vertaald en toegevoegd. (WEEK-248)
+
+**Jira:** [WEEK-248](https://proqltc-1791495894841.atlassian.net/browse/WEEK-248) · **Confluence:** [WEEK-248](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24641537)
+
 ## [0.128.0] – 2026-11-12
 
 - Eigen recept inlezen via een link: plak de link van een receptensite en de app vult naam, soort, kooktijd, stappen en ingrediënten in. Ingrediënten worden gekoppeld aan de ingrediëntenlijst (een dubbel of synoniem gebruikt altijd het bestaande ingrediënt) en omgerekend naar één volwassene; wat niet zeker is, staat onder "Nog na te kijken". Een Supabase-functie haalt de pagina op, met een daglimiet. (WEEK-247)
