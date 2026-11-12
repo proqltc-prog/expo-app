@@ -344,3 +344,9 @@ describe('één woord per begrip in alle talen (WEEK-266)', () => {
     });
   }
 });
+
+describe('aanmeldscherm zonder zin over een account (WEEK-267)', () => {
+  test('de zin "Met een account blijven je gegevens bewaard…" bestaat in geen enkele taal meer', () => {
+    for (const taal of TALEN) assert.equal((VERTALINGEN[taal] as Record<string, string>)['aanmelden.tekst'], undefined, taal);
+  });
+});

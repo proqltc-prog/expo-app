@@ -612,7 +612,6 @@ export const fr: Vertalingen = {
   'uitleg.winkels.titel': 'Les commerçants de votre quartier',
   'uitleg.winkels.tekst': 'Trouvez les commerçants près de chez vous. Vous achetez local, vous gagnez du temps et vous soutenez votre région.',
   'aanmelden.titel': 'Connectez-vous',
-  'aanmelden.tekst': 'Avec un compte, vos données restent disponibles si vous changez d’appareil.',
   'aangemeld.bezig': 'Connexion en cours…',
   'aangemeld.annuleren': 'Annuler',
   'aanmelden.metGoogle': 'Continuer avec Google',

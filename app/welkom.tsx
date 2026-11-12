@@ -208,7 +208,6 @@ export default function Welkom() {
       <TerugKnop onPress={() => setStap('start')} kleur={KLEUR} style={s.terug} />
       <View style={s.kop}>
         <Text style={s.titel}>{t('aanmelden.titel')}</Text>
-        <Text style={s.tekst}>{t('aanmelden.tekst')}</Text>
       </View>
       {aanmeldFout && (
         <Text style={s.fout} accessibilityRole="alert">
