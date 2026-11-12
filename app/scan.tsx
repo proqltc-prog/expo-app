@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { TerugKnop } from '@/ui/terugKnop';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
@@ -195,15 +196,7 @@ function ScanInhoud() {
         {/* WEEK-102: de scan sluiten. WEEK-120: enkel bij scannen vanuit de lijst of de frigo.
             WEEK-177: staat ná de overlay, zodat de overlay de knop niet meer afdekt. */}
         {scanTerug(van) !== undefined && (
-          <Pressable
-            onPress={annuleer}
-            accessibilityRole="button"
-            accessibilityLabel={t('scan.annuleer')}
-            hitSlop={12}
-            style={s.annuleer}
-          >
-            <Ionicons name="close" size={26} color="#fff" />
-          </Pressable>
+          <TerugKnop onPress={annuleer} kleur="#fff" style={s.annuleer} />
         )}
       </View>
     );
@@ -307,7 +300,7 @@ const s = StyleSheet.create({
   knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  annuleer: { position: 'absolute', top: 16, right: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
+  annuleer: { position: 'absolute', top: 16, left: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
   kader: { width: 260, height: 150, borderWidth: 3, borderColor: '#fff', borderRadius: 16 },
   hint: { color: '#fff', marginTop: 16, fontWeight: '600', textShadowColor: '#000', textShadowRadius: 4 },
   resultaat: { padding: 16, gap: 8, backgroundColor: PAPIER },

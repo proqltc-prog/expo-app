@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
 import { startIngredienten } from '@/opslag/gegevens';
+import { KopTerug } from '@/ui/terugKnop';
 import { luisterNaarTerugkeer } from '@/opslag/aanmelden';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
@@ -69,15 +70,15 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
       <Tabs.Screen name="frigo" options={{ tabBarIcon: ({ color, size }) => <Ionicons name={IN_HUIS_ICOON} size={size} color={color} />, title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
       <Tabs.Screen name="scan" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="scan-outline" size={size} color={color} />, title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
       {/* Gezinsprofiel (WEEK-39): geen eigen tabblad meer, bereikbaar via het instellingen-icoon. */}
-      <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null }} />
+      <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null, headerLeft: () => <KopTerug scherm="profiel" /> }} />
       {/* Zelf kiezen (WEEK-44): een gerecht uit de databank, vanuit het weekmenu. */}
-      <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null }} />
+      <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null, headerLeft: () => <KopTerug scherm="kies" /> }} />
       {/* Mijn recepten (WEEK-192): het overzicht van de eigen recepten, vanuit "Ons gezin" in "Zelf kiezen". */}
-      <Tabs.Screen name="mijn-recepten" options={{ title: t('mijn.titel'), href: null }} />
+      <Tabs.Screen name="mijn-recepten" options={{ title: t('mijn.titel'), href: null, headerLeft: () => <KopTerug scherm="mijn-recepten" /> }} />
       {/* Eigen recept bewerken (WEEK-192): een nieuw of bestaand eigen recept. */}
-      <Tabs.Screen name="eigen-recept" options={{ title: t('recept.titelNieuw'), href: null }} />
+      <Tabs.Screen name="eigen-recept" options={{ title: t('recept.titelNieuw'), href: null, headerLeft: () => <KopTerug scherm="eigen-recept" /> }} />
       {/* Bereiding (WEEK-81): de stappen van een bevestigd gerecht, vanuit het weekmenu. */}
-      <Tabs.Screen name="bereiding" options={{ title: t('bereiding.titel'), href: null }} />
+      <Tabs.Screen name="bereiding" options={{ title: t('bereiding.titel'), href: null, headerLeft: () => <KopTerug scherm="bereiding" /> }} />
     </Tabs>
   );
 }

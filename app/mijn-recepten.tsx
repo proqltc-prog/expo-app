@@ -1,7 +1,8 @@
 import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { padMet } from '@/lib/terug';
 import { EigenRecept, SOORTEN } from '@/lib/eigenrecepten';
 import { kiesbareEigenRecepten, KiesFilter } from '@/lib/planner/kies';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
@@ -17,6 +18,9 @@ const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88
 export default function MijnRecepten() {
   const { t, taal } = useTaal();
   const [lijst, setLijst] = useState<EigenRecept[]>([]);
+  // WEEK-259: vanuit een recept terug naar dit scherm, met hetzelfde terugpad (bv. naar Kies een gerecht).
+  const { terug } = useLocalSearchParams<{ terug?: string }>();
+  const hier = padMet('/mijn-recepten', { terug });
   const [zoek, setZoek] = useState('');
   const [soort, setSoort] = useState<Soort | null>(null);
 
@@ -34,7 +38,7 @@ export default function MijnRecepten() {
 
   return (
     <View style={s.scherm}>
-      <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: '/mijn-recepten' } })} accessibilityRole="button">
+      <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: hier } })} accessibilityRole="button">
         <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
       </Pressable>
       <TextInput
@@ -71,7 +75,7 @@ export default function MijnRecepten() {
         renderItem={({ item }) => (
           <Pressable
             style={s.rij}
-            onPress={() => router.push({ pathname: '/eigen-recept', params: { id: item.id, terug: '/mijn-recepten' } })}
+            onPress={() => router.push({ pathname: '/eigen-recept', params: { id: item.id, terug: hier } })}
             accessibilityRole="button"
           >
             <Text style={s.naam}>{item.naam}</Text>

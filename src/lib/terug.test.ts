@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { padMet, terugPad } from '@/lib/terug';
+import { padMet, terugPad, terugVoor } from '@/lib/terug';
 
 describe('terugkeren naar het vorige scherm (WEEK-218)', () => {
   test('padMet bouwt een pad met enkel de ingevulde parameters', () => {
@@ -15,5 +15,20 @@ describe('terugkeren naar het vorige scherm (WEEK-218)', () => {
     assert.equal(terugPad('', '/mijn-recepten'), '/mijn-recepten');
     assert.equal(terugPad('https://kwaad.be', '/mijn-recepten'), '/mijn-recepten');
     assert.equal(terugPad('//kwaad.be', '/mijn-recepten'), '/mijn-recepten');
+  });
+});
+
+describe('WEEK-259: terugpijl van de verborgen schermen', () => {
+  test('met een meegegeven pad: daar naartoe', () => {
+    assert.equal(terugVoor('mijn-recepten', '/kies?index=2'), '/kies?index=2');
+    assert.equal(terugVoor('eigen-recept', '/mijn-recepten?terug=%2Fkies'), '/mijn-recepten?terug=%2Fkies');
+  });
+  test('zonder (of met een vreemd) pad: de vaste ouder', () => {
+    assert.equal(terugVoor('kies', undefined), '/');
+    assert.equal(terugVoor('mijn-recepten', undefined), '/');
+    assert.equal(terugVoor('eigen-recept', undefined), '/mijn-recepten');
+    assert.equal(terugVoor('bereiding', 'https://elders.be'), '/');
+    assert.equal(terugVoor('profiel', '//elders.be'), '/');
+    assert.equal(terugVoor('eigen-recept', 42), '/mijn-recepten');
   });
 });

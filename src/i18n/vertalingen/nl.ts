@@ -60,6 +60,7 @@ export const nl = {
   'soort.vegetarisch': 'vegetarisch',
   'soort.vis': 'vis',
 
+  'algemeen.terug': 'Terug',
   'algemeen.minuten': '{n} min',
   'algemeen.personen_1': '{n} persoon',
   'algemeen.personen_n': '{n} personen',

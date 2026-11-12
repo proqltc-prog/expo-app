@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.135.1] – 2026-11-12
+
+- Eén terugpijl (←) in de hele app, altijd linksboven: nieuw op Mijn recepten, Kies een gerecht, Nieuw recept en Gezinsprofiel; Bereiding en de scanner krijgen dezelfde pijl in plaats van een kruisje, het aanmeldscherm in plaats van de tekst "Terug". De pijl gaat altijd naar het scherm vanwaar je kwam. (WEEK-259)
+
+**Jira:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.135.0] – 2026-11-12
 
 - Allergenen aangevuld: elk ingrediënt nagekeken tegen de 14 EU-allergenen (streng bij kant-en-klare producten, pinda apart van noten); 167 ingrediënten hebben nu allergenen (was 71). (WEEK-257)

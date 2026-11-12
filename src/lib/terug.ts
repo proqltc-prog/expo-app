@@ -14,3 +14,18 @@ export function padMet(pad: string, params: Record<string, string | number | und
 export function terugPad(terug: string | undefined, standaard: string): string {
   return terug && terug.startsWith('/') && !terug.startsWith('//') ? terug : standaard;
 }
+
+/** WEEK-259: de verborgen schermen met een terugpijl linksboven, en waar die naartoe gaat als er geen `terug` meegegeven is. */
+export const TERUG_STANDAARD = {
+  kies: '/',
+  'mijn-recepten': '/',
+  'eigen-recept': '/mijn-recepten',
+  bereiding: '/',
+  profiel: '/',
+} as const;
+export type SchermMetTerug = keyof typeof TERUG_STANDAARD;
+
+/** Waar de terugpijl van een verborgen scherm naartoe gaat (WEEK-259): het meegegeven `terug`, anders de vaste ouder. */
+export function terugVoor(scherm: SchermMetTerug, terug: unknown): string {
+  return terugPad(typeof terug === 'string' ? terug : undefined, TERUG_STANDAARD[scherm]);
+}

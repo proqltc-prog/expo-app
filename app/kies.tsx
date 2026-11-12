@@ -189,7 +189,7 @@ export default function Kies() {
           <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
           </Pressable>
-          <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
+          <Pressable style={s.beheer} onPress={() => router.push({ pathname: '/mijn-recepten', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
           </Pressable>
         </View>

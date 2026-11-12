@@ -59,6 +59,7 @@ export const fr: Vertalingen = {
   'soort.vegetarisch': 'végétarien',
   'soort.vis': 'poisson',
 
+  'algemeen.terug': 'Retour',
   'algemeen.minuten': '{n} min',
   'algemeen.personen_1': '{n} personne',
   'algemeen.personen_n': '{n} personnes',
