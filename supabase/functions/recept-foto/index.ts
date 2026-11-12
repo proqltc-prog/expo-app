@@ -101,7 +101,12 @@ Deno.serve(async (req) => {
     }
   };
   // Geen antwoord binnen de tijd (undefined), 429 (gratis limiet van Google) of 503 (overbelast): "druk".
-  const probeer = (m: string) => vraag(m).catch(() => undefined);
+  const probeer = async (m: string) => {
+    const r = await vraag(m).catch(() => undefined);
+    // Bij een fout de reden van Google loggen (enkel hun foutmelding, nooit de foto of de sleutel).
+    if (r && !r.ok) console.error(`Gemini ${m} ${r.status}: ${(await r.clone().text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 300)}`);
+    return r;
+  };
   const druk = (r: Response | undefined) => !r || r.status === 429 || r.status === 503;
   try {
     let res = await probeer(model);
