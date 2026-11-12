@@ -199,7 +199,6 @@ export const de: Vertalingen = {
   'recept.foto.fout.niet_bereikbaar': "Das Foto konnte gerade nicht gelesen werden. Versuche es später erneut.",
   'recept.foto.fout.geen_recept': "Auf diesem Foto hat die App kein Rezept gefunden. Mach ein scharfes Foto der Zutaten und der Zubereitung oder gib das Rezept selbst ein.",
   'recept.foto.fout.geen_verbinding': "Keine Verbindung. Prüfe dein Internet und versuche es erneut.",
-  'recept.link.nieuw': "{n} neue Zutaten wurden zur Liste der App hinzugefügt.",
   'recept.link.opnieuw': "Erneut suchen",
   'recept.nieuwIngredient': "Als neue Zutat hinzufügen: {naam}",
   'recept.nieuwBezig': "Wird gesucht…",

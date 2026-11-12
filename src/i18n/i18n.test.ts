@@ -318,3 +318,9 @@ describe('infovenster Kies een gerecht (WEEK-263)', () => {
     assert.equal(nl['pagina.kiesInfo'].split('\n').at(-1), 'Met nieuw recept voeg je er een toe.');
   });
 });
+
+describe('recept inlezen: geen melding over nieuwe ingrediënten (WEEK-265)', () => {
+  test('de zin "nieuwe ingrediënten zijn aan de lijst van de app toegevoegd" bestaat in geen enkele taal meer', () => {
+    for (const taal of TALEN) assert.equal((VERTALINGEN[taal] as Record<string, string>)['recept.link.nieuw'], undefined, taal);
+  });
+});

@@ -199,7 +199,6 @@ export const en: Vertalingen = {
   'recept.foto.fout.niet_bereikbaar': "The photo could not be read right now. Try again later.",
   'recept.foto.fout.geen_recept': "The app found no recipe on this photo. Take a sharp photo of the ingredients and the method, or enter the recipe yourself.",
   'recept.foto.fout.geen_verbinding': "No connection. Check your internet and try again.",
-  'recept.link.nieuw': "{n} new ingredients were added to the app’s list.",
   'recept.link.opnieuw': "Search again",
   'recept.nieuwIngredient': "Add as a new ingredient: {naam}",
   'recept.nieuwBezig': "Searching…",

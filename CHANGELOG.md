@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.138.1] – 2026-11-12
+
+- Na het inlezen van een recept verschijnt de zin "… nieuwe ingrediënten zijn aan de lijst van de app toegevoegd" niet meer, in geen enkele taal. (WEEK-265)
+- Bevat ook 0.138.0 (uitleg bij de icoontjes van het weekmenu, WEEK-264; infovenster Kies een gerecht, WEEK-263), 0.137.0 (WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-265](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165825), [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.138.0] – 2026-11-12
 
 - Nieuw: een infoknop (i) rechts van "Je weekmenu" legt de icoontjes op de kaarten uit (Bevestigen, Ander gerecht, Zelf kiezen, Verwijderen, Recept bekijken, Gekookt), elk zoals het op de kaart staat. (WEEK-264)

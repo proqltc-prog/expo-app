@@ -67,7 +67,6 @@ type LinkMelding = {
   personen: number;
   vanSite: boolean;
   teLang?: number;
-  nieuw?: number;
   /** WEEK-258: onbekende ingrediënten konden niet opgezocht worden (AI tijdelijk onbereikbaar). */
   opzoekenTijdelijk?: boolean;
 };
@@ -243,7 +242,6 @@ export default function EigenReceptScherm() {
   const pasToe = async (recept: RuwRecept, bron: LinkMelding['bron']) => {
     let ingelezen = verwerkRecept(recept, taal);
     // WEEK-254: wat de app niet kent, wordt meteen opgezocht: een bestaand ingrediënt of een nieuw (automatisch toegevoegd).
-    let nieuw = 0;
     let opzoekenTijdelijk = false;
     const onbekend = ingelezen.nakijken.filter((n) => n.reden === 'onbekend');
     if (onbekend.length) {
@@ -254,7 +252,6 @@ export default function EigenReceptScherm() {
       opzoekenTijdelijk = opzoekenTijdelijkOnbereikbaar(r);
       if (r.ok && r.resultaten.some((x) => x.code)) {
         ingelezen = verwerkRecept(recept, taal, koppelingenUit(r.resultaten));
-        nieuw = r.resultaten.filter((x) => x.status === 'nieuw').length;
       }
     }
     if (ingelezen.naam) setNaam(ingelezen.naam);
@@ -264,7 +261,7 @@ export default function EigenReceptScherm() {
     if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
     setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
     setNakijken(ingelezen.nakijken);
-    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(nieuw ? { nieuw } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk } : {}) });
+    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk } : {}) });
   };
 
   /** WEEK-251: een foto nemen of kiezen en laten lezen; één vraag per foto. */
@@ -588,7 +585,6 @@ export default function EigenReceptScherm() {
           <Text style={s.uitlegTekst}>{t('recept.link.klaar', { aantal: linkMelding.aantal })}</Text>
           <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
           {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
-          {linkMelding.nieuw !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.nieuw', { n: linkMelding.nieuw })}</Text>}
           {linkMelding.opzoekenTijdelijk && <Text style={s.uitlegTekst}>{t('recept.link.opzoekenTijdelijk')}</Text>}
         </View>
       )}

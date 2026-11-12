@@ -199,7 +199,6 @@ export const fr: Vertalingen = {
   'recept.foto.fout.niet_bereikbaar': "La photo n’a pas pu être lue pour le moment. Réessayez plus tard.",
   'recept.foto.fout.geen_recept': "L’application n’a trouvé aucune recette sur cette photo. Prenez une photo nette des ingrédients et de la préparation, ou saisissez la recette vous-même.",
   'recept.foto.fout.geen_verbinding': "Pas de connexion. Vérifiez votre connexion internet et réessayez.",
-  'recept.link.nieuw': "{n} nouveaux ingrédients ont été ajoutés à la liste de l’application.",
   'recept.link.opnieuw': "Rechercher à nouveau",
   'recept.nieuwIngredient': "Ajouter comme nouvel ingrédient : {naam}",
   'recept.nieuwBezig': "Recherche en cours…",

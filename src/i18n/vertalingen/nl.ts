@@ -200,7 +200,6 @@ export const nl = {
   'recept.foto.fout.niet_bereikbaar': "De foto kon nu niet gelezen worden. Probeer later opnieuw.",
   'recept.foto.fout.geen_recept': "Op deze foto vond de app geen recept. Neem een scherpe foto van de ingrediënten en de bereiding, of vul het recept zelf in.",
   'recept.foto.fout.geen_verbinding': "Geen verbinding. Controleer je internet en probeer opnieuw.",
-  'recept.link.nieuw': "{n} nieuwe ingrediënten zijn aan de lijst van de app toegevoegd.",
   'recept.link.opnieuw': "Opnieuw opzoeken",
   'recept.nieuwIngredient': "Toevoegen als nieuw ingrediënt: {naam}",
   'recept.nieuwBezig': "Bezig met opzoeken…",
