@@ -8,6 +8,143 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.144.0] – 2026-11-12
+
+Deze release bundelt 0.135.1 tot en met 0.144.0. Overzicht:
+
+**Weekmenu**
+- Geen weekmenu zonder ingesteld gezin; "Plan mijn week" uitgegrijsd en het gezinsicoon licht op. (WEEK-261, WEEK-268)
+- "Plan mijn week" vraagt eerst de bevestigde gerechten op Gekookt te zetten. (WEEK-262)
+- Infoknop die de icoontjes uitlegt; het vuilbakje maakt plaats voor een rond bereidingsicoon. (WEEK-264, WEEK-269)
+- "Geen gerecht deze dag" in Zelf kiezen, ook na bevestigen. (WEEK-272)
+- Meldingen op de pagina in plaats van vensters die op het web niet verschenen (weekmenu en scanner). (WEEK-271, WEEK-274)
+
+**Gerechten en eenheden**
+- Recept inlezen als kaart met twee tegels. (WEEK-260)
+- Keukeneenheden (el, kl, cl, dl, l, kg, stuk, bosje, takje, snuifje, blaadje) met omrekening voor de boodschappenlijst; "zakje" voorlopig niet. (WEEK-270, WEEK-278)
+- Eigen gerechten worden weer gedeeld in de gezinsruimte; enkel de beheerder beheert ze. (WEEK-275, WEEK-276)
+
+- Reclamefilmpje vóór het inlezen van een recept in de app; gesloten vóór het einde = niet inlezen, geen filmpje beschikbaar = toch inlezen. Niet op de website. (WEEK-280)
+
+**Teksten en navigatie**
+- Eén terugpijl linksboven in de hele app. (WEEK-259)
+- Eén woord per begrip in alle talen (gerecht, weekmenu, favorieten, In huis), spelling nagekeken in 4 talen. (WEEK-266, WEEK-279)
+- Kleinere tekstaanpassingen. (WEEK-263, WEEK-265, WEEK-267)
+
+**Onderhoud**
+- Oude code opgeruimd; package-lock.json in .gitignore. (WEEK-273, WEEK-277)
+
+**Jira:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-268](https://proqltc-1791495894841.atlassian.net/browse/WEEK-268), [WEEK-269](https://proqltc-1791495894841.atlassian.net/browse/WEEK-269), [WEEK-270](https://proqltc-1791495894841.atlassian.net/browse/WEEK-270), [WEEK-271](https://proqltc-1791495894841.atlassian.net/browse/WEEK-271), [WEEK-272](https://proqltc-1791495894841.atlassian.net/browse/WEEK-272), [WEEK-273](https://proqltc-1791495894841.atlassian.net/browse/WEEK-273), [WEEK-274](https://proqltc-1791495894841.atlassian.net/browse/WEEK-274), [WEEK-275](https://proqltc-1791495894841.atlassian.net/browse/WEEK-275), [WEEK-276](https://proqltc-1791495894841.atlassian.net/browse/WEEK-276), [WEEK-277](https://proqltc-1791495894841.atlassian.net/browse/WEEK-277), [WEEK-278](https://proqltc-1791495894841.atlassian.net/browse/WEEK-278), [WEEK-279](https://proqltc-1791495894841.atlassian.net/browse/WEEK-279), [WEEK-280](https://proqltc-1791495894841.atlassian.net/browse/WEEK-280) · **Confluence:** [WEEK-280](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25362433), [WEEK-279](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24969259) en de pagina's per workitem onder "Workitems".
+
+## [0.143.2] – 2026-11-12
+
+- De eenheid "zakje" staat niet meer in de keuzelijst: één vast gewicht (8 g) klopt niet voor spinazie, rozijnen of noten. Bosje, takje, snuifje en blaadje blijven. (WEEK-278)
+- Bevat ook 0.135.1 tot en met 0.143.1 (WEEK-259 tot WEEK-277).
+
+**Jira:** [WEEK-278](https://proqltc-1791495894841.atlassian.net/browse/WEEK-278) · **Confluence:** [WEEK-278](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067541)
+
+## [0.143.1] – 2026-11-12
+
+- package-lock.json staat in .gitignore: de repo heeft bewust geen lockfile (WEEK-38, WEEK-220). Geen wijziging aan de app. (WEEK-277)
+- Bevat ook 0.135.1 tot en met 0.143.0 (WEEK-259 tot WEEK-276).
+
+**Jira:** [WEEK-277](https://proqltc-1791495894841.atlassian.net/browse/WEEK-277) · **Confluence:** [WEEK-277](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165869)
+
+## [0.143.0] – 2026-11-12
+
+- Gezinsruimte hersteld: de databank weigerde eigen gerechten en daardoor werden ook de boodschappenlijst, In huis en het weekmenu niet meer gedeeld. Eigen gerechten zijn nu toegelaten en elke soort wordt apart doorgestuurd. (WEEK-275)
+- Enkel de beheerder van de gezinsruimte beheert de eigen gerechten (maken, bewerken, verwijderen, inlezen); de andere leden kunnen ze bekijken. Ook de databank dwingt dit af. (WEEK-276)
+- Bevat ook 0.135.1 tot en met 0.142.2 (WEEK-259 tot WEEK-274).
+
+**Jira:** [WEEK-275](https://proqltc-1791495894841.atlassian.net/browse/WEEK-275), [WEEK-276](https://proqltc-1791495894841.atlassian.net/browse/WEEK-276) · **Confluence:** [WEEK-275 / WEEK-276](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133101)
+
+## [0.142.2] – 2026-11-12
+
+- Scanner zonder vensters (die op de website niet verschenen): "afgevinkt" en "van je lijst gehaald" zijn weg (je ziet het op de lijst); "staat bij In huis" staat kort bovenaan de scanner. Op de website na 10 scans geen filmpjesknop maar "Morgen kan je weer 10 keer scannen." De app blijft ongewijzigd. (WEEK-274)
+- Bevat ook 0.135.1 tot en met 0.142.1 (WEEK-259 tot WEEK-273).
+
+**Jira:** [WEEK-274](https://proqltc-1791495894841.atlassian.net/browse/WEEK-274) · **Confluence:** [WEEK-274](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25329665)
+
+## [0.142.1] – 2026-11-12
+
+- Opgeruimd: de oude code voor "gerecht toevoegen" in Zelf kiezen (de knop bestond niet meer), met de twee meldingen en teksten die daarbij hoorden. De gebruiker merkt niets. (WEEK-273)
+- Bevat ook 0.135.1 tot en met 0.142.0 (WEEK-259 tot WEEK-272).
+
+**Jira:** [WEEK-273](https://proqltc-1791495894841.atlassian.net/browse/WEEK-273) · **Confluence:** [WEEK-273](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25296897)
+
+## [0.142.0] – 2026-11-12
+
+- "Geen gerecht deze dag" bovenaan in Zelf kiezen: haalt een gerecht van het weekmenu, ook als het al bevestigd is (niet als het gekookt is). Wat nog op de boodschappenlijst staat, gaat eraf; wat al in huis is, blijft. (WEEK-272)
+- Bevat ook 0.135.1 tot en met 0.141.1 (WEEK-259 tot WEEK-271).
+
+**Jira:** [WEEK-272](https://proqltc-1791495894841.atlassian.net/browse/WEEK-272) · **Confluence:** [WEEK-272](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25264129)
+
+## [0.141.1] – 2026-11-12
+
+- Weekmenu: meldingen (geen verbinding, niet genoeg gerechten, alle gerechten gezien, weekmenu van een ander gezinslid) staan op de pagina in plaats van in een venster dat op het web niet verscheen. Korte teksten; bij "alle gerechten gezien" de knop "Zelf kiezen". (WEEK-271)
+- Bevat ook 0.135.1 tot en met 0.141.0 (WEEK-259 tot WEEK-270).
+
+**Jira:** [WEEK-271](https://proqltc-1791495894841.atlassian.net/browse/WEEK-271) · **Confluence:** [WEEK-271](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25198593)
+
+## [0.141.0] – 2026-11-12
+
+- Meer eenheden: bij een ingrediënt kies je el, kl, cl, dl, l, kg, snuifje, scheutje, zakje, blaadje, takje, bosje of stuk (als het stukgewicht gekend is, bv. kipfilet, zalm, schelvishaasjes, tomaat). Het gerecht en de bereiding tonen je keuze (bv. 2 el, schaalt mee met het gezin); de boodschappenlijst en In huis blijven optellen in g of ml. Ingelezen recepten houden el, kl, dl, …; de AI kiest "stuk" voor wat je telt. (WEEK-270)
+- Weekmenukaart: het vuilbakje is weg; op die plaats staat het bereidingsicoon als rond icoon, altijd zichtbaar. (WEEK-269)
+- Bevat ook 0.140.0 (WEEK-268), 0.139.0 (WEEK-266, WEEK-267), 0.138.1 (WEEK-265), 0.138.0 (WEEK-263, WEEK-264), 0.137.0 (WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-270](https://proqltc-1791495894841.atlassian.net/browse/WEEK-270), [WEEK-269](https://proqltc-1791495894841.atlassian.net/browse/WEEK-269), [WEEK-268](https://proqltc-1791495894841.atlassian.net/browse/WEEK-268), [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-269 / WEEK-270](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24969236), [WEEK-268](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133080), [WEEK-266 / WEEK-267](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165846), [WEEK-265](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165825), [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.140.0] – 2026-11-12
+
+- Zonder ingesteld gezin is "Plan mijn week" uitgegrijsd en licht het gezinsicoon rechtsboven op (oranje, met een zachte kloppende ring, zonder tekst). Na bewaren van het gezin gaat het oplichten meteen weg. De knop "Gezin invullen" is weg; de infotekst zegt nu: "We hebben nog enkele gegevens over je gezin nodig om je weekmenu te berekenen." (WEEK-268)
+- Bevat ook 0.139.0 (WEEK-266, WEEK-267), 0.138.1 (WEEK-265), 0.138.0 (WEEK-263, WEEK-264), 0.137.0 (WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-268](https://proqltc-1791495894841.atlassian.net/browse/WEEK-268), [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-268](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133080), [WEEK-266 / WEEK-267](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165846), [WEEK-265](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165825), [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.139.0] – 2026-11-12
+
+- Eén woord per begrip in de hele app en in alle talen: "gerecht" voor het gerecht (Mijn gerechten, Nieuw gerecht, Kies een gerecht, Per gerecht), "recept" enkel voor wat je inleest van een website of foto, "Bereiding bekijken" voor het boekje, "weekmenu", "favorieten" en "In huis". Bij Bevestigen: "Bij bevestigen komen de ingrediënten op je boodschappenlijst." Een woordenlijsttest bewaakt dit voortaan. (WEEK-266)
+- Aanmeldscherm: de zin "Met een account blijven je gegevens bewaard als je van toestel wisselt." is weg. (WEEK-267)
+- Bevat ook 0.138.1 (WEEK-265), 0.138.0 (WEEK-263, WEEK-264), 0.137.0 (WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-266 / WEEK-267](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165846), [WEEK-265](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165825), [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.138.1] – 2026-11-12
+
+- Na het inlezen van een recept verschijnt de zin "… nieuwe ingrediënten zijn aan de lijst van de app toegevoegd" niet meer, in geen enkele taal. (WEEK-265)
+- Bevat ook 0.138.0 (uitleg bij de icoontjes van het weekmenu, WEEK-264; infovenster Kies een gerecht, WEEK-263), 0.137.0 (WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-265](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165825), [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.138.0] – 2026-11-12
+
+- Nieuw: een infoknop (i) rechts van "Je weekmenu" legt de icoontjes op de kaarten uit (Bevestigen, Ander gerecht, Zelf kiezen, Verwijderen, Recept bekijken, Gekookt), elk zoals het op de kaart staat. (WEEK-264)
+- Infovenster op Kies een gerecht: "Met nieuw recept voeg je er een toe." staat op een eigen regel, zonder plusteken en zonder hoofdletter. (WEEK-263)
+- Bevat ook 0.137.0 (geen weekmenu zonder gezin, eerst koken; WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.137.0] – 2026-11-12
+
+- Zonder ingesteld en bewaard gezin (volwassenen en adres) maakt "Plan mijn week" geen recepten meer en is er geen weekmenu: de kaarten verdwijnen, een melding met de knop "Gezin invullen" leidt naar het gezinsprofiel. (WEEK-261)
+- Staat er nog een bevestigd recept dat niet gekookt is, dan maakt "Plan mijn week" geen nieuw menu maar toont een infomelding: zet je bevestigde recepten eerst op Gekookt. Is alles gekookt, dan komt er meteen een nieuw weekmenu, zonder het oude bevestigingsvenster dat op het web niet werkte. (WEEK-262)
+- Bevat ook 0.136.0 (recept inlezen als kaart met twee tegels, WEEK-260) en 0.135.1 (één terugpijl linksboven, WEEK-259).
+
+**Jira:** [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.136.0] – 2026-11-12
+
+- Recept inlezen is mooier en duidelijker: één kaart "Recept inlezen" met twee tegels (Via een link, Via een foto), en panelen met een kop en dezelfde terugpijl als in de rest van de app; grote knoppen met icoon (Foto nemen, Foto kiezen, Inlezen). (WEEK-260)
+- Bevat ook 0.135.1: één terugpijl linksboven in de hele app. (WEEK-259)
+
+**Jira:** [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
+## [0.135.1] – 2026-11-12
+
+- Eén terugpijl (←) in de hele app, altijd linksboven: nieuw op Mijn recepten, Kies een gerecht, Nieuw recept en Gezinsprofiel; Bereiding en de scanner krijgen dezelfde pijl in plaats van een kruisje, het aanmeldscherm in plaats van de tekst "Terug". De pijl gaat altijd naar het scherm vanwaar je kwam. (WEEK-259)
+
+**Jira:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.135.0] – 2026-11-12
 
 - Allergenen aangevuld: elk ingrediënt nagekeken tegen de 14 EU-allergenen (streng bij kant-en-klare producten, pinda apart van noten); 167 ingrediënten hebben nu allergenen (was 71). (WEEK-257)

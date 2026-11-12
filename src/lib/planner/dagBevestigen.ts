@@ -14,6 +14,14 @@ export function magDagWijzigen(dag: PlanDag): boolean {
   return !dag.bevestigd && !dag.gedaan;
 }
 
+/**
+ * WEEK-272: zelf een ander gerecht kiezen of het gerecht weghalen ("Geen gerecht deze dag") mag zolang het niet gekookt is,
+ * ook na bevestigen. Gekookt blijft vast.
+ */
+export function magZelfKiezen(dag: PlanDag | undefined): boolean {
+  return !!dag && !dag.gedaan;
+}
+
 /** De dagen die bevestigd zijn: enkel die horen op de boodschappenlijst. */
 export function bevestigdeDagen(plan: Weekplan): PlanDag[] {
   return plan.dagen.filter((d) => d.bevestigd);
@@ -73,4 +81,20 @@ export function alleBevestigdeGekookt(plan: Weekplan): boolean {
 export function planZonderHoeveelheden(plan: Pick<Weekplan, 'dagen'> | null | undefined): boolean {
   const ingredienten = plan?.dagen.flatMap((d) => d.recept.ingredienten) ?? [];
   return ingredienten.length > 0 && ingredienten.every((i) => !(i.hoeveelheid > 0));
+}
+
+/** Waarom "Plan mijn week" (nog) geen nieuw weekmenu maakt (WEEK-261/262). */
+export type NieuwPlanBlokkade = 'gezin' | 'nietGekookt';
+
+/**
+ * Mag "Plan mijn week" een nieuw weekmenu maken?
+ * - 'gezin' (WEEK-261): het gezin is nog niet ingesteld en bewaard (volwassenen, postcode, gemeente); zonder gezin geen recepten.
+ * - 'nietGekookt' (WEEK-262): op het weekmenu staat nog een bevestigd recept dat niet gekookt is; eerst koken.
+ * - undefined: een nieuw weekmenu maken mag.
+ */
+export function blokkadeNieuwPlan(plan: Weekplan | null, gezinIngesteld: boolean): NieuwPlanBlokkade | undefined {
+  if (!gezinIngesteld) return 'gezin';
+  const zichtbaar = zichtbaarWeekmenu(plan);
+  if (zichtbaar && openBevestigdeDagen(zichtbaar).length > 0) return 'nietGekookt';
+  return undefined;
 }

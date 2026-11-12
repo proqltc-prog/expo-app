@@ -1,6 +1,6 @@
 import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Moment, MOMENTEN, Soort, SOORTEN, StijlCode } from '@/data/recept';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
@@ -12,8 +12,8 @@ import {
   kiesbareEigenRecepten,
   kiesbarePoolRecepten,
   startSoorten,
-  voegPlanReceptToe,
   vervangDoorPlanRecept,
+  verwijderDag,
   wisselSoort,
 } from '@/lib/planner/kies';
 import { zelfdeDag } from '@/lib/planner/bijwerken';
@@ -21,6 +21,8 @@ import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadProfiel } from '@/opslag/profiel';
 import { laadKeuzes, laadPlan, wijzigPlan } from '@/opslag/plan';
+import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
+import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
@@ -119,35 +121,32 @@ export default function Kies() {
     }));
   }, [tab, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, soorten, zoek, taal]);
 
-  const kies = async (keuze: Keuze) => {
-    if (bezig || geenRecht) return;
+  // WEEK-272: geen gerecht op deze dag. Ingrediënten op de boodschappenlijst gaan weg; wat al in huis is, blijft.
+  const geenGerecht = async () => {
+    if (bezig || geenRecht || index === undefined) return;
     setBezig(true);
     try {
-      if (index !== undefined) {
-        // Bestaande dag vervangen; enkel als die dag nog hetzelfde is als toen het scherm opende.
-        const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
-        await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorPlanRecept(huidig, index, keuze.recept) : huidig));
-        router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
-        return;
-      }
-      // Nieuwe maaltijd op de eerste vrije dag voor dit moment.
-      let vol = false;
-      const bewaard = await wijzigPlan((huidig) => {
-        const nieuw = voegPlanReceptToe(huidig, keuze.recept, moment);
-        if (!nieuw) {
-          vol = true;
-          return huidig;
-        }
-        return nieuw;
-      });
-      if (!bewaard) {
-        Alert.alert(t('kies.titel'), t('planning.geenPlan'));
-        return;
-      }
-      if (vol) {
-        Alert.alert(t('kies.titel'), t('planning.geenVrijeDag'));
-        return;
-      }
+      const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
+      const bewaard = await wijzigPlan((huidig) => verwijderDag(huidig, index, verwacht));
+      if (bewaard) await zetLijstBijPlan(bewaard, taal);
+      router.navigate('/');
+    } finally {
+      setBezig(false);
+    }
+  };
+
+  // Zelf kiezen vervangt altijd het gerecht van één dag (WEEK-273: "gerecht toevoegen" bestaat niet meer).
+  const magBeheren = useMagGerechtenBeheren();
+
+  const kies = async (keuze: Keuze) => {
+    if (bezig || geenRecht || index === undefined) return;
+    setBezig(true);
+    try {
+      // Enkel als die dag nog hetzelfde is als toen het scherm opende.
+      const verwacht = { gemaaktOp: params.gemaaktOp ?? '', receptNaam: params.naam ?? '' };
+      const bewaard = await wijzigPlan((huidig) => (zelfdeDag(huidig, index, verwacht) ? vervangDoorPlanRecept(huidig, index, keuze.recept) : huidig));
+      // WEEK-272: was het vorige gerecht bevestigd, dan gaan zijn ingrediënten van de boodschappenlijst.
+      if (bewaard) await zetLijstBijPlan(bewaard, taal);
       router.navigate('/'); // WEEK-120: altijd naar het weekmenu, niet met back
     } finally {
       setBezig(false);
@@ -167,6 +166,11 @@ export default function Kies() {
     <View style={s.scherm}>
       {popup}
       <Text style={s.moment}>{t(`moment.${moment}`)}</Text>
+      {index !== undefined && (
+        <Pressable style={s.geenGerecht} onPress={geenGerecht} disabled={bezig} accessibilityRole="button">
+          <Text style={s.geenGerechtTekst}>{t('kies.geenGerecht')}</Text>
+        </Pressable>
+      )}
       <View style={s.tabs} accessibilityRole="tablist">
         {(['ontdek', 'gezin'] as const).map((k) => {
           const actief = tab === k;
@@ -186,10 +190,10 @@ export default function Kies() {
       {tab === 'gezin' && (
         // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
         <View style={s.gezinActies}>
-          <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
+          {magBeheren && <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
-          </Pressable>
-          <Pressable style={s.beheer} onPress={() => router.push('/mijn-recepten')} accessibilityRole="button">
+          </Pressable>}
+          <Pressable style={s.beheer} onPress={() => router.push({ pathname: '/mijn-recepten', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
             <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
           </Pressable>
         </View>
@@ -247,6 +251,8 @@ const s = StyleSheet.create({
   scherm: { flex: 1, padding: 16, gap: 12 },
   moment: { fontSize: 13, color: '#777', fontWeight: '600' },
   melding: { fontSize: 15, lineHeight: 22, color: '#333', backgroundColor: '#fff8e1', padding: 14, borderRadius: 12 },
+  geenGerecht: { borderWidth: 1.5, borderColor: '#B4472B', borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  geenGerechtTekst: { color: '#B4472B', fontWeight: '700', fontSize: 15 },
   tabs: { flexDirection: 'row', gap: 8 },
   tab: { flex: 1, paddingVertical: 10, minHeight: 44, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   tabActief: { backgroundColor: KLEUR },

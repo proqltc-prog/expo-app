@@ -14,3 +14,6 @@ android/
 .DS_Store
 npm-debug.*
 yarn-error.*
+
+# WEEK-277: bewust geen lockfile in de repo (WEEK-38, WEEK-220); de workflows gebruiken npm install.
+package-lock.json

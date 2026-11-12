@@ -243,7 +243,8 @@ describe('WEEK-247: omrekenen naar de eenheid van de app en naar één volwassen
   });
   test('stuks naar gram en gram naar stuks via het gemiddelde stukgewicht', () => {
     assert.equal(omrekenen(ontleedRegel('600 g tomaten'), 'tomaat', 4), 1.25); // 600 / 120 / 4
-    assert.equal(omrekenen(ontleedRegel('2 kipfilets'), 'kipfilet', 2), undefined); // geen stukgewicht gekend
+    assert.equal(omrekenen(ontleedRegel('2 kipfilets'), 'kipfilet', 2), 150); // WEEK-270: stukgewicht kipfilet 150 g
+    assert.equal(omrekenen(ontleedRegel('2 tofu'), 'tofu', 2), undefined); // geen stukgewicht gekend
   });
   test('een snuifje blijft een snuifje; zout zonder hoeveelheid is een beetje; een bosje is niet te bepalen', () => {
     assert.equal(omrekenen(ontleedRegel('1 snufje zout'), 'zout', 4), 1);

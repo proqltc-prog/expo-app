@@ -9,7 +9,6 @@ import {
   kiesbareEigenRecepten,
   kiesbarePoolRecepten,
   vervangDoorPlanRecept,
-  voegPlanReceptToe,
 } from '@/lib/planner/kies';
 import type { PlanDag, PlanRecept, Weekplan } from '@/lib/planner/types';
 import { standaardProfiel } from '@/lib/profiel';
@@ -172,19 +171,12 @@ describe('planrecepten op het weekmenu', () => {
   const r1 = recept('x', 'Eerste', 15, 'vegetarisch');
   const r2 = recept('y', 'Tweede', 25, 'vis');
 
-  test('een planrecept toevoegen kiest de eerste vrije avond', () => {
-    const p = plan([{ dag: 'maandag', recept: r1 }]);
-    const nieuw = voegPlanReceptToe(p, r2, 'avond');
-    if (!nieuw) throw new Error('er is een vrije dag');
-    assert.equal(nieuw.dagen.find((d) => d.recept.id === 'y')?.dag, 'zondag');
-  });
-
   test('een planrecept vervangen houdt dag en moment en wist de voortgang', () => {
-    const p = plan([{ dag: 'woensdag', moment: 'avond', recept: r1, gedaan: true }]);
+    const p = plan([{ dag: 'woensdag', moment: 'avond', recept: r1, bevestigd: true }]);
     const nieuw = vervangDoorPlanRecept(p, 0, r2);
     assert.equal(nieuw.dagen[0].dag, 'woensdag');
     assert.equal(nieuw.dagen[0].recept.id, 'y');
-    assert.equal(nieuw.dagen[0].gedaan, undefined);
+    assert.equal(nieuw.dagen[0].bevestigd, undefined);
   });
 
   test('WEEK-204: een planrecept vervangen houdt de datum van de dag', () => {

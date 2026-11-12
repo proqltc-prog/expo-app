@@ -2,10 +2,10 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { Afdeling, ingredientNaam } from '@/data/ingredienten';
+import { Afdeling, gewichtPerStuk, ingredientNaam } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
-import type { Sleutel } from '@/i18n';
+import { eenheidNaam, type Sleutel } from '@/i18n';
 import {
   afdelingVanEigen,
   bewaarEigen,
@@ -39,6 +39,10 @@ import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
 import { fotoTijdelijkOnbereikbaar, type FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
+import { TerugKnop } from '@/ui/terugKnop';
+import { useMagGerechtenBeheren } from '@/ui/magGerechten';
+import { toonFilmpjeVoorInlezen } from '@/opslag/advertentie';
+import { magInlezenNaFilmpje } from '@/lib/inlezenFilmpje';
 import { koppelOnbekend } from '@/opslag/ingredientKoppel';
 import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } from '@/lib/ingredientKoppel';
 
@@ -54,7 +58,13 @@ import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } f
 const KLEUR = '#2e7d4f';
 
 /** Een ingrediënt in het formulier; de hoeveelheid komt uit de popup en is altijd ingevuld. */
+import { isKeukenEenheid, KeukenEenheid, keuzeEenheden, naarBasis, pastBij } from '@/lib/eenheden';
+
 type Rij = EigenIngredient;
+
+/** WEEK-270: hoeveelheid en eenheid zoals de gebruiker ze ziet: de gekozen keukenmaat, anders de basis. */
+const zichtbareMaat = (r: Pick<Rij, 'hoeveelheid' | 'eenheid' | 'keuken'>): { hoeveelheid: number; eenheid: KeukenEenheid } =>
+  r.keuken ? { hoeveelheid: r.keuken.hoeveelheid, eenheid: r.keuken.eenheid } : { hoeveelheid: r.hoeveelheid, eenheid: r.eenheid };
 
 /** Waarvoor de popup open staat: een nieuw ingrediënt (met of zonder code) of een bestaande rij. */
 type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string; nakijk?: number };
@@ -66,7 +76,6 @@ type LinkMelding = {
   personen: number;
   vanSite: boolean;
   teLang?: number;
-  nieuw?: number;
   /** WEEK-258: onbekende ingrediënten konden niet opgezocht worden (AI tijdelijk onbereikbaar). */
   opzoekenTijdelijk?: boolean;
 };
@@ -112,13 +121,13 @@ export default function EigenReceptScherm() {
   const [linkOpen, setLinkOpen] = useState(false);
   const [link, setLink] = useState('');
   const [linkBezig, setLinkBezig] = useState(false);
-  const [linkFout, setLinkFout] = useState<LinkFout | undefined>(undefined);
+  const [linkFout, setLinkFout] = useState<LinkFout | 'filmpje' | undefined>(undefined);
   const [linkMelding, setLinkMelding] = useState<LinkMelding | undefined>(undefined);
   const [nakijken, setNakijken] = useState<NakijkRegel[]>([]);
   // WEEK-251: een recept inlezen via een foto (Google Gemini via de Supabase-functie recept-foto).
   const [fotoOpen, setFotoOpen] = useState(false);
   const [fotoBezig, setFotoBezig] = useState(false);
-  const [fotoFout, setFotoFout] = useState<FotoFout | 'geenToestemming' | undefined>(undefined);
+  const [fotoFout, setFotoFout] = useState<FotoFout | 'geenToestemming' | 'filmpje' | undefined>(undefined);
   // WEEK-254: een onbekend ingrediënt laten opzoeken of toevoegen (Gemini, via de Supabase-functie ingredient-koppel).
   const [nieuwBezig, setNieuwBezig] = useState(false);
   const [nieuwFout, setNieuwFout] = useState<NieuwFout | undefined>(undefined);
@@ -163,22 +172,25 @@ export default function EigenReceptScherm() {
   /** Opent de popup voor een ingrediënt: met code liggen eenheid en categorie vast (zoals de lijst en de frigo), anders kies je ze. */
   const openPopup = (doel: PopupDoel, bestaande?: Rij) => {
     const code = doel.code;
-    const eenheid = bestaande?.eenheid ?? standaardEenheid(code);
+    const basis = bestaande?.eenheid ?? standaardEenheid(code);
+    // WEEK-270: de popup toont wat de gebruiker koos (2 el), niet de omgerekende basis (30 ml).
+    const zichtbaar = bestaande ? zichtbareMaat(bestaande) : undefined;
+    const keuzes = keuzeEenheden(basis, code ? gewichtPerStuk(code) : undefined);
     const afdeling = code ? afdelingVanEigen({ code }) : bestaande?.afdeling;
     setPopupDoel(doel);
     setPopup({
       sleutel: `${doel.index ?? 'nieuw'}-${Date.now()}`,
       titel: t(doel.index === undefined ? 'recept.popupNieuw' : 'recept.popupBewerk'),
       naam: doel.naam,
-      hoeveelheid: bestaande?.hoeveelheid,
-      eenheid,
+      hoeveelheid: zichtbaar?.hoeveelheid,
+      eenheid: zichtbaar?.eenheid ?? basis,
       afdeling: afdeling ?? 'overig',
-      // WEEK-245: enkel de hoeveelheid is in te geven; eenheid en categorie liggen vast.
-      toonEenheid: false,
+      // WEEK-245: de categorie ligt vast. WEEK-270: de eenheid kies je uit de keukeneenheden die bij het ingrediënt passen.
+      toonEenheid: keuzes.length > 1,
       toonCategorie: false,
       toonVasteCategorie: !!code,
       toonHoudbaar: false,
-      eenheden: EENHEDEN,
+      eenheden: keuzes,
       hoeveelheidVerplicht: true,
       accent: KLEUR,
     });
@@ -203,7 +215,17 @@ export default function EigenReceptScherm() {
     const code = popupDoel.code;
     const eenheid = (code ? standaardEenheid(code) : w.eenheid && (EENHEDEN as readonly string[]).includes(w.eenheid) ? w.eenheid : 'g') as Eenheid;
     const afdeling: Afdeling | undefined = !code && w.afdeling !== 'overig' ? w.afdeling : undefined;
-    const rij: Rij = { ...(code ? { code } : {}), naam: popupDoel.naam, hoeveelheid: w.hoeveelheid, eenheid, ...(afdeling ? { afdeling } : {}) };
+    // WEEK-270: een gekozen keukeneenheid (el, bosje, dl …) wordt omgerekend naar de basis; de keuze zelf blijft bewaard om te tonen.
+    const perStuk = code ? gewichtPerStuk(code) : undefined;
+    const gekozen = isKeukenEenheid(w.eenheid) && pastBij(w.eenheid, eenheid, perStuk) && w.eenheid !== eenheid ? w.eenheid : undefined;
+    const rij: Rij = {
+      ...(code ? { code } : {}),
+      naam: popupDoel.naam,
+      hoeveelheid: gekozen ? naarBasis(w.hoeveelheid, gekozen, eenheid, perStuk) : w.hoeveelheid,
+      eenheid,
+      ...(afdeling ? { afdeling } : {}),
+      ...(gekozen ? { keuken: { eenheid: gekozen, hoeveelheid: w.hoeveelheid } } : {}),
+    };
     // WEEK-247: een ingrediënt dat al in het recept staat, wordt niet dubbel toegevoegd; de hoeveelheden worden samengeteld.
     setRijen((r) => (popupDoel.index === undefined ? voegSamen(r, rij) : r.map((x, i) => (i === popupDoel.index ? rij : x))));
     if (popupDoel.nakijk !== undefined) {
@@ -225,6 +247,11 @@ export default function EigenReceptScherm() {
     setLinkFout(undefined);
     setLinkBezig(true);
     try {
+      // WEEK-280: eerst het filmpje (in de app); vroegtijdig gesloten = niet inlezen.
+      if (!magInlezenNaFilmpje(await toonFilmpjeVoorInlezen())) {
+        setLinkFout('filmpje');
+        return;
+      }
       const r = await haalReceptOp(url);
       if (!r.ok) {
         setLinkFout(r.fout);
@@ -242,7 +269,6 @@ export default function EigenReceptScherm() {
   const pasToe = async (recept: RuwRecept, bron: LinkMelding['bron']) => {
     let ingelezen = verwerkRecept(recept, taal);
     // WEEK-254: wat de app niet kent, wordt meteen opgezocht: een bestaand ingrediënt of een nieuw (automatisch toegevoegd).
-    let nieuw = 0;
     let opzoekenTijdelijk = false;
     const onbekend = ingelezen.nakijken.filter((n) => n.reden === 'onbekend');
     if (onbekend.length) {
@@ -253,7 +279,6 @@ export default function EigenReceptScherm() {
       opzoekenTijdelijk = opzoekenTijdelijkOnbereikbaar(r);
       if (r.ok && r.resultaten.some((x) => x.code)) {
         ingelezen = verwerkRecept(recept, taal, koppelingenUit(r.resultaten));
-        nieuw = r.resultaten.filter((x) => x.status === 'nieuw').length;
       }
     }
     if (ingelezen.naam) setNaam(ingelezen.naam);
@@ -263,7 +288,7 @@ export default function EigenReceptScherm() {
     if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
     setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
     setNakijken(ingelezen.nakijken);
-    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(nieuw ? { nieuw } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk } : {}) });
+    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk } : {}) });
   };
 
   /** WEEK-251: een foto nemen of kiezen en laten lezen; één vraag per foto. */
@@ -278,6 +303,11 @@ export default function EigenReceptScherm() {
     if (!foto) return;
     setFotoBezig(true);
     try {
+      // WEEK-280: eerst het filmpje (in de app); vroegtijdig gesloten = niet inlezen.
+      if (!magInlezenNaFilmpje(await toonFilmpjeVoorInlezen())) {
+        setFotoFout('filmpje');
+        return;
+      }
       const r = await leesReceptUitFoto(foto);
       if (!r.ok) {
         setFotoFout(r.fout);
@@ -373,7 +403,8 @@ export default function EigenReceptScherm() {
   /** Wat een rij toont naast de naam: hoeveelheid, eenheid en categorie. */
   const rijDetail = (r: Rij) => {
     const afd = afdelingVanEigen(r);
-    return `${String(r.hoeveelheid).replace('.', ',')} ${t(`recept.eenheid.${r.eenheid}`)} · ${t(`afdeling.${afd ?? 'overig'}` as Sleutel)}`;
+    const m = zichtbareMaat(r);
+    return `${String(m.hoeveelheid).replace('.', ',')} ${eenheidNaam(taal, m.eenheid)} · ${t(`afdeling.${afd ?? 'overig'}` as Sleutel)}`;
   };
 
   const wijzigStap = (index: number, tekst: string) => setStappen((s) => s.map((x, i) => (i === index ? tekst : x)));
@@ -429,34 +460,71 @@ export default function EigenReceptScherm() {
 
   // WEEK-246: een getoonde melding verdwijnt zodra het probleem opgelost is.
   const getoond = nogGeldigeFouten(fouten, { naam, soort, minuten, stijlen, seizoenen, ingredienten: rijen, stappen });
+  // WEEK-276: enkel de beheerder beheert de gerechten; de andere leden kunnen ze enkel lezen.
+  const magBeheren = useMagGerechtenBeheren();
+
   const fout = (f: Fout) => (getoond.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
 
   return (
     <ScrollView contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
+      {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
+      <View style={s.formulier} pointerEvents={magBeheren ? 'auto' : 'none'}>
       {/* WEEK-245: de hoeveelheden zijn voor één volwassene; de app rekent om voor het gezin. */}
       <View style={s.uitleg}>
         <Text style={s.uitlegTekst}>{t('recept.uitlegVolwassene')}</Text>
       </View>
 
-      {/* WEEK-247: een recept inlezen via de link van een receptensite. */}
-      {!bestaand && !linkOpen && !fotoOpen && (
-        <Pressable style={s.linkKnop} onPress={() => setLinkOpen(true)} accessibilityRole="button">
-          <Ionicons name="link-outline" size={18} color={KLEUR} />
-          <Text style={s.linkKnopTekst}>{t('recept.link.knop')}</Text>
-        </Pressable>
-      )}
-      {/* WEEK-251: een recept inlezen via een foto. */}
-      {!bestaand && !linkOpen && !fotoOpen && (
-        <Pressable style={s.linkKnop} onPress={() => setFotoOpen(true)} accessibilityRole="button">
-          <Ionicons name="camera-outline" size={18} color={KLEUR} />
-          <Text style={s.linkKnopTekst}>{t('recept.foto.knop')}</Text>
-        </Pressable>
+      {/* WEEK-247/251/260: een recept inlezen via de link van een receptensite of via een foto: één kaart, twee tegels. */}
+      {magBeheren && !bestaand && !linkOpen && !fotoOpen && (
+        <View style={s.inlezenKaart}>
+          <Text style={s.inlezenTitel}>{t('recept.inlezen.titel')}</Text>
+          <Text style={s.inlezenSub}>{t('recept.inlezen.sub')}</Text>
+          <View style={s.tegels}>
+            <Pressable
+              style={({ pressed }) => [s.tegel, pressed && s.tegelGedrukt]}
+              onPress={() => setLinkOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('recept.link.knop')}
+            >
+              <View style={s.tegelIcoon}>
+                <Ionicons name="link" size={22} color={KLEUR} />
+              </View>
+              <Text style={s.tegelTitel}>{t('recept.link.tegel')}</Text>
+              <Text style={s.tegelSub}>{t('recept.link.tegelSub')}</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [s.tegel, pressed && s.tegelGedrukt]}
+              onPress={() => setFotoOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('recept.foto.knop')}
+            >
+              <View style={s.tegelIcoon}>
+                <Ionicons name="camera" size={22} color={KLEUR} />
+              </View>
+              <Text style={s.tegelTitel}>{t('recept.foto.tegel')}</Text>
+              <Text style={s.tegelSub}>{t('recept.foto.tegelSub')}</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
       {!bestaand && fotoOpen && (
-        <View style={s.linkVak}>
-          <Text style={s.linkUitleg}>{t('recept.foto.uitleg')}</Text>
+        <View style={s.inlezenKaart}>
+          <View style={s.paneelKop}>
+            <TerugKnop
+              onPress={() => {
+                setFotoOpen(false);
+                setFotoFout(undefined);
+              }}
+              style={s.paneelTerug}
+            />
+            <View style={s.tegelIcoonKlein}>
+              <Ionicons name="camera" size={18} color={KLEUR} />
+            </View>
+            <Text style={s.paneelTitel}>{t('recept.foto.tegel')}</Text>
+          </View>
+          <Text style={s.paneelUitleg}>{t('recept.foto.uitleg')}</Text>
           {/* WEEK-258: de AI is tijdelijk onbereikbaar: duidelijk zeggen en de andere werkwijzen aanbieden. */}
-          {fotoTijdelijkOnbereikbaar(fotoFout) ? (
+          {fotoTijdelijkOnbereikbaar(fotoFout === 'filmpje' ? undefined : fotoFout) ? (
             <View style={s.tijdelijkVak}>
               <Text style={s.fout}>{t('recept.foto.tijdelijk')}</Text>
               <View style={s.rijChips}>
@@ -492,23 +560,29 @@ export default function EigenReceptScherm() {
               <Text style={s.linkUitleg}>{t('recept.foto.bezig')}</Text>
             </View>
           ) : (
-            <View style={s.knoppen}>
-              <Pressable style={s.annuleer} onPress={() => leesFoto('camera')} accessibilityRole="button">
-                <Text style={s.annuleerTekst}>{t('recept.foto.camera')}</Text>
+            <View style={s.fotoKnoppen}>
+              <Pressable style={({ pressed }) => [s.fotoKnop, pressed && s.tegelGedrukt]} onPress={() => leesFoto('camera')} accessibilityRole="button">
+                <Ionicons name="camera-outline" size={20} color="#fff" />
+                <Text style={s.fotoKnopTekst}>{t('recept.foto.camera')}</Text>
               </Pressable>
-              <Pressable style={s.annuleer} onPress={() => leesFoto('galerij')} accessibilityRole="button">
-                <Text style={s.annuleerTekst}>{t('recept.foto.galerij')}</Text>
+              <Pressable style={({ pressed }) => [s.fotoKnopLicht, pressed && s.tegelGedrukt]} onPress={() => leesFoto('galerij')} accessibilityRole="button">
+                <Ionicons name="images-outline" size={20} color={KLEUR} />
+                <Text style={s.fotoKnopLichtTekst}>{t('recept.foto.galerij')}</Text>
               </Pressable>
             </View>
           )}
-          <Pressable onPress={() => { setFotoOpen(false); setFotoFout(undefined); }} disabled={fotoBezig} accessibilityRole="button" style={s.fotoAnnuleer}>
-            <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
-          </Pressable>
         </View>
       )}
       {!bestaand && linkOpen && (
-        <View style={s.linkVak}>
-          <Text style={s.linkUitleg}>{t('recept.link.uitleg')}</Text>
+        <View style={s.inlezenKaart}>
+          <View style={s.paneelKop}>
+            <TerugKnop onPress={() => !linkBezig && setLinkOpen(false)} style={s.paneelTerug} />
+            <View style={s.tegelIcoonKlein}>
+              <Ionicons name="link" size={18} color={KLEUR} />
+            </View>
+            <Text style={s.paneelTitel}>{t('recept.link.tegel')}</Text>
+          </View>
+          <Text style={s.paneelUitleg}>{t('recept.link.uitleg')}</Text>
           <TextInput
             style={s.veld}
             value={link}
@@ -525,20 +599,23 @@ export default function EigenReceptScherm() {
             editable={!linkBezig}
           />
           {linkFout && <Text style={s.fout}>{t(`recept.link.fout.${linkFout}` as Sleutel)}</Text>}
-          <View style={s.knoppen}>
-            <Pressable style={s.annuleer} onPress={() => setLinkOpen(false)} disabled={linkBezig} accessibilityRole="button">
-              <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
-            </Pressable>
-            <Pressable
-              style={[s.bewaar, (linkBezig || !link.trim()) && { opacity: 0.6 }]}
-              onPress={leesLink}
-              disabled={linkBezig || !link.trim()}
-              accessibilityRole="button"
-              accessibilityLabel={t(linkBezig ? 'recept.link.bezig' : 'recept.link.lees')}
-            >
-              {linkBezig ? <ActivityIndicator color="#fff" /> : <Text style={s.bewaarTekst}>{t('recept.link.lees')}</Text>}
-            </Pressable>
-          </View>
+          {/* WEEK-260: terug via de pijl in de kop; één duidelijke knop om in te lezen. */}
+          <Pressable
+            style={[s.fotoKnop, (linkBezig || !link.trim()) && { opacity: 0.6 }]}
+            onPress={leesLink}
+            disabled={linkBezig || !link.trim()}
+            accessibilityRole="button"
+            accessibilityLabel={t(linkBezig ? 'recept.link.bezig' : 'recept.link.lees')}
+          >
+            {linkBezig ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="download-outline" size={20} color="#fff" />
+                <Text style={s.fotoKnopTekst}>{t('recept.link.lees')}</Text>
+              </>
+            )}
+          </Pressable>
         </View>
       )}
       {linkMelding && (
@@ -546,7 +623,6 @@ export default function EigenReceptScherm() {
           <Text style={s.uitlegTekst}>{t('recept.link.klaar', { aantal: linkMelding.aantal })}</Text>
           <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
           {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
-          {linkMelding.nieuw !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.nieuw', { n: linkMelding.nieuw })}</Text>}
           {linkMelding.opzoekenTijdelijk && <Text style={s.uitlegTekst}>{t('recept.link.opzoekenTijdelijk')}</Text>}
         </View>
       )}
@@ -689,7 +765,9 @@ export default function EigenReceptScherm() {
         </Pressable>
       )}
       {fout('stappen')}
+      </View>
 
+      {magBeheren && (
       <View style={s.knoppen}>
         <Pressable style={s.annuleer} onPress={terug} disabled={bezig} accessibilityRole="button">
           <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
@@ -698,12 +776,13 @@ export default function EigenReceptScherm() {
           <Text style={s.bewaarTekst}>{t('recept.bewaar')}</Text>
         </Pressable>
       </View>
-      {bestaand && !bevestigVerwijder && (
+      )}
+      {magBeheren && bestaand && !bevestigVerwijder && (
         <Pressable style={s.verwijderKnop} onPress={() => setBevestigVerwijder(true)} accessibilityRole="button">
           <Text style={s.verwijderTekst}>{t('recept.verwijder')}</Text>
         </Pressable>
       )}
-      {bestaand && bevestigVerwijder && (
+      {magBeheren && bestaand && bevestigVerwijder && (
         <View style={s.bevestig}>
           <Text style={s.bevestigTekst}>{t('recept.verwijderVraag')}</Text>
           <View style={s.knoppen}>
@@ -735,6 +814,9 @@ function Chip({ tekst, actief, onPress }: { tekst: string; actief: boolean; onPr
 }
 
 const s = StyleSheet.create({
+  // WEEK-276
+  formulier: { gap: 14 },
+  alleenLezen: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   // WEEK-203: dezelfde maten als Kies en Mijn recepten: zijmarge 16, velden en knoppen met hoekstraal 12, chips zoals in het weekmenu.
   scherm: { padding: 16, gap: 8, paddingBottom: 48 },
   label: { fontSize: 14, fontWeight: '700', color: '#333', marginTop: 10 },
@@ -778,6 +860,26 @@ const s = StyleSheet.create({
   linkKnopTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
   fotoBezig: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
   fotoAnnuleer: { alignSelf: 'center', paddingVertical: 6 },
+  // WEEK-260: kaart "Recept inlezen" met twee tegels, en de panelen met een kop.
+  inlezenKaart: { backgroundColor: '#F3F8F5', borderRadius: 16, padding: 14, gap: 10, borderWidth: 1, borderColor: '#DCEBE1' },
+  inlezenTitel: { fontSize: 16, fontWeight: '800', color: '#17201A' },
+  inlezenSub: { fontSize: 13, lineHeight: 18, color: '#5E6B63', marginTop: -6 },
+  tegels: { flexDirection: 'row', gap: 10 },
+  tegel: { flex: 1, backgroundColor: '#fff', borderRadius: 14, padding: 12, gap: 6, borderWidth: 1, borderColor: '#DCEBE1', minHeight: 116 },
+  tegelGedrukt: { opacity: 0.75 },
+  tegelIcoon: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#E1F0E6', alignItems: 'center', justifyContent: 'center' },
+  tegelIcoonKlein: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#E1F0E6', alignItems: 'center', justifyContent: 'center' },
+  tegelTitel: { fontSize: 15, fontWeight: '700', color: '#17201A' },
+  tegelSub: { fontSize: 12, lineHeight: 16, color: '#5E6B63' },
+  paneelKop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  paneelTerug: { paddingRight: 4, paddingVertical: 4 },
+  paneelTitel: { fontSize: 16, fontWeight: '800', color: '#17201A', flex: 1 },
+  paneelUitleg: { fontSize: 13, lineHeight: 19, color: '#5E6B63' },
+  fotoKnoppen: { gap: 10 },
+  fotoKnop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: KLEUR, borderRadius: 12, minHeight: 50, paddingHorizontal: 14 },
+  fotoKnopTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  fotoKnopLicht: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#fff', borderRadius: 12, minHeight: 50, paddingHorizontal: 14, borderWidth: 1.5, borderColor: KLEUR },
+  fotoKnopLichtTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
   tijdelijkVak: { gap: 8, marginTop: 4 },
   linkVak: { borderWidth: 1, borderColor: '#cfe3d6', borderRadius: 14, padding: 12, gap: 8, backgroundColor: '#fff' },
   linkUitleg: { color: '#333', fontSize: 14, lineHeight: 20 },

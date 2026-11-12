@@ -5,7 +5,7 @@ export const SLEUTEL = {
   lijstWeergave: 'lijstweergave:v1',
   frigo: 'frigo:v1',
   favorieten: 'favorieten:v1',
-  /** Eigen recepten (WEEK-45): enkel op dit toestel, niet in de gezinssynchronisatie. */
+  /** Eigen gerechten (WEEK-45): gedeeld met de gezinsruimte (WEEK-192, WEEK-275); enkel de beheerder wijzigt ze (WEEK-276). */
   eigenRecepten: 'eigenrecepten:v1',
   plan: 'weekplan:v1',
   keuzes: 'planningkeuzes:v1',

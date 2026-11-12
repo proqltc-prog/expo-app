@@ -26,6 +26,7 @@ import {
   pasExternToe,
   SyncMeta,
   SyncRij,
+  teVersturenSoorten,
   voegWachtrijSamen,
 } from '@/lib/sync';
 import { SLEUTEL } from './sleutels';
@@ -247,38 +248,60 @@ export async function verstuur(): Promise<void> {
       const t = await naElkaar(laadToestand);
       // Per item maar één rij (de nieuwste): twee keer dezelfde id in één batch weigert de database (WEEK-27).
       // Alleen soorten die dit toestel nog kent (WEEK-72: favorieten zijn verwijderd).
-      const itemRijen = (Object.entries(t.wachtrij.items) as [ItemSoort, SyncRij[]][])
-        .filter(([soort]) => soort in ITEMBRONNEN)
-        .flatMap(([soort, rijen]) =>
-        voegWachtrijSamen([], rijen).map((r) => ({ gezin_id: gezin.id, soort, id: r.id, data: r.data, verwijderd: r.verwijderd, bijgewerkt_op: r.bijgewerkt_op }))
-      );
-      // WEEK-168: enkel de beheerder deelt het gezinsprofiel; de database weigert het voor de andere leden.
+      // WEEK-168/276: enkel de beheerder deelt het gezinsprofiel en de eigen gerechten; de database weigert ze voor de andere leden.
       const magProfiel = ikBeheerder(await laadBeheerderId(), await ikId());
+      const soorten = teVersturenSoorten(
+        (Object.keys(t.wachtrij.items) as ItemSoort[]).filter((soort) => soort in ITEMBRONNEN),
+        magProfiel
+      );
+      const itemRijen = soorten.flatMap((soort) =>
+        voegWachtrijSamen([], t.wachtrij.items[soort] ?? []).map((r) => ({ gezin_id: gezin.id, soort, id: r.id, data: r.data, verwijderd: r.verwijderd, bijgewerkt_op: r.bijgewerkt_op }))
+      );
       const docRijen = (Object.entries(t.wachtrij.documenten) as [DocumentSleutel, { data: unknown; bijgewerkt_op: string }][])
         .filter(([sleutel]) => sleutel !== 'profiel' || magProfiel)
         .map(([sleutel, d]) => ({ gezin_id: gezin.id, sleutel, data: d.data, bijgewerkt_op: d.bijgewerkt_op }));
-      for (let i = 0; i < itemRijen.length; i += 500) {
-        const { error } = await sb.from('gezin_items').upsert(itemRijen.slice(i, i + 500), { onConflict: 'gezin_id,soort,id' });
-        if (error) throw error;
+      // WEEK-275: elke soort apart. Een weigering van één soort houdt de andere (lijst, In huis, weekmenu) niet tegen.
+      let fout: unknown;
+      const aangekomen: typeof itemRijen = [];
+      for (const soort of soorten) {
+        const rijenVanSoort = itemRijen.filter((r) => r.soort === soort);
+        try {
+          for (let i = 0; i < rijenVanSoort.length; i += 500) {
+            const { error } = await sb.from('gezin_items').upsert(rijenVanSoort.slice(i, i + 500), { onConflict: 'gezin_id,soort,id' });
+            if (error) throw error;
+            aangekomen.push(...rijenVanSoort.slice(i, i + 500));
+          }
+        } catch (e) {
+          fout = fout ?? e;
+        }
       }
+      let documentenAangekomen = false;
       if (docRijen.length) {
         const { error } = await sb.from('gezin_documenten').upsert(docRijen, { onConflict: 'gezin_id,sleutel' });
-        if (error) throw error;
+        if (error) fout = fout ?? error;
+        else documentenAangekomen = true;
       }
       // Enkel weghalen wat verstuurd is; wat intussen opnieuw wijzigde, blijft staan.
       await naElkaar(async () => {
         const nu = await laadToestand();
-        const verstuurd = new Set(itemRijen.map((r) => `${r.soort}|${r.id}|${r.bijgewerkt_op}`));
+        const verstuurd = new Set(aangekomen.map((r) => `${r.soort}|${r.id}|${r.bijgewerkt_op}`));
         for (const soort of Object.keys(nu.wachtrij.items) as ItemSoort[]) {
           nu.wachtrij.items[soort] = (nu.wachtrij.items[soort] ?? []).filter((r) => !verstuurd.has(`${soort}|${r.id}|${r.bijgewerkt_op}`));
         }
-        for (const d of docRijen) {
-          if (nu.wachtrij.documenten[d.sleutel]?.bijgewerkt_op === d.bijgewerkt_op) delete nu.wachtrij.documenten[d.sleutel];
+        if (documentenAangekomen) {
+          for (const d of docRijen) {
+            if (nu.wachtrij.documenten[d.sleutel]?.bijgewerkt_op === d.bijgewerkt_op) delete nu.wachtrij.documenten[d.sleutel];
+          }
         }
-        // Een niet-beheerder verstuurt het profiel nooit: een eigen wijziging wordt weggegooid (WEEK-168).
-        if (!magProfiel) delete nu.wachtrij.documenten.profiel;
+        // Een niet-beheerder verstuurt het profiel en de eigen gerechten nooit: eigen wijzigingen worden weggegooid (WEEK-168/276).
+        if (!magProfiel) {
+          delete nu.wachtrij.documenten.profiel;
+          delete nu.wachtrij.items.eigenRecept;
+        }
         await bewaarToestand(nu);
       });
+      // Wat niet aankwam, blijft in de wachtrij en wordt later opnieuw geprobeerd.
+      if (fout) throw fout;
       zetStatus('verbonden');
     } while (nogEens);
   } catch {

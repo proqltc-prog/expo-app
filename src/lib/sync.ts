@@ -227,3 +227,11 @@ export function alsEigenGezin(ruw: unknown): { id: string; naam: string; code: s
   if (!gezin || typeof gezin.id !== 'string' || typeof gezin.code !== 'string') return null;
   return { id: gezin.id, naam: typeof gezin.naam === 'string' ? gezin.naam : '', code: gezin.code };
 }
+
+/**
+ * WEEK-275: welke soorten dit toestel doorstuurt. Elke soort gaat apart naar de databank, zodat een weigering van
+ * één soort de rest (lijst, In huis) niet blokkeert. Eigen gerechten enkel als dit toestel ze mag beheren (WEEK-276).
+ */
+export function teVersturenSoorten<S extends string>(soorten: readonly S[], magGerechten: boolean): S[] {
+  return soorten.filter((s) => s !== 'eigenRecept' || magGerechten);
+}

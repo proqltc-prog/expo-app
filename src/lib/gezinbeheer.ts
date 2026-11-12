@@ -44,3 +44,12 @@ export function toonGezinsnaam(naam: string | null | undefined, zonderNaam: stri
   const n = naam?.trim();
   return !n || n === GEZINSNAAM_STANDAARD ? zonderNaam : n;
 }
+
+/**
+ * WEEK-276: mag dit toestel de eigen gerechten van het gezin maken, bewerken, verwijderen of inlezen?
+ * Zelfde regel als het gezinsprofiel: zonder gezinsruimte zelf alles, met een gezin enkel de beheerder.
+ * De andere leden kunnen de gerechten wel bekijken. De databank weigert hetzelfde (is_beheerder).
+ */
+export function magGerechtenBeheren(gezinAanwezig: boolean, beheerderId: string | undefined, mijnId: string | undefined): boolean {
+  return magGezinsprofielWijzigen(gezinAanwezig, beheerderId, mijnId);
+}

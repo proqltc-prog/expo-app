@@ -82,9 +82,7 @@ export default function Bereiding() {
   return (
     <View style={s.scherm}>
       {popup}
-      <Pressable onPress={sluit} accessibilityRole="button" accessibilityLabel={t('bereiding.sluit')} style={s.sluit} hitSlop={8}>
-        <Ionicons name="close" size={22} color={INKT} />
-      </Pressable>
+      {/* WEEK-259: terug via de terugpijl linksboven in de kop (zoals overal in de app), niet meer met een kruisje. */}
       <ScrollView contentContainerStyle={s.inhoud}>
         <Text style={s.titel}>{naam}</Text>
         {minuten ? (
@@ -107,7 +105,7 @@ export default function Bereiding() {
                 ) : ing.dekking === 'deels' ? (
                   <Text style={s.ingDeels}>{t('bereiding.deelsInFrigo')}</Text>
                 ) : null}
-                <Text style={s.ingHoeveelheid}>{hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
+                <Text style={s.ingHoeveelheid}>{ing.keuken ? hoeveelheidTekst(taal, ing.keuken.hoeveelheid, ing.keuken.eenheid) : hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}</Text>
               </View>
             ))}
           </View>
@@ -160,7 +158,6 @@ const s = StyleSheet.create({
   scherm: { flex: 1, backgroundColor: PAPIER },
   inhoud: { padding: 20, gap: 16, paddingBottom: 24 },
   titel: { fontSize: 26, fontWeight: '800', color: INKT, lineHeight: 31, paddingRight: 52 },
-  sluit: { position: 'absolute', top: 12, right: 14, zIndex: 1, width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, alignItems: 'center', justifyContent: 'center' },
   chips: { flexDirection: 'row', gap: 8 },
   chip: { fontSize: 12, fontWeight: '700', color: PETROL, backgroundColor: PETROL_ZACHT, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10, overflow: 'hidden' },
   ingKaart: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, borderRadius: 18, padding: 14, gap: 4 },

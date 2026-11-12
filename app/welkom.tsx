@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { TerugKnop } from '@/ui/terugKnop';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Sleutel } from '@/i18n';
@@ -156,9 +157,7 @@ export default function Welkom() {
   if (stap === 'mail') {
     return (
       <ScrollView contentContainerStyle={s.schermContainer}>
-        <Pressable onPress={() => setStap('aanmelden')} accessibilityRole="button" hitSlop={12}>
-          <Text style={s.linkTekst}>{t('aanmelden.terug')}</Text>
-        </Pressable>
+        <TerugKnop onPress={() => setStap('aanmelden')} kleur={KLEUR} style={s.terug} />
         <View style={s.kop}>
           <Text style={s.titel}>{t('aanmelden.mailTitel')}</Text>
           <Text style={s.tekst}>{t('aanmelden.mailTekst')}</Text>
@@ -206,12 +205,9 @@ export default function Welkom() {
   // stap 'aanmelden': de aanbieders die aanstaan (WEEK-225: enkel Google), e-mail als dat aanstaat, en zonder account.
   return (
     <ScrollView contentContainerStyle={s.schermContainer}>
-      <Pressable onPress={() => setStap('start')} accessibilityRole="button" hitSlop={12}>
-        <Text style={s.linkTekst}>{t('aanmelden.terug')}</Text>
-      </Pressable>
+      <TerugKnop onPress={() => setStap('start')} kleur={KLEUR} style={s.terug} />
       <View style={s.kop}>
         <Text style={s.titel}>{t('aanmelden.titel')}</Text>
-        <Text style={s.tekst}>{t('aanmelden.tekst')}</Text>
       </View>
       {aanmeldFout && (
         <Text style={s.fout} accessibilityRole="alert">
@@ -277,6 +273,7 @@ const s = StyleSheet.create({
   knopZachtTekst: { color: KLEUR, fontWeight: '700', fontSize: 17 },
   linkKnop: { alignItems: 'center', paddingVertical: 8 },
   linkTekst: { color: KLEUR, fontWeight: '700', fontSize: 16 },
+  terug: { alignSelf: 'flex-start', paddingVertical: 8, paddingRight: 16 },
   alternatief: { gap: 8, alignItems: 'center', marginTop: 8 },
   waarschuwing: { fontSize: 13, color: MUTED, lineHeight: 18, textAlign: 'center' },
   uit: { opacity: 0.6 },

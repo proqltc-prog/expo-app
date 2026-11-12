@@ -5,7 +5,8 @@ import type { Vermijd } from '@/data/vermijden';
 import type { Taal } from '@/i18n';
 import { afdelingVanEigen, EigenRecept } from '@/lib/eigenrecepten';
 import type { LijstItem } from '@/lib/lijst';
-import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
+import { geschaaldeHoeveelheid, Gezin, schaalFactor } from '@/lib/schaal';
+import { schaalKeukenMaat } from '@/lib/eenheden';
 import type { DbPoolRecept } from './dbplan';
 import { kooktijdVan, DagCode, KooktijdCode, PlanDag, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 import { momentVan } from './moment';
@@ -94,6 +95,8 @@ export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
       eenheid: i.eenheid,
       ...(afdelingVanEigen(i) ? { afdeling: afdelingVanEigen(i) } : {}),
       ...(i.code ? { code: i.code } : {}),
+      // WEEK-270: de gekozen keukeneenheid schaalt mee met het gezin (2 el per volwassene → 5 el voor 2,5 porties).
+      ...(i.keuken ? { keuken: schaalKeukenMaat(i.keuken, schaalFactor(gezin)) } : {}),
     })),
   };
 }
@@ -101,7 +104,8 @@ export function eigenNaarPlanRecept(r: EigenRecept, gezin: Gezin): PlanRecept {
 /** Zet een ander recept op dezelfde plek: dag, moment en datum blijven, de voortgang (gekookt, frigo) gaat weg. */
 export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: PlanRecept): Weekplan {
   const huidig = plan.dagen[index];
-  if (!huidig) return plan;
+  // WEEK-272: een gekookt gerecht blijft vast.
+  if (!huidig || huidig.gedaan) return plan;
   const nieuw: PlanDag = {
     dag: huidig.dag,
     ...(huidig.moment ? { moment: huidig.moment } : {}),
@@ -109,26 +113,6 @@ export function vervangDoorPlanRecept(plan: Weekplan, index: number, recept: Pla
     recept,
   };
   return { ...plan, dagen: plan.dagen.map((d, i) => (i === index ? nieuw : d)) };
-}
-
-/**
- * Voegt een maaltijd toe op de eerste vrije weekdag voor dat moment.
- * Geeft undefined als er voor dat moment geen dag meer vrij is.
- */
-export function voegPlanReceptToe(plan: Weekplan, recept: PlanRecept, moment: Moment): Weekplan | undefined {
-  const bezet = new Set<DagCode>(plan.dagen.filter((d) => momentVan(d) === moment).map((d) => d.dag));
-  const dag = WEEKDAGEN.find((d) => !bezet.has(d));
-  if (!dag) return undefined;
-  const nieuw: PlanDag = {
-    dag,
-    ...(moment !== 'avond' ? { moment } : {}),
-    recept,
-  };
-  const dagen = [...plan.dagen, nieuw].sort(
-    (a, b) =>
-      WEEKDAGEN.indexOf(a.dag) - WEEKDAGEN.indexOf(b.dag) || momentVolgorde(momentVan(a)) - momentVolgorde(momentVan(b))
-  );
-  return { ...plan, dagen };
 }
 
 /**

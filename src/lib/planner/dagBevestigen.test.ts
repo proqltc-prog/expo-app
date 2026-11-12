@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, blokkadeNieuwPlan, magZelfKiezen, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -175,5 +175,45 @@ describe('WEEK-249: planZonderHoeveelheden', () => {
     assert.equal(planZonderHoeveelheden(plan([dag({ dag: 'maandag' }), dag({ dag: 'dinsdag', recept: nulRecept })])), false);
     assert.equal(planZonderHoeveelheden(plan([])), false);
     assert.equal(planZonderHoeveelheden(null), false);
+  });
+});
+
+describe('WEEK-261/262: mag "Plan mijn week" een nieuw weekmenu maken?', () => {
+  test('zonder ingesteld gezin nooit, ook niet zonder weekmenu (geen recepten genereren)', () => {
+    assert.equal(blokkadeNieuwPlan(null, false), 'gezin');
+    assert.equal(blokkadeNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true })]), false), 'gezin');
+    assert.equal(blokkadeNieuwPlan(plan([dag({ dag: 'maandag' })]), false), 'gezin');
+  });
+  test('met gezin en een bevestigd recept dat niet gekookt is: eerst koken', () => {
+    assert.equal(blokkadeNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true })]), true), 'nietGekookt');
+    assert.equal(
+      blokkadeNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })]), true),
+      'nietGekookt'
+    );
+  });
+  test('met gezin en niets open bevestigd: een nieuw menu mag', () => {
+    assert.equal(blokkadeNieuwPlan(null, true), undefined);
+    assert.equal(blokkadeNieuwPlan(plan([]), true), undefined);
+    assert.equal(blokkadeNieuwPlan(plan([dag({ dag: 'maandag' }), dag({ dag: 'dinsdag' })]), true), undefined);
+    assert.equal(blokkadeNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag' })]), true), undefined);
+    assert.equal(blokkadeNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true })]), true), undefined);
+  });
+  test('regressie: zichtbaarWeekmenu en openBevestigdeDagen blijven hetzelfde', () => {
+    const p = plan([dag({ dag: 'maandag', bevestigd: true }), dag({ dag: 'dinsdag', bevestigd: true, gedaan: true })]);
+    assert.equal(zichtbaarWeekmenu(p), p);
+    assert.deepEqual(openBevestigdeDagen(p), [p.dagen[0]]);
+  });
+});
+
+describe('WEEK-272: zelf kiezen of geen gerecht deze dag', () => {
+  test('mag bij een open en bij een bevestigd gerecht, niet bij een gekookt', () => {
+    assert.equal(magZelfKiezen(dag({ dag: 'maandag' })), true);
+    assert.equal(magZelfKiezen(dag({ dag: 'maandag', bevestigd: true })), true);
+    assert.equal(magZelfKiezen(dag({ dag: 'maandag', bevestigd: true, gedaan: true })), false);
+    assert.equal(magZelfKiezen(undefined), false);
+  });
+  test('regressie: vervangen en bevestigen blijven enkel voor open gerechten', () => {
+    assert.equal(magDagWijzigen(dag({ dag: 'maandag', bevestigd: true })), false);
+    assert.equal(magDagWijzigen(dag({ dag: 'maandag' })), true);
   });
 });

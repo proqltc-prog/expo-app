@@ -1,11 +1,12 @@
 // Eigen recepten (WEEK-45): recepten die het gezin zelf toevoegt. Pure logica, zonder opslag.
 // Hoeveelheden zijn per volwassen portie, zoals in de databank.
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
-import { Afdeling, AFDELINGEN, afdelingVan, dbCodeVan, eenheidVan, IngredientCode } from '@/data/ingredienten';
+import { Afdeling, AFDELINGEN, afdelingVan, dbCodeVan, eenheidVan, gewichtPerStuk, IngredientCode } from '@/data/ingredienten';
 import { MAX_KOOKTIJD_MIN } from '@/lib/kooktijd';
 import type { Taal } from '@/i18n';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
 import { normaliseer, zoekCatalogus } from '@/lib/frigoSheets';
+import { KeukenMaat, normaliseerKeukenMaat } from '@/lib/eenheden';
 
 export const EENHEDEN: readonly Eenheid[] = ['g', 'ml', 'stuk', 'teentje'];
 export const SOORTEN: readonly Soort[] = ['vegetarisch', 'vis', 'vlees'];
@@ -22,6 +23,11 @@ export type EigenIngredient = {
   eenheid: Eenheid;
   /** Winkelafdeling van een eigen ingrediënt zonder code (WEEK-201); ontbreekt = overig. Met code geldt de afdeling van de ingrediëntenlijst. */
   afdeling?: Afdeling;
+  /**
+   * WEEK-270: de eenheid zoals de gebruiker ze koos (bv. 2 el), per volwassene. De hoeveelheid hierboven is altijd in de
+   * basiseenheid (30 ml), zodat de lijst en "In huis" blijven optellen. Ontbreekt = de basiseenheid zelf.
+   */
+  keuken?: KeukenMaat;
 };
 
 const isAfdeling = (x: unknown): x is Afdeling => typeof x === 'string' && (AFDELINGEN as string[]).includes(x);
@@ -131,9 +137,11 @@ export function normaliseerEigen(ruw: unknown): EigenRecept[] {
       // WEEK-205: oude catalogus-codes worden databankcodes; een onbekende code valt weg (het ingrediënt blijft als eigen ingrediënt).
       ingredienten: r.ingredienten
         .filter((i) => i && typeof i === 'object' && typeof i.naam === 'string')
-        .map(({ code, ...i }) => {
+        .map(({ code, keuken, ...i }) => {
           const db = typeof code === 'string' ? dbCodeVan(code) : undefined;
-          return db ? { ...i, code: db } : i;
+          // WEEK-270: een keukenmaat die niet (meer) bij de basiseenheid past, valt weg; de basishoeveelheid blijft.
+          const maat = normaliseerKeukenMaat(keuken, i.eenheid, db ? gewichtPerStuk(db) : undefined);
+          return { ...i, ...(db ? { code: db } : {}), ...(maat ? { keuken: maat } : {}) };
         }),
       stappen: r.stappen.filter((x): x is string => typeof x === 'string'),
     }));

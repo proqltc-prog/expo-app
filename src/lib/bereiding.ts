@@ -34,7 +34,7 @@ export function toonBereidingsIcoon(_bevestigd?: boolean): boolean {
 }
 
 /** Eén ingrediënt voor de bereidingspagina: de hoeveelheid is al voor het gezin omgerekend (WEEK-146). */
-export type BereidingIngredient = { naam: string; hoeveelheid: number; eenheid: string };
+export type BereidingIngredient = { naam: string; hoeveelheid: number; eenheid: string; keuken?: { eenheid: string; hoeveelheid: number } };
 
 /**
  * De ingrediënten van een gerecht uit het weekplan, in de volgorde van het recept (WEEK-146).
@@ -44,7 +44,8 @@ export function ingredientenVoor(plan: Weekplan | null, receptId: string, taal: 
   const dag = plan?.dagen.find((d) => d.recept.id === receptId);
   if (!dag) return [];
   // WEEK-154: de namen in de gekozen taal; hoeveelheden blijven zoals ze zijn.
-  return ingredientenInTaal(dag.recept, taal).map(({ naam, hoeveelheid, eenheid }) => ({ naam, hoeveelheid, eenheid }));
+  // WEEK-270: de keukenmaat (bv. 5 el) gaat mee om te tonen; de dekking uit In huis rekent met de basishoeveelheid.
+  return ingredientenInTaal(dag.recept, taal).map(({ naam, hoeveelheid, eenheid, keuken }) => ({ naam, hoeveelheid, eenheid, ...(keuken ? { keuken } : {}) }));
 }
 
 /** Een ingrediënt met de dekking uit de frigo: geheel, deels of niet (WEEK-147). */
