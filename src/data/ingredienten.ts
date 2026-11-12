@@ -1,5 +1,8 @@
 // De ingrediëntenlijst van de app (WEEK-205): de ingrediënten uit de databank, met winkelafdeling, eenheid en naam in elke taal.
 // De gegevens staan in ingredienten.gegenereerd.ts (uit de databank gegenereerd). Dit bestand bevat enkel de logica erop.
+// WEEK-252: die ingebouwde lijst is het vertrekpunt; bij het opstarten vult de app ze aan met de ingrediënten uit de
+// databank (bewaard op het toestel, enkel opnieuw opgehaald als de databank gewijzigd is). Zo komen nieuwe
+// ingrediënten binnen zonder nieuwe app-versie. Zie zetIngredientenUitDatabank.
 // Volgorde van de namen: nl, fr, de, en.
 import type { Taal } from '@/i18n';
 import { INGREDIENTEN_DB } from '@/data/ingredienten.gegenereerd';
@@ -25,12 +28,36 @@ export const AFDELINGEN: Afdeling[] = [
   'dranken',
 ];
 
-export type IngredientCode = keyof typeof INGREDIENTEN_DB;
+/** Eén ingrediënt: [categorie in de databank, eenheid, [naam nl, fr, de, en]]. */
+export type IngredientInfo = readonly [categorie: string, eenheid: string, namen: readonly [string, string, string, string]];
+
+/** De codes in de ingebouwde lijst (voor vaste tabellen hieronder). */
+type IngebouwdeCode = keyof typeof INGREDIENTEN_DB;
+
+/**
+ * Een ingrediëntcode, bv. "witlof". Sinds WEEK-252 kan de lijst bij het opstarten groeien, dus elke tekst kan een code
+ * zijn; isIngredient zegt of de app ze kent. De ingebouwde codes blijven voorgesteld in de editor.
+ */
+export type IngredientCode = IngebouwdeCode | (string & {});
 
 const VOLGORDE: Taal[] = ['nl', 'fr', 'de', 'en'];
 
+/** De lijst die de app nu gebruikt: de ingebouwde lijst, aangevuld met de databank (WEEK-252). */
+let LIJST: Readonly<Record<string, IngredientInfo>> = INGREDIENTEN_DB;
+let lijstVersie = 0;
+
 export function isIngredient(code: string): code is IngredientCode {
-  return Object.prototype.hasOwnProperty.call(INGREDIENTEN_DB, code);
+  return Object.prototype.hasOwnProperty.call(LIJST, code);
+}
+
+/** Categorie, eenheid en namen van een ingrediënt, of undefined als de app de code niet kent. */
+export function ingredientInfo(code: string): IngredientInfo | undefined {
+  return isIngredient(code) ? LIJST[code] : undefined;
+}
+
+/** Stijgt telkens de lijst verandert; zo weten afgeleide gegevens (bv. de zoekindex bij het inlezen) dat ze opnieuw moeten. */
+export function ingredientenLijstVersie(): number {
+  return lijstVersie;
 }
 
 /** De winkelafdeling bij een categorie uit de databank. */
@@ -55,7 +82,7 @@ export function afdelingVoorCategorie(categorie: string): Afdeling {
 }
 
 /** Enkele producten horen in een andere winkelafdeling dan hun databankcategorie laat vermoeden. */
-const AFDELING_PER_CODE: Readonly<Partial<Record<IngredientCode, Afdeling>>> = {
+const AFDELING_PER_CODE: Readonly<Partial<Record<IngebouwdeCode, Afdeling>>> = {
   brood: 'brood',
   naan: 'brood',
   tortilla_wrap: 'brood',
@@ -81,14 +108,30 @@ const AFDELING_PER_CODE: Readonly<Partial<Record<IngredientCode, Afdeling>>> = {
 };
 
 export function afdelingVan(code: IngredientCode): Afdeling {
-  return AFDELING_PER_CODE[code] ?? afdelingVoorCategorie(INGREDIENTEN_DB[code][0]);
+  return AFDELING_PER_CODE[code as IngebouwdeCode] ?? afdelingVoorCategorie(ingredientInfo(code)?.[0] ?? '');
 }
 
 export function ingredientNaam(code: IngredientCode, taal: Taal): string {
-  return INGREDIENTEN_DB[code][2][VOLGORDE.indexOf(taal)];
+  const info = ingredientInfo(code);
+  return info ? info[2][VOLGORDE.indexOf(taal)] : code;
 }
 
-export const INGREDIENT_CODES = Object.keys(INGREDIENTEN_DB) as IngredientCode[];
+/** Alle codes die de app kent. Wordt ter plaatse bijgewerkt als de lijst groeit (WEEK-252). */
+export const INGREDIENT_CODES: IngredientCode[] = Object.keys(INGREDIENTEN_DB);
+
+/**
+ * WEEK-252: vult de ingebouwde lijst aan met de ingrediënten uit de databank. Een code uit de databank vervangt die
+ * van de ingebouwde lijst (de databank is de bron); codes die enkel ingebouwd zijn, blijven. Geeft het aantal codes
+ * terug dat de ingebouwde lijst niet kende.
+ */
+export function zetIngredientenUitDatabank(uitDatabank: Readonly<Record<string, IngredientInfo>>): number {
+  LIJST = { ...INGREDIENTEN_DB, ...uitDatabank };
+  const ingebouwd = Object.keys(INGREDIENTEN_DB);
+  const nieuw = Object.keys(uitDatabank).filter((c) => !Object.prototype.hasOwnProperty.call(INGREDIENTEN_DB, c)).sort();
+  INGREDIENT_CODES.splice(0, INGREDIENT_CODES.length, ...ingebouwd, ...nieuw);
+  lijstVersie++;
+  return nieuw.length;
+}
 
 /**
  * Codes van de vroegere lokale catalogus (tot WEEK-205) en de databankcode die ze nu hebben.
@@ -150,7 +193,7 @@ export function gewichtPerStuk(code: string): number | undefined {
 /** De eenheid waarin een ingrediënt in de frigo en in recepten staat: die van de databank (WEEK-160). Onbekende code: gram. */
 export function eenheidVan(code: string): string {
   const db = dbCodeVan(code);
-  return db ? INGREDIENTEN_DB[db][1] : 'g';
+  return (db && ingredientInfo(db)?.[1]) || 'g';
 }
 
 const normaliseerNaam = (t: string) =>

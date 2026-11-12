@@ -5,8 +5,7 @@
 //  - elke ingrediëntregel wordt ontleed (hoeveelheid, eenheid, naam) en gekoppeld aan de ingrediëntenlijst van de app.
 //    Een dubbel of synoniem (meervoud, "rijpe", "verse", andere taal) gebruikt altijd het bestaande ingrediënt: geen dubbels;
 //  - hoeveelheden worden omgerekend naar de eenheid van de app en naar één volwassene.
-import { eenheidVan, gewichtPerStuk, ingredientNaam, INGREDIENT_CODES, IngredientCode, isVoorraad } from '@/data/ingredienten';
-import { INGREDIENTEN_DB } from '@/data/ingredienten.gegenereerd';
+import { eenheidVan, gewichtPerStuk, ingredientenLijstVersie, ingredientInfo, ingredientNaam, INGREDIENT_CODES, IngredientCode, isVoorraad } from '@/data/ingredienten';
 import type { Eenheid, Soort } from '@/data/recept';
 import { TALEN, Taal } from '@/i18n';
 import type { EigenIngredient } from '@/lib/eigenrecepten';
@@ -425,9 +424,12 @@ const SYNONIEMEN: Readonly<Record<string, IngredientCode>> = {
 
 type Index = { code: IngredientCode; taal: Taal; stammen: string[] }[];
 let index: Index | undefined;
+let indexVersie = -1;
 
 function bouwIndex(): Index {
-  if (!index) {
+  // WEEK-252: de lijst kan bij het opstarten groeien; dan wordt de index opnieuw opgebouwd.
+  if (!index || indexVersie !== ingredientenLijstVersie()) {
+    indexVersie = ingredientenLijstVersie();
     index = INGREDIENT_CODES.flatMap((code) =>
       TALEN.map((taal) => ({ code, taal, stammen: woorden(ingredientNaam(code, taal)).map(stam) })).filter((x) => x.stammen.length)
     );
@@ -549,7 +551,7 @@ export type NakijkRegel = {
 
 /** Het soort gerecht volgens de ingrediënten: met vlees "vlees", anders met vis "vis", anders "vegetarisch". */
 export function soortVanIngredienten(codes: readonly IngredientCode[]): Soort {
-  const categorieen = new Set(codes.map((c) => INGREDIENTEN_DB[c][0] as string));
+  const categorieen = new Set(codes.map((c) => ingredientInfo(c)?.[0] ?? ''));
   return categorieen.has('vlees') ? 'vlees' : categorieen.has('vis') ? 'vis' : 'vegetarisch';
 }
 

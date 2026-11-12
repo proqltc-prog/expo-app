@@ -1,8 +1,7 @@
 // Testrecepten (WEEK-208): een kleine, met de hand geschreven set recepten in de vorm van de databank.
 // Enkel voor tests; de app zelf haalt alle recepten uit de databank. Geen testbestand (geen `describe`), wel testdata.
 // Ingrediëntcodes komen uit de ingrediëntenlijst van de databank (src/data/ingredienten.gegenereerd.ts).
-import { INGREDIENTEN_DB } from '@/data/ingredienten.gegenereerd';
-import { type IngredientCode, ingredientNaam } from '@/data/ingredienten';
+import { type IngredientCode, ingredientInfo, ingredientNaam } from '@/data/ingredienten';
 import { TALEN } from '@/i18n';
 import type { Gezin } from '@/lib/schaal';
 import type { DbIngredient, DbRecept } from './db';
@@ -11,7 +10,7 @@ import { type DbPoolRecept, maakDbPool } from './dbplan';
 /** Een databankingrediënt met de namen in elke taal uit de ingrediëntenlijst. Hoeveelheden per volwassene. */
 export function testIngredient(code: IngredientCode, hoeveelheid: number, eenheid: string): DbIngredient {
   const namen = Object.fromEntries(TALEN.map((taal) => [taal, ingredientNaam(code, taal)]));
-  return { code, categorie: INGREDIENTEN_DB[code][0], namen, hoeveelheid, eenheid };
+  return { code, categorie: ingredientInfo(code)?.[0] ?? '', namen, hoeveelheid, eenheid };
 }
 
 const ing = testIngredient;

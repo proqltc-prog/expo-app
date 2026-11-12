@@ -5,6 +5,7 @@ import { router, Tabs, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
+import { startIngredienten } from '@/opslag/gegevens';
 import { luisterNaarTerugkeer } from '@/opslag/aanmelden';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
@@ -92,6 +93,11 @@ export default function Layout() {
       if (staat === 'active') startSync();
     });
     return () => sub.remove();
+  }, []);
+
+  // WEEK-252: de ingrediëntenlijst aanvullen met de databank (enkel ophalen als er iets gewijzigd is).
+  useEffect(() => {
+    void startIngredienten();
   }, []);
 
   // Eerste opening (WEEK-79): eerst het welkomstscherm met de taalkeuze, daarna de gezinsruimte.

@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.131.0] – 2026-11-12
+
+- De ingrediëntenlijst wordt bij het opstarten aangevuld met de databank: nieuwe of gewijzigde ingrediënten komen binnen zonder nieuwe app-versie of APK. De app vraagt enkel een klein versienummer op en haalt de lijst (± 33 kB) pas opnieuw op als de databank gewijzigd is; de kopie blijft op het toestel, ook zonder internet. Nieuwe tabel data_versie met automatische versienummers voor ingrediënten en recepten. (WEEK-252)
+
+**Jira:** [WEEK-252](https://proqltc-1791495894841.atlassian.net/browse/WEEK-252) · **Confluence:** [WEEK-252](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838145)
+
 ## [0.130.0] – 2026-11-12
 
 - Eigen recept inlezen via een foto: neem of kies een foto van een recept (kookboek, receptkaart, scherm). Google Gemini leest de tekst via een Supabase-functie; de app koppelt de ingrediënten en rekent om naar één volwassene, zoals bij een link. De foto wordt nergens bewaard. Limiet: 5 foto's per gebruiker per dag. Werkt zodra de sleutel GEMINI_API_KEY in Supabase staat. Nieuwe pakketten expo-image-picker en expo-image-manipulator (nieuwe APK nodig). (WEEK-251)
