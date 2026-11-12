@@ -230,6 +230,8 @@ export const fr: Vertalingen = {
   'planning.herhaald': 'Il n’y avait pas assez d’autres favoris ; certains plats étaient déjà au menu la semaine dernière.',
   'planning.kort': 'Votre livre de recettes ne contient que {n} recettes adaptées ; cette semaine compte donc {n} jours.',
   'planning.versoepeld': "Il n’y avait pas assez de recettes correspondant à vos choix. Le menu de la semaine a été complété avec d’autres recettes, d’un autre style ou d’un autre temps de cuisson.",
+  'planning.geenGezin': "Indiquez d’abord votre famille : pour combien de personnes cuisinez-vous ? Sans famille, l’application ne peut pas calculer les quantités.",
+  'planning.zonderHoeveelheden': "Ce menu a été créé sans famille et n’a donc pas de quantités. Créez un nouveau menu de la semaine.",
   'kooktijd.snel': 'Rapide (jusqu’à {tot} min)',
   'kooktijd.gemiddeld': 'Moyen ({van}–{tot} min)',
   'kooktijd.uitgebreid': 'Élaboré ({van}–{tot} min)',

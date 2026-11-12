@@ -231,6 +231,8 @@ export const nl = {
   'planning.herhaald': 'Er waren niet genoeg andere favorieten; sommige gerechten stonden vorige week ook op het menu.',
   'planning.kort': 'Je kookboek heeft maar {n} passende recepten; deze week telt daarom {n} dagen.',
   'planning.versoepeld': 'Er waren te weinig recepten die bij je keuzes passen. Het weekmenu is aangevuld met andere recepten, van een andere stijl of kooktijd.',
+  'planning.geenGezin': 'Vul eerst je gezin in: voor hoeveel personen kook je? Zonder gezin kan de app geen hoeveelheden berekenen.',
+  'planning.zonderHoeveelheden': 'Dit weekmenu werd gemaakt zonder gezin en heeft daardoor geen hoeveelheden. Maak een nieuw weekmenu.',
   'kooktijd.snel': 'Snel (tot {tot} min)',
   'kooktijd.gemiddeld': 'Gemiddeld ({van}–{tot} min)',
   'kooktijd.uitgebreid': 'Uitgebreid ({van}–{tot} min)',

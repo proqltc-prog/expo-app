@@ -230,6 +230,8 @@ export const de: Vertalingen = {
   'planning.herhaald': 'Es gab nicht genug andere Favoriten; einige Gerichte standen schon letzte Woche auf dem Menü.',
   'planning.kort': 'Dein Kochbuch hat nur {n} passende Rezepte; diese Woche hat deshalb {n} Tage.',
   'planning.versoepeld': 'Es gab zu wenige Rezepte, die zu deiner Auswahl passen. Der Wochenplan wurde mit anderen Rezepten ergänzt (anderer Stil oder Kochzeit).',
+  'planning.geenGezin': 'Gib zuerst deine Familie ein: Für wie viele Personen kochst du? Ohne Familie kann die App keine Mengen berechnen.',
+  'planning.zonderHoeveelheden': 'Dieser Wochenplan wurde ohne Familie erstellt und hat deshalb keine Mengen. Erstelle einen neuen Wochenplan.',
   'kooktijd.snel': 'Schnell (bis {tot} Min.)',
   'kooktijd.gemiddeld': 'Mittel ({van}–{tot} Min.)',
   'kooktijd.uitgebreid': 'Aufwendig ({van}–{tot} Min.)',

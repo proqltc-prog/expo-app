@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.129.1] – 2026-11-12
+
+- Opgelost: zonder ingevuld gezin kon je een weekmenu "voor 0 personen" maken; alle hoeveelheden waren dan 0 en in Bereiding stond bij elk ingrediënt een vinkje. Nu vraagt de app eerst je gezin in te vullen, krijgt een oud menu zonder hoeveelheden een melding, en krijgt een ingrediënt zonder hoeveelheid nooit een vinkje. (WEEK-249)
+
+**Jira:** [WEEK-249](https://proqltc-1791495894841.atlassian.net/browse/WEEK-249) · **Confluence:** [WEEK-249](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24674305)
+
 ## [0.129.0] – 2026-11-12
 
 - Onbekende ingrediënten melden: slaat een gebruiker bij het inlezen van een recept een ingrediënt over dat de app niet kent, dan wordt het anoniem gemeld (één rij per naam en taal met een teller, met daglimieten). In Supabase toont een overzicht per taal hoeveel ingrediënten gemeld zijn en welke talen ontbreken; goedgekeurde ingrediënten worden in één keer vertaald en toegevoegd. (WEEK-248)

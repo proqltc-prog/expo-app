@@ -53,5 +53,6 @@ export type BereidingIngredientMetFrigo = BereidingIngredient & { dekking: Dekki
 /** Koppelt aan elk ingrediënt wat er al in de frigo ligt (WEEK-147). Zelfde volgorde als de ingrediënten. */
 export function ingredientenMetFrigo(ingredienten: readonly BereidingIngredient[], frigo: readonly FrigoItem[]): BereidingIngredientMetFrigo[] {
   const dekking = verdeelFrigo(ingredienten, frigo);
-  return ingredienten.map((ing, i) => ({ ...ing, dekking: dekking[i]?.gedekt ?? 'niet' }));
+  // WEEK-249: zonder hoeveelheid (0, bv. een menu voor 0 personen) is niets "helemaal in huis": geen vinkje.
+  return ingredienten.map((ing, i) => ({ ...ing, dekking: ing.hoeveelheid > 0 ? (dekking[i]?.gedekt ?? 'niet') : 'niet' }));
 }

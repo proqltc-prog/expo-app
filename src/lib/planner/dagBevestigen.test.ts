@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -163,5 +163,17 @@ describe('de popup bij een nieuw weekmenu verschijnt enkel bij zichtbare bevesti
   });
   test('een gekookt bevestigd recept naast een open bevestigd recept: popup', () => {
     assert.equal(vraagtBevestigingVoorNieuwPlan(plan([dag({ dag: 'maandag', bevestigd: true, gedaan: true }), dag({ dag: 'dinsdag', bevestigd: true })])), true);
+  });
+});
+
+describe('WEEK-249: planZonderHoeveelheden', () => {
+  const nulRecept = { ...recept, ingredienten: [{ ...recept.ingredienten[0], hoeveelheid: 0 }] };
+  test('een menu waarin elk ingrediënt 0 is, werd zonder gezin gemaakt', () => {
+    assert.equal(planZonderHoeveelheden(plan([dag({ dag: 'maandag', recept: nulRecept }), dag({ dag: 'dinsdag', recept: nulRecept })])), true);
+  });
+  test('regressie: een gewoon menu, een leeg menu of geen menu niet', () => {
+    assert.equal(planZonderHoeveelheden(plan([dag({ dag: 'maandag' }), dag({ dag: 'dinsdag', recept: nulRecept })])), false);
+    assert.equal(planZonderHoeveelheden(plan([])), false);
+    assert.equal(planZonderHoeveelheden(null), false);
   });
 });

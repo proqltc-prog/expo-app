@@ -2,6 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   aantalPersonen,
+  heeftGezin,
   normaliseerProfiel,
   Profiel,
   profielContext,
@@ -127,5 +128,19 @@ describe('profielContext', () => {
     const c = profielContext(gezin({ volwassenen: 1, kinderen: 1, adres: { postcode: '', gemeente: '', land: '' } }));
     assert.match(c, /2 personen – 1 volwassene, 1 kind \(0 tot 12 jaar\)/);
     assert.doesNotMatch(c, /Woonplaats/);
+  });
+});
+
+describe('WEEK-249: heeftGezin', () => {
+  test('een nieuw, leeg gezin (0 volwassenen) kan nog niet plannen', () => {
+    assert.equal(heeftGezin(standaardProfiel()), false);
+    assert.equal(heeftGezin(normaliseerProfiel(null)), false);
+  });
+  test('vanaf één volwassene wel', () => {
+    assert.equal(heeftGezin({ ...standaardProfiel(), volwassenen: 1 }), true);
+    assert.equal(heeftGezin({ ...standaardProfiel(), volwassenen: 2, kinderen: 3 }), true);
+  });
+  test('regressie: een bewaard profiel heeft altijd minstens één volwassene', () => {
+    assert.equal(heeftGezin(normaliseerProfiel({ volwassenen: 0, kinderen: 0 })), true);
   });
 });

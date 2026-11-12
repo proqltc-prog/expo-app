@@ -65,3 +65,12 @@ export function alleBevestigdeGekookt(plan: Weekplan): boolean {
   const bevestigd = bevestigdeDagen(plan);
   return bevestigd.length > 0 && bevestigd.every((d) => d.gedaan);
 }
+
+/**
+ * Een weekmenu dat gemaakt werd zonder gezin ("voor 0 personen", WEEK-249): elk ingrediënt heeft hoeveelheid 0.
+ * Zo'n menu toont geen hoeveelheden en zet geen juiste boodschappen; de gebruiker maakt beter een nieuw menu.
+ */
+export function planZonderHoeveelheden(plan: Pick<Weekplan, 'dagen'> | null | undefined): boolean {
+  const ingredienten = plan?.dagen.flatMap((d) => d.recept.ingredienten) ?? [];
+  return ingredienten.length > 0 && ingredienten.every((i) => !(i.hoeveelheid > 0));
+}
