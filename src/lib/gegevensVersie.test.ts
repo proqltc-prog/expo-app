@@ -13,7 +13,7 @@ import {
   zetIngredientenUitDatabank,
 } from '@/data/ingredienten';
 import { INGREDIENTEN_DB } from '@/data/ingredienten.gegenereerd';
-import { leesIngredientRijen, leesVersies, moetOphalen } from './gegevensVersie';
+import { inBlokken, leesIngredientRijen, leesVersies, moetOphalen, uitBlokken } from './gegevensVersie';
 import { koppelIngredient, verwerkRecept } from './receptLink';
 
 const YUZU = {
@@ -116,5 +116,25 @@ describe('WEEK-252: de lijst aanvullen met de databank', () => {
     assert.equal(ingredientNaam('bestaat_niet', 'nl'), 'bestaat_niet');
     assert.equal(eenheidVan('bestaat_niet'), 'g');
     assert.equal(afdelingVan('bestaat_niet'), 'droge-voeding');
+  });
+});
+
+describe('WEEK-253: recepten in blokken bewaren', () => {
+  test('in blokken van 50 en terug, zonder iets te verliezen', () => {
+    const recepten = Array.from({ length: 370 }, (_, i) => ({ id: i }));
+    const blokken = inBlokken(recepten);
+    assert.equal(blokken.length, 8);
+    assert.equal(blokken[7].length, 20);
+    assert.deepEqual(uitBlokken(blokken, 8), recepten);
+  });
+  test('lege lijst: geen blokken', () => {
+    assert.deepEqual(inBlokken([]), []);
+    assert.deepEqual(uitBlokken([], 0), []);
+  });
+  test('een ontbrekend of kapot blok: opnieuw ophalen (undefined)', () => {
+    const blokken = inBlokken([1, 2, 3], 2);
+    assert.equal(uitBlokken(blokken, 3), undefined);
+    assert.equal(uitBlokken([blokken[0], undefined], 2), undefined);
+    assert.equal(uitBlokken([blokken[0], 'kapot'], 2), undefined);
   });
 });

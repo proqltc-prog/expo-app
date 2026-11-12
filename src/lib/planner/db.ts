@@ -1,7 +1,7 @@
 // Recepten uit de Supabase-database omzetten naar het formaat van het weekplan (WEEK-68).
 // Pure logica: geen netwerk. Het ophalen zit in src/opslag/receptenbank.ts.
 // Hoeveelheden in de database gelden voor 1 volwassene; hier worden ze geschaald naar het gezin (WEEK-67).
-import { type Afdeling, afdelingVan, afdelingVoorCategorie, isIngredient } from '@/data/ingredienten';
+import { type Afdeling, afdelingVan, afdelingVoorCategorie, ingredientNaam, isIngredient } from '@/data/ingredienten';
 import { SEIZOENEN, type Seizoen } from '@/data/seizoenen';
 import type { Basis, Moment, Soort, StijlCode } from '@/data/recept';
 import type { Taal } from '@/i18n';
@@ -138,6 +138,11 @@ export function leesBereidingen(ruw: unknown): Partial<Record<Taal, string[]>> {
   return uit;
 }
 
+/** De namen van een ingrediënt in elke taal uit de ingrediëntenlijst (ingebouwd + databank, WEEK-252); onbekend: leeg. */
+function namenUitLijst(code: string): Vertalingen {
+  return isIngredient(code) ? Object.fromEntries(ALLE_TALEN.map((taal) => [taal, ingredientNaam(code, taal)])) : {};
+}
+
 function leesDbIngredient(ruw: unknown): DbIngredient | undefined {
   if (!ruw || typeof ruw !== 'object') return undefined;
   const r = ruw as Record<string, unknown>;
@@ -146,7 +151,9 @@ function leesDbIngredient(ruw: unknown): DbIngredient | undefined {
   return {
     code: ing.code,
     categorie: typeof ing.categorie === 'string' ? ing.categorie : '',
-    namen: leesVertalingen(ing.ingredient_vertalingen, 'naam'),
+    // WEEK-253: de namen komen uit de ingrediëntenlijst (alle 4 talen); enkel als de rij ze zelf meebrengt
+    // (oudere vorm van de vraag), worden die gebruikt.
+    namen: Array.isArray(ing.ingredient_vertalingen) ? leesVertalingen(ing.ingredient_vertalingen, 'naam') : namenUitLijst(ing.code),
     hoeveelheid: r.hoeveelheid,
     eenheid: r.eenheid,
   };

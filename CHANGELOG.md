@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.132.0] – 2026-11-12
+
+- De recepten blijven op het toestel bewaard en worden enkel opnieuw opgehaald als de databank gewijzigd is: geen download van alle recepten meer bij elke start, nieuwe recepten zonder nieuwe APK, en de receptenbank werkt ook zonder internet. De download is kleiner (ingrediëntnamen komen uit de ingrediëntenlijst) en de ingrediënten van databankrecepten hebben nu ook een Duitse naam. (WEEK-253)
+
+**Jira:** [WEEK-253](https://proqltc-1791495894841.atlassian.net/browse/WEEK-253) · **Confluence:** [WEEK-253](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24870913)
+
 ## [0.131.0] – 2026-11-12
 
 - De ingrediëntenlijst wordt bij het opstarten aangevuld met de databank: nieuwe of gewijzigde ingrediënten komen binnen zonder nieuwe app-versie of APK. De app vraagt enkel een klein versienummer op en haalt de lijst (± 33 kB) pas opnieuw op als de databank gewijzigd is; de kopie blijft op het toestel, ook zonder internet. Nieuwe tabel data_versie met automatische versienummers voor ingrediënten en recepten. (WEEK-252)

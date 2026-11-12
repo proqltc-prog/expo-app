@@ -128,3 +128,34 @@ describe('leesDbRecept: ruwe rijen uit Supabase (WEEK-68)', () => {
     assert.equal(r.ingredienten.length, 0);
   });
 });
+
+describe('WEEK-253: recepten zonder ingrediëntnamen in de download', () => {
+  const rij = {
+    id: 8,
+    porties: 1,
+    kooktijd_min: 20,
+    moment: 'avond',
+    stijl: 'klassiek',
+    soort: 'vegetarisch',
+    basis: null,
+    recept_vertalingen: [{ taal: 'nl', titel: 'Witloofgratin' }],
+    recept_ingredienten: [{ hoeveelheid: 1, eenheid: 'stuk', optioneel: false, ingredienten: { code: 'witlof', categorie: 'groente' } }],
+  };
+
+  test('de namen komen in alle 4 de talen uit de ingrediëntenlijst', () => {
+    const r = leesDbRecept(rij)!;
+    assert.deepEqual(r.ingredienten[0].namen, { nl: 'witlof', fr: 'endive', de: 'Chicorée', en: 'Belgian endive' });
+    assert.equal(naarPlanRecept(r, 'fr', gezin1)!.ingredienten[0].naam, 'endive');
+  });
+
+  test('een code die de app (nog) niet kent, valt terug op de code', () => {
+    const r = leesDbRecept({ ...rij, recept_ingredienten: [{ hoeveelheid: 1, eenheid: 'stuk', ingredienten: { code: 'onbekend_iets', categorie: 'fruit' } }] })!;
+    assert.deepEqual(r.ingredienten[0].namen, {});
+    assert.equal(naarPlanRecept(r, 'nl', gezin1)!.ingredienten[0].naam, 'onbekend_iets');
+  });
+
+  test('regressie: een rij met eigen vertalingen (oude vorm) gebruikt die nog altijd', () => {
+    const oud = { ...rij, recept_ingredienten: [{ hoeveelheid: 1, eenheid: 'stuk', ingredienten: { code: 'witlof', categorie: 'groente', ingredient_vertalingen: [{ taal: 'nl', naam: 'witloof' }] } }] };
+    assert.deepEqual(leesDbRecept(oud)!.ingredienten[0].namen, { nl: 'witloof' });
+  });
+});

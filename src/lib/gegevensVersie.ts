@@ -54,3 +54,19 @@ export function leesIngredientRijen(rijen: unknown): Record<string, IngredientIn
   }
   return uit;
 }
+
+/** WEEK-253: grote lijsten worden in blokken bewaard (Android kan geen heel groot item in één keer lezen). */
+export const RECEPTEN_PER_BLOK = 50;
+
+/** Verdeelt een lijst in blokken van hoogstens `grootte` elementen; een lege lijst geeft geen blokken. */
+export function inBlokken<T>(lijst: readonly T[], grootte = RECEPTEN_PER_BLOK): T[][] {
+  const uit: T[][] = [];
+  for (let i = 0; i < lijst.length; i += Math.max(1, grootte)) uit.push(lijst.slice(i, i + Math.max(1, grootte)));
+  return uit;
+}
+
+/** Plakt de bewaarde blokken weer aan elkaar; ontbreekt er een blok of is het geen lijst, dan undefined (opnieuw ophalen). */
+export function uitBlokken<T>(blokken: readonly unknown[], verwacht: number): T[] | undefined {
+  if (blokken.length !== verwacht || blokken.some((b) => !Array.isArray(b))) return undefined;
+  return (blokken as T[][]).flat();
+}
