@@ -313,9 +313,9 @@ describe('infovenster Kies een gerecht (WEEK-263)', () => {
       const tekst = (VERTALINGEN[taal] as Record<string, string>)['pagina.kiesInfo'];
       const laatste = tekst.split('\n').at(-1) ?? '';
       assert.ok(!tekst.includes('+'), `${taal}: geen plusteken`);
-      assert.match(laatste, /recept|recette|Rezept|recipe/i, `${taal}: de laatste regel gaat over een nieuw recept`);
+      assert.match(laatste, /gerecht|plat|Gericht|dish/i, `${taal}: de laatste regel gaat over een nieuw gerecht`);
     }
-    assert.equal(nl['pagina.kiesInfo'].split('\n').at(-1), 'Met nieuw recept voeg je er een toe.');
+    assert.equal(nl['pagina.kiesInfo'].split('\n').at(-1), 'Met nieuw gerecht voeg je er een toe.');
   });
 });
 
@@ -323,4 +323,24 @@ describe('recept inlezen: geen melding over nieuwe ingrediënten (WEEK-265)', ()
   test('de zin "nieuwe ingrediënten zijn aan de lijst van de app toegevoegd" bestaat in geen enkele taal meer', () => {
     for (const taal of TALEN) assert.equal((VERTALINGEN[taal] as Record<string, string>)['recept.link.nieuw'], undefined, taal);
   });
+});
+
+describe('één woord per begrip in alle talen (WEEK-266)', () => {
+  // Gerecht = het gerecht (weekmenu, eigen gerechten). "Recept" enkel voor de geschreven bron die je inleest (website, foto).
+  // Weekmenu i.p.v. weekplan(ning); favorieten i.p.v. kookboek; "In huis" i.p.v. koelkast.
+  const UITZONDERING = /^(recept\.(link|foto|inlezen)\.|categorie\.)/;
+  const VERBODEN: Record<string, RegExp> = {
+    nl: /\b(recept(en)?|maaltijd(en)?|weekplan|weekplanning|koelkast|kookboek|receptenbank|receptendatabank)\b/i,
+    fr: /\b(recettes?|repas|livre de recettes|frigo)\b/i,
+    de: /\b(Rezepte?n?|Mahlzeit(en)?|Wochenplan|Wochenplans|Wochenplanung|Kochbuch|Kühlschrank|Rezeptsammlung|Rezeptdatenbank)\b/,
+    en: /\b(recipes?|meals?(?! planner)|weekly plan|weekmenu|week menu|cookbook|fridge|recipe collection|recipe database)\b/i,
+  };
+  for (const taal of TALEN) {
+    test(`${taal}: geen afwijkende woorden voor gerecht, weekmenu, favorieten of In huis`, () => {
+      const fout = Object.entries(VERTALINGEN[taal] as Record<string, string>)
+        .filter(([k, v]) => !UITZONDERING.test(k) && VERBODEN[taal].test(v.replace(/{[^}]*}/g, '')))
+        .map(([k, v]) => `${k}: ${v}`);
+      assert.deepEqual(fout, []);
+    });
+  }
 });
