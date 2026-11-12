@@ -51,3 +51,13 @@ export function heeftVermijdNaam(ingredienten: readonly { naam: string }[], verm
   return ingredienten.some((i) => vermijdVoorNaam(i.naam, vermijd) !== undefined);
 }
 
+
+/**
+ * Moet dit recept vermeden worden (WEEK-256)? De naamcontrole hierboven, en bij "vis" ook elk recept van de soort vis:
+ * namen als "witvis" of "zeevis" hebben "vis" niet vooraan, maar elk visgerecht in de databank heeft de soort vis.
+ */
+export function vermijdtRecept(recept: { ingredienten: readonly { naam: string }[]; soort?: string }, vermijd: readonly Vermijd[]): boolean {
+  if (!vermijd.length) return false;
+  if (vermijd.includes('vis') && recept.soort === 'vis') return true;
+  return heeftVermijdNaam(recept.ingredienten, vermijd);
+}

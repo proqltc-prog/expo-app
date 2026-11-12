@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.134.1] – 2026-11-12
+
+- Opgelost: met Vermijden "Vis" kwamen toch visgerechten met witvis in het weekmenu. Nu wordt elk visgerecht vermeden, ook als geen ingrediëntnaam met "vis" begint. De melding "Opzoeken lukt nu even niet" verdwijnt bij een nieuwe zoekterm. (WEEK-256)
+
+**Jira:** [WEEK-256](https://proqltc-1791495894841.atlassian.net/browse/WEEK-256) · **Confluence:** [WEEK-256](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24903700)
+
 ## [0.134.0] – 2026-11-12
 
 - Dubbele ingrediënten kunnen veilig samengevoegd worden: receptregels gaan naar het behouden ingrediënt (hoeveelheden samengeteld), en de oude code blijft een doorverwijzing die de app meekrijgt, zodat eigen recepten, boodschappenlijsten, frigo's en weekmenu's op de toestellen blijven werken. Elke dag kijkt een geplande taak de automatisch toegevoegde ingrediënten streng na (vertalingen, eenheid, allergenen, dubbels). (WEEK-255)

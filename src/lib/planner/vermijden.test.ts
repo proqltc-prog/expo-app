@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { heeftVermijdNaam, normaliseerVermijd, NIET_VEGETARISCH, vermijdOpties, vermijdVoorNaam, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
+import { heeftVermijdNaam, normaliseerVermijd, NIET_VEGETARISCH, vermijdOpties, vermijdtRecept, vermijdVoorNaam, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
+import { zonderVermeden } from '@/lib/planner/dbplan';
 import { VERMIJDBAAR } from '@/data/vermijden';
 import { testPool } from '@/lib/planner/testrecepten';
 
@@ -104,5 +105,30 @@ describe('alleen vegetarische gerechten (WEEK-221)', () => {
 
   test('regressie: uitzetten verandert de andere keuzes niet', () => {
     assert.deepEqual(zetEnkelVegetarisch({ vermijd: ['eieren'], enkelVegetarisch: true }, false), { vermijd: ['eieren'], enkelVegetarisch: false });
+  });
+});
+
+describe('WEEK-256: vis vermijden vangt ook "witvis"', () => {
+  const witvisRecept = testPool().find((k) => k.recept.ingredienten.some((i) => i.code === 'witvis'))!;
+
+  test('de naamcontrole alleen mist "witvis" (oorzaak van de fout)', () => {
+    assert.equal(heeftVermijdNaam(witvisRecept.recept.ingredienten, ['vis']), false);
+  });
+
+  test('een recept van de soort vis wordt vermeden, ook met enkel witvis', () => {
+    assert.equal(vermijdtRecept({ ingredienten: witvisRecept.recept.ingredienten, soort: witvisRecept.soort }, ['vis']), true);
+  });
+
+  test('geen enkel visgerecht in een weekmenu met vis vermeden', () => {
+    const pool = zonderVermeden(testPool(), ['vis']);
+    assert.ok(pool.length > 0);
+    assert.equal(pool.some((k) => k.soort === 'vis'), false);
+  });
+
+  test('regressie: zonder vis vermijden blijven visgerechten; andere keuzes werken zoals voorheen', () => {
+    assert.ok(zonderVermeden(testPool(), ['noten']).some((k) => k.soort === 'vis'));
+    assert.equal(vermijdtRecept({ ingredienten: [{ naam: 'zalmfilet' }], soort: 'vlees' }, ['vis']), true);
+    assert.equal(vermijdtRecept({ ingredienten: [{ naam: 'kipfilet' }], soort: 'vlees' }, ['vis']), false);
+    assert.equal(vermijdtRecept({ ingredienten: [{ naam: 'witvis' }], soort: 'vis' }, []), false);
   });
 });

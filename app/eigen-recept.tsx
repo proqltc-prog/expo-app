@@ -597,7 +597,11 @@ export default function EigenReceptScherm() {
         <TextInput
           style={[s.veld, s.invoerVeld]}
           value={zoek}
-          onChangeText={setZoek}
+          onChangeText={(x) => {
+            setZoek(x);
+            // Een oude melding over opzoeken (WEEK-254) hoort niet bij een nieuwe zoekterm.
+            setNieuwFout(undefined);
+          }}
           onSubmitEditing={plus}
           returnKeyType="done"
           placeholder={t('recept.zoekIngredient')}
