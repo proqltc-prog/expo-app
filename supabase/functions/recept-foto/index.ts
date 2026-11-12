@@ -6,7 +6,8 @@
 // Instellen (eigenaar, Supabase → Edge Functions → Secrets): GEMINI_API_KEY (verplicht), GEMINI_MODEL (optioneel).
 const MAX_BASE64 = 2_800_000;
 const TIJDSLIMIET_MS = 30_000;
-const STANDAARD_MODEL = 'gemini-2.5-flash';
+// gemini-2.5-flash is niet meer beschikbaar voor nieuwe projecten; Google raadt 3.5 Flash-Lite aan (snel en zuinig, genoeg om tekst te lezen).
+const STANDAARD_MODEL = 'gemini-3.5-flash-lite';
 const MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const CORS = {
@@ -33,13 +34,15 @@ const SCHEMA = {
   properties: {
     gevonden: { type: 'BOOLEAN' },
     naam: { type: 'STRING' },
-    personen: { type: 'INTEGER' },
-    minuten: { type: 'INTEGER' },
+    personen: { type: 'INTEGER', nullable: true },
+    minuten: { type: 'INTEGER', nullable: true },
     taal: { type: 'STRING' },
     ingredienten: { type: 'ARRAY', items: { type: 'STRING' } },
     stappen: { type: 'ARRAY', items: { type: 'STRING' } },
   },
-  required: ['gevonden'],
+  // Alles verplicht (leeg of null als het er niet staat): anders laat een licht model de lijsten soms weg.
+  required: ['gevonden', 'naam', 'personen', 'minuten', 'taal', 'ingredienten', 'stappen'],
+  propertyOrdering: ['gevonden', 'naam', 'personen', 'minuten', 'taal', 'ingredienten', 'stappen'],
 };
 
 /** Telt de foto mee voor de gebruiker (met diens eigen sessie); false als de daglimiet bereikt is. */
@@ -89,7 +92,8 @@ Deno.serve(async (req) => {
         generationConfig: { temperature: 0, responseMimeType: 'application/json', responseSchema: SCHEMA },
       }),
     });
-    if (res.status === 429) return antwoord({ fout: 'druk' }, 503);
+    // 429 = gratis limiet van Google bereikt, 503 = Gemini tijdelijk overbelast: beide "probeer later".
+    if (res.status === 429 || res.status === 503) return antwoord({ fout: 'druk' }, 503);
     if (!res.ok) {
       // Enkel de status loggen, nooit de foto of de sleutel.
       console.error(`Gemini antwoordt ${res.status}`);
