@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.129.2] – 2026-11-12
+
+- Gezinsprofiel: het uitlegblok "Waarom vragen we dit?" staat nu binnen het blok Gezin en klapt mee in, zoals de uitleg bij Adres. (WEEK-250)
+
+**Jira:** [WEEK-250](https://proqltc-1791495894841.atlassian.net/browse/WEEK-250) · **Confluence:** [WEEK-250](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24707073)
+
 ## [0.129.1] – 2026-11-12
 
 - Opgelost: zonder ingevuld gezin kon je een weekmenu "voor 0 personen" maken; alle hoeveelheden waren dan 0 en in Bereiding stond bij elk ingrediënt een vinkje. Nu vraagt de app eerst je gezin in te vullen, krijgt een oud menu zonder hoeveelheden een melding, en krijgt een ingrediënt zonder hoeveelheid nooit een vinkje. (WEEK-249)
