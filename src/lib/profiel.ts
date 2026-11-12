@@ -101,3 +101,11 @@ export function profielContext(p: Profiel): string {
 export function heeftGezin(p: Profiel): boolean {
   return Number.isInteger(p.volwassenen) && p.volwassenen >= 1;
 }
+
+/**
+ * WEEK-268: laat het gezinsicoon rechtsboven oplichten zolang het gezin niet ingesteld en bewaard is.
+ * Nog niet geladen (null): niet oplichten, zodat het icoon niet even flikkert bij het openen.
+ */
+export function gezinIcoonOplichten(p: Profiel | null): boolean {
+  return p !== null && !isProfielIngesteld(p);
+}

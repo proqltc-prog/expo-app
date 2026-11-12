@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.140.0] – 2026-11-12
+
+- Zonder ingesteld gezin is "Plan mijn week" uitgegrijsd en licht het gezinsicoon rechtsboven op (oranje, met een zachte kloppende ring, zonder tekst). Na bewaren van het gezin gaat het oplichten meteen weg. De knop "Gezin invullen" is weg; de infotekst zegt nu: "We hebben nog enkele gegevens over je gezin nodig om je weekmenu te berekenen." (WEEK-268)
+- Bevat ook 0.139.0 (WEEK-266, WEEK-267), 0.138.1 (WEEK-265), 0.138.0 (WEEK-263, WEEK-264), 0.137.0 (WEEK-261, WEEK-262), 0.136.0 (WEEK-260) en 0.135.1 (WEEK-259).
+
+**Jira:** [WEEK-268](https://proqltc-1791495894841.atlassian.net/browse/WEEK-268), [WEEK-267](https://proqltc-1791495894841.atlassian.net/browse/WEEK-267), [WEEK-266](https://proqltc-1791495894841.atlassian.net/browse/WEEK-266), [WEEK-265](https://proqltc-1791495894841.atlassian.net/browse/WEEK-265), [WEEK-264](https://proqltc-1791495894841.atlassian.net/browse/WEEK-264), [WEEK-263](https://proqltc-1791495894841.atlassian.net/browse/WEEK-263), [WEEK-262](https://proqltc-1791495894841.atlassian.net/browse/WEEK-262), [WEEK-261](https://proqltc-1791495894841.atlassian.net/browse/WEEK-261), [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-268](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133080), [WEEK-266 / WEEK-267](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165846), [WEEK-265](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165825), [WEEK-263 / WEEK-264](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25100297), [WEEK-261 / WEEK-262](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25133057), [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.139.0] – 2026-11-12
 
 - Eén woord per begrip in de hele app en in alle talen: "gerecht" voor het gerecht (Mijn gerechten, Nieuw gerecht, Kies een gerecht, Per gerecht), "recept" enkel voor wat je inleest van een website of foto, "Bereiding bekijken" voor het boekje, "weekmenu", "favorieten" en "In huis". Bij Bevestigen: "Bij bevestigen komen de ingrediënten op je boodschappenlijst." Een woordenlijsttest bewaakt dit voortaan. (WEEK-266)

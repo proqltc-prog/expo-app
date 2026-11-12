@@ -6,6 +6,15 @@ import { naElkaar } from './wachtrij';
 
 const SLEUTEL = SLEUTELS.profiel;
 
+// WEEK-268: schermen (bv. het gezinsicoon in de kop) horen het meteen als het profiel op dit toestel bewaard is.
+const luisteraars = new Set<() => void>();
+export function bijProfielBewaard(f: () => void): () => void {
+  luisteraars.add(f);
+  return () => {
+    luisteraars.delete(f);
+  };
+}
+
 export async function laadProfiel(): Promise<Profiel> {
   try {
     const ruw = await AsyncStorage.getItem(SLEUTEL);
@@ -20,6 +29,13 @@ export function bewaarProfiel(p: Profiel): Promise<void> {
   return naElkaar(async () => {
     await AsyncStorage.setItem(SLEUTEL, JSON.stringify(p));
     await registreerDocument('profiel', p);
+    luisteraars.forEach((f) => {
+      try {
+        f();
+      } catch {
+        // een fout in één scherm mag het bewaren niet stoppen
+      }
+    });
   });
 }
 

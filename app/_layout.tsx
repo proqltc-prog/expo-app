@@ -7,6 +7,7 @@ import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
 import { startIngredienten } from '@/opslag/gegevens';
 import { KopTerug } from '@/ui/terugKnop';
+import { GezinKnop } from '@/ui/gezinKnop';
 import { luisterNaarTerugkeer } from '@/opslag/aanmelden';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
@@ -15,20 +16,10 @@ import { IN_HUIS_ICOON } from '@/lib/frigoSheets';
 
 const KLEUR = '#2e7d4f';
 
-/** Instellingen (WEEK-39): taal en gezinsruimte, bereikbaar via een icoon op het menu. */
+/** Instellingen (WEEK-39): taal en gezinsruimte, bereikbaar via een icoon op het menu. Licht op zolang het gezin niet ingesteld is (WEEK-268). */
 function InstellingenKnop() {
   const { t } = useTaal();
-  return (
-    <Pressable
-      onPress={() => router.push('/profiel')}
-      accessibilityRole="button"
-      accessibilityLabel={t('tab.instellingen')}
-      hitSlop={10}
-      style={{ paddingHorizontal: 14 }}
-    >
-      <Text style={{ fontSize: 22, color: KLEUR }}>⚙</Text>
-    </Pressable>
-  );
+  return <GezinKnop kleur={KLEUR} label={t('tab.instellingen')} />;
 }
 
 function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {

@@ -553,18 +553,17 @@ export default function Weekplanning() {
             {kopStap('planning.kies.plan')}
             {kaarten && <IconenUitleg iconen={WEEKMENU_ICONEN} t={(k) => t(k as never)} kleur={PETROL} kleurZacht={PETROL_ZACHT} />}
           </View>
-          {profiel && !gezinIngesteld && (
-            <View style={s.gezinVak}>
-              <Text style={s.melding}>{t('planning.geenGezin')}</Text>
-              <Pressable style={s.tweedeKnop} onPress={() => router.navigate('/profiel')} accessibilityRole="button">
-                <Text style={s.tweedeKnopTekst}>{t('planning.gezinInvullen')}</Text>
-              </Pressable>
-            </View>
-          )}
+          {profiel && !gezinIngesteld && <Text style={s.melding}>{t('planning.geenGezin')}</Text>}
           {gezinIngesteld && planZonderHoeveelheden(plan) && (
             <Text style={s.melding}>{t('planning.zonderHoeveelheden')}</Text>
           )}
-          <Pressable style={[s.knop, bezig && s.uit]} onPress={vraagNieuwPlan} disabled={bezig || !profiel || !mag}>
+          {/* WEEK-268: zonder ingesteld gezin is de knop uitgegrijsd; het gezinsicoon rechtsboven licht op. */}
+          <Pressable
+            style={[s.knop, (bezig || !gezinIngesteld) && s.uit]}
+            onPress={vraagNieuwPlan}
+            disabled={bezig || !profiel || !mag || !gezinIngesteld}
+            accessibilityState={{ disabled: bezig || !profiel || !mag || !gezinIngesteld }}
+          >
             {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
           </Pressable>
           {toonEerstKoken && (
@@ -746,7 +745,6 @@ const s = StyleSheet.create({
   melding: { backgroundColor: ORANJE_ZACHT, color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   leeg: { color: MUTED, textAlign: 'center', marginTop: 8 },
   // WEEK-261/262
-  gezinVak: { gap: 8 },
   infoVak: { flexDirection: 'row', gap: 8, alignItems: 'flex-start', backgroundColor: '#E6F1F3', borderRadius: 10, padding: 10 },
   infoTekst: { flex: 1, color: PETROL, fontSize: 13, lineHeight: 18 },
   kaart: { backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: LIJN },
