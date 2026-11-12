@@ -39,6 +39,7 @@ import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
 import { fotoTijdelijkOnbereikbaar, type FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
 import { meldOvergeslagen } from '@/opslag/ingredientMelding';
+import { TerugKnop } from '@/ui/terugKnop';
 import { koppelOnbekend } from '@/opslag/ingredientKoppel';
 import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } from '@/lib/ingredientKoppel';
 
@@ -438,23 +439,55 @@ export default function EigenReceptScherm() {
         <Text style={s.uitlegTekst}>{t('recept.uitlegVolwassene')}</Text>
       </View>
 
-      {/* WEEK-247: een recept inlezen via de link van een receptensite. */}
+      {/* WEEK-247/251/260: een recept inlezen via de link van een receptensite of via een foto: één kaart, twee tegels. */}
       {!bestaand && !linkOpen && !fotoOpen && (
-        <Pressable style={s.linkKnop} onPress={() => setLinkOpen(true)} accessibilityRole="button">
-          <Ionicons name="link-outline" size={18} color={KLEUR} />
-          <Text style={s.linkKnopTekst}>{t('recept.link.knop')}</Text>
-        </Pressable>
-      )}
-      {/* WEEK-251: een recept inlezen via een foto. */}
-      {!bestaand && !linkOpen && !fotoOpen && (
-        <Pressable style={s.linkKnop} onPress={() => setFotoOpen(true)} accessibilityRole="button">
-          <Ionicons name="camera-outline" size={18} color={KLEUR} />
-          <Text style={s.linkKnopTekst}>{t('recept.foto.knop')}</Text>
-        </Pressable>
+        <View style={s.inlezenKaart}>
+          <Text style={s.inlezenTitel}>{t('recept.inlezen.titel')}</Text>
+          <Text style={s.inlezenSub}>{t('recept.inlezen.sub')}</Text>
+          <View style={s.tegels}>
+            <Pressable
+              style={({ pressed }) => [s.tegel, pressed && s.tegelGedrukt]}
+              onPress={() => setLinkOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('recept.link.knop')}
+            >
+              <View style={s.tegelIcoon}>
+                <Ionicons name="link" size={22} color={KLEUR} />
+              </View>
+              <Text style={s.tegelTitel}>{t('recept.link.tegel')}</Text>
+              <Text style={s.tegelSub}>{t('recept.link.tegelSub')}</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [s.tegel, pressed && s.tegelGedrukt]}
+              onPress={() => setFotoOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('recept.foto.knop')}
+            >
+              <View style={s.tegelIcoon}>
+                <Ionicons name="camera" size={22} color={KLEUR} />
+              </View>
+              <Text style={s.tegelTitel}>{t('recept.foto.tegel')}</Text>
+              <Text style={s.tegelSub}>{t('recept.foto.tegelSub')}</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
       {!bestaand && fotoOpen && (
-        <View style={s.linkVak}>
-          <Text style={s.linkUitleg}>{t('recept.foto.uitleg')}</Text>
+        <View style={s.inlezenKaart}>
+          <View style={s.paneelKop}>
+            <TerugKnop
+              onPress={() => {
+                setFotoOpen(false);
+                setFotoFout(undefined);
+              }}
+              style={s.paneelTerug}
+            />
+            <View style={s.tegelIcoonKlein}>
+              <Ionicons name="camera" size={18} color={KLEUR} />
+            </View>
+            <Text style={s.paneelTitel}>{t('recept.foto.tegel')}</Text>
+          </View>
+          <Text style={s.paneelUitleg}>{t('recept.foto.uitleg')}</Text>
           {/* WEEK-258: de AI is tijdelijk onbereikbaar: duidelijk zeggen en de andere werkwijzen aanbieden. */}
           {fotoTijdelijkOnbereikbaar(fotoFout) ? (
             <View style={s.tijdelijkVak}>
@@ -492,23 +525,29 @@ export default function EigenReceptScherm() {
               <Text style={s.linkUitleg}>{t('recept.foto.bezig')}</Text>
             </View>
           ) : (
-            <View style={s.knoppen}>
-              <Pressable style={s.annuleer} onPress={() => leesFoto('camera')} accessibilityRole="button">
-                <Text style={s.annuleerTekst}>{t('recept.foto.camera')}</Text>
+            <View style={s.fotoKnoppen}>
+              <Pressable style={({ pressed }) => [s.fotoKnop, pressed && s.tegelGedrukt]} onPress={() => leesFoto('camera')} accessibilityRole="button">
+                <Ionicons name="camera-outline" size={20} color="#fff" />
+                <Text style={s.fotoKnopTekst}>{t('recept.foto.camera')}</Text>
               </Pressable>
-              <Pressable style={s.annuleer} onPress={() => leesFoto('galerij')} accessibilityRole="button">
-                <Text style={s.annuleerTekst}>{t('recept.foto.galerij')}</Text>
+              <Pressable style={({ pressed }) => [s.fotoKnopLicht, pressed && s.tegelGedrukt]} onPress={() => leesFoto('galerij')} accessibilityRole="button">
+                <Ionicons name="images-outline" size={20} color={KLEUR} />
+                <Text style={s.fotoKnopLichtTekst}>{t('recept.foto.galerij')}</Text>
               </Pressable>
             </View>
           )}
-          <Pressable onPress={() => { setFotoOpen(false); setFotoFout(undefined); }} disabled={fotoBezig} accessibilityRole="button" style={s.fotoAnnuleer}>
-            <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
-          </Pressable>
         </View>
       )}
       {!bestaand && linkOpen && (
-        <View style={s.linkVak}>
-          <Text style={s.linkUitleg}>{t('recept.link.uitleg')}</Text>
+        <View style={s.inlezenKaart}>
+          <View style={s.paneelKop}>
+            <TerugKnop onPress={() => !linkBezig && setLinkOpen(false)} style={s.paneelTerug} />
+            <View style={s.tegelIcoonKlein}>
+              <Ionicons name="link" size={18} color={KLEUR} />
+            </View>
+            <Text style={s.paneelTitel}>{t('recept.link.tegel')}</Text>
+          </View>
+          <Text style={s.paneelUitleg}>{t('recept.link.uitleg')}</Text>
           <TextInput
             style={s.veld}
             value={link}
@@ -525,20 +564,23 @@ export default function EigenReceptScherm() {
             editable={!linkBezig}
           />
           {linkFout && <Text style={s.fout}>{t(`recept.link.fout.${linkFout}` as Sleutel)}</Text>}
-          <View style={s.knoppen}>
-            <Pressable style={s.annuleer} onPress={() => setLinkOpen(false)} disabled={linkBezig} accessibilityRole="button">
-              <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
-            </Pressable>
-            <Pressable
-              style={[s.bewaar, (linkBezig || !link.trim()) && { opacity: 0.6 }]}
-              onPress={leesLink}
-              disabled={linkBezig || !link.trim()}
-              accessibilityRole="button"
-              accessibilityLabel={t(linkBezig ? 'recept.link.bezig' : 'recept.link.lees')}
-            >
-              {linkBezig ? <ActivityIndicator color="#fff" /> : <Text style={s.bewaarTekst}>{t('recept.link.lees')}</Text>}
-            </Pressable>
-          </View>
+          {/* WEEK-260: terug via de pijl in de kop; één duidelijke knop om in te lezen. */}
+          <Pressable
+            style={[s.fotoKnop, (linkBezig || !link.trim()) && { opacity: 0.6 }]}
+            onPress={leesLink}
+            disabled={linkBezig || !link.trim()}
+            accessibilityRole="button"
+            accessibilityLabel={t(linkBezig ? 'recept.link.bezig' : 'recept.link.lees')}
+          >
+            {linkBezig ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="download-outline" size={20} color="#fff" />
+                <Text style={s.fotoKnopTekst}>{t('recept.link.lees')}</Text>
+              </>
+            )}
+          </Pressable>
         </View>
       )}
       {linkMelding && (
@@ -778,6 +820,26 @@ const s = StyleSheet.create({
   linkKnopTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
   fotoBezig: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
   fotoAnnuleer: { alignSelf: 'center', paddingVertical: 6 },
+  // WEEK-260: kaart "Recept inlezen" met twee tegels, en de panelen met een kop.
+  inlezenKaart: { backgroundColor: '#F3F8F5', borderRadius: 16, padding: 14, gap: 10, borderWidth: 1, borderColor: '#DCEBE1' },
+  inlezenTitel: { fontSize: 16, fontWeight: '800', color: '#17201A' },
+  inlezenSub: { fontSize: 13, lineHeight: 18, color: '#5E6B63', marginTop: -6 },
+  tegels: { flexDirection: 'row', gap: 10 },
+  tegel: { flex: 1, backgroundColor: '#fff', borderRadius: 14, padding: 12, gap: 6, borderWidth: 1, borderColor: '#DCEBE1', minHeight: 116 },
+  tegelGedrukt: { opacity: 0.75 },
+  tegelIcoon: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#E1F0E6', alignItems: 'center', justifyContent: 'center' },
+  tegelIcoonKlein: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#E1F0E6', alignItems: 'center', justifyContent: 'center' },
+  tegelTitel: { fontSize: 15, fontWeight: '700', color: '#17201A' },
+  tegelSub: { fontSize: 12, lineHeight: 16, color: '#5E6B63' },
+  paneelKop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  paneelTerug: { paddingRight: 4, paddingVertical: 4 },
+  paneelTitel: { fontSize: 16, fontWeight: '800', color: '#17201A', flex: 1 },
+  paneelUitleg: { fontSize: 13, lineHeight: 19, color: '#5E6B63' },
+  fotoKnoppen: { gap: 10 },
+  fotoKnop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: KLEUR, borderRadius: 12, minHeight: 50, paddingHorizontal: 14 },
+  fotoKnopTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  fotoKnopLicht: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#fff', borderRadius: 12, minHeight: 50, paddingHorizontal: 14, borderWidth: 1.5, borderColor: KLEUR },
+  fotoKnopLichtTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
   tijdelijkVak: { gap: 8, marginTop: 4 },
   linkVak: { borderWidth: 1, borderColor: '#cfe3d6', borderRadius: 14, padding: 12, gap: 8, backgroundColor: '#fff' },
   linkUitleg: { color: '#333', fontSize: 14, lineHeight: 20 },

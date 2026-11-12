@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.136.0] – 2026-11-12
+
+- Recept inlezen is mooier en duidelijker: één kaart "Recept inlezen" met twee tegels (Via een link, Via een foto), en panelen met een kop en dezelfde terugpijl als in de rest van de app; grote knoppen met icoon (Foto nemen, Foto kiezen, Inlezen). (WEEK-260)
+- Bevat ook 0.135.1: één terugpijl linksboven in de hele app. (WEEK-259)
+
+**Jira:** [WEEK-260](https://proqltc-1791495894841.atlassian.net/browse/WEEK-260), [WEEK-259](https://proqltc-1791495894841.atlassian.net/browse/WEEK-259) · **Confluence:** [WEEK-260](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25067522), [WEEK-259](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838164)
+
 ## [0.135.1] – 2026-11-12
 
 - Eén terugpijl (←) in de hele app, altijd linksboven: nieuw op Mijn recepten, Kies een gerecht, Nieuw recept en Gezinsprofiel; Bereiding en de scanner krijgen dezelfde pijl in plaats van een kruisje, het aanmeldscherm in plaats van de tekst "Terug". De pijl gaat altijd naar het scherm vanwaar je kwam. (WEEK-259)
