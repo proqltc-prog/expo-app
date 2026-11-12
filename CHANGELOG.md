@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.143.1] – 2026-11-12
+
+- package-lock.json staat in .gitignore: de repo heeft bewust geen lockfile (WEEK-38, WEEK-220). Geen wijziging aan de app. (WEEK-277)
+- Bevat ook 0.135.1 tot en met 0.143.0 (WEEK-259 tot WEEK-276).
+
+**Jira:** [WEEK-277](https://proqltc-1791495894841.atlassian.net/browse/WEEK-277) · **Confluence:** [WEEK-277](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25165869)
+
 ## [0.143.0] – 2026-11-12
 
 - Gezinsruimte hersteld: de databank weigerde eigen gerechten en daardoor werden ook de boodschappenlijst, In huis en het weekmenu niet meer gedeeld. Eigen gerechten zijn nu toegelaten en elke soort wordt apart doorgestuurd. (WEEK-275)
