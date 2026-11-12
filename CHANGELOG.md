@@ -8,6 +8,80 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.135.0] – 2026-11-12
+
+- Allergenen aangevuld: elk ingrediënt nagekeken tegen de 14 EU-allergenen (streng bij kant-en-klare producten, pinda apart van noten); 167 ingrediënten hebben nu allergenen (was 71). (WEEK-257)
+- Is de AI (Gemini) tijdelijk onbereikbaar, dan zegt de app dat duidelijk in alle talen en biedt ze alternatieven aan: bij een foto "Via een link inlezen" of "Zelf invullen", bij een nieuw ingrediënt een gelijkaardig ingrediënt kiezen, na het inlezen "Opnieuw opzoeken", "Zelf zoeken" of "Overslaan". Opgelost: automatisch een nieuw ingrediënt toevoegen faalde altijd door een fout in de databankfunctie. (WEEK-258)
+
+**Jira:** [WEEK-257](https://proqltc-1791495894841.atlassian.net/browse/WEEK-257), [WEEK-258](https://proqltc-1791495894841.atlassian.net/browse/WEEK-258) · **Confluence:** [WEEK-257](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24969217), [WEEK-258](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25001985)
+
+## [0.134.1] – 2026-11-12
+
+- Opgelost: met Vermijden "Vis" kwamen toch visgerechten met witvis in het weekmenu. Nu wordt elk visgerecht vermeden, ook als geen ingrediëntnaam met "vis" begint. De melding "Opzoeken lukt nu even niet" verdwijnt bij een nieuwe zoekterm. (WEEK-256)
+
+**Jira:** [WEEK-256](https://proqltc-1791495894841.atlassian.net/browse/WEEK-256) · **Confluence:** [WEEK-256](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24903700)
+
+## [0.134.0] – 2026-11-12
+
+- Dubbele ingrediënten kunnen veilig samengevoegd worden: receptregels gaan naar het behouden ingrediënt (hoeveelheden samengeteld), en de oude code blijft een doorverwijzing die de app meekrijgt, zodat eigen recepten, boodschappenlijsten, frigo's en weekmenu's op de toestellen blijven werken. Elke dag kijkt een geplande taak de automatisch toegevoegde ingrediënten streng na (vertalingen, eenheid, allergenen, dubbels). (WEEK-255)
+
+**Jira:** [WEEK-255](https://proqltc-1791495894841.atlassian.net/browse/WEEK-255) · **Confluence:** [WEEK-255](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24936449)
+
+## [0.133.0] – 2026-11-12
+
+- Onbekende ingrediënten blokkeren de gebruiker niet meer: na het inlezen via link of foto, en bij zelf invullen ("Toevoegen als nieuw ingrediënt"), zoekt een Supabase-functie het ingrediënt op. Eerst letterlijk in de databank, daarna met Gemini: een bestaand ingrediënt wordt gebruikt (geen dubbels), een nieuw wordt automatisch toegevoegd (met vertalingen, eenheid, categorie en allergenen, nog na te kijken door de eigenaar). Limieten: 20 per gebruiker per dag, 300 samen, 50 nieuwe ingrediënten per dag. (WEEK-254)
+
+**Jira:** [WEEK-254](https://proqltc-1791495894841.atlassian.net/browse/WEEK-254) · **Confluence:** [WEEK-254](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24903681)
+
+## [0.132.0] – 2026-11-12
+
+- De recepten blijven op het toestel bewaard en worden enkel opnieuw opgehaald als de databank gewijzigd is: geen download van alle recepten meer bij elke start, nieuwe recepten zonder nieuwe APK, en de receptenbank werkt ook zonder internet. De download is kleiner (ingrediëntnamen komen uit de ingrediëntenlijst) en de ingrediënten van databankrecepten hebben nu ook een Duitse naam. (WEEK-253)
+
+**Jira:** [WEEK-253](https://proqltc-1791495894841.atlassian.net/browse/WEEK-253) · **Confluence:** [WEEK-253](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24870913)
+
+## [0.131.0] – 2026-11-12
+
+- De ingrediëntenlijst wordt bij het opstarten aangevuld met de databank: nieuwe of gewijzigde ingrediënten komen binnen zonder nieuwe app-versie of APK. De app vraagt enkel een klein versienummer op en haalt de lijst (± 33 kB) pas opnieuw op als de databank gewijzigd is; de kopie blijft op het toestel, ook zonder internet. Nieuwe tabel data_versie met automatische versienummers voor ingrediënten en recepten. (WEEK-252)
+
+**Jira:** [WEEK-252](https://proqltc-1791495894841.atlassian.net/browse/WEEK-252) · **Confluence:** [WEEK-252](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24838145)
+
+## [0.130.0] – 2026-11-12
+
+- Eigen recept inlezen via een foto: neem of kies een foto van een recept (kookboek, receptkaart, scherm). Google Gemini leest de tekst via een Supabase-functie; de app koppelt de ingrediënten en rekent om naar één volwassene, zoals bij een link. De foto wordt nergens bewaard. Limiet: 5 foto's per gebruiker per dag. Werkt zodra de sleutel GEMINI_API_KEY in Supabase staat. Nieuwe pakketten expo-image-picker en expo-image-manipulator (nieuwe APK nodig). (WEEK-251)
+
+**Jira:** [WEEK-251](https://proqltc-1791495894841.atlassian.net/browse/WEEK-251) · **Confluence:** [WEEK-251](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24739841)
+
+## [0.129.2] – 2026-11-12
+
+- Gezinsprofiel: het uitlegblok "Waarom vragen we dit?" staat nu binnen het blok Gezin en klapt mee in, zoals de uitleg bij Adres. (WEEK-250)
+
+**Jira:** [WEEK-250](https://proqltc-1791495894841.atlassian.net/browse/WEEK-250) · **Confluence:** [WEEK-250](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24707073)
+
+## [0.129.1] – 2026-11-12
+
+- Opgelost: zonder ingevuld gezin kon je een weekmenu "voor 0 personen" maken; alle hoeveelheden waren dan 0 en in Bereiding stond bij elk ingrediënt een vinkje. Nu vraagt de app eerst je gezin in te vullen, krijgt een oud menu zonder hoeveelheden een melding, en krijgt een ingrediënt zonder hoeveelheid nooit een vinkje. (WEEK-249)
+
+**Jira:** [WEEK-249](https://proqltc-1791495894841.atlassian.net/browse/WEEK-249) · **Confluence:** [WEEK-249](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24674305)
+
+## [0.129.0] – 2026-11-12
+
+- Onbekende ingrediënten melden: slaat een gebruiker bij het inlezen van een recept een ingrediënt over dat de app niet kent, dan wordt het anoniem gemeld (één rij per naam en taal met een teller, met daglimieten). In Supabase toont een overzicht per taal hoeveel ingrediënten gemeld zijn en welke talen ontbreken; goedgekeurde ingrediënten worden in één keer vertaald en toegevoegd. (WEEK-248)
+
+**Jira:** [WEEK-248](https://proqltc-1791495894841.atlassian.net/browse/WEEK-248) · **Confluence:** [WEEK-248](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24641537)
+
+## [0.128.0] – 2026-11-12
+
+- Eigen recept inlezen via een link: plak de link van een receptensite en de app vult naam, soort, kooktijd, stappen en ingrediënten in. Ingrediënten worden gekoppeld aan de ingrediëntenlijst (een dubbel of synoniem gebruikt altijd het bestaande ingrediënt) en omgerekend naar één volwassene; wat niet zeker is, staat onder "Nog na te kijken". Een Supabase-functie haalt de pagina op, met een daglimiet. (WEEK-247)
+
+**Jira:** [WEEK-247](https://proqltc-1791495894841.atlassian.net/browse/WEEK-247) · **Confluence:** [WEEK-247](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24608769)
+
+## [0.127.0] – 2026-11-12
+
+- Eigen recept: je kiest enkel nog ingrediënten die de app kent (in 4 talen) en geeft enkel de hoeveelheid in; eenheid en categorie liggen vast. Bovenaan staat dat de hoeveelheden voor één volwassene zijn. (WEEK-245)
+- Eigen recept: "Recept verwijderen" werkt nu ook in de webversie, met een bevestiging in de pagina. Een foutmelding verdwijnt zodra het probleem opgelost is, bv. na het opnieuw toevoegen van een ingrediënt. (WEEK-246)
+
+**Jira:** [WEEK-245](https://proqltc-1791495894841.atlassian.net/browse/WEEK-245) · [WEEK-246](https://proqltc-1791495894841.atlassian.net/browse/WEEK-246) · **Confluence:** [WEEK-245](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24543233) · [WEEK-246](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24576001)
+
 ## [0.126.0] – 2026-11-11
 
 - Weekmenu en stijlkeuze: echte foto's van gerechten in plaats van de getekende logo's. Elke keuken heeft een foto van een traditioneel gerecht; in het weekmenu past de foto bij de keuken en het soort gerecht (bv. Thais + curry, Frans + soep, Italiaans + pasta), met 2 à 3 varianten per groep zodat een weekmenu minder dubbel toont. Recepten van het gezin krijgen de foto van hun keuken of een gezinsfoto. (WEEK-244)

@@ -174,3 +174,18 @@ describe('ingredientenVoor in de gekozen taal (WEEK-154)', () => {
   });
 });
 
+
+describe('WEEK-249: geen vinkje zonder hoeveelheid', () => {
+  const vol = [
+    { id: 'a', naam: 'zalmfilet', hoeveelheid: 130, eenheid: 'g', afdeling: 'vis', toegevoegdOp: '2026-11-01T10:00:00Z', bron: 'planner', code: 'zalm' },
+    { id: 'b', naam: 'prei', hoeveelheid: 1, eenheid: 'stuk', afdeling: 'groenten-fruit', toegevoegdOp: '2026-11-01T10:00:00Z', bron: 'planner', code: 'prei' },
+  ] as unknown as FrigoItem[];
+  test('een ingrediënt met hoeveelheid 0 (menu voor 0 personen) telt nooit als in huis', () => {
+    const nul = [{ naam: 'zalmfilet', hoeveelheid: 0, eenheid: 'g' }, { naam: 'prei', hoeveelheid: 0, eenheid: 'stuk' }];
+    assert.deepEqual(ingredientenMetFrigo(nul, vol).map((i) => i.dekking), ['niet', 'niet']);
+  });
+  test('regressie: met een hoeveelheid blijft het vinkje zoals voorheen', () => {
+    const nodig = [{ naam: 'zalmfilet', hoeveelheid: 130, eenheid: 'g' }, { naam: 'prei', hoeveelheid: 1, eenheid: 'stuk' }];
+    assert.deepEqual(ingredientenMetFrigo(nodig, vol).map((i) => i.dekking), ['geheel', 'geheel']);
+  });
+});

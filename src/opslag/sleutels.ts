@@ -25,4 +25,8 @@ export const SLEUTEL = {
   winkelCache: 'winkelcache:v1',
   /** Synchronisatietoestand per soort/document (zie src/opslag/sync.ts). */
   sync: 'sync:v1',
+  /** Ingrediënten uit de databank met hun versie (WEEK-252): enkel lokaal, een kopie van de databank. */
+  ingredientenDb: 'ingredientendb:v1',
+  /** Recepten uit de databank met hun versie (WEEK-253): enkel lokaal, een kopie van de databank. */
+  receptenDb: 'receptendb:v1',
 } as const;

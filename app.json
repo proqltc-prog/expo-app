@@ -3,7 +3,7 @@
     "name": "Famenu",
     "slug": "famenu",
     "scheme": "famenu",
-    "version": "0.126.0",
+    "version": "0.135.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -27,6 +27,14 @@
         {
           "cameraPermission": "Famenu gebruikt de camera om barcodes van producten te scannen.",
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Famenu gebruikt je foto's enkel om een recept van een foto in te lezen.",
+          "cameraPermission": "Famenu gebruikt de camera om barcodes te scannen en om een recept te fotograferen.",
+          "microphonePermission": false
         }
       ],
       [

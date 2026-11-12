@@ -16,13 +16,13 @@ import { kooktijdVan, KooktijdCode, PlanDag, PlanRecept, PlanVerzoek, Weekplan, 
 import { dagenVoorVerzoek, plandagenVoorDatums, voegDatumsToe } from '@/lib/planner/datums';
 import { seizoenPasst, seizoenVan } from '@/lib/planner/seizoen';
 import type { Vermijd } from '@/data/vermijden';
-import { heeftVermijdNaam } from '@/lib/planner/vermijden';
+import { vermijdtRecept } from '@/lib/planner/vermijden';
 import { frigoScoreIngredienten } from '@/lib/planner/frigovoorrang';
 
 /** Recepten met een vermeden ingrediënt vallen altijd weg, ook bij aanvullen (WEEK-116). */
 export function zonderVermeden(pool: DbPoolRecept[], vermijd: readonly Vermijd[] | undefined): DbPoolRecept[] {
   if (!vermijd?.length) return pool;
-  return pool.filter((k) => !heeftVermijdNaam(k.recept.ingredienten, vermijd));
+  return pool.filter((k) => !vermijdtRecept({ ingredienten: k.recept.ingredienten, soort: k.soort }, vermijd));
 }
 
 /** WEEK-190: met 'enkel vegetarisch' blijven enkel vegetarische recepten over. */

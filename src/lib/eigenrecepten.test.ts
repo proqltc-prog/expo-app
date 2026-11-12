@@ -9,6 +9,7 @@ import {
   isExactBekend,
   nieuweId,
   normaliseerEigen,
+  nogGeldigeFouten,
   valideer,
   verwijderEigen,
   zoekIngredienten,
@@ -84,18 +85,26 @@ import { standaardEenheid, EENHEDEN } from '@/lib/eigenrecepten';
 describe('WEEK-192: zoeken naar ingrediënten zoals de lijst', () => {
   test('een zoekterm zonder accenten en hoofdletters vindt de databankingrediënten', () => {
     const eerste = catalogus('nl')[0];
-    const gevonden = zoekIngredienten(eerste.naam.toUpperCase(), 'nl', []);
+    const gevonden = zoekIngredienten(eerste.naam.toUpperCase(), 'nl');
     assert.ok(gevonden.some((k) => k.code === eerste.code));
   });
 
-  test('eigen ingrediënten zonder databankcode komen erbij, zonder dubbel', () => {
-    const eigen: EigenRecept[] = [{ ...recept('x', 'Test'), ingredienten: [{ naam: 'Zeldzame kruid', hoeveelheid: 5, eenheid: 'g' }] }];
-    assert.deepEqual(zoekIngredienten('zeldzame', 'nl', eigen), [{ naam: 'Zeldzame kruid' }]);
+  test('WEEK-245: enkel gekende ingrediënten; een onbekende naam geeft niets (geen eigen ingrediënt)', () => {
+    assert.deepEqual(zoekIngredienten('zeldzame kruid xyz', 'nl'), []);
+    for (const k of zoekIngredienten('to', 'nl')) assert.ok(k.code, `${k.naam} heeft een code`);
+  });
+
+  test('WEEK-245: zoeken werkt in elke taal en geeft dezelfde code', () => {
+    const eerste = catalogus('nl')[0];
+    for (const taal of ['fr', 'de', 'en'] as const) {
+      const naam = catalogus(taal).find((c) => c.code === eerste.code)!.naam;
+      assert.ok(zoekIngredienten(naam, taal).some((k) => k.code === eerste.code), taal);
+    }
   });
 
   test('een ingrediënt dat exact bestaat, is niet opnieuw nodig', () => {
     const eerste = catalogus('nl')[0];
-    const keuzes = zoekIngredienten(eerste.naam, 'nl', []);
+    const keuzes = zoekIngredienten(eerste.naam, 'nl');
     assert.equal(isExactBekend(eerste.naam.toUpperCase(), keuzes), true);
     assert.equal(isExactBekend('zzz-bestaat-niet', keuzes), false);
   });
@@ -187,5 +196,19 @@ describe('WEEK-204: normaliseerEigen vult ontbrekende velden in', () => {
     const [terug] = normaliseerEigen([{ ...recept('g2', 'Test'), stijlen: ['italiaans', 'bogus'], seizoenen: ['zomer', 'nooit'] }]);
     assert.deepEqual(terug.stijlen, ['italiaans']);
     assert.deepEqual(terug.seizoenen, ['zomer']);
+  });
+});
+
+describe('WEEK-246: foutmeldingen verdwijnen zodra het probleem opgelost is', () => {
+  const invoer = (ingredienten: { naam: string; hoeveelheid: number; eenheid: 'g' }[]) => ({
+    naam: 'Test', soort: 'vegetarisch' as const, minuten: '20', stijlen: [], seizoenen: [], ingredienten, stappen: ['Koken'],
+  });
+  test('na het opnieuw toevoegen van een ingrediënt verdwijnt de melding over de ingrediënten', () => {
+    assert.deepEqual(nogGeldigeFouten(['ingredienten'], invoer([])), ['ingredienten']);
+    assert.deepEqual(nogGeldigeFouten(['ingredienten'], invoer([{ naam: 'tomaat', hoeveelheid: 2, eenheid: 'g' }])), []);
+  });
+  test('er komen geen nieuwe meldingen bij voor je opnieuw bewaart', () => {
+    assert.deepEqual(nogGeldigeFouten([], { ...invoer([]), naam: '' }), []);
+    assert.deepEqual(nogGeldigeFouten(['naam'], { ...invoer([]), naam: '' }), ['naam']);
   });
 });

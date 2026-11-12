@@ -161,12 +161,12 @@ export default function ProfielScherm() {
         </View>
         <Text style={s.totaal}>{t('profiel.samen', { personen: tn('algemeen.personen', aantalPersonen(profiel)) })}</Text>
       </View>
-      </Inklapbaar>
-
-      <View style={s.waarom}>
+      {/* WEEK-250: de uitleg hoort bij het blok Gezin en klapt mee in, zoals de uitleg bij Adres. */}
+      <View style={[s.waarom, s.waromInBlok]}>
         <Text style={s.waromKop}>{t('profiel.waarom.titel')}</Text>
         <Text style={s.hint}>{t('profiel.waarom.tekst')}</Text>
       </View>
+      </Inklapbaar>
 
       <Inklapbaar titel={t('profiel.adres')} open={uitgeklapt.has('adres')} onWissel={() => wissel('adres')}>
       <View style={s.kaart}>
@@ -213,6 +213,7 @@ const s = StyleSheet.create({
   rij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 16 },
   waarom: { backgroundColor: '#eef6f1', borderRadius: 14, padding: 16, gap: 6 },
+  waromInBlok: { marginTop: 12 },
   waromKop: { fontWeight: '700', fontSize: 15, color: '#333' },
   totaal: { color: '#777', fontSize: 13 },
   taalRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },

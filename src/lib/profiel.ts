@@ -93,3 +93,11 @@ export function profielContext(p: Profiel): string {
   if (plaats) regels.push(`Woonplaats: ${plaats}.`);
   return regels.join('\n');
 }
+
+/**
+ * Kan er voor dit gezin gepland worden (WEEK-249)? Minstens één volwassene; anders worden alle hoeveelheden 0
+ * (een weekmenu "voor 0 personen" zonder hoeveelheden, en in Bereiding overal een vinkje).
+ */
+export function heeftGezin(p: Profiel): boolean {
+  return Number.isInteger(p.volwassenen) && p.volwassenen >= 1;
+}

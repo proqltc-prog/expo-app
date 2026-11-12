@@ -9,7 +9,7 @@ import { geschaaldeHoeveelheid, Gezin } from '@/lib/schaal';
 import type { DbPoolRecept } from './dbplan';
 import { kooktijdVan, DagCode, KooktijdCode, PlanDag, PlanRecept, Weekplan, WEEKDAGEN } from './types';
 import { momentVan } from './moment';
-import { heeftVermijdNaam } from './vermijden';
+import { vermijdtRecept } from './vermijden';
 
 /** Kleine letters, zonder accenten, zodat "croque" ook "Croqué" vindt. */
 export const zoeksleutel = (t: string) =>
@@ -57,7 +57,7 @@ export function kiesbarePoolRecepten(pool: readonly DbPoolRecept[], f: KiesFilte
       k.moment === f.moment &&
       (!f.kooktijden.length || f.kooktijden.includes(k.kooktijd)) &&
       (!f.stijlen.length || k.stijlen.some((s) => f.stijlen.includes(s))) &&
-      !heeftVermijdNaam(k.recept.ingredienten, f.vermijd) &&
+      !vermijdtRecept({ ingredienten: k.recept.ingredienten, soort: k.soort }, f.vermijd) &&
       soortToegelaten(k.soort, f) &&
       (!zoek || zoeksleutel(k.recept.naam).includes(zoek))
   );
@@ -74,7 +74,7 @@ export function kiesbareEigenRecepten(lijst: readonly EigenRecept[], f: KiesFilt
       f.moment === 'avond' &&
       (!f.kooktijden.length || f.kooktijden.includes(kooktijdVan(r.minuten))) &&
       (!f.stijlen.length || r.gezinStijl === true || r.stijlen.some((s) => f.stijlen.includes(s))) &&
-      !heeftVermijdNaam(r.ingredienten, f.vermijd) &&
+      !vermijdtRecept(r, f.vermijd) &&
       soortToegelaten(r.soort, f) &&
       (!zoek || zoeksleutel(r.naam).includes(zoek))
   );

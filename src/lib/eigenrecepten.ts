@@ -63,6 +63,16 @@ export type Invoer = {
 export type Fout = 'naam' | 'minuten' | 'ingredienten' | 'stappen';
 export type Gewaardeerd = Omit<EigenRecept, 'id' | 'bijgewerkt'>;
 
+/**
+ * WEEK-246: welke getoonde foutmeldingen nog gelden. Een melding verdwijnt zodra het probleem opgelost is
+ * (bv. opnieuw een ingrediënt toegevoegd); er komen geen nieuwe meldingen bij voor je opnieuw bewaart.
+ */
+export function nogGeldigeFouten(getoond: readonly Fout[], invoer: Invoer): Fout[] {
+  if (!getoond.length) return [];
+  const r = valideer(invoer);
+  return r.ok ? [] : getoond.filter((f) => r.fouten.includes(f));
+}
+
 /** Controleert het formulier; geeft de opgeschoonde waarden of de fouten. */
 export function valideer(invoer: Invoer): { ok: true; waarden: Gewaardeerd } | { ok: false; fouten: Fout[] } {
   const fouten: Fout[] = [];
@@ -148,25 +158,12 @@ export function verwijderEigen(lijst: readonly EigenRecept[], id: string): Eigen
 export type IngredientKeuze = { code?: IngredientCode; naam: string };
 
 /**
- * Zoeken naar een ingrediënt: dezelfde zoeklogica als de lijst en de frigo (zoekCatalogus, zonder accenten en hoofdletters),
- * gevolgd door de eigen ingrediënten van het gezin die nog geen databankcode hebben (WEEK-192).
+ * Zoeken naar een ingrediënt: dezelfde zoeklogica als de lijst en de frigo (zoekCatalogus, zonder accenten en hoofdletters).
+ * WEEK-245: enkel ingrediënten die de app kent (de ingrediëntenlijst in 4 talen); eigen ingrediënten kunnen niet meer.
  */
-export function zoekIngredienten(zoek: string, taal: Taal, eigen: readonly EigenRecept[], max = 8): IngredientKeuze[] {
-  const q = normaliseer(zoek);
-  if (!q) return [];
-  const uit: IngredientKeuze[] = zoekCatalogus(zoek, taal).map((i) => ({ code: i.code, naam: i.naam }));
-  const bekend = new Set(uit.map((k) => normaliseer(k.naam)));
-  for (const recept of eigen) {
-    for (const i of recept.ingredienten) {
-      if (i.code) continue;
-      const k = normaliseer(i.naam);
-      if (k.includes(q) && !bekend.has(k)) {
-        bekend.add(k);
-        uit.push({ naam: i.naam });
-      }
-    }
-  }
-  return uit.slice(0, max);
+export function zoekIngredienten(zoek: string, taal: Taal, max = 8): IngredientKeuze[] {
+  if (!normaliseer(zoek)) return [];
+  return zoekCatalogus(zoek, taal).map((i) => ({ code: i.code, naam: i.naam })).slice(0, max);
 }
 
 /** De eenheid die de lijst bij dit ingrediënt toont; zonder databankcode is het gram. */

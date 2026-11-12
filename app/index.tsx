@@ -22,7 +22,7 @@ import { Weekplan } from '@/lib/planner/types';
 import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { bereikDatums, dagenTussen, kortDatum, vandaagIso } from '@/lib/planner/datums';
 import { Kalender } from '@/ui/kalender';
-import { aantalPersonen, Profiel } from '@/lib/profiel';
+import { aantalPersonen, heeftGezin, Profiel } from '@/lib/profiel';
 import { wijzigLijst } from '@/opslag/lijst';
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
@@ -35,7 +35,7 @@ import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorM
 import { vermijdOpties as vermijdKeuzesVoor, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { KOOKTIJD_BEREIK, KooktijdCode } from '@/lib/kooktijd';
-import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, openBevestigdeDagen, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -260,6 +260,8 @@ export default function Weekplanning() {
   };
 
   const vraagNieuwPlan = () => {
+    // WEEK-249: zonder gezin worden alle hoeveelheden 0; eerst het gezin invullen.
+    if (profiel && !heeftGezin(profiel)) return router.navigate('/profiel');
     // WEEK-143: de bevestiging enkel bij zichtbare, bevestigde recepten.
     if (!vraagtBevestigingVoorNieuwPlan(plan)) return maakPlan(false);
     Alert.alert(t('planning.plan'), t('planning.resetVraag'), [
@@ -272,6 +274,7 @@ export default function Weekplanning() {
   // WEEK-184: het recept dat er nu op staat, komt de rest van de week niet meer terug.
   const herdoeDag = async (index: number) => {
     if (!plan || !profiel || bezigDag !== null || !mag || !magDagWijzigen(plan.dagen[index])) return;
+    if (!heeftGezin(profiel)) return router.navigate('/profiel');
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
@@ -540,6 +543,10 @@ export default function Weekplanning() {
       {fase === 'plan' && (
         <View style={s.blok}>
           {kopStap('planning.kies.plan')}
+          {profiel && !heeftGezin(profiel) && <Text style={s.melding}>{t('planning.geenGezin')}</Text>}
+          {profiel && heeftGezin(profiel) && planZonderHoeveelheden(plan) && (
+            <Text style={s.melding}>{t('planning.zonderHoeveelheden')}</Text>
+          )}
           <Pressable style={[s.knop, bezig && s.uit]} onPress={vraagNieuwPlan} disabled={bezig || !profiel || !mag}>
             {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
           </Pressable>
