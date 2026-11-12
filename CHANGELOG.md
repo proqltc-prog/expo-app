@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.127.0] – 2026-11-12
+
+- Eigen recept: je kiest enkel nog ingrediënten die de app kent (in 4 talen) en geeft enkel de hoeveelheid in; eenheid en categorie liggen vast. Bovenaan staat dat de hoeveelheden voor één volwassene zijn. (WEEK-245)
+- Eigen recept: "Recept verwijderen" werkt nu ook in de webversie, met een bevestiging in de pagina. Een foutmelding verdwijnt zodra het probleem opgelost is, bv. na het opnieuw toevoegen van een ingrediënt. (WEEK-246)
+
+**Jira:** [WEEK-245](https://proqltc-1791495894841.atlassian.net/browse/WEEK-245) · [WEEK-246](https://proqltc-1791495894841.atlassian.net/browse/WEEK-246) · **Confluence:** [WEEK-245](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24543233) · [WEEK-246](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24576001)
+
 ## [0.126.0] – 2026-11-11
 
 - Weekmenu en stijlkeuze: echte foto's van gerechten in plaats van de getekende logo's. Elke keuken heeft een foto van een traditioneel gerecht; in het weekmenu past de foto bij de keuken en het soort gerecht (bv. Thais + curry, Frans + soep, Italiaans + pasta), met 2 à 3 varianten per groep zodat een weekmenu minder dubbel toont. Recepten van het gezin krijgen de foto van hun keuken of een gezinsfoto. (WEEK-244)

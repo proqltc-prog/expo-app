@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Afdeling } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
@@ -15,6 +15,7 @@ import {
   GEZIN_STIJL,
   isExactBekend,
   nieuweId,
+  nogGeldigeFouten,
   standaardEenheid,
   SOORTEN,
   StijlKeuze,
@@ -35,7 +36,7 @@ import { useTaal } from '@/ui/taal';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
-// Ingrediënten die nog niet bestaan, kun je handmatig toevoegen; die blijven bij het recept.
+// WEEK-245: enkel ingrediënten die de app kent; je geeft enkel de hoeveelheid in (voor één volwassene).
 // WEEK-199: de kooktijd kies je als snel, gemiddeld of uitgebreid (met het tijdsbestek); de minuten worden vooraf
 // ingevuld met de geschatte tijd uit de databank en blijven aanpasbaar tot de bovengrens van een uur.
 // WEEK-200: een ingrediënt voeg je toe zoals een product op de lijst: naam ingeven, op de plus tikken (of een treffer
@@ -78,10 +79,11 @@ export default function EigenReceptScherm() {
   const [zoek, setZoek] = useState('');
   const [popup, setPopup] = useState<PopupOpties | null>(null);
   const [popupDoel, setPopupDoel] = useState<PopupDoel | null>(null);
-  const [alle, setAlle] = useState<EigenRecept[]>([]);
   const [gezinNaam, setGezinNaam] = useState<string | undefined>(undefined);
   const [fouten, setFouten] = useState<Fout[]>([]);
   const [bezig, setBezig] = useState(false);
+  // WEEK-246: bevestiging van het verwijderen in de pagina zelf (een Alert met knoppen werkt niet op het web).
+  const [bevestigVerwijder, setBevestigVerwijder] = useState(false);
   // De geschatte tijd per kooktijd: het gemiddelde van de databankrecepten; zolang die niet geladen zijn, de vaste schatting.
   const [schattingen, setSchattingen] = useState<Record<KooktijdCode, number>>(KOOKTIJD_SCHATTING_STANDAARD);
 
@@ -94,7 +96,6 @@ export default function EigenReceptScherm() {
   useEffect(() => {
     laadGezin().then((g) => setGezinNaam(g?.naam || undefined)).catch(() => setGezinNaam(undefined));
     laadEigenRecepten().then((lijst) => {
-      setAlle(lijst);
       const r = id ? lijst.find((x) => x.id === id) : undefined;
       setBestaand(r);
       if (r) {
@@ -118,8 +119,9 @@ export default function EigenReceptScherm() {
   // De gezinsstijl heet naar de gezinsruimte; zonder eigen naam heet hij vertaald "Ons gezin" (WEEK-243).
   const gezinLabel = toonGezinsnaam(gezinNaam, t('recept.stijlGezinZonderNaam'));
 
-  const zoekTreffers = useMemo(() => (zoek.trim() ? zoekIngredienten(zoek, taal, alle) : []), [zoek, taal, alle]);
-  const kanNieuw = zoek.trim().length > 0 && !isExactBekend(zoek, zoekTreffers);
+  // WEEK-245: enkel ingrediënten die de app kent (in 4 talen); eigen ingrediënten kunnen niet meer.
+  const zoekTreffers = useMemo(() => (zoek.trim() ? zoekIngredienten(zoek, taal) : []), [zoek, taal]);
+  const nietsGevonden = zoek.trim().length > 0 && zoekTreffers.length === 0;
 
   /** Opent de popup voor een ingrediënt: met code liggen eenheid en categorie vast (zoals de lijst en de frigo), anders kies je ze. */
   const openPopup = (doel: PopupDoel, bestaande?: Rij) => {
@@ -134,8 +136,9 @@ export default function EigenReceptScherm() {
       hoeveelheid: bestaande?.hoeveelheid,
       eenheid,
       afdeling: afdeling ?? 'overig',
-      toonEenheid: !code,
-      toonCategorie: !code,
+      // WEEK-245: enkel de hoeveelheid is in te geven; eenheid en categorie liggen vast.
+      toonEenheid: false,
+      toonCategorie: false,
       toonVasteCategorie: !!code,
       toonHoudbaar: false,
       eenheden: EENHEDEN,
@@ -149,12 +152,13 @@ export default function EigenReceptScherm() {
     setPopupDoel(null);
   };
 
-  /** De plus: een treffer die exact zo heet, telt als dat ingrediënt; anders wordt het een eigen ingrediënt. */
+  /** De plus: een treffer die exact zo heet, of de enige treffer. Een onbekende naam kan niet (WEEK-245). */
   const plus = () => {
     const naam = zoek.trim();
     if (!naam) return;
-    const exact = zoekTreffers.find((k) => normaliseer(k.naam) === normaliseer(naam));
-    openPopup(exact ? { code: exact.code, naam: exact.naam } : { naam });
+    const exact = isExactBekend(naam, zoekTreffers) ? zoekTreffers.find((k) => normaliseer(k.naam) === normaliseer(naam)) : undefined;
+    const keuze = exact ?? (zoekTreffers.length === 1 ? zoekTreffers[0] : undefined);
+    if (keuze) openPopup({ code: keuze.code, naam: keuze.naam });
   };
 
   const bewaarPopup = (w: LosWijziging) => {
@@ -218,27 +222,25 @@ export default function EigenReceptScherm() {
     }
   };
 
-  const verwijder = () => {
+  const verwijder = async () => {
     if (!bestaand) return;
-    Alert.alert(t('recept.verwijderVraag'), undefined, [
-      { text: t('recept.annuleer'), style: 'cancel' },
-      {
-        text: t('recept.verwijder'),
-        style: 'destructive',
-        onPress: async () => {
-          await wijzigEigenRecepten((lijst) => verwijderEigen(lijst, bestaand.id));
-          terug();
-        },
-      },
-    ]);
+    setBevestigVerwijder(false);
+    await wijzigEigenRecepten((lijst) => verwijderEigen(lijst, bestaand.id));
+    terug();
   };
 
   if (!geladen) return null;
 
-  const fout = (f: Fout) => (fouten.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
+  // WEEK-246: een getoonde melding verdwijnt zodra het probleem opgelost is.
+  const getoond = nogGeldigeFouten(fouten, { naam, soort, minuten, stijlen, seizoenen, ingredienten: rijen, stappen });
+  const fout = (f: Fout) => (getoond.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
 
   return (
     <ScrollView contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
+      {/* WEEK-245: de hoeveelheden zijn voor één volwassene; de app rekent om voor het gezin. */}
+      <View style={s.uitleg}>
+        <Text style={s.uitlegTekst}>{t('recept.uitlegVolwassene')}</Text>
+      </View>
       <Text style={s.label}>{t('recept.naam')}</Text>
       <TextInput style={s.veld} value={naam} onChangeText={setNaam} accessibilityLabel={t('recept.naam')} />
       {fout('naam')}
@@ -280,7 +282,7 @@ export default function EigenReceptScherm() {
             <Text style={s.ingredientNaam}>{r.naam}</Text>
             <Text style={s.ingredientDetail}>{rijDetail(r)}</Text>
           </Pressable>
-          <Pressable onPress={() => verwijderRij(i)} accessibilityRole="button" accessibilityLabel={t('recept.verwijder')} hitSlop={8}>
+          <Pressable onPress={() => verwijderRij(i)} accessibilityRole="button" accessibilityLabel={t('recept.ingredientWeg', { naam: r.naam })} hitSlop={8}>
             <Text style={s.verwijder}>✕</Text>
           </Pressable>
         </View>
@@ -307,11 +309,7 @@ export default function EigenReceptScherm() {
           <Text style={s.trefferTekst}>{k.naam}</Text>
         </Pressable>
       ))}
-      {kanNieuw && (
-        <Pressable style={s.treffer} onPress={() => openPopup({ naam: zoek.trim() })} accessibilityRole="button">
-          <Text style={s.trefferTekst}>{t('recept.voegIngredientToe', { naam: zoek.trim() })}</Text>
-        </Pressable>
-      )}
+      {nietsGevonden && <Text style={s.geenTreffer}>{t('frigo.geenIngredient')}</Text>}
 
       <Text style={s.label}>{t('recept.stappen')}</Text>
       {stappen.map((stap, i) => (
@@ -342,10 +340,23 @@ export default function EigenReceptScherm() {
           <Text style={s.bewaarTekst}>{t('recept.bewaar')}</Text>
         </Pressable>
       </View>
-      {bestaand && (
-        <Pressable style={s.verwijderKnop} onPress={verwijder} accessibilityRole="button">
+      {bestaand && !bevestigVerwijder && (
+        <Pressable style={s.verwijderKnop} onPress={() => setBevestigVerwijder(true)} accessibilityRole="button">
           <Text style={s.verwijderTekst}>{t('recept.verwijder')}</Text>
         </Pressable>
+      )}
+      {bestaand && bevestigVerwijder && (
+        <View style={s.bevestig}>
+          <Text style={s.bevestigTekst}>{t('recept.verwijderVraag')}</Text>
+          <View style={s.knoppen}>
+            <Pressable style={s.annuleer} onPress={() => setBevestigVerwijder(false)} accessibilityRole="button">
+              <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
+            </Pressable>
+            <Pressable style={[s.bewaar, s.verwijderJa]} onPress={verwijder} accessibilityRole="button">
+              <Text style={s.bewaarTekst}>{t('recept.verwijder')}</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
       <LosPopup opties={popup} onSluit={sluitPopup} onBewaar={bewaarPopup} />
     </ScrollView>
@@ -398,5 +409,11 @@ const s = StyleSheet.create({
   bewaar: { flex: 2, backgroundColor: KLEUR, borderRadius: 12, padding: 14, minHeight: 50, alignItems: 'center', justifyContent: 'center' },
   bewaarTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   verwijderKnop: { padding: 12, alignItems: 'center' },
+  bevestig: { marginTop: 12, padding: 14, borderRadius: 14, borderWidth: 1, borderColor: '#f3c1c1', backgroundColor: '#fdf1f1', gap: 4 },
+  bevestigTekst: { color: '#7a1c1c', fontWeight: '700', textAlign: 'center' },
+  verwijderJa: { backgroundColor: '#c62828' },
+  uitleg: { backgroundColor: '#E8F3EC', borderRadius: 12, padding: 12, marginBottom: 4 },
+  uitlegTekst: { color: '#1f5c38', fontSize: 14, lineHeight: 20 },
+  geenTreffer: { color: '#666', marginTop: 6 },
   verwijderTekst: { color: '#c62828', fontWeight: '600' },
 });
