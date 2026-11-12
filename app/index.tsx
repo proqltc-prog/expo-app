@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, Soort } from '@/data/recept';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
@@ -120,6 +120,8 @@ export default function Weekplanning() {
   const [bezig, setBezig] = useState(false);
   // WEEK-262: infomelding na een klik op "Plan mijn week" terwijl er nog bevestigde recepten niet gekookt zijn.
   const [eerstKoken, setEerstKoken] = useState(false);
+  // WEEK-271: een korte melding op de pagina; met index hoort ze bij die kaart, met zelfKiezen krijgt ze die knop.
+  const [melding, setMelding] = useState<{ tekst: string; index?: number; zelfKiezen?: boolean } | null>(null);
   const [bezigDag, setBezigDag] = useState<number | null>(null);
   const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
   const [keuzes, setKeuzes] = useState<Keuzes>(STANDAARD_KEUZES);
@@ -216,12 +218,13 @@ export default function Weekplanning() {
       : t('planning.alleenBeheerderOnbekend')
     : '';
   // Een knop die niet mag werken, legt uit waarom (WEEK-92): geen stille knop meer.
-  const toonBeheer = () => Alert.alert(t('planning.beheerTitel'), beheerTekst);
+  const toonBeheer = (index?: number) => setMelding({ tekst: beheerTekst, index });
 
   // Een nieuw weekmenu uit de databank (WEEK-68). Sinds WEEK-208 is de databank de enige bron: geen lokale planner meer.
   // Met bevestigde dagen vervangt dit ook de boodschappenlijst; de gebruiker is daar eerst mee akkoord gegaan.
   const maakPlan = async (resetLijst: boolean) => {
     if (!profiel || bezig || !mag) return;
+    setMelding(null);
     setBezig(true);
     try {
       const frigo = await laadFrigo();
@@ -241,17 +244,17 @@ export default function Weekplanning() {
       // Databank onbereikbaar: melden en stoppen, want zonder recepten is er geen plan.
       const recepten = await laadDbRecepten().catch(() => null);
       if (!recepten) {
-        Alert.alert(t('planning.plan'), t('planning.geenVerbinding'));
+        setMelding({ tekst: t('planning.geenVerbinding') });
         return;
       }
       const nieuw = planUitDatabase(verzoek, maakDbPool(recepten, taal, profiel));
       if (!nieuw) {
-        Alert.alert(t('planning.plan'), t('planning.geenRecepten'));
+        setMelding({ tekst: t('planning.geenRecepten') });
         return;
       }
       // Pas tonen als het bewaard is: een ander gezinslid kan het plan intussen hebben overgenomen.
       if (!(await bewaarPlan(nieuw))) {
-        Alert.alert(t('planning.beheerTitel'), beheerTekst);
+        setMelding({ tekst: beheerTekst });
         return;
       }
       if (resetLijst && plan) {
@@ -280,6 +283,7 @@ export default function Weekplanning() {
   const herdoeDag = async (index: number) => {
     if (!plan || !profiel || bezigDag !== null || !mag || !magDagWijzigen(plan.dagen[index])) return;
     if (!isProfielIngesteld(profiel)) return router.navigate('/profiel');
+    setMelding(null);
     setBezigDag(index);
     try {
       const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: plan.dagen[index]?.recept.naam ?? '' };
@@ -288,16 +292,13 @@ export default function Weekplanning() {
       // WEEK-116/WEEK-208: een dag wordt altijd uit de databank vervangen; is die onbereikbaar, dan melden we dat.
       const recepten = await laadDbRecepten().catch(() => null);
       if (!recepten) {
-        Alert.alert(t('planning.plan'), t('planning.geenVerbinding'));
+        setMelding({ tekst: t('planning.geenVerbinding'), index });
         return;
       }
       const nieuw: Weekplan = vervangDbDag(basis, index, maakDbPool(recepten, taal, profiel), Date.now());
       // Geen enkel recept meer over: de gebruiker kiest zelf (WEEK-184).
       if (nieuw === basis) {
-        Alert.alert(t('planning.allesGezienTitel'), t('planning.allesGezienTekst'), [
-          { text: t('planning.annuleer'), style: 'cancel' },
-          { text: t('planning.zelfKiezen'), onPress: () => kiesZelf(index) },
-        ]);
+        setMelding({ tekst: t('planning.allesGezienTekst'), index, zelfKiezen: true });
         return;
       }
       // Enkel die ene dag in het nieuwste plan vervangen: wat intussen veranderde, blijft (WEEK-28).
@@ -532,6 +533,17 @@ export default function Weekplanning() {
           >
             {bezig ? <ActivityIndicator color="#fff" /> : <Text style={s.knopTekst}>{t('planning.plan')}</Text>}
           </Pressable>
+          {melding && melding.index === undefined && (
+            <View style={s.infoVak} accessibilityRole="alert">
+              <Ionicons name="information-circle" size={20} color={PETROL} />
+              <Text style={s.infoTekst}>{melding.tekst}</Text>
+              {melding.zelfKiezen && melding.index !== undefined && (
+                <Pressable style={s.kleineKnop} onPress={() => { const i = melding.index as number; setMelding(null); kiesZelf(i); }} accessibilityRole="button">
+                  <Text style={s.kleineKnopTekst}>{t('planning.zelfKiezen')}</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
           {toonEerstKoken && (
             <View style={s.infoVak} accessibilityRole="alert">
               <Ionicons name="information-circle" size={20} color={PETROL} />
@@ -564,18 +576,18 @@ export default function Weekplanning() {
                               naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
                               label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
                               aan={!!bevestigd}
-                              onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer())}
+                              onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer(index))}
                             />
                             <ActieIcoon
                               naam="refresh-outline"
                               label={t('planning.reset', { dag: t(dagSleutel(dag)) })}
                               bezig={bezigDag === index}
-                              onPress={() => (mag ? herdoeDag(index) : toonBeheer())}
+                              onPress={() => (mag ? herdoeDag(index) : toonBeheer(index))}
                             />
                             <ActieIcoon
                               naam="create-outline"
                               label={t('planning.zelfKiezen')}
-                              onPress={() => (mag ? kiesZelf(index) : toonBeheer())}
+                              onPress={() => (mag ? kiesZelf(index) : toonBeheer(index))}
                             />
                           </>
                         )}
@@ -620,12 +632,23 @@ export default function Weekplanning() {
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
                     </View>
+                    {melding && melding.index === index && (
+            <View style={s.infoVak} accessibilityRole="alert">
+              <Ionicons name="information-circle" size={20} color={PETROL} />
+              <Text style={s.infoTekst}>{melding.tekst}</Text>
+              {melding.zelfKiezen && melding.index !== undefined && (
+                <Pressable style={s.kleineKnop} onPress={() => { const i = melding.index as number; setMelding(null); kiesZelf(i); }} accessibilityRole="button">
+                  <Text style={s.kleineKnopTekst}>{t('planning.zelfKiezen')}</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
                     {/* WEEK-114: de knop Gekookt op een eigen regel, links uitgelijnd, zodat hij nooit buiten de kaart valt. */}
                     {bevestigd && (
                     <View style={s.gedaanRij}>
                       <Pressable
                         style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
-                        onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer())}
+                        onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer(index))}
                         disabled={bezigGedaan !== null}
                         accessibilityRole="checkbox"
                         accessibilityState={{ checked: !!gedaan }}

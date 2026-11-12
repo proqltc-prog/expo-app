@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.141.1] – 2026-11-12
+
+- Weekmenu: meldingen (geen verbinding, niet genoeg gerechten, alle gerechten gezien, weekmenu van een ander gezinslid) staan op de pagina in plaats van in een venster dat op het web niet verscheen. Korte teksten; bij "alle gerechten gezien" de knop "Zelf kiezen". (WEEK-271)
+- Bevat ook 0.135.1 tot en met 0.141.0 (WEEK-259 tot WEEK-270).
+
+**Jira:** [WEEK-271](https://proqltc-1791495894841.atlassian.net/browse/WEEK-271) · **Confluence:** [WEEK-271](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25198593)
+
 ## [0.141.0] – 2026-11-12
 
 - Meer eenheden: bij een ingrediënt kies je el, kl, cl, dl, l, kg, snuifje, scheutje, zakje, blaadje, takje, bosje of stuk (als het stukgewicht gekend is, bv. kipfilet, zalm, schelvishaasjes, tomaat). Het gerecht en de bereiding tonen je keuze (bv. 2 el, schaalt mee met het gezin); de boodschappenlijst en In huis blijven optellen in g of ml. Ingelezen recepten houden el, kl, dl, …; de AI kiest "stuk" voor wat je telt. (WEEK-270)
