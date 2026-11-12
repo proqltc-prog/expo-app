@@ -5,9 +5,12 @@
 // limiet per gebruiker per dag (public.famenu_recept_foto_tel). De foto wordt nergens bewaard.
 // Instellen (eigenaar, Supabase → Edge Functions → Secrets): GEMINI_API_KEY (verplicht), GEMINI_MODEL (optioneel).
 const MAX_BASE64 = 2_800_000;
-const TIJDSLIMIET_MS = 30_000;
+// Per poging; met de tweede poging blijft het geheel ruim onder de grens van een Supabase-functie.
+const TIJDSLIMIET_MS = 25_000;
 // gemini-2.5-flash is niet meer beschikbaar voor nieuwe projecten; Google raadt 3.5 Flash-Lite aan (snel en zuinig, genoeg om tekst te lezen).
 const STANDAARD_MODEL = 'gemini-3.5-flash-lite';
+// Tweede poging als het eerste model overbelast is (WEEK-251): het sterkere Flash-model, ook aangeraden door Google.
+const RESERVE_MODEL = 'gemini-3.8-flash';
 const MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const CORS = {
@@ -80,20 +83,34 @@ Deno.serve(async (req) => {
   if (!(await binnenLimiet(authorization))) return antwoord({ fout: 'limiet' }, 429);
 
   const model = Deno.env.get('GEMINI_MODEL') || STANDAARD_MODEL;
-  const stop = new AbortController();
-  const klok = setTimeout(() => stop.abort(), TIJDSLIMIET_MS);
+  const vraag = async (m: string): Promise<Response> => {
+    const stop = new AbortController();
+    const klok = setTimeout(() => stop.abort(), TIJDSLIMIET_MS);
+    try {
+      return await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+        method: 'POST',
+        signal: stop.signal,
+        headers: { 'x-goog-api-key': sleutel, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ inline_data: { mime_type: mime, data: beeld } }, { text: OPDRACHT }] }],
+          generationConfig: { temperature: 0, responseMimeType: 'application/json', responseSchema: SCHEMA },
+        }),
+      });
+    } finally {
+      clearTimeout(klok);
+    }
+  };
+  // Geen antwoord binnen de tijd (undefined), 429 (gratis limiet van Google) of 503 (overbelast): "druk".
+  const probeer = (m: string) => vraag(m).catch(() => undefined);
+  const druk = (r: Response | undefined) => !r || r.status === 429 || r.status === 503;
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-      method: 'POST',
-      signal: stop.signal,
-      headers: { 'x-goog-api-key': sleutel, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ inline_data: { mime_type: mime, data: beeld } }, { text: OPDRACHT }] }],
-        generationConfig: { temperature: 0, responseMimeType: 'application/json', responseSchema: SCHEMA },
-      }),
-    });
-    // 429 = gratis limiet van Google bereikt, 503 = Gemini tijdelijk overbelast: beide "probeer later".
-    if (res.status === 429 || res.status === 503) return antwoord({ fout: 'druk' }, 503);
+    let res = await probeer(model);
+    // Eén tweede poging met een ander model, enkel als het eerste overbelast is of te traag; daarna "probeer later".
+    if (druk(res) && model !== RESERVE_MODEL) {
+      console.error(`Gemini ${model} antwoordt ${res?.status ?? 'niet op tijd'}; tweede poging met ${RESERVE_MODEL}`);
+      res = await probeer(RESERVE_MODEL);
+    }
+    if (!res || druk(res)) return antwoord({ fout: 'druk' }, 503);
     if (!res.ok) {
       // Enkel de status loggen, nooit de foto of de sleutel.
       console.error(`Gemini antwoordt ${res.status}`);
@@ -111,7 +128,5 @@ Deno.serve(async (req) => {
     return antwoord({ recept });
   } catch {
     return antwoord({ fout: 'niet_bereikbaar' }, 504);
-  } finally {
-    clearTimeout(klok);
   }
 });
