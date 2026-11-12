@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.128.0] – 2026-11-12
+
+- Eigen recept inlezen via een link: plak de link van een receptensite en de app vult naam, soort, kooktijd, stappen en ingrediënten in. Ingrediënten worden gekoppeld aan de ingrediëntenlijst (een dubbel of synoniem gebruikt altijd het bestaande ingrediënt) en omgerekend naar één volwassene; wat niet zeker is, staat onder "Nog na te kijken". Een Supabase-functie haalt de pagina op, met een daglimiet. (WEEK-247)
+
+**Jira:** [WEEK-247](https://proqltc-1791495894841.atlassian.net/browse/WEEK-247) · **Confluence:** [WEEK-247](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/24608769)
+
 ## [0.127.0] – 2026-11-12
 
 - Eigen recept: je kiest enkel nog ingrediënten die de app kent (in 4 talen) en geeft enkel de hoeveelheid in; eenheid en categorie liggen vast. Bovenaan staat dat de hoeveelheden voor één volwassene zijn. (WEEK-245)

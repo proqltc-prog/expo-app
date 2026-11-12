@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { Afdeling } from '@/data/ingredienten';
+import { Afdeling, ingredientNaam } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
 import type { Sleutel } from '@/i18n';
@@ -33,6 +34,8 @@ import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
+import { NakijkRegel, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
+import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
 
 // Recept bewerken (WEEK-192): naam, soort, kooktijd, stijl (ook de gezinsstijl), seizoen (optioneel),
 // ingrediënten uit de ingrediëntenlijst van de app met hoeveelheid en eenheid, en de bereiding stap voor stap.
@@ -49,7 +52,10 @@ const KLEUR = '#2e7d4f';
 type Rij = EigenIngredient;
 
 /** Waarvoor de popup open staat: een nieuw ingrediënt (met of zonder code) of een bestaande rij. */
-type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string };
+type PopupDoel = { index?: number; code?: EigenIngredient['code']; naam: string; nakijk?: number };
+
+/** Wat er na het inlezen via een link getoond wordt (WEEK-247). */
+type LinkMelding = { aantal: number; personen: number; vanSite: boolean; teLang?: number };
 
 const FOUT_TEKST: Record<Fout, string> = {
   naam: 'recept.fout.naam',
@@ -85,6 +91,13 @@ export default function EigenReceptScherm() {
   // WEEK-246: bevestiging van het verwijderen in de pagina zelf (een Alert met knoppen werkt niet op het web).
   const [bevestigVerwijder, setBevestigVerwijder] = useState(false);
   // De geschatte tijd per kooktijd: het gemiddelde van de databankrecepten; zolang die niet geladen zijn, de vaste schatting.
+  // WEEK-247: een recept inlezen via een link.
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [link, setLink] = useState('');
+  const [linkBezig, setLinkBezig] = useState(false);
+  const [linkFout, setLinkFout] = useState<LinkFout | undefined>(undefined);
+  const [linkMelding, setLinkMelding] = useState<LinkMelding | undefined>(undefined);
+  const [nakijken, setNakijken] = useState<NakijkRegel[]>([]);
   const [schattingen, setSchattingen] = useState<Record<KooktijdCode, number>>(KOOKTIJD_SCHATTING_STANDAARD);
 
   useEffect(() => {
@@ -167,9 +180,66 @@ export default function EigenReceptScherm() {
     const eenheid = (code ? standaardEenheid(code) : w.eenheid && (EENHEDEN as readonly string[]).includes(w.eenheid) ? w.eenheid : 'g') as Eenheid;
     const afdeling: Afdeling | undefined = !code && w.afdeling !== 'overig' ? w.afdeling : undefined;
     const rij: Rij = { ...(code ? { code } : {}), naam: popupDoel.naam, hoeveelheid: w.hoeveelheid, eenheid, ...(afdeling ? { afdeling } : {}) };
-    setRijen((r) => (popupDoel.index === undefined ? [...r, rij] : r.map((x, i) => (i === popupDoel.index ? rij : x))));
+    // WEEK-247: een ingrediënt dat al in het recept staat, wordt niet dubbel toegevoegd; de hoeveelheden worden samengeteld.
+    setRijen((r) => (popupDoel.index === undefined ? voegSamen(r, rij) : r.map((x, i) => (i === popupDoel.index ? rij : x))));
+    if (popupDoel.nakijk !== undefined) {
+      const weg = popupDoel.nakijk;
+      setNakijken((n) => n.filter((_, i) => i !== weg));
+    }
     setZoek('');
     sluitPopup();
+  };
+
+  /** WEEK-247: leest het recept van de link in en vult het formulier; wat niet zeker is, komt bij "nog na te kijken". */
+  const leesLink = async () => {
+    if (linkBezig) return;
+    const url = zoekLink(link);
+    if (!url) {
+      setLinkFout('ongeldige_link');
+      return;
+    }
+    setLinkFout(undefined);
+    setLinkBezig(true);
+    try {
+      const r = await haalReceptOp(url);
+      if (!r.ok) {
+        setLinkFout(r.fout);
+        return;
+      }
+      const ingelezen = verwerkRecept(r.recept, taal);
+      if (ingelezen.naam) setNaam(ingelezen.naam);
+      setSoort(ingelezen.soort);
+      const teLang = ingelezen.minuten !== undefined && ingelezen.minuten > MAX_KOOKTIJD_MIN ? ingelezen.minuten : undefined;
+      if (ingelezen.minuten !== undefined && !teLang) setMinuten(String(ingelezen.minuten));
+      if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
+      setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
+      setNakijken(ingelezen.nakijken);
+      setLinkMelding({ aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}) });
+      setLinkOpen(false);
+      setLink('');
+    } finally {
+      setLinkBezig(false);
+    }
+  };
+
+  /** Een regel om na te kijken: het voorstel gebruiken (met hoeveelheid meteen, anders via de popup). */
+  const gebruikNakijk = (index: number) => {
+    const n = nakijken[index];
+    if (!n?.code) return;
+    const naamApp = ingredientNaam(n.code, taal);
+    if (n.hoeveelheid !== undefined) {
+      const rij: Rij = { code: n.code, naam: naamApp, hoeveelheid: n.hoeveelheid, eenheid: standaardEenheid(n.code) };
+      setRijen((r) => voegSamen(r, rij));
+      setNakijken((l) => l.filter((_, i) => i !== index));
+    } else {
+      openPopup({ code: n.code, naam: naamApp, nakijk: index });
+    }
+  };
+  const slaNakijkOver = (index: number) => setNakijken((l) => l.filter((_, i) => i !== index));
+  /** Zelf zoeken: de naam komt in het zoekveld en de regel verdwijnt uit de lijst om na te kijken. */
+  const zoekNakijk = (index: number) => {
+    setZoek(nakijken[index]?.naam ?? '');
+    slaNakijkOver(index);
   };
 
   const verwijderRij = (index: number) => setRijen((r) => r.filter((_, i) => i !== index));
@@ -241,6 +311,56 @@ export default function EigenReceptScherm() {
       <View style={s.uitleg}>
         <Text style={s.uitlegTekst}>{t('recept.uitlegVolwassene')}</Text>
       </View>
+
+      {/* WEEK-247: een recept inlezen via de link van een receptensite. */}
+      {!bestaand && !linkOpen && (
+        <Pressable style={s.linkKnop} onPress={() => setLinkOpen(true)} accessibilityRole="button">
+          <Ionicons name="link-outline" size={18} color={KLEUR} />
+          <Text style={s.linkKnopTekst}>{t('recept.link.knop')}</Text>
+        </Pressable>
+      )}
+      {!bestaand && linkOpen && (
+        <View style={s.linkVak}>
+          <Text style={s.linkUitleg}>{t('recept.link.uitleg')}</Text>
+          <TextInput
+            style={s.veld}
+            value={link}
+            onChangeText={(x) => {
+              setLink(x);
+              setLinkFout(undefined);
+            }}
+            onSubmitEditing={leesLink}
+            placeholder="https://"
+            accessibilityLabel={t('recept.link.veld')}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="url"
+            editable={!linkBezig}
+          />
+          {linkFout && <Text style={s.fout}>{t(`recept.link.fout.${linkFout}` as Sleutel)}</Text>}
+          <View style={s.knoppen}>
+            <Pressable style={s.annuleer} onPress={() => setLinkOpen(false)} disabled={linkBezig} accessibilityRole="button">
+              <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
+            </Pressable>
+            <Pressable
+              style={[s.bewaar, (linkBezig || !link.trim()) && { opacity: 0.6 }]}
+              onPress={leesLink}
+              disabled={linkBezig || !link.trim()}
+              accessibilityRole="button"
+              accessibilityLabel={t(linkBezig ? 'recept.link.bezig' : 'recept.link.lees')}
+            >
+              {linkBezig ? <ActivityIndicator color="#fff" /> : <Text style={s.bewaarTekst}>{t('recept.link.lees')}</Text>}
+            </Pressable>
+          </View>
+        </View>
+      )}
+      {linkMelding && (
+        <View style={s.uitleg}>
+          <Text style={s.uitlegTekst}>{t('recept.link.klaar', { aantal: linkMelding.aantal })}</Text>
+          <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
+          {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
+        </View>
+      )}
       <Text style={s.label}>{t('recept.naam')}</Text>
       <TextInput style={s.veld} value={naam} onChangeText={setNaam} accessibilityLabel={t('recept.naam')} />
       {fout('naam')}
@@ -276,6 +396,38 @@ export default function EigenReceptScherm() {
       </View>
 
       <Text style={s.label}>{t('recept.ingredienten')}</Text>
+      {/* WEEK-247: wat bij het inlezen niet zeker gekoppeld is: voorstel gebruiken, zelf zoeken of overslaan. */}
+      {nakijken.length > 0 && (
+        <View style={s.nakijkVak}>
+          <Text style={s.nakijkKop}>{t('recept.link.nakijken')}</Text>
+          <Text style={s.nakijkUitleg}>{t('recept.link.nakijkUitleg')}</Text>
+          {nakijken.map((n, i) => (
+            <View key={`${n.tekst}-${i}`} style={s.nakijkRij}>
+              <Text style={s.nakijkTekst}>{n.tekst}</Text>
+              <Text style={s.nakijkDetail}>
+                {n.code
+                  ? n.reden === 'hoeveelheid'
+                    ? `${ingredientNaam(n.code, taal)} · ${t('recept.link.hoeveelheid')}`
+                    : t('recept.link.voorstel', { naam: ingredientNaam(n.code, taal) })
+                  : t('recept.link.onbekend')}
+              </Text>
+              <View style={s.rijChips}>
+                {n.code && (
+                  <Pressable style={[s.chip, s.chipActief]} onPress={() => gebruikNakijk(i)} accessibilityRole="button">
+                    <Text style={[s.chipTekst, s.chipTekstActief]}>{n.hoeveelheid === undefined ? t('recept.link.hoeveelheid') : t('recept.link.gebruik')}</Text>
+                  </Pressable>
+                )}
+                <Pressable style={s.chip} onPress={() => zoekNakijk(i)} accessibilityRole="button">
+                  <Text style={s.chipTekst}>{t('recept.link.zoek')}</Text>
+                </Pressable>
+                <Pressable style={s.chip} onPress={() => slaNakijkOver(i)} accessibilityRole="button">
+                  <Text style={s.chipTekst}>{t('recept.link.sla')}</Text>
+                </Pressable>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
       {rijen.map((r, i) => (
         <View key={`${r.naam}-${i}`} style={s.ingredient}>
           <Pressable style={s.ingredientTekst} onPress={() => openPopup({ index: i, code: r.code, naam: r.naam }, r)} accessibilityRole="button">
@@ -416,4 +568,14 @@ const s = StyleSheet.create({
   uitlegTekst: { color: '#1f5c38', fontSize: 14, lineHeight: 20 },
   geenTreffer: { color: '#666', marginTop: 6 },
   verwijderTekst: { color: '#c62828', fontWeight: '600' },
+  linkKnop: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14, backgroundColor: '#fff' },
+  linkKnopTekst: { color: KLEUR, fontWeight: '700', fontSize: 15 },
+  linkVak: { borderWidth: 1, borderColor: '#cfe3d6', borderRadius: 14, padding: 12, gap: 8, backgroundColor: '#fff' },
+  linkUitleg: { color: '#333', fontSize: 14, lineHeight: 20 },
+  nakijkVak: { borderWidth: 1, borderColor: '#f0d9a8', backgroundColor: '#fff9ec', borderRadius: 14, padding: 12, gap: 8 },
+  nakijkKop: { fontWeight: '800', color: '#7a5200', fontSize: 15 },
+  nakijkUitleg: { color: '#7a5200', fontSize: 13 },
+  nakijkRij: { backgroundColor: '#fff', borderRadius: 12, padding: 10, gap: 6, borderWidth: 1, borderColor: '#f3e3bf' },
+  nakijkTekst: { fontSize: 15, fontWeight: '600', color: '#17201A' },
+  nakijkDetail: { fontSize: 13, color: '#5E6B63' },
 });
