@@ -306,3 +306,15 @@ describe('datumKort', () => {
     assert.equal(datumKort('nl', 'gisteren'), '');
   });
 });
+
+describe('infovenster Kies een gerecht (WEEK-263)', () => {
+  test('bij Ons gezin staat de zin over een nieuw recept op een eigen regel, zonder plusteken', () => {
+    for (const taal of TALEN) {
+      const tekst = (VERTALINGEN[taal] as Record<string, string>)['pagina.kiesInfo'];
+      const laatste = tekst.split('\n').at(-1) ?? '';
+      assert.ok(!tekst.includes('+'), `${taal}: geen plusteken`);
+      assert.match(laatste, /recept|recette|Rezept|recipe/i, `${taal}: de laatste regel gaat over een nieuw recept`);
+    }
+    assert.equal(nl['pagina.kiesInfo'].split('\n').at(-1), 'Met nieuw recept voeg je er een toe.');
+  });
+});
