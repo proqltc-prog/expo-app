@@ -19,6 +19,10 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij een additief met EFSA-risico: uitleg in gewone taal en een link naar het EFSA-advies.
 - Voorbeeld: Monster Ultra Paradise gaat van 85 (Goed) naar 39 (Slecht).
 
+**WEEK-291** – Voedingstabel van de scanner zonder afronding ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-291) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Waarden en grenzen tonen hun decimalen (tot op de milligram): zout 0,16 g blijft 0,16 g, de grens 0,75 g blijft 0,75 g.
+
 ## [0.148.0] – 2026-11-14
 
 **Jira:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/browse/WEEK-288) · **Confluence:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886744)

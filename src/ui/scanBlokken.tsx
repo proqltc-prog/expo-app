@@ -6,7 +6,7 @@ import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { additiefWeergave, type AdditiefWeergave } from '@/data/additieven';
 import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditieven';
-import { getal, Sleutel } from '@/i18n';
+import { Sleutel, voedingGetal } from '@/i18n';
 import { isDrank, type Oordeel, type Product } from '@/lib/openfoodfacts';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
@@ -95,7 +95,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
   const ernst: EuStatus | null = telling.verboden ? 'verboden' : telling.waarschuwing ? 'waarschuwing' : null;
   const drank = isDrank(p);
   const tabel = voedingstabel(p, drank);
-  const g = (n: number) => getal(taal, n);
+  const g = (n: number) => voedingGetal(taal, n); // WEEK-291: geen afronding op 1 decimaal
 
   const waarde = (r: TabelRij) => (r.waarde === undefined ? '–' : `${g(r.waarde)} ${r.sleutel === 'kcal' ? 'kcal' : 'g'}`);
   const grensTekst = (grens: Grens) => {
