@@ -14,7 +14,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 - Startpagina: grote sfeerfoto bovenaan die zacht overloopt in een warme crème, het logo als wit badge half over de foto.
 - Startpagina: woordmerk in twee kleuren (Fa + menu), slogan met een sierlijntje en één rustige regel met drie kenmerken (Weekmenu, Boodschappen, Gezond en vers).
-- Aan de slag: elke foto groot bovenaan zoals op de start, met stapteller (1/7), Overslaan en het icoon van het scherm als badge.
+- Aan de slag: elke foto groot bovenaan zoals op de start, met stapteller (1/7) en Overslaan; daaronder dezelfde opbouw als de startpagina: icoon in een witte badge half over de foto, grote titel, sierlijntje met blaadje en de uitleg in de stijl van de slogan.
 - Aan de slag: slanke navigatie onderaan (rond terugknopje, stippen, rond knopje met pijl; vinkje op het laatste scherm) en vegen: naar links = volgende, naar rechts = vorige.
 - Plan je week: zeven ronde borden, volledig zichtbaar, met de dag voluit eronder (in de taal van de app); één dag uitgelicht als volle pil.
 - Meld je aan: nieuw ontwerp met foto bovenaan, logo, witte Google-knop, Verder zonder account als hoofdknop en de waarschuwing in een kaartje.

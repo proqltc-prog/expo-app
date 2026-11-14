@@ -218,12 +218,18 @@ export default function Welkom() {
         <Pressable onPress={naAanmelden} accessibilityRole="button" hitSlop={12} style={s.overslaan}>
           <Text style={s.overslaanTekst}>{t('uitleg.overslaan')}</Text>
         </Pressable>
+        {/* WEEK-289: zelfde opbouw als de startpagina: badge half over de foto, grote titel, sierlijntje, tekst als de slogan. */}
         <View style={s.uitlegTekst}>
-          <View style={[s.badge, { backgroundColor: scherm.kleur }]}>
-            <Ionicons name={scherm.icoon as 'home-outline'} size={26} color="#fff" />
+          <View style={s.badge}>
+            <Ionicons name={scherm.icoon as 'home-outline'} size={28} color={scherm.kleur} />
           </View>
-          <Text style={s.titel}>{t(scherm.titel as Sleutel)}</Text>
-          <Text style={s.tekst}>{t(scherm.tekst as Sleutel)}</Text>
+          <Text style={s.uitlegTitel} accessibilityRole="header">{t(scherm.titel as Sleutel)}</Text>
+          <View style={s.scheiding} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <View style={s.scheidingLijn} />
+            <Ionicons name="leaf" size={14} color={ORANJE} />
+            <View style={s.scheidingLijn} />
+          </View>
+          <Text style={s.uitlegUitleg}>{t(scherm.tekst as Sleutel)}</Text>
         </View>
         {/* WEEK-289: slanke navigatie onderaan: rond terugknopje, de stippen, en een rond knopje met pijl (vinkje op het laatste scherm). */}
         <View style={s.navBalk}>
@@ -374,8 +380,10 @@ const s = StyleSheet.create({
   dagPilAan: { backgroundColor: KLEUR },
   dagTekst: { fontSize: 12, fontWeight: '700', color: KLEUR },
   dagTekstAan: { color: '#fff' },
-  uitlegTekst: { alignItems: 'center', gap: 10, paddingHorizontal: 24, marginTop: -26, flex: 1 },
-  badge: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: PAPIER },
+  uitlegTekst: { alignItems: 'center', gap: 8, paddingHorizontal: 24, marginTop: -34, flex: 1 },
+  badge: { width: 66, height: 66, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginBottom: 6, shadowColor: '#3A2A12', shadowOpacity: 0.18, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 6 },
+  uitlegTitel: { fontSize: 32, fontWeight: '900', color: INKT, textAlign: 'center', lineHeight: 37, letterSpacing: -0.8 },
+  uitlegUitleg: { fontSize: 17, color: '#3E4A43', textAlign: 'center', maxWidth: 340, lineHeight: 25, fontWeight: '500' },
   vol: { flex: 1 },
   navBalk: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, marginTop: 20 },
   navTerug: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#fff', borderWidth: 1, borderColor: ZACHTE_RAND, alignItems: 'center', justifyContent: 'center' },
