@@ -29,7 +29,7 @@ import { usePaginaInfo } from '@/ui/paginaInfo';
 import { IcoonKnop } from '@/ui/icoonKnop';
 import { LosVoorstel, staatErAl, uitFrigo, uitLijst, voegSamen } from '@/lib/losVoorstellen';
 import { laadLosVoorstellen, onthoudLosVoorstel } from '@/opslag/losVoorstellen';
-import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import { andereWeergave, teKopen, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -251,6 +251,8 @@ export default function Lijst() {
 
   // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.
   const { open, totaal } = useMemo(() => telRegels(maakSecties(sheetItems, groep, dagVolgorde)), [sheetItems, groep, dagVolgorde]);
+  // WEEK-292: de tellers op de tabbladen en bij Te kopen: enkel wat nog te kopen is, over beide tabbladen.
+  const nogTeKopen = useMemo(() => teKopen(zichtbaar, weergave, dagVolgorde), [zichtbaar, weergave, dagVolgorde]);
 
   // WEEK-286: één compacte regel (teller, groepering, zoekicoon) die mee scrolt; het zoekveld klapt open onder de regel.
   const accent = sheetThema(sheet).accent;
@@ -327,7 +329,7 @@ export default function Lijst() {
         </Text>
         {h === 'boodschappen' && (
           <View style={[s.tabTeller, aan && { backgroundColor: kleur, borderColor: kleur }]}>
-            <Text style={[s.tellerTekst, aan && { color: '#fff' }]}>{open}</Text>
+            <Text style={[s.tellerTekst, aan && { color: '#fff' }]}>{nogTeKopen.totaal}</Text>
           </View>
         )}
       </Pressable>
@@ -360,7 +362,7 @@ export default function Lijst() {
             sheet={sheet}
             onKies={setSheet}
             labels={{ planner: t('frigo.sheetPlanner'), los: t('frigo.sheetLos') }}
-            aantallen={{ planner: opSheet(zichtbaar, 'recept').length, los: opSheet(zichtbaar, 'los').length }}
+            aantallen={{ planner: nogTeKopen.planner, los: nogTeKopen.los }}
           />
           <View style={[s.streep, { backgroundColor: sheetThema(sheet).accent }]} />
 

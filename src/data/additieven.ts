@@ -74,6 +74,7 @@ const ADDITIEVEN: Record<string, AdditiefUitleg> = {
   E471: { functie: 'emulgator', naam: { nl: 'Mono- en diglyceriden', fr: 'Mono- et diglycérides', de: 'Mono- und Diglyceride', en: 'Mono- and diglycerides' } },
   E621: { functie: 'smaakversterker', naam: { nl: 'Mononatriumglutamaat (MSG)', fr: 'Glutamate monosodique', de: 'Mononatriumglutamat', en: 'Monosodium glutamate' } },
   E950: { functie: 'zoetstof', naam: { nl: 'Acesulfaam-K', fr: 'Acésulfame K', de: 'Acesulfam-K', en: 'Acesulfame K' } },
+  E14XX: { functie: 'verdikkingsmiddel', naam: { nl: 'Gemodificeerde zetmelen', fr: 'Amidons modifiés', de: 'Modifizierte Stärken', en: 'Modified starches' } },
   E951: { functie: 'zoetstof', naam: { nl: 'Aspartaam', fr: 'Aspartame', de: 'Aspartam', en: 'Aspartame' } },
   E955: { functie: 'zoetstof', naam: { nl: 'Sucralose', fr: 'Sucralose', de: 'Sucralose', en: 'Sucralose' } },
 };
@@ -83,6 +84,8 @@ const ADDITIEVEN: Record<string, AdditiefUitleg> = {
  * WEEK-290: ook varianten met een letter en/of een Romeins cijfer, zoals E322i, E420ii en E440aiv.
  */
 export function eNummer(tag: string): string | null {
+  // WEEK-290: "E14XX" is de groep gemodificeerde zetmelen (E1404–E1452), zo vermeld op veel verpakkingen.
+  if (/^(en:)?e14xx(?![a-z0-9])/i.test(tag.trim())) return 'E14XX';
   const m = tag.trim().toLowerCase().replace(/^en:/, '').match(/^e(\d{3,4})([a-z]?(?:x{0,2}(?:ix|iv|v?i{0,3})))(?![a-z0-9])/);
   return m ? `E${m[1]}${m[2].toUpperCase()}` : null;
 }

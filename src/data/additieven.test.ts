@@ -22,6 +22,8 @@ describe('eNummer (WEEK-71)', () => {
     assert.equal(eNummer('en:e420ii'), 'E420II');
     assert.equal(eNummer('en:e440aiv'), 'E440AIV');
     assert.equal(eNummer('en:e163xi'), 'E163XI');
+    assert.equal(eNummer('en:e14xx'), 'E14XX');
+    assert.equal(additiefWeergave('en:e14xx', 'nl').omschrijving, 'Gemodificeerde zetmelen · verdikkingsmiddel');
   });
 });
 
