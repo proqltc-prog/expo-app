@@ -9,11 +9,13 @@
  *    voedingsclaims uit Verordening (EG) 1924/2006.
  * De PUNTEN die aan een drempel hangen zijn onze eigen keuze; de app zegt dat ook.
  *
- * WEEK-290: ook additieven tellen mee, enkel op basis van officiële bronnen:
- *  - EU-wet (Verordening (EG) 1333/2008, bijlage V; zie euAdditieven.ts): verplichte waarschuwing of niet meer toegelaten.
- *  - EFSA: risico dat mensen er meer van binnenkrijgen dan de veilige dagdosis (via de additievenlijst van Open Food Facts).
- *  - zoetstoffen in een drank.
- * En twee plafonds: ultrabewerkt (NOVA 4) is nooit "goed", een additief met EU-waarschuwing is altijd "slecht".
+ * WEEK-290/WEEK-295: additieven tellen streng mee, enkel op basis van officiële bronnen:
+ *  - elk additief kost punten; zoetstoffen extra;
+ *  - EFSA: risico dat mensen er meer van binnenkrijgen dan de veilige dagdosis ("matig" of "hoog");
+ *  - EU-wet (Verordening (EG) 1333/2008; zie euAdditieven.ts): verplichte waarschuwing, of niet meer toegelaten.
+ * Plafonds: verboden additief = 0; EU-waarschuwing hoogstens 25; hoog EFSA-risico hoogstens 39; NOVA 4 hoogstens 49.
+ * WEEK-295: ontbreken cruciale gegevens (NOVA, ingrediënten, vet/suikers/zout), dan geen score: "niet genoeg gegevens".
+ * We vullen nooit zelf iets aan.
  */
 import { additiefInfo, eNummer } from '@/data/additieven';
 import { euRegel } from '@/data/euAdditieven';
@@ -27,14 +29,18 @@ export type RedenCode =
   | 'suikersMidden' | 'suikersHoog'
   | 'zoutMidden' | 'zoutHoog'
   | 'nova4' | 'vezels' | 'eiwit'
-  | 'additiefEu' | 'efsaRisico' | 'zoetstofDrank';
+  | 'additief' | 'efsaMatig' | 'efsaHoog' | 'additiefEu' | 'verboden' | 'zoetstof';
 
 /** Een reden is taalonafhankelijk. Het scherm toont ze niet meer apart: de voedingstabel (`voedingstabel.ts`) zegt per stof waarom. */
 export type Reden = { code: RedenCode; punten: number; waarde?: number; additief?: string };
 export type OordeelLabel = 'goed' | 'matig' | 'slecht';
 /** WEEK-290: waarom de score niet hoger kan dan `max`. */
-export type Plafond = { reden: 'nova4' | 'additiefEu'; max: number };
-export type Oordeel = { score: number; label: OordeelLabel; redenen: Reden[]; plafond?: Plafond };
+export type PlafondReden = 'verboden' | 'additiefEu' | 'efsaHoog' | 'nova4';
+export type Plafond = { reden: PlafondReden; max: number };
+/** WEEK-295: cruciale gegevens die Open Food Facts niet heeft. */
+export type Ontbrekend = 'nova' | 'ingredienten' | 'voeding';
+/** `onvoldoende`: er ontbreken cruciale gegevens; het scherm toont dan geen score maar "niet genoeg gegevens". */
+export type Oordeel = { score: number; label: OordeelLabel; redenen: Reden[]; plafond?: Plafond; onvoldoende?: Ontbrekend[] };
 
 /** [laag tot en met, hoog vanaf boven] per stof. */
 export const DREMPELS: Record<'voeding' | 'drank', Record<Stof, [number, number]>> = {
@@ -42,9 +48,31 @@ export const DREMPELS: Record<'voeding' | 'drank', Record<Stof, [number, number]
   drank: { vet: [1.5, 8.75], verzadigd: [0.75, 2.5], suikers: [2.5, 11.25], zout: [0.3, 0.75] },
 };
 
-export const PUNTEN = { midden: -10, hoog: -25, nova4: -20, vezels: 5, eiwit: 5, additiefEu: -15, efsaRisico: -5, zoetstofDrank: -10 } as const;
-/** WEEK-290: hoogste score bij NOVA 4 (net onder "goed") en bij een additief met EU-waarschuwing (net onder "matig"). */
-export const PLAFOND = { nova4: 64, additiefEu: 39 } as const;
+export const PUNTEN = {
+  midden: -10,
+  hoog: -25,
+  nova4: -25,
+  vezels: 5,
+  eiwit: 5,
+  // WEEK-295: per additief; EFSA en EU komen er bovenop.
+  additief: -5,
+  efsaMatig: -10,
+  efsaHoog: -15,
+  additiefEu: -25,
+  zoetstof: -15,
+} as const;
+/** WEEK-295: de hoogste score die nog kan; het strengste plafond telt. Verboden in de EU = 0. */
+export const PLAFOND: Record<PlafondReden, number> = { verboden: 0, additiefEu: 25, efsaHoog: 39, nova4: 49 };
+const PLAFOND_VOLGORDE: PlafondReden[] = ['verboden', 'additiefEu', 'efsaHoog', 'nova4'];
+
+/** WEEK-295: welke cruciale gegevens ontbreken. Een oud bewaard product zonder het veld ingredientenBekend telt als gekend. */
+export function ontbrekendeGegevens(p: Product): Ontbrekend[] {
+  const uit: Ontbrekend[] = [];
+  if (p.nova === undefined) uit.push('nova');
+  if (p.ingredientenBekend === false) uit.push('ingredienten');
+  if (p.vet === undefined || p.suikers === undefined || p.zout === undefined) uit.push('voeding');
+  return uit;
+}
 export const VEZELS_VEEL = 6; // g per 100 g
 export const EIWIT_VEEL_ENERGIE = 0.2; // aandeel van de energie
 const KCAL_PER_G_EIWIT = 4;
@@ -77,27 +105,42 @@ export function berekenScore(p: Product, drank: boolean): Oordeel {
   if (p.eiwitten !== undefined && p.kcal && (p.eiwitten * KCAL_PER_G_EIWIT) / p.kcal >= EIWIT_VEEL_ENERGIE) {
     redenen.push({ code: 'eiwit', punten: PUNTEN.eiwit, waarde: p.eiwitten });
   }
-  // WEEK-290: additieven. Elk E-nummer telt één keer; een additief met een EU-regel telt niet nog eens voor EFSA.
+  // WEEK-295: additieven, streng. Elk E-nummer telt één keer: altijd de basisaftrek, en daarbovenop
+  // zoetstof, EFSA-risico of de EU-regel (een additief met een EU-regel telt niet nog eens voor EFSA).
   const gezien = new Set<string>();
-  let zoetstof = false;
+  const plafonds = new Set<PlafondReden>();
+  if (p.nova === 4) plafonds.add('nova4');
   for (const tag of p.additieven) {
     const code = eNummer(tag);
     if (!code || gezien.has(code)) continue;
     gezien.add(code);
     const info = additiefInfo(tag, 'nl');
-    if (info?.functie === 'zoetstof') zoetstof = true;
-    if (euRegel(tag)) redenen.push({ code: 'additiefEu', punten: PUNTEN.additiefEu, additief: code });
-    else if (info?.efsa) redenen.push({ code: 'efsaRisico', punten: PUNTEN.efsaRisico, additief: code });
+    redenen.push({ code: 'additief', punten: PUNTEN.additief, additief: code });
+    if (info?.functie === 'zoetstof') redenen.push({ code: 'zoetstof', punten: PUNTEN.zoetstof, additief: code });
+    const regel = euRegel(tag);
+    if (regel?.status === 'verboden') {
+      redenen.push({ code: 'verboden', punten: 0, additief: code });
+      plafonds.add('verboden');
+    } else if (regel) {
+      redenen.push({ code: 'additiefEu', punten: PUNTEN.additiefEu, additief: code });
+      plafonds.add('additiefEu');
+    } else if (info?.efsa?.risico === 'hoog') {
+      redenen.push({ code: 'efsaHoog', punten: PUNTEN.efsaHoog, additief: code });
+      plafonds.add('efsaHoog');
+    } else if (info?.efsa?.risico === 'matig') {
+      redenen.push({ code: 'efsaMatig', punten: PUNTEN.efsaMatig, additief: code });
+    }
   }
-  if (drank && zoetstof) redenen.push({ code: 'zoetstofDrank', punten: PUNTEN.zoetstofDrank });
 
   const totaal = 100 + redenen.reduce((som, r) => som + r.punten, 0);
   let score = Math.max(0, Math.min(100, Math.round(totaal)));
   // Het strengste plafond telt; het wordt enkel vermeld als het de score echt verlaagt.
-  const plafonds: Plafond[] = [];
-  if (redenen.some((r) => r.code === 'additiefEu')) plafonds.push({ reden: 'additiefEu', max: PLAFOND.additiefEu });
-  if (p.nova === 4) plafonds.push({ reden: 'nova4', max: PLAFOND.nova4 });
-  const plafond = plafonds.find((pl) => score > pl.max);
+  const strengste = PLAFOND_VOLGORDE.find((reden) => plafonds.has(reden));
+  const plafond: Plafond | undefined = strengste !== undefined && score > PLAFOND[strengste] ? { reden: strengste, max: PLAFOND[strengste] } : undefined;
   if (plafond) score = plafond.max;
-  return plafond ? { score, label: labelVoor(score), redenen, plafond } : { score, label: labelVoor(score), redenen };
+  const onvoldoende = ontbrekendeGegevens(p);
+  const oordeel: Oordeel = { score, label: labelVoor(score), redenen };
+  if (plafond) oordeel.plafond = plafond;
+  if (onvoldoende.length) oordeel.onvoldoende = onvoldoende;
+  return oordeel;
 }

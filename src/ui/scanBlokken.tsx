@@ -46,6 +46,11 @@ const EU_STIJL: Record<EuStatus, { rand: string; bg: string; tekst: string }> = 
   waarschuwing: { rand: '#E8A33D', bg: '#FBEBCF', tekst: '#7A4A06' },
 };
 
+/** WEEK-295: "a", "a en b", "a, b en c". */
+function lijstTekst(delen: string[], en: string): string {
+  return delen.length <= 1 ? (delen[0] ?? '') : `${delen.slice(0, -1).join(', ')} ${en} ${delen[delen.length - 1]}`;
+}
+
 const LABEL: Record<RijSleutel, Sleutel> = {
   kcal: 'voeding.kcal',
   vet: 'voeding.vet',
@@ -148,6 +153,19 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
   return (
     <View style={s.root}>
       <Kaart titel={t('scan.eigenTitel')} kant={t('scan.eigenLabel')} nadruk>
+        {/* WEEK-295: ontbreken cruciale gegevens, dan geen score maar een duidelijke melding. */}
+        {oordeel.onvoldoende ? (
+          <View style={s.onvoldoende}>
+            <Ionicons name="help-circle-outline" size={22} color="#7A4A06" />
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={s.onvoldoendeTitel}>{t('scan.onvoldoende.titel')}</Text>
+              <Text style={s.onvoldoendeTekst}>
+                {t('scan.onvoldoende.tekst', { wat: lijstTekst(oordeel.onvoldoende.map((o) => t(`scan.ontbreekt.${o}` as Sleutel)), t('scan.ontbreekt.en')) })}
+              </Text>
+            </View>
+          </View>
+        ) : (
+        <>
         <View style={s.scoreRij}>
           <Text style={s.score}>{oordeel.score}</Text>
           <Text style={s.uitleg}>{t('scan.eigenVan')} · </Text>
@@ -169,6 +187,8 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
         </View>
         {/* WEEK-290: zeg waarom de score niet hoger kan. */}
         {oordeel.plafond && <Text style={s.plafond}>{t(`scan.plafond.${oordeel.plafond.reden}`)}</Text>}
+        </>
+        )}
       </Kaart>
 
       <Kaart titel={t('scan.nutriscoreTitel')} kant={t('scan.bronOff')}>
@@ -302,6 +322,9 @@ const s = StyleSheet.create({
   additiefCode: { minWidth: 64, fontWeight: '800', color: ACCENT },
   additiefTekst: { flex: 1, color: INKT },
   plafond: { fontSize: 13, color: INKT, fontWeight: '600' },
+  onvoldoende: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: '#FBEBCF', borderRadius: 10, padding: 12 },
+  onvoldoendeTitel: { fontSize: 15, fontWeight: '800', color: '#7A4A06' },
+  onvoldoendeTekst: { fontSize: 13, lineHeight: 19, color: '#7A4A06' },
   efsa: { marginTop: 3, gap: 2 },
   efsaTekst: { fontSize: 12, lineHeight: 17, color: '#7A4A06' },
   efsaLink: { fontSize: 12, fontWeight: '700', color: '#1D5A38', textDecorationLine: 'underline' },

@@ -561,3 +561,11 @@ describe('receptingrediënt in de frigo aanpassen (WEEK-222)', () => {
     assert.deepEqual(uit[1], ander);
   });
 });
+
+describe('leesProduct bewaart of de ingrediënten gekend zijn (WEEK-295)', () => {
+  test('true en false blijven, iets anders valt weg', () => {
+    assert.equal(leesProduct({ barcode: '1', naam: 'x', ingredientenBekend: false })?.ingredientenBekend, false);
+    assert.equal(leesProduct({ barcode: '1', naam: 'x', ingredientenBekend: true })?.ingredientenBekend, true);
+    assert.equal(leesProduct({ barcode: '1', naam: 'x', ingredientenBekend: 'ja' })?.ingredientenBekend, undefined);
+  });
+});

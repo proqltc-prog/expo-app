@@ -19,6 +19,12 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Bij een additief met EFSA-risico: uitleg in gewone taal en een link naar het EFSA-advies.
 - Voorbeeld: Monster Ultra Paradise gaat van 85 (Goed) naar 39 (Slecht).
 
+**WEEK-295** – Strengere score en "niet genoeg gegevens" ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-295) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Ontbreken NOVA, de ingrediëntenlijst of vet/suikers/zout, dan geen score maar "Niet genoeg gegevens om een score te berekenen", met wat er ontbreekt.
+- Strenger voor additieven: elk additief −5, zoetstof −15 per stuk, EFSA matig −10, EFSA hoog −15 (hoogstens 39), EU-waarschuwing −25 (hoogstens 25), verboden in de EU = 0; NOVA 4 −25 (hoogstens 49).
+- Monster Ultra Paradise geeft nu 0, met of zonder E102 in de gegevens.
+
 **WEEK-291** – Voedingstabel van de scanner zonder afronding ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-291) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 
 - Waarden en grenzen tonen hun decimalen (tot op de milligram): zout 0,16 g blijft 0,16 g, de grens 0,75 g blijft 0,75 g.
