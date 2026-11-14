@@ -227,16 +227,15 @@ export default function Welkom() {
           <Text style={s.titel}>{t(scherm.titel as Sleutel)}</Text>
           <Text style={s.tekst}>{t(scherm.tekst as Sleutel)}</Text>
         </View>
-        <View style={[s.onderaan, s.uitlegKnoppen]}>
+        {/* WEEK-289: slanke navigatie onderaan: rond terugknopje, de stippen, en een rond knopje met pijl (vinkje op het laatste scherm). */}
+        <View style={s.navBalk}>
+          <Pressable style={s.navTerug} onPress={() => ga('vorige')} accessibilityRole="button" accessibilityLabel={t('algemeen.terug')} hitSlop={8}>
+            <Ionicons name="arrow-back" size={20} color={INKT} />
+          </Pressable>
           {stippen(uitlegIndex, UITLEG_SCHERMEN.length)}
-          <View style={s.knoppenRij}>
-            <Pressable style={s.knopTerug} onPress={() => ga('vorige')} accessibilityRole="button" accessibilityLabel={t('algemeen.terug')}>
-              <Ionicons name="arrow-back" size={22} color={KLEUR} />
-            </Pressable>
-            <Pressable style={[s.knop, s.knopVol]} onPress={() => ga('volgende')} accessibilityRole="button">
-              <Text style={s.knopTekst}>{t('uitleg.volgende')}</Text>
-            </Pressable>
-          </View>
+          <Pressable style={s.navVolgende} onPress={() => ga('volgende')} accessibilityRole="button" accessibilityLabel={t('uitleg.volgende')} hitSlop={8}>
+            <Ionicons name={uitlegIndex === UITLEG_SCHERMEN.length - 1 ? 'checkmark' : 'arrow-forward'} size={26} color="#fff" />
+          </Pressable>
         </View>
       </ScrollView>
       </View>
@@ -379,11 +378,10 @@ const s = StyleSheet.create({
   kalenderDag: { fontSize: 13, fontWeight: '900', letterSpacing: 0.5, paddingVertical: 2 },
   uitlegTekst: { alignItems: 'center', gap: 10, paddingHorizontal: 24, marginTop: -26, flex: 1 },
   badge: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: PAPIER },
-  uitlegKnoppen: { paddingHorizontal: 24, marginTop: 20 },
   vol: { flex: 1 },
-  knoppenRij: { flexDirection: 'row', gap: 12 },
-  knopTerug: { width: 58, borderRadius: 16, borderWidth: 1.5, borderColor: KLEUR, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
-  knopVol: { flex: 1 },
+  navBalk: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, marginTop: 20 },
+  navTerug: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#fff', borderWidth: 1, borderColor: ZACHTE_RAND, alignItems: 'center', justifyContent: 'center' },
+  navVolgende: { width: 64, height: 64, borderRadius: 32, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center', shadowColor: KLEUR, shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 6 },
   aanmeldContainer: { flexGrow: 1, paddingBottom: 28, backgroundColor: PAPIER },
   terugRond: { position: 'absolute', top: 44, left: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.94)', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   terugInRond: { padding: 0, margin: 0 },
