@@ -2,12 +2,30 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { dagKort, FOTO_BRON, FOTO_SLEUTELS, FOTO_VERHOUDING, kaartVerhouding, KAART_VERHOUDING, uitlegFoto, WEEKPLAN_BLAADJES } from '@/lib/welkomFotos';
+import { merkDelen, START_KENMERKEN, dagKort, FOTO_BRON, FOTO_SLEUTELS, FOTO_VERHOUDING, kaartVerhouding, KAART_VERHOUDING, uitlegFoto, WEEKPLAN_BLAADJES } from '@/lib/welkomFotos';
 import { UITLEG_SCHERMEN } from '@/lib/welkom';
 import { WEEKDAGEN } from '@/lib/planner/types';
 import { vertaal, TALEN } from '@/i18n';
 
 const MAP = join(__dirname, '..', '..', 'assets', 'welkom');
+
+describe('woordmerk en kenmerken op de startpagina (WEEK-289)', () => {
+  test('Famenu wordt Fa + menu; een andere naam blijft heel', () => {
+    assert.deepEqual(merkDelen('Famenu'), ['Fa', 'menu']);
+    assert.deepEqual(merkDelen(' Famenu '), ['Fa', 'menu']);
+    assert.deepEqual(merkDelen('Gezond Boodschappen'), ['Gezond Boodschappen', '']);
+  });
+
+  test('in elke taal is het merk Famenu en heeft elk kenmerk een korte tekst', () => {
+    for (const taal of TALEN) {
+      assert.deepEqual(merkDelen(vertaal(taal, 'welkom.merk')), ['Fa', 'menu'], taal);
+      for (const k of START_KENMERKEN) {
+        const tekst = vertaal(taal, k.tekst);
+        assert.ok(tekst.length > 0 && tekst.length <= 20, `${taal} ${k.tekst}: ${tekst}`);
+      }
+    }
+  });
+});
 
 describe('sfeerfoto\'s (WEEK-289)', () => {
   test('elk uitlegscherm heeft een foto, en elke foto hoort bij de start of een uitlegscherm', () => {

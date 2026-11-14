@@ -67,3 +67,18 @@ export const WEEKPLAN_BLAADJES: readonly { dag: DagCode; x: number; y: number; k
 export function dagKort(naam: string): string {
   return naam.trim().slice(0, 2).toLocaleUpperCase();
 }
+
+/**
+ * Het woordmerk in twee kleuren (WEEK-289): "Fa" (familie) en "menu". Een andere merknaam blijft één geheel.
+ */
+export function merkDelen(merk: string): [string, string] {
+  const m = merk.trim();
+  return /^fa.*menu$/i.test(m) ? [m.slice(0, m.length - 4), m.slice(-4)] : [m, ''];
+}
+
+/** De drie kenmerken onder de slogan op de startpagina: icoon (Ionicons) en tekstsleutel. */
+export const START_KENMERKEN: readonly { icoon: string; tekst: 'welkom.kenmerk.week' | 'welkom.kenmerk.lijst' | 'welkom.kenmerk.gezond' }[] = [
+  { icoon: 'calendar-outline', tekst: 'welkom.kenmerk.week' },
+  { icoon: 'cart-outline', tekst: 'welkom.kenmerk.lijst' },
+  { icoon: 'leaf-outline', tekst: 'welkom.kenmerk.gezond' },
+];

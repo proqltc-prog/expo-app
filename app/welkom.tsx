@@ -9,7 +9,7 @@ import { zetWelkomGezien } from '@/opslag/welkom';
 import { inlogMet, isAnoniem, koppel, stuurAanmeldMail } from '@/opslag/aanmelden';
 import { AANBIEDERS, AANMELDEN_MET_MAIL, Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
 import { ROUTE_AANGEMELD, ROUTE_NA_WELKOM, UITLEG_SCHERMEN } from '@/lib/welkom';
-import { dagKort, kaartVerhouding, uitlegFoto, WEEKPLAN_BLAADJES } from '@/lib/welkomFotos';
+import { dagKort, kaartVerhouding, merkDelen, START_KENMERKEN, uitlegFoto, WEEKPLAN_BLAADJES } from '@/lib/welkomFotos';
 import { WELKOM_FOTO } from '@/ui/welkomFotos';
 import { useTaal } from '@/ui/taal';
 
@@ -41,6 +41,7 @@ const KNOP: Record<Aanbieder, { icoon: 'logo-google' | 'logo-apple' | 'logo-face
 export default function Welkom() {
   const { t } = useTaal();
   const { height: schermHoogte } = useWindowDimensions();
+  const [merkFa, merkMenu] = merkDelen(t('welkom.merk'));
   const [stap, setStap] = useState<Stap>('start');
   const [uitlegIndex, setUitlegIndex] = useState(0);
   const [bezig, setBezig] = useState(false);
@@ -105,7 +106,7 @@ export default function Welkom() {
       <ScrollView contentContainerStyle={s.startContainer}>
         <View>
         {/* WEEK-289: sfeerfoto bovenaan (een gedeelde tafel) met afgeronde onderkant; het logo ligt half over de foto. */}
-        <View style={[s.heroFoto, { height: Math.max(260, Math.round(schermHoogte * 0.54)) }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <View style={[s.heroFoto, { height: Math.max(260, Math.round(schermHoogte * 0.42)) }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Image source={WELKOM_FOTO.start} style={s.vulFoto} resizeMode="cover" />
           <LinearGradient colors={['rgba(23,32,26,0.22)', 'rgba(23,32,26,0)', 'rgba(23,32,26,0)', 'rgba(23,32,26,0.28)']} locations={[0, 0.28, 0.6, 1]} style={StyleSheet.absoluteFill} />
         </View>
@@ -113,8 +114,27 @@ export default function Welkom() {
           <View style={s.logoBadge}>
             <Image source={require('../assets/icon.png')} style={s.logo} accessibilityLabel="Logo van Gezond Boodschappen" />
           </View>
-          <Text style={s.merk}>{t('welkom.merk')}</Text>
+          {/* WEEK-289: woordmerk in twee kleuren: Fa (familie) en menu. */}
+          <Text style={s.merk} accessibilityRole="header">
+            <Text style={{ color: KLEUR }}>{merkFa}</Text>
+            <Text style={{ color: ORANJE }}>{merkMenu}</Text>
+          </Text>
+          <View style={s.scheiding} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <View style={s.scheidingLijn} />
+            <Ionicons name="leaf" size={14} color={ORANJE} />
+            <View style={s.scheidingLijn} />
+          </View>
           <Text style={s.slogan}>{t('welkom.slogan')}</Text>
+          <View style={s.kenmerken}>
+            {START_KENMERKEN.map((k) => (
+              <View key={k.tekst} style={s.kenmerk}>
+                <View style={s.kenmerkIcoon}>
+                  <Ionicons name={k.icoon as 'leaf-outline'} size={17} color={KLEUR} />
+                </View>
+                <Text style={s.kenmerkTekst} numberOfLines={2}>{t(k.tekst)}</Text>
+              </View>
+            ))}
+          </View>
         </View>
         </View>
         <View style={[s.onderaan, s.startKnoppen]}>
@@ -277,16 +297,22 @@ export default function Welkom() {
 }
 
 const s = StyleSheet.create({
-  startContainer: { flexGrow: 1, paddingBottom: 40, backgroundColor: PAPIER, justifyContent: 'space-between' },
+  startContainer: { flexGrow: 1, paddingBottom: 28, backgroundColor: PAPIER, justifyContent: 'space-between' },
   // WEEK-289: op het web neemt een Image anders de grootte van het bestand aan in plaats van die van de kaart.
   vulFoto: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
   heroFoto: { width: '100%', borderBottomLeftRadius: 36, borderBottomRightRadius: 36, overflow: 'hidden', backgroundColor: KLEUR_ZACHT },
-  hero: { alignItems: 'center', gap: 10, marginTop: -58, paddingHorizontal: 24 },
-  logoBadge: { padding: 6, borderRadius: 30, backgroundColor: '#fff', shadowColor: '#3A2A12', shadowOpacity: 0.18, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 6, marginBottom: 6 },
-  logo: { width: 92, height: 92, borderRadius: 24 },
-  merk: { fontSize: 30, fontWeight: '800', color: INKT, textAlign: 'center', lineHeight: 34 },
-  slogan: { fontSize: 15, color: MUTED, textAlign: 'center', maxWidth: 300, lineHeight: 22 },
-  startKnoppen: { paddingHorizontal: 24, marginTop: 28 },
+  hero: { alignItems: 'center', gap: 8, marginTop: -46, paddingHorizontal: 24 },
+  logoBadge: { padding: 5, borderRadius: 24, backgroundColor: '#fff', shadowColor: '#3A2A12', shadowOpacity: 0.18, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 6, marginBottom: 6 },
+  logo: { width: 72, height: 72, borderRadius: 19 },
+  merk: { fontSize: 42, fontWeight: '900', color: INKT, textAlign: 'center', lineHeight: 46, letterSpacing: -1 },
+  scheiding: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 },
+  scheidingLijn: { width: 44, height: 1.5, borderRadius: 1, backgroundColor: '#E6D8C2' },
+  slogan: { fontSize: 17, color: '#3E4A43', textAlign: 'center', maxWidth: 330, lineHeight: 25, fontWeight: '500' },
+  kenmerken: { flexDirection: 'row', gap: 10, marginTop: 12, width: '100%', maxWidth: 360 },
+  kenmerk: { flex: 1, alignItems: 'center', gap: 6, backgroundColor: '#fff', borderWidth: 1, borderColor: '#EDE3D3', borderRadius: 16, paddingVertical: 10, paddingHorizontal: 6 },
+  kenmerkIcoon: { width: 34, height: 34, borderRadius: 17, backgroundColor: KLEUR_ZACHT, alignItems: 'center', justifyContent: 'center' },
+  kenmerkTekst: { fontSize: 12, fontWeight: '700', color: INKT, textAlign: 'center' },
+  startKnoppen: { paddingHorizontal: 24, marginTop: 22 },
   uitlegContainer: { flexGrow: 1, padding: 24, paddingTop: 56, paddingBottom: 32, backgroundColor: PAPIER, justifyContent: 'space-between', gap: 24 },
   uitlegBovenaan: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   stapChip: { backgroundColor: '#fff', borderRadius: 999, paddingVertical: 5, paddingHorizontal: 12, borderWidth: 1, borderColor: '#EDE3D3' },
