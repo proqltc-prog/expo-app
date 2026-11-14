@@ -15,11 +15,14 @@ export function usePaginaInfo({
   kleur,
   infoLabel,
   sluitLabel,
+  rond = false,
 }: {
   tekst: string;
   kleur: string;
   infoLabel: string;
   sluitLabel: string;
+  /** WEEK-289: de infoknop in een wit rondje, voor een kop die over een foto ligt. */
+  rond?: boolean;
 }) {
   const navigation = useNavigation();
   const [open, setOpen] = useState(false);
@@ -32,13 +35,13 @@ export function usePaginaInfo({
           accessibilityRole="button"
           accessibilityLabel={infoLabel}
           hitSlop={10}
-          style={s.knop}
+          style={rond ? s.knopRond : s.knop}
         >
           <Ionicons name="information-circle-outline" size={26} color={kleur} />
         </Pressable>
       ),
     });
-  }, [navigation, kleur, infoLabel]);
+  }, [navigation, kleur, infoLabel, rond]);
 
   const alinea = alineas(tekst);
   const popup = (
@@ -70,6 +73,7 @@ export function usePaginaInfo({
 
 const s = StyleSheet.create({
   knop: { paddingHorizontal: 14 },
+  knopRond: { marginRight: 16, width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.94)', alignItems: 'center', justifyContent: 'center' },
   achtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 24 },
   venster: { width: '100%', maxWidth: 480, maxHeight: '80%', backgroundColor: '#fff', borderRadius: 16, padding: 18, gap: 14 },
   scroll: { flexGrow: 0 },

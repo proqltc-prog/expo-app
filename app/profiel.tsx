@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { onthoudVertrekUitGezinsprofiel } from '@/lib/planner/startfase';
 import {
@@ -23,8 +25,16 @@ import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import { wisselGroep } from '@/lib/groepen';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
+import { heroHoogte } from '@/lib/welkomFotos';
+import { WELKOM_FOTO } from '@/ui/welkomFotos';
 
-const KLEUR = '#2e7d4f';
+// WEEK-289: zelfde huisstijl als de startpagina en Aan de slag (petrol, oranje accent, warme crème).
+const KLEUR = '#0F6B66';
+const KLEUR_ZACHT = '#D5EDEA';
+const ORANJE = '#E8710A';
+const PAPIER = '#FBF6EE';
+const INKT = '#17201A';
+const ZACHTE_RAND = '#EDE3D3';
 
 const FOUT_MAX: Record<ProfielFout, number | undefined> = {
   volwassenen: MAX_VOLWASSENEN,
@@ -51,6 +61,7 @@ function Teller({ waarde, min, max, onChange, uit = false }: { waarde: number; m
 
 export default function ProfielScherm() {
   const { t, tn, voorkeur, zetVoorkeur } = useTaal();
+  const { height: schermHoogte } = useWindowDimensions();
   // Welke secties open staan (WEEK-126); standaard zijn ze allemaal ingeklapt.
   const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   const wissel = (sleutel: string) => setUitgeklapt((o) => wisselGroep(o, sleutel));
@@ -67,6 +78,7 @@ export default function ProfielScherm() {
     kleur: KLEUR,
     infoLabel: t('pagina.infoKnop'),
     sluitLabel: t('pagina.sluiten'),
+    rond: true,
   });
 
   useFocusEffect(
@@ -122,12 +134,29 @@ export default function ProfielScherm() {
   };
 
   return (
-    <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
+    <ScrollView style={s.scherm} contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
       {popup}
-      <Text style={s.intro}>{t('profiel.intro')}</Text>
+      {/* WEEK-289: sfeerfoto bovenaan (het gezin samen aan het werk) die zacht overloopt in de crème; de kop ligt erover. */}
+      <View style={[s.hero, { height: Math.round(heroHoogte(schermHoogte) * 0.75) }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <Image source={WELKOM_FOTO.huishouden} style={s.vulFoto} resizeMode="cover" />
+        <LinearGradient colors={['rgba(23,32,26,0.30)', 'rgba(23,32,26,0)', 'rgba(251,246,238,0)', PAPIER]} locations={[0, 0.35, 0.75, 1]} style={StyleSheet.absoluteFill} />
+      </View>
+      <View style={s.kopBlok}>
+        <View style={s.badge}>
+          <Ionicons name="people-outline" size={28} color={KLEUR} />
+        </View>
+        <Text style={s.titel} accessibilityRole="header">{t('tab.gezin.titel')}</Text>
+        <View style={s.scheiding} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <View style={s.scheidingLijn} />
+          <Ionicons name="leaf" size={14} color={ORANJE} />
+          <View style={s.scheidingLijn} />
+        </View>
+        <Text style={s.intro}>{t('profiel.intro')}</Text>
+      </View>
+      <View style={s.blokken}>
 
       {/* Taal (WEEK-126, WEEK-179): enkel de vier ondersteunde talen. Zonder keuze gebruikt de app de taal van het toestel. */}
-      <Inklapbaar titel={t('profiel.taal')} open={uitgeklapt.has('taal')} onWissel={() => wissel('taal')}>
+      <Inklapbaar titel={t('profiel.taal')} icoon="language-outline" open={uitgeklapt.has('taal')} onWissel={() => wissel('taal')}>
         <View style={s.kaart}>
           <Text style={s.hint}>{t('profiel.taalHint')}</Text>
           {KEUZE_TALEN.map((code) => (
@@ -140,12 +169,12 @@ export default function ProfielScherm() {
       </Inklapbaar>
 
       {gezinsruimteBeschikbaar() && (
-        <Inklapbaar titel={t('gezin.titel')} open={uitgeklapt.has('gezinsruimte')} onWissel={() => wissel('gezinsruimte')}>
+        <Inklapbaar titel={t('gezin.titel')} icoon="home-outline" open={uitgeklapt.has('gezinsruimte')} onWissel={() => wissel('gezinsruimte')}>
           <GezinsRuimte kopTonen={false} />
         </Inklapbaar>
       )}
 
-      <Inklapbaar titel={t('profiel.gezin')} open={uitgeklapt.has('gezin')} onWissel={() => wissel('gezin')}>
+      <Inklapbaar titel={t('profiel.gezin')} icoon="people-outline" open={uitgeklapt.has('gezin')} onWissel={() => wissel('gezin')}>
       <View style={s.kaart}>
         {!mag && <Text style={s.hint}>{t('profiel.alleenBeheerder')}</Text>}
         <View style={s.rij}>
@@ -168,7 +197,7 @@ export default function ProfielScherm() {
       </View>
       </Inklapbaar>
 
-      <Inklapbaar titel={t('profiel.adres')} open={uitgeklapt.has('adres')} onWissel={() => wissel('adres')}>
+      <Inklapbaar titel={t('profiel.adres')} icoon="location-outline" open={uitgeklapt.has('adres')} onWissel={() => wissel('adres')}>
       <View style={s.kaart}>
         {!mag && <Text style={s.hint}>{t('profiel.alleenBeheerder')}</Text>}
         <View style={s.info}>
@@ -198,41 +227,51 @@ export default function ProfielScherm() {
         <Text key={f} style={s.fout}>• {t(`fout.${f}` as Sleutel, { max: FOUT_MAX[f] ?? '' })}</Text>
       ))}
 
-      <Pressable style={s.knop} onPress={bewaar}>
+      <Pressable style={s.knop} onPress={bewaar} accessibilityRole="button">
         <Text style={s.knopTekst}>{t('profiel.bewaar')}</Text>
       </Pressable>
+      </View>
     </ScrollView>
   );
 }
 
 const s = StyleSheet.create({
-  container: { padding: 16, gap: 12, paddingBottom: 40 },
-  intro: { color: '#555', fontSize: 15, lineHeight: 21 },
+  scherm: { backgroundColor: PAPIER },
+  container: { paddingBottom: 40 },
+  vulFoto: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
+  hero: { width: '100%', overflow: 'hidden', backgroundColor: KLEUR_ZACHT },
+  kopBlok: { alignItems: 'center', gap: 8, paddingHorizontal: 24, marginTop: -34 },
+  badge: { width: 66, height: 66, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginBottom: 6, shadowColor: '#3A2A12', shadowOpacity: 0.18, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 6 },
+  titel: { fontSize: 32, fontWeight: '900', color: INKT, textAlign: 'center', lineHeight: 37, letterSpacing: -0.8 },
+  scheiding: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 },
+  scheidingLijn: { width: 44, height: 1.5, borderRadius: 1, backgroundColor: '#E6D8C2' },
+  intro: { fontSize: 17, color: '#3E4A43', textAlign: 'center', maxWidth: 340, lineHeight: 25, fontWeight: '500' },
+  blokken: { paddingHorizontal: 16, gap: 12, marginTop: 24 },
   kop: { fontWeight: '700', fontSize: 15, color: '#333', marginTop: 10 },
-  kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: '#e5e5e5', gap: 12 },
+  kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 4, gap: 12 },
   rij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 16 },
-  waarom: { backgroundColor: '#eef6f1', borderRadius: 14, padding: 16, gap: 6 },
+  waarom: { backgroundColor: '#F4EFE6', borderRadius: 14, padding: 14, gap: 6 },
   waromInBlok: { marginTop: 12 },
   waromKop: { fontWeight: '700', fontSize: 15, color: '#333' },
   totaal: { color: '#777', fontSize: 13 },
   taalRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
-  vinkje: { color: '#2e7d4f', fontWeight: '800', fontSize: 16 },
+  vinkje: { color: KLEUR, fontWeight: '800', fontSize: 16 },
   teller: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   tellerKnop: { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   uit: { opacity: 0.3 },
   tellerTekst: { color: KLEUR, fontSize: 20, fontWeight: '700' },
   tellerWaarde: { fontSize: 17, fontWeight: '600', minWidth: 24, textAlign: 'center' },
-  veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
+  veld: { borderWidth: 1, borderColor: ZACHTE_RAND, borderRadius: 12, paddingHorizontal: 12, minHeight: 46, backgroundColor: '#FDFBF7', color: INKT },
   rijVelden: { flexDirection: 'row', gap: 8 },
   hint: { color: '#777', fontSize: 13 },
-  info: { backgroundColor: '#eef6f1', borderRadius: 10, padding: 12, gap: 4 },
+  info: { backgroundColor: '#F4EFE6', borderRadius: 12, padding: 12, gap: 4 },
   fout: { color: '#c62828' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 6, minHeight: 36, justifyContent: 'center' },
   chipActief: { backgroundColor: KLEUR },
   chipTekst: { color: KLEUR, fontWeight: '600' },
   chipTekstActief: { color: '#fff' },
-  knop: { backgroundColor: KLEUR, borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 8 },
-  knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  knop: { backgroundColor: KLEUR, borderRadius: 16, paddingVertical: 17, alignItems: 'center', marginTop: 12 },
+  knopTekst: { color: '#fff', fontWeight: '700', fontSize: 17 },
 });

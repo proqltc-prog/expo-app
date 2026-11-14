@@ -44,3 +44,14 @@ export function KopTerug({ scherm }: { scherm: SchermMetTerug }) {
   const { terug } = useGlobalSearchParams<{ terug?: string }>();
   return <TerugKnop pad={terugVoor(scherm, terug)} />;
 }
+
+/** WEEK-289: dezelfde terugpijl, in een wit rondje, voor een kop die over een sfeerfoto ligt (gezinsprofiel). */
+export function KopTerugRond({ scherm }: { scherm: SchermMetTerug }) {
+  const { terug } = useGlobalSearchParams<{ terug?: string }>();
+  return (
+    <TerugKnop
+      pad={terugVoor(scherm, terug)}
+      style={{ marginLeft: 16, width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.94)', alignItems: 'center', justifyContent: 'center' }}
+    />
+  );
+}
