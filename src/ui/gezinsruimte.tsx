@@ -11,7 +11,7 @@ import { leesGezinFout, leesGezinscode, toonGezinscode } from '@/lib/sync';
 import { anderenLeden, APP_LINK, GEZINSNAAM_STANDAARD, ikBeheerder, toonGezinsnaam, vraagtOpvolgerBijVertrek } from '@/lib/gezinbeheer';
 import { wijsPlanBeheerderAan } from '@/opslag/plan';
 import { laadVoornaam, zetVoornaam } from '@/opslag/voornaam';
-import { valideerVoornaam, VoornaamFout } from '@/lib/voornaam';
+import { naamVoorGezinsruimte, valideerVoornaam, VoornaamFout, vraagVoornaamInGezin } from '@/lib/voornaam';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import {
   bijWijziging,
@@ -123,9 +123,28 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
     }
   };
 
+  /** WEEK-283: geldige voornaam voor het maken of vervoegen, meteen bewaard op het toestel; anders de fout onder het veld. */
+  const voornaamVoorGezin = async (): Promise<string | undefined> => {
+    const r = naamVoorGezinsruimte(voornaam, voornaamInvoer);
+    if (!r.ok) {
+      setVoornaamFout(r.fout);
+      setVoornaamOpgeslagen(false);
+      return undefined;
+    }
+    setVoornaamFout(null);
+    if (r.naam !== voornaam) {
+      await zetVoornaam(r.naam);
+      setVoornaam(r.naam);
+      setVoornaamInvoer(r.naam);
+    }
+    return r.naam;
+  };
+
   const maak = () =>
     voerUit(async () => {
-      await maakGezin(GEZINSNAAM_STANDAARD, await laadVoornaam());
+      const naam = await voornaamVoorGezin();
+      if (!naam) return;
+      await maakGezin(GEZINSNAAM_STANDAARD, naam);
       // Wie het gezin maakt, is ook beheerder van het weekplan (WEEK-65).
       const id = await ikId();
       if (id) await wijsPlanBeheerderAan(id);
@@ -137,13 +156,16 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
       setFout(t('gezin.fout.code'));
       return;
     }
-    voerUit(async () => wordLid(gelezen, await laadVoornaam()));
+    voerUit(async () => {
+      const naam = await voornaamVoorGezin();
+      if (!naam) return;
+      await wordLid(gelezen, naam);
+    });
   };
 
   const deel = () => gezin && Share.share({ message: t('gezin.deelTekst', { code: toonGezinscode(gezin.code) }) });
 
   const beheerder = ikBeheerder(beheerderId, mijnId);
-  const beheerderNaamTekst = leden.find((l) => l.id === beheerderId)?.naam;
 
   // WEEK-176: verlaten kan altijd, ook voor een niet-beheerder. Een beheerder met andere leden kiest eerst een opvolger (WEEK-65).
   const verlaat = () => {
@@ -205,6 +227,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
       {kopTonen && <Text style={s.kop}>{t('gezin.titel')}</Text>}
       <View style={s.kaart}>
         <Text style={s.uitleg}>{t('naam.uitleg')}</Text>
+        {vraagVoornaamInGezin(!!gezin, voornaam) && <Text style={s.naamMelding}>{t('naam.vraagInGezin')}</Text>}
         <Text style={s.label}>{t('naam.kop')}</Text>
         <View style={s.rij}>
           <TextInput
@@ -261,6 +284,8 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 <Ionicons name="enter-outline" size={24} color={KLEUR} />
               </Pressable>
             </View>
+            {/* WEEK-283: ook zonder gezinsruimte de fout tonen (ongeldige of onbekende code, maken mislukt); vroeger onzichtbaar. */}
+            {fout && <Text style={s.fout} accessibilityRole="alert">{fout}</Text>}
           </>
         ) : (
           <>
@@ -348,7 +373,6 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 <Ionicons name="share-social-outline" size={22} color={KLEUR} />
               </Pressable>
             </View>
-            {beheerderNaamTekst && <Text style={s.label}>{t('gezin.beheerder', { naam: beheerderNaamTekst })}</Text>}
             {leden.length > 0 && (
               <>
                 <Text style={s.label}>{t('gezin.leden')}</Text>
@@ -358,6 +382,8 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                       <Text style={s.avatarTekst}>{naamVan(l).charAt(0).toUpperCase()}</Text>
                     </View>
                     <Text style={[s.lid, s.lidNaam]}>{l.ikZelf ? t('gezin.jij', { naam: naamVan(l) }) : naamVan(l)}</Text>
+                    {/* WEEK-282: de beheerder is altijd herkenbaar, ook zonder voornaam. */}
+                    {l.id === beheerderId && <Text style={s.beheerderLabel}>{t('gezin.beheerderLabel')}</Text>}
                     {beheerder && !l.ikZelf && (
                       <Pressable
                         style={s.icoonKnop}
@@ -387,6 +413,9 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
 }
 
 const s = StyleSheet.create({
+  // WEEK-282/283
+  beheerderLabel: { backgroundColor: '#E3F2E9', color: '#1F6B3A', fontSize: 12, fontWeight: '700', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3, overflow: 'hidden' },
+  naamMelding: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   kop: { fontWeight: '700', fontSize: 15, color: '#333', marginTop: 10 },
   kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: '#e5e5e5', gap: 14 },
   kopRij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 },

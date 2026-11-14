@@ -19,6 +19,8 @@ export const nl = {
   'naam.uitleg': 'Zo zien de andere gezinsleden wie iets gekocht of toegevoegd heeft.',
   'naam.opslaan': 'Opslaan',
   'naam.opgeslagen': 'Opgeslagen.',
+  'gezin.beheerderLabel': 'Beheerder',
+  'naam.vraagInGezin': 'Vul je voornaam in, zodat je gezin weet wie je bent.',
   'aanmelden.kop': 'Aanmelden',
   'aanmelden.uitleg': 'Koppel je Google-account, dan blijven je gezinsgegevens bewaard als je van toestel wisselt.',
   'aanmelden.google': 'Koppel Google-account',

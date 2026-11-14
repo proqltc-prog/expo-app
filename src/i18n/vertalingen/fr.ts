@@ -18,6 +18,8 @@ export const fr: Vertalingen = {
   'naam.uitleg': 'Ainsi, les autres membres de la famille voient qui a acheté ou ajouté quelque chose.',
   'naam.opslaan': "Enregistrer",
   'naam.opgeslagen': 'Enregistré.',
+  'gezin.beheerderLabel': 'Gestionnaire',
+  'naam.vraagInGezin': 'Indiquez votre prénom pour que votre famille sache qui vous êtes.',
   'aanmelden.kop': 'Connexion',
   'aanmelden.uitleg': "Liez votre compte Google pour garder les données de votre famille si vous changez d’appareil.",
   'aanmelden.google': 'Lier le compte Google',

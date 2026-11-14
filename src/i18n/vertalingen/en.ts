@@ -18,6 +18,8 @@ export const en: Vertalingen = {
   'naam.uitleg': 'This is how other family members see who bought or added something.',
   'naam.opslaan': 'Save',
   'naam.opgeslagen': 'Saved.',
+  'gezin.beheerderLabel': 'Manager',
+  'naam.vraagInGezin': 'Enter your first name so your family knows who you are.',
   'aanmelden.kop': 'Sign in',
   'aanmelden.uitleg': 'Link your Google account so your family data stays available when you switch devices.',
   'aanmelden.google': 'Link Google account',

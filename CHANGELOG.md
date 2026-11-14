@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.145.0] – 2026-11-14
+
+- Gezinsruimte: de beheerder krijgt altijd het label "Beheerder" in de ledenlijst, ook zonder voornaam. (WEEK-282)
+- Een voornaam is verplicht om een gezinsruimte te maken of er lid van te worden; wat in het veld staat, wordt meteen bewaard. Leden zonder voornaam krijgen een korte melding. Fouten bij het lid worden (bv. een onbestaande code) zijn nu zichtbaar; vroeger verscheen er niets. (WEEK-283)
+
+**Jira:** [WEEK-282](https://proqltc-1791495894841.atlassian.net/browse/WEEK-282), [WEEK-283](https://proqltc-1791495894841.atlassian.net/browse/WEEK-283) · **Confluence:** [WEEK-282 / WEEK-283](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25853953)
+
 ## [0.144.0] – 2026-11-12
 
 Deze release bundelt 0.135.1 tot en met 0.144.0. Overzicht:

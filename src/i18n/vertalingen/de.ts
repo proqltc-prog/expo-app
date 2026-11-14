@@ -18,6 +18,8 @@ export const de: Vertalingen = {
   'naam.uitleg': 'So sehen die anderen Familienmitglieder, wer etwas gekauft oder hinzugefügt hat.',
   'naam.opslaan': 'Speichern',
   'naam.opgeslagen': 'Gespeichert.',
+  'gezin.beheerderLabel': 'Verwaltung',
+  'naam.vraagInGezin': 'Gib deinen Vornamen ein, damit deine Familie weiß, wer du bist.',
   'aanmelden.kop': 'Anmelden',
   'aanmelden.uitleg': 'Verknüpfe dein Google-Konto, damit deine Familiendaten beim Gerätewechsel erhalten bleiben.',
   'aanmelden.google': 'Google-Konto verknüpfen',
