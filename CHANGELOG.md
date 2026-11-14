@@ -8,6 +8,16 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.150.0] – 2026-11-14
+
+**WEEK-289** – Sfeerfoto's op de startpagina en in Aan de slag ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-289) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))
+
+- Startpagina: grote sfeerfoto bovenaan met afgeronde onderkant, het logo als wit badge half over de foto, warme crème achtergrond.
+- Aan de slag: per scherm een fotokaart (zelfde grootte op elk scherm), het icoon als badge en een stapteller (1/7).
+- Plan je week: een kalenderblaadje met de dag op zeven borden, in de taal van de app.
+- Acht gratis Pexels-foto's in de app (samen ongeveer 0,7 MB, werkt offline), zonder gezichten of merken; bronnen in assets/welkom/BRONNEN.md.
+- Nieuw pakket expo-linear-gradient voor de kleurovergang op de foto's.
+
 ## [0.148.0] – 2026-11-14
 
 **Jira:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/browse/WEEK-288) · **Confluence:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886744)
