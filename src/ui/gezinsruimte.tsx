@@ -228,7 +228,10 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
       <View style={s.kaart}>
         <Text style={s.uitleg}>{t('naam.uitleg')}</Text>
         {vraagVoornaamInGezin(!!gezin, voornaam) && <Text style={s.naamMelding}>{t('naam.vraagInGezin')}</Text>}
-        <Text style={s.label}>{t('naam.kop')}</Text>
+        {/* WEEK-294: de voornaam is verplicht om een gezinsruimte te maken of aan te sluiten; dat staat er vooraf bij. */}
+        <Text style={s.label}>
+          {t('naam.kop')} <Text style={s.verplicht}>({t('naam.verplicht')})</Text>
+        </Text>
         <View style={s.rij}>
           <TextInput
             style={[s.veld, s.naamVeld, voornaamFout && s.veldFout]}
@@ -443,7 +446,9 @@ const s = StyleSheet.create({
   gedeeld: { fontSize: 18, fontWeight: '700', color: '#1d2420', flexShrink: 1 },
   status: { color: KLEUR, fontSize: 13 },
   statusOffline: { color: '#7a5b00' },
-  label: { color: '#5b6661', fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' },
+  // WEEK-294: geen hoofdletters meer.
+  label: { color: '#3E4A43', fontSize: 14, fontWeight: '700' },
+  verplicht: { color: '#8A958E', fontSize: 13, fontWeight: '500' },
   gezinsUitleg: { borderWidth: 1, borderColor: KLEUR, borderRadius: 10, padding: 12, gap: 10 },
   uitlegTekst: { color: '#1d2420', fontSize: 14, lineHeight: 20 },
   uitlegKnop: { alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },

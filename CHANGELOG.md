@@ -19,6 +19,12 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Plan je week: zeven ronde borden, volledig zichtbaar, met de dag voluit eronder (in de taal van de app); één dag uitgelicht als volle pil.
 - Meld je aan: nieuw ontwerp met foto bovenaan, logo, witte Google-knop, Verder zonder account als hoofdknop en de waarschuwing in een kaartje.
 - Gezinsprofiel: zelfde stijl als de startpagina: sfeerfoto bovenaan met ronde terug- en infoknop erover, icoon in een witte badge, grote titel met sierlijntje, intro in slogan-stijl; Taal, Gezinsruimte, Gezin en Adres als witte kaarten met icoon.
+
+**WEEK-294** – Gezinsprofiel: Gezin en Gezinsruimte samen ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-294) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))
+
+- Eén blok Gezin met "Wie eet er mee?" en "Samen delen" (voornaam en gezinsruimte); de blokken zijn nu Taal, Gezin en Adres.
+- "Jouw voornaam (verplicht)" staat er vooraf bij; labels niet meer in hoofdletters.
+- De ronde terug- en infoknop boven de foto hebben een schaduw, zodat ze bij het scrollen zichtbaar blijven.
 - Acht gratis Pexels-foto's in de app (samen ongeveer 0,7 MB, werkt offline), zonder gezichten of merken; bronnen in assets/welkom/BRONNEN.md.
 - Nieuw pakket expo-linear-gradient voor de kleurovergang op de foto's.
 

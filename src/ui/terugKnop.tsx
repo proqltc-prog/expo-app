@@ -51,7 +51,7 @@ export function KopTerugRond({ scherm }: { scherm: SchermMetTerug }) {
   return (
     <TerugKnop
       pad={terugVoor(scherm, terug)}
-      style={{ marginLeft: 16, width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.94)', alignItems: 'center', justifyContent: 'center' }}
+      style={{ marginLeft: 16, width: 42, height: 42, borderRadius: 21, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 }}
     />
   );
 }

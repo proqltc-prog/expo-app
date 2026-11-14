@@ -168,13 +168,9 @@ export default function ProfielScherm() {
         </View>
       </Inklapbaar>
 
-      {gezinsruimteBeschikbaar() && (
-        <Inklapbaar titel={t('gezin.titel')} icoon="home-outline" open={uitgeklapt.has('gezinsruimte')} onWissel={() => wissel('gezinsruimte')}>
-          <GezinsRuimte kopTonen={false} />
-        </Inklapbaar>
-      )}
-
+      {/* WEEK-294: Gezin en Gezinsruimte in één blok: wie er mee eet, en (optioneel) samen delen. */}
       <Inklapbaar titel={t('profiel.gezin')} icoon="people-outline" open={uitgeklapt.has('gezin')} onWissel={() => wissel('gezin')}>
+      <Text style={s.deelKop}>{t('profiel.wieEet')}</Text>
       <View style={s.kaart}>
         {!mag && <Text style={s.hint}>{t('profiel.alleenBeheerder')}</Text>}
         <View style={s.rij}>
@@ -195,6 +191,13 @@ export default function ProfielScherm() {
         <Text style={s.waromKop}>{t('profiel.waarom.titel')}</Text>
         <Text style={s.hint}>{t('profiel.waarom.tekst')}</Text>
       </View>
+      {gezinsruimteBeschikbaar() && (
+        <>
+          <View style={s.deelScheiding} />
+          <Text style={s.deelKop}>{t('profiel.samenDelen')}</Text>
+          <GezinsRuimte kopTonen={false} />
+        </>
+      )}
       </Inklapbaar>
 
       <Inklapbaar titel={t('profiel.adres')} icoon="location-outline" open={uitgeklapt.has('adres')} onWissel={() => wissel('adres')}>
@@ -248,6 +251,8 @@ const s = StyleSheet.create({
   intro: { fontSize: 17, color: '#3E4A43', textAlign: 'center', maxWidth: 340, lineHeight: 25, fontWeight: '500' },
   blokken: { paddingHorizontal: 16, gap: 12, marginTop: 24 },
   kop: { fontWeight: '700', fontSize: 15, color: '#333', marginTop: 10 },
+  deelKop: { fontSize: 15, fontWeight: '800', color: INKT, paddingHorizontal: 4, marginTop: 2 },
+  deelScheiding: { height: 1, backgroundColor: ZACHTE_RAND, marginVertical: 4 },
   kaart: { backgroundColor: '#fff', borderRadius: 14, padding: 4, gap: 12 },
   rij: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 16 },
