@@ -184,10 +184,10 @@ describe('Frans: beleefdheidsvorm en vaste woordenlijst (WEEK-238)', () => {
 
 describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-239)', () => {
   const verwacht = {
-    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Voor de weekplanner', ander: 'Andere producten' },
-    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Pour le planificateur', ander: 'Autres produits' },
-    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Für den Wochenplaner', ander: 'Andere Produkte' },
-    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'For the meal planner', ander: 'Other products' },
+    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Weekmenu', ander: 'Andere producten' },
+    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Menu de la semaine', ander: 'Autres produits' },
+    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Wochenmenü', ander: 'Andere Produkte' },
+    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'Weekly menu', ander: 'Other products' },
   } as const;
   for (const [taal, w] of Object.entries(verwacht) as [keyof typeof verwacht, (typeof verwacht)['nl']][]) {
     test(`${taal}: de tabs dragen de nieuwe namen`, () => {
@@ -223,7 +223,7 @@ describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-23
 describe('uitleg Andere producten en invoervelden (WEEK-240)', () => {
   test('de uitleg noemt meer dan één soort product, niet enkel wc-papier', () => {
     for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
-      for (const k of ['leeg.lijstAnder', 'leeg.huisAnder', 'pagina.lijstInfo', 'pagina.frigoInfo'] as const) {
+      for (const k of ['pagina.lijstInfo', 'pagina.frigoInfo'] as const) {
         const v = vertaal(taal, k);
         assert.doesNotMatch(v, /wc-papier|papier toilette|Toilettenpapier|toilet paper/iu, `${taal} ${k}`);
         assert.ok(v.split(',').length >= 3, `${taal} ${k}: meerdere voorbeelden`);

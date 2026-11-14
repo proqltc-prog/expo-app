@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { MAX_VOORNAAM, valideerVoornaam } from '@/lib/voornaam';
+import { MAX_VOORNAAM, valideerVoornaam, naamVoorGezinsruimte, vraagVoornaamInGezin } from '@/lib/voornaam';
 
 describe('valideerVoornaam (WEEK-163)', () => {
   test('gewone voornamen zijn geldig, ook met accenten, koppelteken of apostrof', () => {
@@ -42,5 +42,34 @@ describe('valideerVoornaam (WEEK-163)', () => {
 
   test('emoji en vreemde schrijfsystemen zonder letters worden geweigerd', () => {
     assert.deepEqual(valideerVoornaam('Jan 😀'), { ok: false, fout: 'ongeldig' });
+  });
+});
+
+describe('voornaam verplicht voor een gezinsruimte (WEEK-283)', () => {
+  test('positief: een getypte, nog niet opgeslagen naam wordt gebruikt', () => {
+    assert.deepEqual(naamVoorGezinsruimte('', 'Lien'), { ok: true, naam: 'Lien' });
+  });
+  test('positief: een leeg veld valt terug op de opgeslagen naam', () => {
+    assert.deepEqual(naamVoorGezinsruimte('Maarten', '   '), { ok: true, naam: 'Maarten' });
+  });
+  test('positief: wat in het veld staat gaat voor op de opgeslagen naam', () => {
+    assert.deepEqual(naamVoorGezinsruimte('Maarten', 'Marie-Anne'), { ok: true, naam: 'Marie-Anne' });
+  });
+  test('negatief: geen naam opgeslagen en niets getypt', () => {
+    assert.deepEqual(naamVoorGezinsruimte('', ''), { ok: false, fout: 'leeg' });
+    assert.deepEqual(naamVoorGezinsruimte('', '   '), { ok: false, fout: 'leeg' });
+  });
+  test('negatief: ongeldige of te lange naam in het veld (ook met een geldige opgeslagen naam)', () => {
+    assert.deepEqual(naamVoorGezinsruimte('Maarten', 'M@rten'), { ok: false, fout: 'ongeldig' });
+    assert.deepEqual(naamVoorGezinsruimte('', 'A'.repeat(21)), { ok: false, fout: 'teLang' });
+  });
+  test('randgeval: precies 20 tekens, accenten en dubbele spaties', () => {
+    assert.deepEqual(naamVoorGezinsruimte('', 'A'.repeat(20)), { ok: true, naam: 'A'.repeat(20) });
+    assert.deepEqual(naamVoorGezinsruimte('', '  Éloïse   De  Vos '), { ok: true, naam: 'Éloïse De Vos' });
+  });
+  test('melding in een gezin zonder geldige voornaam', () => {
+    assert.equal(vraagVoornaamInGezin(true, ''), true);
+    assert.equal(vraagVoornaamInGezin(true, 'Maarten'), false);
+    assert.equal(vraagVoornaamInGezin(false, ''), false);
   });
 });

@@ -8,6 +8,36 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.148.0] – 2026-11-14
+
+**Jira:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/browse/WEEK-288) · **Confluence:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886744)
+
+- Andere producten (boodschappenlijst en In huis): vergrootglas zoals bij het weekmenu. Tijdens het typen verschijnen eerder ingevulde producten met hun hoeveelheid, eenheid en categorie; staat het er niet bij, dan voeg je het toe als nieuw product. Wat er al staat, krijgt een vinkje.
+- Een lege tab toont één korte regel ("Nog niets te kopen", "Nog niets in huis"); de uitleg blijft onder het info-icoon.
+
+## [0.147.0] – 2026-11-14
+
+- In huis: op het tabblad Weekmenu kies je, zoals op de boodschappenlijst, tussen Per categorie en Per gerecht. Een product staat bij elk bevestigd gerecht dat het nodig heeft; de rest onder "Niet voor het weekmenu". (WEEK-287)
+- Weekmenukaart na nazicht: het boekje staat rechtsboven naast datum en status, de vraag bij het vuilbakje verschijnt in een venster in het midden, en Gekookt staat onder de foto. (WEEK-284)
+- Boodschappenlijst: Winkels en Te kopen zijn kleiner, met icoon en teller. (WEEK-286)
+
+**Jira:** [WEEK-287](https://proqltc-1791495894841.atlassian.net/browse/WEEK-287), [WEEK-284](https://proqltc-1791495894841.atlassian.net/browse/WEEK-284), [WEEK-286](https://proqltc-1791495894841.atlassian.net/browse/WEEK-286) · **Confluence:** [WEEK-287](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25919489)
+
+## [0.146.0] – 2026-11-14
+
+- Weekmenu: het vuilbakje is terug bij een gerecht dat nog niet bevestigd is; het haalt de hele dag van het weekmenu, na een korte vraag op de kaart. Een bevestigd gerecht ligt vast: geen Ander gerecht, Verwijderen of Zelf kiezen meer. Het boekje (ingrediënten en bereiding) staat naast categorie en kooktijd. (WEEK-284)
+- Het venster Product toevoegen past op een iPhone: Annuleren en Bewaren staan altijd zichtbaar onderaan, de velden scrollen. (WEEK-285)
+- Boodschappenlijst en In huis compacter op de smartphone: het tabblad heet Weekmenu, Andere producten staan altijd per categorie, zoeken en toevoegen zitten achter een icoon. De producten krijgen zo 133 px meer plaats. (WEEK-286)
+
+**Jira:** [WEEK-284](https://proqltc-1791495894841.atlassian.net/browse/WEEK-284), [WEEK-285](https://proqltc-1791495894841.atlassian.net/browse/WEEK-285), [WEEK-286](https://proqltc-1791495894841.atlassian.net/browse/WEEK-286) · **Confluence:** [WEEK-284 / 285 / 286](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886721)
+
+## [0.145.0] – 2026-11-14
+
+- Gezinsruimte: de beheerder krijgt altijd het label "Beheerder" in de ledenlijst, ook zonder voornaam. (WEEK-282)
+- Een voornaam is verplicht om een gezinsruimte te maken of er lid van te worden; wat in het veld staat, wordt meteen bewaard. Leden zonder voornaam krijgen een korte melding. Fouten bij het lid worden (bv. een onbestaande code) zijn nu zichtbaar; vroeger verscheen er niets. (WEEK-283)
+
+**Jira:** [WEEK-282](https://proqltc-1791495894841.atlassian.net/browse/WEEK-282), [WEEK-283](https://proqltc-1791495894841.atlassian.net/browse/WEEK-283) · **Confluence:** [WEEK-282 / WEEK-283](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25853953)
+
 ## [0.144.0] – 2026-11-12
 
 Deze release bundelt 0.135.1 tot en met 0.144.0. Overzicht:

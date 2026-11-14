@@ -16,3 +16,17 @@ export function valideerVoornaam(invoer: string): { ok: true; naam: string } | {
   if (!TOEGESTAAN.test(naam)) return { ok: false, fout: 'ongeldig' };
   return { ok: true, naam };
 }
+
+/**
+ * WEEK-283: de voornaam waarmee iemand een gezinsruimte maakt of lid wordt. Verplicht.
+ * Wat in het veld staat, gaat voor (ook als het nog niet opgeslagen is); een leeg veld valt terug op de opgeslagen naam.
+ * Geen geldige naam: dezelfde fout als bij opslaan, en er wordt niets gemaakt of vervoegd.
+ */
+export function naamVoorGezinsruimte(opgeslagen: string, invoer: string): { ok: true; naam: string } | { ok: false; fout: VoornaamFout } {
+  return valideerVoornaam(invoer.trim() ? invoer : opgeslagen);
+}
+
+/** WEEK-283: in een gezinsruimte zonder eigen voornaam vraagt de app die op te geven. */
+export function vraagVoornaamInGezin(inGezin: boolean, opgeslagen: string): boolean {
+  return inGezin && !valideerVoornaam(opgeslagen).ok;
+}

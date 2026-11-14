@@ -29,4 +29,6 @@ export const SLEUTEL = {
   ingredientenDb: 'ingredientendb:v1',
   /** Recepten uit de databank met hun versie (WEEK-253): enkel lokaal, een kopie van de databank. */
   receptenDb: 'receptendb:v1',
+  /** Eerder ingevulde andere producten, voor de voorstellen bij het zoeken (WEEK-288): enkel lokaal. */
+  losVoorstellen: 'losvoorstellen:v1',
 } as const;

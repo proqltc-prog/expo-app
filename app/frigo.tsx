@@ -13,13 +13,25 @@ import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/o
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { aantalSheet, CatalogusItem, koppelBronnen, legeTabUitleg, sheets, sheetThema, voegLosToe, voegPlannerToe } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
-import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
+import { datumKort, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { ingredientNaam, dbCodeVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
 import { ProductInvoer } from '@/ui/productInvoer';
 import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
+import { IcoonKnop } from '@/ui/icoonKnop';
+import { LosVoorstel, staatErAl, uitFrigo, uitLijst, voegSamen } from '@/lib/losVoorstellen';
+import { laadLosVoorstellen, onthoudLosVoorstel } from '@/opslag/losVoorstellen';
+import { laadLijst } from '@/opslag/lijst';
+import type { LijstItem } from '@/lib/lijst';
+import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import type { Weergave } from '@/lib/lijst';
+import { frigoPerGerecht } from '@/lib/frigoPerGerecht';
+import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
+import { inTaal } from '@/lib/planner/vertaal';
+import type { Weekplan } from '@/lib/planner/types';
+import { laadPlan } from '@/opslag/plan';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -56,17 +68,29 @@ export default function Frigo() {
   // Welke afdelingen open staan (WEEK-124); standaard is alles ingeklapt.
   const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   // WEEK-242: voor welk product de kalender van de houdbaarheid open staat (het oudste exemplaar), of null.
+  // WEEK-286: zoeken en toevoegen ingeklapt achter het zoekicoon.
+  const [zoekOpen, setZoekOpen] = useState(ZOEKEN_STANDAARD_OPEN);
+  // WEEK-287: bij het weekmenu per categorie of per gerecht, zoals op de boodschappenlijst.
+  const [weergave, setWeergave] = useState<Weergave>('categorie');
+  const [plan, setPlan] = useState<Weekplan | null>(null);
+  // WEEK-288: eerder ingevulde andere producten (bewaard, op de lijst), voor de voorstellen bij het zoeken.
+  const [bewaardeVoorstellen, setBewaardeVoorstellen] = useState<LosVoorstel[]>([]);
+  const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [kalenderVoor, setKalenderVoor] = useState<{ id: string; waarde?: string } | null>(null);
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
   useFocusEffect(
     useCallback(() => {
       laadFrigo().then(setFrigo);
+      laadPlan().then(setPlan);
+      laadLosVoorstellen().then(setBewaardeVoorstellen);
+      laadLijst().then(setLijstItems);
     }, [])
   );
 
   // Live: een ander gezinslid kocht iets of haalde iets uit de frigo (WEEK-8).
   useEffect(() => bijWijziging('frigo', () => laadFrigo().then(setFrigo)), []);
+  useEffect(() => bijWijziging('plan', () => laadPlan().then(setPlan)), []);
 
   // Eenmalig: bestaande items koppelen aan de planner-frigo of los zetten (WEEK-71 deel 2). Verwijdert niets.
   useEffect(() => {
@@ -78,9 +102,10 @@ export default function Frigo() {
   }, []);
 
   // + bij een losse naam (WEEK-182): eerst de popup met eenheid, hoeveelheid, categorie en houdbaarheid.
-  const openNieuwLos = (naam: string) => {
+  // WEEK-288: een eerder product neemt de vorige hoeveelheid, eenheid en categorie mee.
+  const openNieuwLos = (naam: string, v?: LosVoorstel) => {
     setBewerkIds(null);
-    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, afdeling: 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: true });
+    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, hoeveelheid: v?.hoeveelheid, eenheid: v?.eenheid, afdeling: v?.afdeling ?? 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: true });
   };
 
   // Het potloodje naast een los product (WEEK-181): dezelfde popup, met de huidige waarden.
@@ -137,6 +162,7 @@ export default function Frigo() {
       setFrigo(await wijzigFrigo((f) => wijzigLos(f, ids, w)));
       return;
     }
+    onthoudLosVoorstel({ naam: opties.naam, hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling }).then(setBewaardeVoorstellen);
     setFrigo(
       await wijzigFrigo((f) =>
         voegLosToe(f, opties.naam, new Date(), { hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling, houdbaarTot: w.houdbaarTot })
@@ -173,32 +199,67 @@ export default function Frigo() {
   };
 
   const zichtbaar = sheet === 'planner' ? sheets(frigo).planner : sheets(frigo).los;
+  const groep = weergaveVoorSheet(sheet, weergave);
   const secties = useMemo(
-    () => frigoSecties(zichtbaar).map((s) => ({ ...s, title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(s.regels, s.afdeling, uitgeklapt) })),
-    [frigo, sheet, taal, uitgeklapt]
+    () =>
+      groep === 'recept'
+        ? frigoPerGerecht(zichtbaar, plan ? openBevestigdeDagen(plan) : []).map((g) => ({
+            key: g.sleutel,
+            sleutel: g.sleutel,
+            regels: g.regels,
+            title: g.dag && g.recept ? t('lijst.receptTitel', { dag: t(dagSleutel(g.dag)), recept: inTaal(g.recept, taal).naam }) : t('frigo.nietVoorWeekmenu'),
+            data: zichtbareRegels(g.regels, g.sleutel, uitgeklapt),
+          }))
+        : frigoSecties(zichtbaar).map((s) => ({ key: s.afdeling, sleutel: s.afdeling as string, regels: s.regels, title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(s.regels, s.afdeling, uitgeklapt) })),
+    [frigo, sheet, taal, uitgeklapt, groep, plan]
   );
   const aantal = aantalProducten(zichtbaar);
   // Accentkleur van de actieve sheet: petrol voor planner-frigo, oranje voor losse producten (WEEK-75).
   const thema = sheetThema(sheet);
 
+  // WEEK-286: één compacte regel met de teller, het zoekicoon en (bij andere producten) de scanner; het veld klapt open.
   const kop = (
     <View>
-      <ProductInvoer
-        sheet={sheet}
-        accent={thema.accent}
-        accentZacht={thema.accentZacht}
-        staatOp={(code) => sheets(frigo).planner.some((f) => (f.code ? dbCodeVan(f.code) === code : f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase()))}
-        onReceptKies={(item, h) => voegCatalogusToe(item, h)}
-        onLosPlus={openNieuwLos}
-        scanKnop={
-          /* Scannen vanaf de frigo (WEEK-47). Een camera-icoon zodat de rij op een smal scherm past (WEEK-176). */
-          <Pressable style={[s.scan, { borderColor: thema.accent }]} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button" accessibilityLabel={t('frigo.scan')}>
-            <Ionicons name="camera-outline" size={22} color={thema.accent} />
+      <View style={s.gereedschap}>
+        {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
+        <Text style={[aantal ? s.teller : s.uitleg, s.gereedschapTekst]} numberOfLines={2}>
+          {aantal ? tn('frigo.teller', aantal) : t(legeTabUitleg('huis'))}
+        </Text>
+        {toonGroepering(sheet) && (
+          <Pressable
+            style={[s.groepKnop, { backgroundColor: thema.accentZacht }]}
+            onPress={() => setWeergave(andereWeergave(weergave))}
+            accessibilityRole="button"
+            accessibilityLabel={t('lijst.groepWissel', { huidig: t(weergave === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie') })}
+          >
+            <Ionicons name={weergave === 'recept' ? 'restaurant-outline' : 'grid-outline'} size={16} color={thema.accent} />
+            <Text style={[s.groepKnopTekst, { color: thema.accent }]} numberOfLines={1}>{t(weergave === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie')}</Text>
+            <Ionicons name="swap-vertical" size={14} color={MUTED} />
           </Pressable>
-        }
-      />
-      {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
-      {aantal ? <Text style={s.teller}>{tn('frigo.teller', aantal)}</Text> : <Text style={s.uitleg}>{t(legeTabUitleg('huis', sheet))}</Text>}
+        )}
+        <IcoonKnop
+          naam={zoekOpen ? 'close' : 'search'}
+          label={t(zoekOpen ? 'lijst.zoekSluit' : 'lijst.zoekOpen')}
+          kleur={thema.accent}
+          aan={zoekOpen}
+          onPress={() => setZoekOpen((o) => !o)}
+        />
+        {/* Scannen vanaf In huis (WEEK-47), enkel bij andere producten zoals voorheen. */}
+        {sheet === 'los' && <IcoonKnop naam="camera-outline" label={t('frigo.scan')} kleur={thema.accent} onPress={() => router.navigate('/scan?van=frigo')} />}
+      </View>
+      {zoekOpen && (
+        <ProductInvoer
+          sheet={sheet}
+          accent={thema.accent}
+          accentZacht={thema.accentZacht}
+          staatOp={(code) => sheets(frigo).planner.some((f) => (f.code ? dbCodeVan(f.code) === code : f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase()))}
+          onReceptKies={(item, h) => voegCatalogusToe(item, h)}
+          onLosPlus={openNieuwLos}
+          losVoorstellen={voegSamen(bewaardeVoorstellen, uitFrigo(frigo), uitLijst(lijstItems))}
+          losStaatOp={(naam) => staatErAl(sheets(frigo).los.map((f) => f.naam), naam)}
+          autoFocus
+        />
+      )}
     </View>
   );
 
@@ -236,13 +297,13 @@ export default function Frigo() {
           // Tikken op de afdeling klapt de groep open of dicht, met de teller van de producten (WEEK-124).
           <Pressable
             style={s.groepKop}
-            onPress={() => setUitgeklapt((o) => wisselGroep(o, section.afdeling))}
+            onPress={() => setUitgeklapt((o) => wisselGroep(o, section.sleutel))}
             accessibilityRole="button"
-            accessibilityState={{ expanded: uitgeklapt.has(section.afdeling) }}
+            accessibilityState={{ expanded: uitgeklapt.has(section.sleutel) }}
           >
             <Text style={s.kop}>{section.title}</Text>
             <Text style={s.groepTeller}>{section.regels.length}</Text>
-            <Ionicons name={(uitgeklapt.has(section.afdeling) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={MUTED} />
+            <Ionicons name={(uitgeklapt.has(section.sleutel) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={MUTED} />
           </Pressable>
         )}
         renderItem={({ item }) => {
@@ -322,7 +383,11 @@ export default function Frigo() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
-  uitleg: { color: MUTED, marginTop: 12 },
+  uitleg: { color: MUTED },
+  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
+  groepKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 10, flexShrink: 0 },
+  groepKnopTekst: { fontWeight: '700', fontSize: 13 },
+  gereedschapTekst: { flex: 1, minWidth: 0, marginVertical: 0 },
   invoer: { flexDirection: 'row', gap: 8, marginTop: 12 },
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
@@ -362,7 +427,7 @@ const s = StyleSheet.create({
   tellerBlok: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
   tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
   tellerTekstAan: { color: '#fff' },
-  streep: { height: 4, borderRadius: 2, marginTop: 10 },
+  streep: { height: 3, borderRadius: 2, marginTop: 6 },
   zoekVeld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', marginTop: 10 },
   resultaten: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
   leegTekst: { color: '#777' },

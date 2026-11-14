@@ -4,13 +4,12 @@ import { icoonTitelSleutel, icoonUitlegSleutel, WEEKMENU_ICONEN } from '@/lib/pl
 import { TALEN, VERTALINGEN } from '@/i18n';
 
 describe('uitleg bij de icoontjes van het weekmenu (WEEK-264)', () => {
-  test('WEEK-269: drie actie-iconen, het ronde bereidingsboekje en Gekookt; geen vuilbakje meer', () => {
+  test('WEEK-284: vier actie-iconen met het vuilbakje, het ronde bereidingsboekje en Gekookt', () => {
     assert.deepEqual(
       WEEKMENU_ICONEN.map((i) => i.icoon),
-      ['checkmark-circle-outline', 'refresh-outline', 'create-outline', 'book-outline', 'ellipse-outline']
+      ['checkmark-circle-outline', 'refresh-outline', 'create-outline', 'trash-outline', 'book-outline', 'ellipse-outline']
     );
-    assert.deepEqual(WEEKMENU_ICONEN.map((i) => i.vorm), ['rond', 'rond', 'rond', 'rond', 'knop']);
-    assert.ok(!WEEKMENU_ICONEN.some((i) => i.icoon === 'trash-outline'), 'geen vuilbakje');
+    assert.deepEqual(WEEKMENU_ICONEN.map((i) => i.vorm), ['rond', 'rond', 'rond', 'rond', 'rond', 'knop']);
   });
   test('elk icoon heeft een titel en een uitleg in alle vier talen', () => {
     for (const taal of TALEN) {
