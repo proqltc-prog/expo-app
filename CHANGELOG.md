@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.148.0] – 2026-11-14
+
+**Jira:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/browse/WEEK-288) · **Confluence:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886744)
+
+- Andere producten (boodschappenlijst en In huis): vergrootglas zoals bij het weekmenu. Tijdens het typen verschijnen eerder ingevulde producten met hun hoeveelheid, eenheid en categorie; staat het er niet bij, dan voeg je het toe als nieuw product. Wat er al staat, krijgt een vinkje.
+- Een lege tab toont één korte regel ("Nog niets te kopen", "Nog niets in huis"); de uitleg blijft onder het info-icoon.
+
 ## [0.147.0] – 2026-11-14
 
 - In huis: op het tabblad Weekmenu kies je, zoals op de boodschappenlijst, tussen Per categorie en Per gerecht. Een product staat bij elk bevestigd gerecht dat het nodig heeft; de rest onder "Niet voor het weekmenu". (WEEK-287)

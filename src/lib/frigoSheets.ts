@@ -102,12 +102,11 @@ export function toonSchakelaarIcoon(breedte: number): boolean {
 export const IN_HUIS_ICOON = 'archive-outline';
 
 /**
- * WEEK-239 (optie C): de korte uitleg die een lege tab toont, op de boodschappenlijst of bij In huis.
- * Zodra er iets in de tab staat, verdwijnt ze; de volledige uitleg zit onder het info-icoon.
+ * WEEK-239/288: de tekst van een lege tab, op de boodschappenlijst of bij In huis. WEEK-288: één korte regel,
+ * zoals de teller ("1 van 1 nog te kopen"); de volledige uitleg zit onder het info-icoon.
  */
-export function legeTabUitleg(pagina: 'lijst' | 'huis', sheet: Sheet): 'leeg.lijstMenu' | 'leeg.lijstAnder' | 'leeg.huisMenu' | 'leeg.huisAnder' {
-  if (pagina === 'lijst') return sheet === 'planner' ? 'leeg.lijstMenu' : 'leeg.lijstAnder';
-  return sheet === 'planner' ? 'leeg.huisMenu' : 'leeg.huisAnder';
+export function legeTabUitleg(pagina: 'lijst' | 'huis'): 'leeg.lijst' | 'leeg.huis' {
+  return pagina === 'lijst' ? 'leeg.lijst' : 'leeg.huis';
 }
 
 /**

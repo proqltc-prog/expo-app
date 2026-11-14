@@ -21,6 +21,10 @@ import { LosPopup, PopupOpties } from '@/ui/losPopup';
 import { ProductInvoer } from '@/ui/productInvoer';
 import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 import { IcoonKnop } from '@/ui/icoonKnop';
+import { LosVoorstel, staatErAl, uitFrigo, uitLijst, voegSamen } from '@/lib/losVoorstellen';
+import { laadLosVoorstellen, onthoudLosVoorstel } from '@/opslag/losVoorstellen';
+import { laadLijst } from '@/opslag/lijst';
+import type { LijstItem } from '@/lib/lijst';
 import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
 import type { Weergave } from '@/lib/lijst';
 import { frigoPerGerecht } from '@/lib/frigoPerGerecht';
@@ -69,6 +73,9 @@ export default function Frigo() {
   // WEEK-287: bij het weekmenu per categorie of per gerecht, zoals op de boodschappenlijst.
   const [weergave, setWeergave] = useState<Weergave>('categorie');
   const [plan, setPlan] = useState<Weekplan | null>(null);
+  // WEEK-288: eerder ingevulde andere producten (bewaard, op de lijst), voor de voorstellen bij het zoeken.
+  const [bewaardeVoorstellen, setBewaardeVoorstellen] = useState<LosVoorstel[]>([]);
+  const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [kalenderVoor, setKalenderVoor] = useState<{ id: string; waarde?: string } | null>(null);
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
@@ -76,6 +83,8 @@ export default function Frigo() {
     useCallback(() => {
       laadFrigo().then(setFrigo);
       laadPlan().then(setPlan);
+      laadLosVoorstellen().then(setBewaardeVoorstellen);
+      laadLijst().then(setLijstItems);
     }, [])
   );
 
@@ -93,9 +102,10 @@ export default function Frigo() {
   }, []);
 
   // + bij een losse naam (WEEK-182): eerst de popup met eenheid, hoeveelheid, categorie en houdbaarheid.
-  const openNieuwLos = (naam: string) => {
+  // WEEK-288: een eerder product neemt de vorige hoeveelheid, eenheid en categorie mee.
+  const openNieuwLos = (naam: string, v?: LosVoorstel) => {
     setBewerkIds(null);
-    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, afdeling: 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: true });
+    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, hoeveelheid: v?.hoeveelheid, eenheid: v?.eenheid, afdeling: v?.afdeling ?? 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: true });
   };
 
   // Het potloodje naast een los product (WEEK-181): dezelfde popup, met de huidige waarden.
@@ -152,6 +162,7 @@ export default function Frigo() {
       setFrigo(await wijzigFrigo((f) => wijzigLos(f, ids, w)));
       return;
     }
+    onthoudLosVoorstel({ naam: opties.naam, hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling }).then(setBewaardeVoorstellen);
     setFrigo(
       await wijzigFrigo((f) =>
         voegLosToe(f, opties.naam, new Date(), { hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling, houdbaarTot: w.houdbaarTot })
@@ -211,8 +222,8 @@ export default function Frigo() {
     <View>
       <View style={s.gereedschap}>
         {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
-        <Text style={[aantal ? s.teller : s.uitleg, s.gereedschapTekst]} numberOfLines={aantal ? 2 : undefined}>
-          {aantal ? tn('frigo.teller', aantal) : t(legeTabUitleg('huis', sheet))}
+        <Text style={[aantal ? s.teller : s.uitleg, s.gereedschapTekst]} numberOfLines={2}>
+          {aantal ? tn('frigo.teller', aantal) : t(legeTabUitleg('huis'))}
         </Text>
         {toonGroepering(sheet) && (
           <Pressable
@@ -227,7 +238,7 @@ export default function Frigo() {
           </Pressable>
         )}
         <IcoonKnop
-          naam={zoekOpen ? 'close' : sheet === 'los' ? 'add' : 'search'}
+          naam={zoekOpen ? 'close' : 'search'}
           label={t(zoekOpen ? 'lijst.zoekSluit' : 'lijst.zoekOpen')}
           kleur={thema.accent}
           aan={zoekOpen}
@@ -244,6 +255,8 @@ export default function Frigo() {
           staatOp={(code) => sheets(frigo).planner.some((f) => (f.code ? dbCodeVan(f.code) === code : f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase()))}
           onReceptKies={(item, h) => voegCatalogusToe(item, h)}
           onLosPlus={openNieuwLos}
+          losVoorstellen={voegSamen(bewaardeVoorstellen, uitFrigo(frigo), uitLijst(lijstItems))}
+          losStaatOp={(naam) => staatErAl(sheets(frigo).los.map((f) => f.naam), naam)}
           autoFocus
         />
       )}

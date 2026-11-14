@@ -27,6 +27,8 @@ import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 import { SectieKop } from '@/ui/sectieKop';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { IcoonKnop } from '@/ui/icoonKnop';
+import { LosVoorstel, staatErAl, uitFrigo, uitLijst, voegSamen } from '@/lib/losVoorstellen';
+import { laadLosVoorstellen, onthoudLosVoorstel } from '@/opslag/losVoorstellen';
 import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
 
 const KLEUR = '#2e7d4f';
@@ -83,6 +85,11 @@ export default function Lijst() {
   const [bewerkId, setBewerkId] = useState<string | null>(null);
   // WEEK-286: zoeken en toevoegen ingeklapt achter het zoekicoon.
   const [zoekOpen, setZoekOpen] = useState(ZOEKEN_STANDAARD_OPEN);
+  // WEEK-288: eerder ingevulde andere producten, voor de voorstellen bij het zoeken.
+  const [bewaardeVoorstellen, setBewaardeVoorstellen] = useState<LosVoorstel[]>([]);
+  useEffect(() => {
+    laadLosVoorstellen().then(setBewaardeVoorstellen);
+  }, []);
 
   useEffect(() => {
     laadWeergave().then(setWeergave);
@@ -127,9 +134,10 @@ export default function Lijst() {
   };
 
   // + bij een losse naam: eerst de popup met hoeveelheid, eenheid en categorie.
-  const openNieuwLos = (naam: string) => {
+  // WEEK-288: een eerder product neemt de vorige hoeveelheid, eenheid en categorie mee.
+  const openNieuwLos = (naam: string, v?: LosVoorstel) => {
     setBewerkId(null);
-    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, afdeling: 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: false });
+    setLosPopup({ sleutel: `nieuw-${Date.now()}`, titel: t('frigo.toevoegenKop'), naam, hoeveelheid: v?.hoeveelheid, eenheid: v?.eenheid, afdeling: v?.afdeling ?? 'overig', toonEenheid: true, toonCategorie: true, toonHoudbaar: false });
   };
 
   // Potloodje: enkel items die de gebruiker zelf toevoegde. Een databankproduct houdt zijn eenheid.
@@ -164,6 +172,7 @@ export default function Lijst() {
     const extra = { hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling === 'overig' ? undefined : w.afdeling };
     const item = eigenItem(opties.naam, nu, ikNaam, extra);
     if (!item) return;
+    onthoudLosVoorstel({ naam: opties.naam, hoeveelheid: w.hoeveelheid, eenheid: w.eenheid, afdeling: w.afdeling }).then(setBewaardeVoorstellen);
     // Pas bij afvinken gaat het naar de frigo (zie toggle); toevoegen raakt de frigo niet.
     wijzig((huidig) => [...huidig, item]);
   };
@@ -249,8 +258,8 @@ export default function Lijst() {
     <View>
       <View style={s.gereedschap}>
         <View style={s.tellerBlok}>
-          <Text style={s.tellerRegel} numberOfLines={totaal ? 2 : undefined}>
-            {totaal ? t('lijst.teller', { open, totaal }) : t(legeTabUitleg('lijst', sheet))}
+          <Text style={s.tellerRegel} numberOfLines={2}>
+            {totaal ? t('lijst.teller', { open, totaal }) : t(legeTabUitleg('lijst'))}
           </Text>
           {gezin && (
             <Text style={[s.gedeeld, status === 'offline' && s.offline]} numberOfLines={1}>
@@ -271,7 +280,7 @@ export default function Lijst() {
           </Pressable>
         )}
         <IcoonKnop
-          naam={(zoekOpen ? 'close' : sheet === 'los' ? 'add' : 'search') as IoniconNaam}
+          naam={(zoekOpen ? 'close' : 'search') as IoniconNaam}
           label={t(zoekOpen ? 'lijst.zoekSluit' : 'lijst.zoekOpen')}
           kleur={accent}
           aan={zoekOpen}
@@ -287,6 +296,8 @@ export default function Lijst() {
           onReceptKies={voegReceptToe}
           onLosPlus={openNieuwLos}
           losTekst={t('lijst.toevoegen')}
+          losVoorstellen={voegSamen(bewaardeVoorstellen, uitFrigo(frigo), uitLijst(items))}
+          losStaatOp={(naam) => staatErAl(opSheet(items, 'los').filter((i) => !i.afgevinkt).map((i) => i.naam), naam)}
           autoFocus
         />
       )}

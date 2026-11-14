@@ -2,6 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { aantalSheet, catalogus, IN_HUIS_ICOON, legeTabUitleg, toonSchakelaarIcoon, inCatalogus, inDatabank, koppelBronnen, normaliseer, SHEET_ICOON, sheets, sheetThema, voegLosToe, voegPlannerToe, zoekCatalogus, zoekDatabank } from '@/lib/frigoSheets';
 import { FrigoItem, voegZelfToe } from '@/lib/frigo';
+import { vertaal } from '@/i18n';
 
 const nu = new Date('2026-10-18T10:00:00.000Z');
 const naam = (f: FrigoItem[]) => f.map((x) => x.naam);
@@ -259,11 +260,12 @@ describe('WEEK-205: oude codes worden bij het inlezen databankcodes', () => {
 });
 
 describe('lege tab en In huis (WEEK-239)', () => {
-  test('elke lege tab heeft een eigen korte uitleg, per pagina en per tab', () => {
-    assert.equal(legeTabUitleg('lijst', 'planner'), 'leeg.lijstMenu');
-    assert.equal(legeTabUitleg('lijst', 'los'), 'leeg.lijstAnder');
-    assert.equal(legeTabUitleg('huis', 'planner'), 'leeg.huisMenu');
-    assert.equal(legeTabUitleg('huis', 'los'), 'leeg.huisAnder');
+  test('WEEK-288: een lege tab toont één korte regel per pagina, zoals de teller', () => {
+    assert.equal(legeTabUitleg('lijst'), 'leeg.lijst');
+    assert.equal(legeTabUitleg('huis'), 'leeg.huis');
+    for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
+      for (const k of ['leeg.lijst', 'leeg.huis'] as const) assert.ok(vertaal(taal, k).length <= 32, taal + ' ' + k + ' is kort');
+    }
   });
   test('op een smal scherm (320, 375 px) valt het icoon in de schakelaar weg, op een tablet niet', () => {
     assert.equal(toonSchakelaarIcoon(320), false);

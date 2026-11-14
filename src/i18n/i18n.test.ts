@@ -223,7 +223,7 @@ describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-23
 describe('uitleg Andere producten en invoervelden (WEEK-240)', () => {
   test('de uitleg noemt meer dan één soort product, niet enkel wc-papier', () => {
     for (const taal of ['nl', 'fr', 'de', 'en'] as const) {
-      for (const k of ['leeg.lijstAnder', 'leeg.huisAnder', 'pagina.lijstInfo', 'pagina.frigoInfo'] as const) {
+      for (const k of ['pagina.lijstInfo', 'pagina.frigoInfo'] as const) {
         const v = vertaal(taal, k);
         assert.doesNotMatch(v, /wc-papier|papier toilette|Toilettenpapier|toilet paper/iu, `${taal} ${k}`);
         assert.ok(v.split(',').length >= 3, `${taal} ${k}: meerdere voorbeelden`);

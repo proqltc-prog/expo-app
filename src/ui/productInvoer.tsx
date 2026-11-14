@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { eenheidVan, IngredientCode } from '@/data/ingredienten';
 import { CatalogusItem, zoekDatabank, Sheet } from '@/lib/frigoSheets';
 import { leesHoeveelheid } from '@/lib/frigo';
+import { heeftExact, LosVoorstel, zoekLos } from '@/lib/losVoorstellen';
 import { eenheidNaam } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 
@@ -16,8 +17,12 @@ type Props = {
   staatOp: (code: IngredientCode) => boolean;
   /** Een product uit de productdatabank, met de hoeveelheid. De eenheid is vast en komt van het product. */
   onReceptKies: (item: CatalogusItem, hoeveelheid: number | undefined) => void;
-  /** Een losse naam met de +: de bovenliggende pagina opent de popup om het product in te vullen. */
-  onLosPlus: (naam: string) => void;
+  /** Een losse naam (nieuw, of een eerder product als voorstel): de bovenliggende pagina opent de popup om het product in te vullen. */
+  onLosPlus: (naam: string, voorstel?: LosVoorstel) => void;
+  /** WEEK-288: eerder ingevulde andere producten, als voorstel tijdens het typen. */
+  losVoorstellen?: readonly LosVoorstel[];
+  /** WEEK-288: staat dit andere product al op de lijst of in huis? Dan een vinkje. */
+  losStaatOp?: (naam: string) => boolean;
   /** Extra knop naast het losse-veld (de scanner op de frigo). */
   scanKnop?: ReactNode;
   /** WEEK-235: tekst in het losse-veld; standaard die van de frigo ("wat al in huis is"), de lijst geeft een eigen tekst. */
@@ -30,7 +35,7 @@ type Props = {
  * Invoer van de boodschappen- of frigo-pagina (WEEK-182): voor Recepten een zoekveld met een keuzelijst
  * uit de productdatabank (enkel de hoeveelheid is in te geven); voor Losse producten een naamveld dat via + de popup opent.
  */
-export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKies, onLosPlus, scanKnop, losTekst, autoFocus }: Props) {
+export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKies, onLosPlus, scanKnop, losTekst, autoFocus, losVoorstellen = [], losStaatOp }: Props) {
   const { t, taal } = useTaal();
   const losLabel = losTekst ?? t('frigo.toevoegen');
   const [zoek, setZoek] = useState('');
@@ -38,35 +43,59 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
   const [hoeveelheid, setHoeveelheid] = useState('');
   const [nieuw, setNieuw] = useState('');
   const resultaten = useMemo(() => (sheet === 'planner' && zoek.trim() ? zoekDatabank(zoek, taal) : []), [zoek, sheet, taal]);
+  const voorstellen = useMemo(() => (sheet === 'los' ? zoekLos(losVoorstellen, nieuw) : []), [sheet, losVoorstellen, nieuw]);
 
   if (sheet === 'los') {
+    // WEEK-288: zoeken zoals bij het weekmenu; tijdens het typen verschijnen eerder ingevulde producten.
+    const tekst = nieuw.trim();
+    const kies = (v?: LosVoorstel) => {
+      if (!tekst && !v) return;
+      onLosPlus(v ? v.naam : tekst, v);
+      setNieuw('');
+    };
+    const exact = voorstellen.find((v) => heeftExact([v], tekst));
     return (
-      <View style={s.invoer}>
-        <TextInput
-          style={[s.veld, s.veldFlex]}
-          placeholder={losLabel}
-          value={nieuw}
-          onChangeText={setNieuw}
-          onSubmitEditing={() => {
-            if (nieuw.trim()) onLosPlus(nieuw.trim());
-            setNieuw('');
-          }}
-          returnKeyType="done"
-          autoFocus={autoFocus}
-          accessibilityLabel={losLabel}
-        />
-        <Pressable
-          style={[s.plus, { backgroundColor: accent }]}
-          onPress={() => {
-            if (nieuw.trim()) onLosPlus(nieuw.trim());
-            setNieuw('');
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={losLabel}
-        >
-          <Text style={s.plusTekst}>+</Text>
-        </Pressable>
-        {scanKnop}
+      <View style={s.blok}>
+        <View style={s.invoer}>
+          <TextInput
+            style={[s.veld, s.veldFlex]}
+            placeholder={t('frigo.zoekIngredient')}
+            value={nieuw}
+            onChangeText={setNieuw}
+            onSubmitEditing={() => kies(exact)}
+            returnKeyType="done"
+            autoFocus={autoFocus}
+            accessibilityLabel={losLabel}
+          />
+          {scanKnop}
+        </View>
+        {tekst ? (
+          <ScrollView style={s.lijst} nestedScrollEnabled keyboardShouldPersistTaps="handled">
+            {voorstellen.map((v) => {
+              const erop = losStaatOp?.(v.naam) ?? false;
+              const detail = [v.hoeveelheid !== undefined ? String(v.hoeveelheid) : '', v.eenheid ?? ''].filter(Boolean).join(' ');
+              return (
+                <Pressable
+                  key={v.naam}
+                  style={[s.rij, s.rijKop]}
+                  onPress={() => kies(v)}
+                  disabled={erop}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: erop }}
+                >
+                  <Text style={[s.naam, erop && { color: accent }]}>{`${erop ? '✓ ' : ''}${v.naam}`}</Text>
+                  {!!detail && <Text style={s.eenheid}>{detail}</Text>}
+                </Pressable>
+              );
+            })}
+            {!exact && (
+              <Pressable style={[s.rij, s.rijKop, { borderColor: accent, backgroundColor: accentZacht }]} onPress={() => kies()} accessibilityRole="button">
+                <Text style={[s.naam, { color: accent }]}>{t('los.nieuw', { naam: tekst })}</Text>
+                <Text style={[s.plusKlein, { color: accent }]}>+</Text>
+              </Pressable>
+            )}
+          </ScrollView>
+        ) : null}
       </View>
     );
   }
@@ -135,6 +164,7 @@ const s = StyleSheet.create({
   getal: { width: 110 },
   plus: { width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
+  plusKlein: { fontSize: 22, fontWeight: '700' },
   leeg: { color: '#666' },
   lijst: { maxHeight: 260, borderRadius: 10 },
   rij: { borderWidth: 1, borderColor: '#E4E8E1', borderRadius: 10, backgroundColor: '#fff', marginBottom: 6, padding: 10, gap: 8 },
