@@ -9,7 +9,7 @@ import { zetWelkomGezien } from '@/opslag/welkom';
 import { inlogMet, isAnoniem, koppel, stuurAanmeldMail } from '@/opslag/aanmelden';
 import { AANBIEDERS, AANMELDEN_MET_MAIL, Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
 import { ROUTE_AANGEMELD, ROUTE_NA_WELKOM, uitlegNaar, UITLEG_SCHERMEN, veegRichting } from '@/lib/welkom';
-import { BORDEN_BOVEN, dagKort, heroHoogte, merkDelen, START_KENMERKEN, uitlegFoto, WEEKPLAN_BORDEN } from '@/lib/welkomFotos';
+import { BORDEN_BOVEN, heroHoogte, merkDelen, START_KENMERKEN, uitlegFoto, WEEKPLAN_BORDEN } from '@/lib/welkomFotos';
 import { WEEK_BORD, WELKOM_FOTO } from '@/ui/welkomFotos';
 import { useTaal } from '@/ui/taal';
 
@@ -21,6 +21,8 @@ const ORANJE = '#E8710A';
 const GROEN = '#2E7D4F';
 const ACCENTEN = [KLEUR, ORANJE, GROEN];
 const ZACHTE_RAND = '#EDE3D3';
+// Plan je week: deze dag staat uitgelicht als volle pil, zoals vandaag in een agenda-app.
+const DAG_UITGELICHT = 'woensdag';
 const INKT = '#17201A';
 const MUTED = '#5E6B63';
 const LIJN = '#E4E8E1';
@@ -187,18 +189,15 @@ export default function Welkom() {
               {[WEEKPLAN_BORDEN.slice(0, BORDEN_BOVEN), WEEKPLAN_BORDEN.slice(BORDEN_BOVEN)].map((rij, r) => (
                 <View key={r} style={s.bordenRij}>
                   {rij.map((dag, i) => {
-                    const maat = Math.min(Math.round((Math.min(schermBreedte, 520) - 32 - 3 * 10) / 4), Math.round((heroUitleg - 230) / 2));
+                    const maat = Math.min(Math.round((Math.min(schermBreedte, 520) - 32 - 3 * 10) / 4), Math.round((heroUitleg - 200) / 2));
                     return (
                       <View key={dag} style={[s.bord, { width: maat + 8 }]}>
                         <View style={[s.bordRand, { width: maat, height: maat, borderRadius: maat / 2 }]}>
                           <Image source={WEEK_BORD[dag]} style={s.vulFoto} resizeMode="cover" />
                         </View>
-                        {/* Een scheurkalendertje met de afgekorte dag (MA, DI …), los onder het bord: niets op het eten. */}
-                        <View style={s.kalender}>
-                          <View style={s.kalenderKop} />
-                          <Text style={s.kalenderDag}>{dagKort(t(`dag.${dag}` as Sleutel))}</Text>
-                          <View style={[s.kalenderRing, s.kalenderRingLinks]} />
-                          <View style={[s.kalenderRing, s.kalenderRingRechts]} />
+                        {/* De dag voluit in kleine, strakke letters onder het bord (niets op het eten); één dag als volle pil, zoals "vandaag" in een agenda. */}
+                        <View style={[s.dagPil, dag === DAG_UITGELICHT && s.dagPilAan]}>
+                          <Text style={[s.dagTekst, dag === DAG_UITGELICHT && s.dagTekstAan]}>{t(`dag.${dag}` as Sleutel)}</Text>
                         </View>
                       </View>
                     );
@@ -366,17 +365,15 @@ const s = StyleSheet.create({
   stapChipTekst: { color: INKT, fontWeight: '800', fontSize: 13 },
   overslaan: { position: 'absolute', top: 48, right: 20, backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 999, paddingVertical: 6, paddingHorizontal: 14 },
   overslaanTekst: { color: KLEUR, fontWeight: '800', fontSize: 13 },
-  borden: { flex: 1, justifyContent: 'center', gap: 16, paddingTop: 92, paddingBottom: 30 },
+  borden: { flex: 1, justifyContent: 'center', gap: 18, paddingTop: 84, paddingBottom: 30 },
   bordenRij: { flexDirection: 'row', justifyContent: 'center', gap: 10 },
   bord: { alignItems: 'center' },
   bordRand: { overflow: 'hidden', borderWidth: 3, borderColor: '#fff', backgroundColor: '#fff', shadowColor: '#3A2A12', shadowOpacity: 0.18, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 4 },
   bordenOvergang: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 36 },
-  kalender: { width: 40, marginTop: 12, borderRadius: 9, backgroundColor: '#fff', alignItems: 'center', borderWidth: 1, borderColor: '#E7DCCB', shadowColor: '#3A2A12', shadowOpacity: 0.12, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
-  kalenderKop: { width: '100%', height: 11, backgroundColor: KLEUR, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
-  kalenderRing: { position: 'absolute', top: -4, width: 5, height: 9, borderRadius: 3, backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#9AA7A0' },
-  kalenderRingLinks: { left: 9 },
-  kalenderRingRechts: { right: 9 },
-  kalenderDag: { fontSize: 14, fontWeight: '800', color: INKT, letterSpacing: 0.5, paddingTop: 3, paddingBottom: 4 },
+  dagPil: { marginTop: 10, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 9 },
+  dagPilAan: { backgroundColor: KLEUR },
+  dagTekst: { fontSize: 12, fontWeight: '700', color: KLEUR },
+  dagTekstAan: { color: '#fff' },
   uitlegTekst: { alignItems: 'center', gap: 10, paddingHorizontal: 24, marginTop: -26, flex: 1 },
   badge: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: PAPIER },
   vol: { flex: 1 },
