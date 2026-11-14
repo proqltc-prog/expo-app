@@ -579,6 +579,7 @@ export const nl = {
   'planning.geenVerbinding': 'Geen verbinding. Probeer opnieuw.',
   'frigo.sheetPlanner': 'Weekmenu',
   'frigo.sheetLos': 'Andere producten',
+  'frigo.nietVoorWeekmenu': 'Niet voor het weekmenu',
   'leeg.lijstMenu': 'Nog niets voor de weekplanner. Bevestig een gerecht op het weekmenu: de ingrediënten komen hier vanzelf.',
   'leeg.lijstAnder': 'Nog geen andere producten. Zet hier alles wat je wilt kopen buiten de weekplanner: drank, ontbijt, snacks, verzorging of poetsmiddelen.',
   'leeg.huisMenu': 'Nog niets voor de weekplanner in huis. Wat je op de boodschappenlijst afvinkt, komt hier vanzelf. De planner kiest eerst gerechten met wat hier ligt.',

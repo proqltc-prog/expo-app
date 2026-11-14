@@ -578,6 +578,7 @@ export const en: Vertalingen = {
   'planning.geenVerbinding': 'No connection. Try again.',
   'frigo.sheetPlanner': 'Weekly menu',
   'frigo.sheetLos': 'Other products',
+  'frigo.nietVoorWeekmenu': 'Not for the weekly menu',
   'leeg.lijstMenu': 'Nothing for the meal planner yet. Confirm a dish on the weekly menu and its ingredients appear here automatically.',
   'leeg.lijstAnder': 'No other products yet. Add everything you want to buy outside the meal planner: drinks, breakfast, snacks, toiletries or cleaning products.',
   'leeg.huisMenu': 'Nothing for the meal planner at home yet. What you tick off on the shopping list lands here automatically. The planner picks dishes with what is here first.',

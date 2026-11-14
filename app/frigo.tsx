@@ -13,7 +13,7 @@ import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/o
 import { wisselGroep, zichtbareRegels } from '@/lib/groepen';
 import { aantalSheet, CatalogusItem, koppelBronnen, legeTabUitleg, sheets, sheetThema, voegLosToe, voegPlannerToe } from '@/lib/frigoSheets';
 import { bijWijziging } from '@/opslag/sync';
-import { datumKort, hoeveelheidTekst, Sleutel } from '@/i18n';
+import { datumKort, dagSleutel, hoeveelheidTekst, Sleutel } from '@/i18n';
 import { ingredientNaam, dbCodeVan } from '@/data/ingredienten';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
@@ -21,7 +21,13 @@ import { LosPopup, PopupOpties } from '@/ui/losPopup';
 import { ProductInvoer } from '@/ui/productInvoer';
 import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 import { IcoonKnop } from '@/ui/icoonKnop';
-import { ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import type { Weergave } from '@/lib/lijst';
+import { frigoPerGerecht } from '@/lib/frigoPerGerecht';
+import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
+import { inTaal } from '@/lib/planner/vertaal';
+import type { Weekplan } from '@/lib/planner/types';
+import { laadPlan } from '@/opslag/plan';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -60,17 +66,22 @@ export default function Frigo() {
   // WEEK-242: voor welk product de kalender van de houdbaarheid open staat (het oudste exemplaar), of null.
   // WEEK-286: zoeken en toevoegen ingeklapt achter het zoekicoon.
   const [zoekOpen, setZoekOpen] = useState(ZOEKEN_STANDAARD_OPEN);
+  // WEEK-287: bij het weekmenu per categorie of per gerecht, zoals op de boodschappenlijst.
+  const [weergave, setWeergave] = useState<Weergave>('categorie');
+  const [plan, setPlan] = useState<Weekplan | null>(null);
   const [kalenderVoor, setKalenderVoor] = useState<{ id: string; waarde?: string } | null>(null);
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
   useFocusEffect(
     useCallback(() => {
       laadFrigo().then(setFrigo);
+      laadPlan().then(setPlan);
     }, [])
   );
 
   // Live: een ander gezinslid kocht iets of haalde iets uit de frigo (WEEK-8).
   useEffect(() => bijWijziging('frigo', () => laadFrigo().then(setFrigo)), []);
+  useEffect(() => bijWijziging('plan', () => laadPlan().then(setPlan)), []);
 
   // Eenmalig: bestaande items koppelen aan de planner-frigo of los zetten (WEEK-71 deel 2). Verwijdert niets.
   useEffect(() => {
@@ -177,9 +188,19 @@ export default function Frigo() {
   };
 
   const zichtbaar = sheet === 'planner' ? sheets(frigo).planner : sheets(frigo).los;
+  const groep = weergaveVoorSheet(sheet, weergave);
   const secties = useMemo(
-    () => frigoSecties(zichtbaar).map((s) => ({ ...s, title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(s.regels, s.afdeling, uitgeklapt) })),
-    [frigo, sheet, taal, uitgeklapt]
+    () =>
+      groep === 'recept'
+        ? frigoPerGerecht(zichtbaar, plan ? openBevestigdeDagen(plan) : []).map((g) => ({
+            key: g.sleutel,
+            sleutel: g.sleutel,
+            regels: g.regels,
+            title: g.dag && g.recept ? t('lijst.receptTitel', { dag: t(dagSleutel(g.dag)), recept: inTaal(g.recept, taal).naam }) : t('frigo.nietVoorWeekmenu'),
+            data: zichtbareRegels(g.regels, g.sleutel, uitgeklapt),
+          }))
+        : frigoSecties(zichtbaar).map((s) => ({ key: s.afdeling, sleutel: s.afdeling as string, regels: s.regels, title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(s.regels, s.afdeling, uitgeklapt) })),
+    [frigo, sheet, taal, uitgeklapt, groep, plan]
   );
   const aantal = aantalProducten(zichtbaar);
   // Accentkleur van de actieve sheet: petrol voor planner-frigo, oranje voor losse producten (WEEK-75).
@@ -193,6 +214,18 @@ export default function Frigo() {
         <Text style={[aantal ? s.teller : s.uitleg, s.gereedschapTekst]} numberOfLines={aantal ? 2 : undefined}>
           {aantal ? tn('frigo.teller', aantal) : t(legeTabUitleg('huis', sheet))}
         </Text>
+        {toonGroepering(sheet) && (
+          <Pressable
+            style={[s.groepKnop, { backgroundColor: thema.accentZacht }]}
+            onPress={() => setWeergave(andereWeergave(weergave))}
+            accessibilityRole="button"
+            accessibilityLabel={t('lijst.groepWissel', { huidig: t(weergave === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie') })}
+          >
+            <Ionicons name={weergave === 'recept' ? 'restaurant-outline' : 'grid-outline'} size={16} color={thema.accent} />
+            <Text style={[s.groepKnopTekst, { color: thema.accent }]} numberOfLines={1}>{t(weergave === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie')}</Text>
+            <Ionicons name="swap-vertical" size={14} color={MUTED} />
+          </Pressable>
+        )}
         <IcoonKnop
           naam={zoekOpen ? 'close' : sheet === 'los' ? 'add' : 'search'}
           label={t(zoekOpen ? 'lijst.zoekSluit' : 'lijst.zoekOpen')}
@@ -251,13 +284,13 @@ export default function Frigo() {
           // Tikken op de afdeling klapt de groep open of dicht, met de teller van de producten (WEEK-124).
           <Pressable
             style={s.groepKop}
-            onPress={() => setUitgeklapt((o) => wisselGroep(o, section.afdeling))}
+            onPress={() => setUitgeklapt((o) => wisselGroep(o, section.sleutel))}
             accessibilityRole="button"
-            accessibilityState={{ expanded: uitgeklapt.has(section.afdeling) }}
+            accessibilityState={{ expanded: uitgeklapt.has(section.sleutel) }}
           >
             <Text style={s.kop}>{section.title}</Text>
             <Text style={s.groepTeller}>{section.regels.length}</Text>
-            <Ionicons name={(uitgeklapt.has(section.afdeling) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={MUTED} />
+            <Ionicons name={(uitgeklapt.has(section.sleutel) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={MUTED} />
           </Pressable>
         )}
         renderItem={({ item }) => {
@@ -338,7 +371,9 @@ export default function Frigo() {
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
   uitleg: { color: MUTED },
-  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
+  groepKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 10, flexShrink: 0 },
+  groepKnopTekst: { fontWeight: '700', fontSize: 13 },
   gereedschapTekst: { flex: 1, minWidth: 0, marginVertical: 0 },
   invoer: { flexDirection: 'row', gap: 8, marginTop: 12 },
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },

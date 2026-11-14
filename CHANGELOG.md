@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.147.0] – 2026-11-14
+
+- In huis: op het tabblad Weekmenu kies je, zoals op de boodschappenlijst, tussen Per categorie en Per gerecht. Een product staat bij elk bevestigd gerecht dat het nodig heeft; de rest onder "Niet voor het weekmenu". (WEEK-287)
+- Weekmenukaart na nazicht: het boekje staat rechtsboven naast datum en status, de vraag bij het vuilbakje verschijnt in een venster in het midden, en Gekookt staat onder de foto. (WEEK-284)
+- Boodschappenlijst: Winkels en Te kopen zijn kleiner, met icoon en teller. (WEEK-286)
+
+**Jira:** [WEEK-287](https://proqltc-1791495894841.atlassian.net/browse/WEEK-287), [WEEK-284](https://proqltc-1791495894841.atlassian.net/browse/WEEK-284), [WEEK-286](https://proqltc-1791495894841.atlassian.net/browse/WEEK-286) · **Confluence:** [WEEK-287](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25919489)
+
 ## [0.146.0] – 2026-11-14
 
 - Weekmenu: het vuilbakje is terug bij een gerecht dat nog niet bevestigd is; het haalt de hele dag van het weekmenu, na een korte vraag op de kaart. Een bevestigd gerecht ligt vast: geen Ander gerecht, Verwijderen of Zelf kiezen meer. Het boekje (ingrediënten en bereiding) staat naast categorie en kooktijd. (WEEK-284)

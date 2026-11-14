@@ -304,7 +304,7 @@ export default function Lijst() {
         accessibilityRole="tab"
         accessibilityState={{ selected: aan }}
       >
-        <Ionicons name={(h === 'winkels' ? WINKEL_ICOON : BOODSCHAPPEN_ICOON) as IoniconNaam} size={18} color={aan ? kleur : MUTED} />
+        <Ionicons name={(h === 'winkels' ? WINKEL_ICOON : BOODSCHAPPEN_ICOON) as IoniconNaam} size={16} color={aan ? kleur : MUTED} />
         {/* WEEK-111: het label wordt volledig getoond; past het niet, dan wordt het kleiner in plaats van afgekapt. */}
         <Text
           style={[s.hoofdTekst, aan && { color: kleur }]}
@@ -470,12 +470,12 @@ export default function Lijst() {
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16 },
   // WEEK-286: compacter, zodat de producten meer plaats krijgen.
-  hoofdSchakelaar: { flexDirection: 'row', backgroundColor: MIST, borderRadius: 16, padding: 4, marginTop: 8 },
-  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 7, paddingHorizontal: 6, borderRadius: 12 },
+  hoofdSchakelaar: { flexDirection: 'row', backgroundColor: MIST, borderRadius: 12, padding: 3, marginTop: 6 },
+  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 4, paddingHorizontal: 6, borderRadius: 10 },
   hoofdTabAan: { backgroundColor: '#fff', shadowColor: '#17201A', shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
-  hoofdTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
-  tabTeller: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
-  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  hoofdTekst: { color: MUTED, fontWeight: '700', fontSize: 14, flexShrink: 1 },
+  tabTeller: { minWidth: 20, height: 20, paddingHorizontal: 5, borderRadius: 10, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
+  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
   tellerBlok: { flex: 1, minWidth: 0 },
   tellerRegel: { color: '#555', fontSize: 14 },
   groepKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 10, backgroundColor: ORANJE_ZACHT, flexShrink: 0 },

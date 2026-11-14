@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, Soort } from '@/data/recept';
 import { Stijlbeeld } from '@/ui/stijlbeeld';
@@ -604,13 +604,29 @@ export default function Weekplanning() {
                           <ActieIcoon
                             naam="trash-outline"
                             label={t('planning.verwijderLabel', { dag: t(dagSleutel(dag)) })}
-                            onPress={() => (mag ? setVerwijderVraag(verwijderVraag === index ? null : index) : toonBeheer(index))}
+                            onPress={() => (mag ? setVerwijderVraag(index) : toonBeheer(index))}
                           />
                         )}
                       </View>
                       )}
+                      {/* WEEK-284: Gekookt onder de foto, in de ruimte die na bevestigen vrij komt. */}
+                      {bevestigd && (
+                        <Pressable
+                          style={[s.gedaanKnop, s.gedaanOnderFoto, gedaan && s.gedaanKnopAan]}
+                          onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer(index))}
+                          disabled={bezigGedaan !== null}
+                          accessibilityRole="checkbox"
+                          accessibilityState={{ checked: !!gedaan }}
+                          accessibilityLabel={t('planning.gedaanLabel', { recept: inTaal(recept, taal).naam })}
+                          hitSlop={6}
+                        >
+                          <Ionicons name={gedaan ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={gedaan ? '#fff' : PETROL} />
+                          <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]} numberOfLines={1}>{t('planning.gekookt')}</Text>
+                        </Pressable>
+                      )}
                     </View>
                     <View style={s.kaartInhoud}>
+                    <View style={s.kaartKopRij}>
                     <View style={s.kaartKop}>
                       <Text style={s.dag}>{(datum ? kortDatum(datum, taal) : '') || t(dagSleutel(dag))}{moment && moment !== 'avond' ? ` · ${t(`moment.${moment}`)}` : ''}</Text>
                       {gedaan ? (
@@ -618,6 +634,16 @@ export default function Weekplanning() {
                       ) : (
                         <Text style={bevestigd ? s.statusAan : s.statusWacht}>{t(bevestigd ? 'planning.bevestigd' : 'planning.nogTeBevestigen')}</Text>
                       )}
+                    </View>
+                    {/* WEEK-284: het boekje (ingrediënten en bereiding) rechtsboven op de kaart, bij elk gerecht. */}
+                    {heeftBereiding && (
+                      <ActieIcoon
+                        klein
+                        naam="book-outline"
+                        label={t('bereiding.icoon')}
+                        onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
+                      />
+                    )}
                     </View>
                     {/* WEEK-151: de titel krijgt de volle breedte; het boekje staat op de rij met het label. */}
                     <Text style={s.naam}>{inTaal(recept, taal).naam}</Text>
@@ -641,29 +667,7 @@ export default function Weekplanning() {
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
-                      {/* WEEK-284: het boekje (ingrediënten en bereiding) naast categorie en kooktijd, bij elk gerecht. */}
-                      {heeftBereiding && (
-                        <ActieIcoon
-                          klein
-                          naam="book-outline"
-                          label={t('bereiding.icoon')}
-                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
-                        />
-                      )}
                     </View>
-                    {verwijderVraag === index && wijzigbaar && (
-                      <View style={s.verwijderVak} accessibilityRole="alert">
-                        <Text style={s.verwijderTekst}>{t('planning.verwijderVraag')}</Text>
-                        <View style={s.verwijderKnoppen}>
-                          <Pressable style={[s.kleineKnop, s.verwijderNee]} onPress={() => setVerwijderVraag(null)} accessibilityRole="button">
-                            <Text style={s.verwijderNeeTekst}>{t('frigo.bewerkAnnuleer')}</Text>
-                          </Pressable>
-                          <Pressable style={[s.kleineKnop, s.verwijderJa]} onPress={() => verwijderDagKnop(index)} accessibilityRole="button">
-                            <Text style={s.verwijderJaTekst}>{t('planning.verwijderJa')}</Text>
-                          </Pressable>
-                        </View>
-                      </View>
-                    )}
                     {melding && melding.index === index && (
             <View style={s.infoVak} accessibilityRole="alert">
               <Ionicons name="information-circle" size={20} color={PETROL} />
@@ -675,23 +679,6 @@ export default function Weekplanning() {
               )}
             </View>
           )}
-                    {/* WEEK-114: de knop Gekookt op een eigen regel, links uitgelijnd, zodat hij nooit buiten de kaart valt. */}
-                    {bevestigd && (
-                    <View style={s.gedaanRij}>
-                      <Pressable
-                        style={[s.gedaanKnop, gedaan && s.gedaanKnopAan]}
-                        onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer(index))}
-                        disabled={bezigGedaan !== null}
-                        accessibilityRole="checkbox"
-                        accessibilityState={{ checked: !!gedaan }}
-                        accessibilityLabel={t('planning.gedaanLabel', { recept: inTaal(recept, taal).naam })}
-                        hitSlop={6}
-                      >
-                        <Ionicons name={gedaan ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={gedaan ? '#fff' : PETROL} />
-                        <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]}>{t('planning.gekookt')}</Text>
-                      </Pressable>
-                    </View>
-                    )}
                     </View>
                     </View>
                   </View>
@@ -702,6 +689,28 @@ export default function Weekplanning() {
 
         </View>
       )}
+
+      {/* WEEK-284: de vraag bij het vuilbakje in een venster in het midden van het scherm (een React-venster: werkt ook op het web). */}
+      <Modal visible={verwijderVraag !== null} transparent animationType="fade" onRequestClose={() => setVerwijderVraag(null)}>
+        <Pressable style={s.vensterAchtergrond} onPress={() => setVerwijderVraag(null)}>
+          <Pressable style={s.venster} onPress={() => undefined} accessibilityRole="alert">
+            <Text style={s.vensterTitel}>{t('planning.verwijderVraag')}</Text>
+            {verwijderVraag !== null && plan?.dagen[verwijderVraag] && (
+              <Text style={s.vensterTekst}>
+                {t('lijst.receptTitel', { dag: t(dagSleutel(plan.dagen[verwijderVraag].dag)), recept: inTaal(plan.dagen[verwijderVraag].recept, taal).naam })}
+              </Text>
+            )}
+            <View style={s.vensterKnoppen}>
+              <Pressable style={[s.vensterKnop, s.verwijderNee]} onPress={() => setVerwijderVraag(null)} accessibilityRole="button">
+                <Text style={s.verwijderNeeTekst}>{t('frigo.bewerkAnnuleer')}</Text>
+              </Pressable>
+              <Pressable style={[s.vensterKnop, s.verwijderJa]} onPress={() => verwijderVraag !== null && verwijderDagKnop(verwijderVraag)} accessibilityRole="button">
+                <Text style={s.verwijderJaTekst}>{t('planning.verwijderJa')}</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {meldVoorkeur && <Text style={s.melding}>{t(meldVoorkeur)}</Text>}
 
@@ -796,13 +805,18 @@ const s = StyleSheet.create({
   actieIcoonAan: { backgroundColor: PETROL },
   // WEEK-284
   actieIcoonKlein: { width: 32, height: 32, borderRadius: 16 },
-  verwijderVak: { backgroundColor: '#FBEAE5', borderRadius: 10, padding: 10, gap: 8, marginTop: 8 },
-  verwijderTekst: { color: '#7a2a14', fontSize: 13, fontWeight: '600' },
-  verwijderKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  kaartKopRij: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 },
+  gedaanOnderFoto: { alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 8, maxWidth: 96 },
+  vensterAchtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  venster: { width: '100%', maxWidth: 400, backgroundColor: '#fff', borderRadius: 16, padding: 18, gap: 10 },
+  vensterTitel: { fontSize: 17, fontWeight: '800', color: INKT },
+  vensterTekst: { fontSize: 14, color: MUTED },
+  vensterKnoppen: { flexDirection: 'row', gap: 10, marginTop: 6 },
+  vensterKnop: { flex: 1, height: 46, borderRadius: 12, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   verwijderNee: { borderColor: '#C9CFC7', backgroundColor: '#fff' },
-  verwijderNeeTekst: { color: '#444', fontSize: 13, fontWeight: '700' },
+  verwijderNeeTekst: { color: '#444', fontSize: 15, fontWeight: '700' },
   verwijderJa: { borderColor: '#B4472B', backgroundColor: '#B4472B' },
-  verwijderJaTekst: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  verwijderJaTekst: { color: '#fff', fontSize: 15, fontWeight: '700' },
   tweedeKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, padding: 12, alignItems: 'center' },
   tweedeKnopTekst: { color: PETROL, fontWeight: '700', fontSize: 15 },
   knop: { backgroundColor: PETROL, borderRadius: 14, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
