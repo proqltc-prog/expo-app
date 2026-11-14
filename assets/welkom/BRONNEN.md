@@ -6,7 +6,7 @@ vermelding niet verplicht, bewerken toegestaan. Verkleind tot 800 px breed. Geen
 | Bestand | Scherm | Pexels | Bewerking |
 |---|---|---|---|
 | start.jpg | Startpagina | https://www.pexels.com/photo/38431262/ | verkleind |
-| weekplan.jpg | Plan je week | https://www.pexels.com/photo/9738985/ | verkleind; de app legt er kalenderblaadjes op |
+| bord-maandag.jpg … bord-zondag.jpg | Plan je week | https://www.pexels.com/photo/9738985/ | zeven borden uitgesneden (320×320), rond getoond |
 | huishouden.jpg | Samen organiseren | https://www.pexels.com/photo/8279641/ | bijgesneden tot 4:5 |
 | frigo.jpg | Eerst wat je in huis hebt | https://www.pexels.com/photo/6508357/ | verkleind |
 | lijst.jpg | Je boodschappenlijst | https://www.pexels.com/photo/9070110/ | verkleind |

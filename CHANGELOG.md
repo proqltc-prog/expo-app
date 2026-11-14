@@ -12,10 +12,11 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 **WEEK-289** – Sfeerfoto's op de startpagina en in Aan de slag ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-289) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))
 
-- Startpagina: grote sfeerfoto bovenaan met afgeronde onderkant, het logo als wit badge half over de foto, warme crème achtergrond.
-- Startpagina: woordmerk in twee kleuren (Fa + menu), slogan met een sierlijntje en drie kenmerk-tegels (Weekmenu, Boodschappen, Gezond en vers).
-- Aan de slag: per scherm een fotokaart (zelfde grootte op elk scherm), het icoon als badge en een stapteller (1/7).
-- Plan je week: een kalenderblaadje met de dag op zeven borden, in de taal van de app.
+- Startpagina: grote sfeerfoto bovenaan die zacht overloopt in een warme crème, het logo als wit badge half over de foto.
+- Startpagina: woordmerk in twee kleuren (Fa + menu), slogan met een sierlijntje en één rustige regel met drie kenmerken (Weekmenu, Boodschappen, Gezond en vers).
+- Aan de slag: elke foto groot bovenaan zoals op de start, met stapteller (1/7), Overslaan en het icoon van het scherm als badge.
+- Plan je week: zeven ronde borden, volledig zichtbaar, met onder elk bord een kalendertje met de dag (MA … ZO, in de taal van de app).
+- Meld je aan: nieuw ontwerp met foto bovenaan, logo, witte Google-knop, Verder zonder account als hoofdknop en de waarschuwing in een kaartje.
 - Acht gratis Pexels-foto's in de app (samen ongeveer 0,7 MB, werkt offline), zonder gezichten of merken; bronnen in assets/welkom/BRONNEN.md.
 - Nieuw pakket expo-linear-gradient voor de kleurovergang op de foto's.
 

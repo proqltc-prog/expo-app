@@ -2,7 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { merkDelen, START_KENMERKEN, dagKort, FOTO_BRON, FOTO_SLEUTELS, FOTO_VERHOUDING, kaartVerhouding, KAART_VERHOUDING, uitlegFoto, WEEKPLAN_BLAADJES } from '@/lib/welkomFotos';
+import { BORDEN_BOVEN, dagKort, FOTO_BRON, FOTO_SLEUTELS, FOTO_VERHOUDING, heeftEigenFoto, heroHoogte, HERO_MIN, merkDelen, START_KENMERKEN, uitlegFoto, WEEKPLAN_BORDEN } from '@/lib/welkomFotos';
 import { UITLEG_SCHERMEN } from '@/lib/welkom';
 import { WEEKDAGEN } from '@/lib/planner/types';
 import { vertaal, TALEN } from '@/i18n';
@@ -36,9 +36,10 @@ describe('sfeerfoto\'s (WEEK-289)', () => {
 
   test('elk bestand bestaat, is klein genoeg en het geheel blijft onder 0,8 MB', () => {
     let totaal = 0;
-    for (const sleutel of FOTO_SLEUTELS) {
-      const grootte = statSync(join(MAP, `${sleutel}.jpg`)).size;
-      assert.ok(grootte < 160 * 1024, `${sleutel}: ${grootte}`);
+    const bestanden = [...FOTO_SLEUTELS.filter(heeftEigenFoto).map((k) => `${k}.jpg`), ...WEEKPLAN_BORDEN.map((d) => `bord-${d}.jpg`)];
+    for (const bestand of bestanden) {
+      const grootte = statSync(join(MAP, bestand)).size;
+      assert.ok(grootte < 160 * 1024, `${bestand}: ${grootte}`);
       totaal += grootte;
     }
     assert.ok(totaal < 800 * 1024, `totaal ${totaal}`);
@@ -53,17 +54,21 @@ describe('sfeerfoto\'s (WEEK-289)', () => {
     }
   });
 
-  test('alle fotokaarten even groot, en Plan je week wordt niet bijgesneden', () => {
-    for (const sleutel of FOTO_SLEUTELS) assert.equal(kaartVerhouding(sleutel), KAART_VERHOUDING, sleutel);
-    assert.equal(KAART_VERHOUDING, FOTO_VERHOUDING.weekplan); // de blaadjes liggen op de borden
+  test('de foto bovenaan is een vast deel van het scherm, met een minimum', () => {
+    assert.equal(heroHoogte(812), Math.round(812 * 0.44));
+    assert.equal(heroHoogte(400), HERO_MIN);
   });
 
-  test('Plan je week: zeven blaadjes, elke weekdag één keer, binnen de foto', () => {
-    assert.deepEqual(WEEKPLAN_BLAADJES.map((b) => b.dag).sort(), [...WEEKDAGEN].sort());
-    for (const b of WEEKPLAN_BLAADJES) {
-      assert.ok(b.x > 5 && b.x < 95 && b.y > 5 && b.y < 95, b.dag);
-      assert.ok(Math.abs(b.kanteling) <= 8, b.dag);
-    }
+  test('enkel Plan je week heeft geen gewone foto (het toont de borden)', () => {
+    assert.deepEqual(FOTO_SLEUTELS.filter((k) => !heeftEigenFoto(k)), ['weekplan']);
+  });
+
+  test('Plan je week: zeven borden, elke weekdag één keer, van maandag tot zondag, vier boven en drie onder', () => {
+    assert.equal(WEEKPLAN_BORDEN.length, 7);
+    assert.deepEqual([...WEEKPLAN_BORDEN].sort(), [...WEEKDAGEN].sort());
+    assert.equal(WEEKPLAN_BORDEN[0], 'maandag');
+    assert.equal(WEEKPLAN_BORDEN[6], 'zondag');
+    assert.equal(BORDEN_BOVEN, 4);
   });
 
   test('korte dagnamen in elke taal: twee letters, binnen een taal allemaal verschillend', () => {
