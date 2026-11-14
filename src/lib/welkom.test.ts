@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { nl } from '@/i18n/vertalingen/nl';
-import { bestemmingNaAanmelden, ROUTE_AANGEMELD, ROUTE_NA_INLOGGEN, ROUTE_NA_WELKOM, ROUTE_WELKOM, UITLEG_SCHERMEN, welkomNodig } from '@/lib/welkom';
+import { bestemmingNaAanmelden, ROUTE_AANGEMELD, ROUTE_NA_INLOGGEN, ROUTE_NA_WELKOM, ROUTE_WELKOM, uitlegNaar, UITLEG_SCHERMEN, VEEG_MIN, veegRichting, welkomNodig } from '@/lib/welkom';
 import { isProfielIngesteld, standaardProfiel } from '@/lib/profiel';
 
 describe('welkomNodig (WEEK-79, WEEK-91)', () => {
@@ -71,5 +71,25 @@ describe('uitlegschermen (WEEK-185)', () => {
       assert.ok(sleutels[scherm.titel], `ontbreekt: ${scherm.titel}`);
       assert.ok(sleutels[scherm.tekst], `ontbreekt: ${scherm.tekst}`);
     }
+  });
+});
+
+describe('Aan de slag: vorige, volgende en vegen (WEEK-289)', () => {
+  test('vorige en volgende binnen de schermen; aan de randen naar start of aanmelden', () => {
+    assert.deepEqual(uitlegNaar(3, 'volgende', 7), { soort: 'scherm', index: 4 });
+    assert.deepEqual(uitlegNaar(3, 'vorige', 7), { soort: 'scherm', index: 2 });
+    assert.deepEqual(uitlegNaar(0, 'vorige', 7), { soort: 'start' });
+    assert.deepEqual(uitlegNaar(6, 'volgende', 7), { soort: 'aanmelden' });
+  });
+
+  test('naar links vegen is volgende, naar rechts vorige', () => {
+    assert.equal(veegRichting(-80, 5), 'volgende');
+    assert.equal(veegRichting(80, -5), 'vorige');
+  });
+
+  test('een korte of vooral verticale beweging is geen veeg', () => {
+    assert.equal(veegRichting(VEEG_MIN - 1, 0), null);
+    assert.equal(veegRichting(-60, 80), null);
+    assert.equal(veegRichting(0, 0), null);
   });
 });

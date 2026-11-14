@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { Image, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TerugKnop } from '@/ui/terugKnop';
 import { router } from 'expo-router';
@@ -8,7 +8,7 @@ import { Sleutel } from '@/i18n';
 import { zetWelkomGezien } from '@/opslag/welkom';
 import { inlogMet, isAnoniem, koppel, stuurAanmeldMail } from '@/opslag/aanmelden';
 import { AANBIEDERS, AANMELDEN_MET_MAIL, Aanbieder, isGeldigEmail } from '@/lib/aanmelden';
-import { ROUTE_AANGEMELD, ROUTE_NA_WELKOM, UITLEG_SCHERMEN } from '@/lib/welkom';
+import { ROUTE_AANGEMELD, ROUTE_NA_WELKOM, uitlegNaar, UITLEG_SCHERMEN, veegRichting } from '@/lib/welkom';
 import { BORDEN_BOVEN, dagKort, heroHoogte, merkDelen, START_KENMERKEN, uitlegFoto, WEEKPLAN_BORDEN } from '@/lib/welkomFotos';
 import { WEEK_BORD, WELKOM_FOTO } from '@/ui/welkomFotos';
 import { useTaal } from '@/ui/taal';
@@ -156,10 +156,24 @@ export default function Welkom() {
 
   if (stap === 'uitleg') {
     const scherm = UITLEG_SCHERMEN[uitlegIndex];
-    const laatste = uitlegIndex === UITLEG_SCHERMEN.length - 1;
     const foto = uitlegFoto(scherm);
     const naAanmelden = () => setStap('aanmelden');
+    // WEEK-289: vorige en volgende, met de knoppen of door te vegen (naar links = volgende, naar rechts = vorige).
+    const ga = (richting: 'vorige' | 'volgende') => {
+      const naar = uitlegNaar(uitlegIndex, richting, UITLEG_SCHERMEN.length);
+      if (naar.soort === 'scherm') setUitlegIndex(naar.index);
+      else if (naar.soort === 'start') setStap('start');
+      else naAanmelden();
+    };
+    const veeg = PanResponder.create({
+      onMoveShouldSetPanResponderCapture: (_, g) => Math.abs(g.dx) > 15 && Math.abs(g.dx) > Math.abs(g.dy) * 1.5,
+      onPanResponderRelease: (_, g) => {
+        const richting = veegRichting(g.dx, g.dy);
+        if (richting) ga(richting);
+      },
+    });
     return (
+      <View style={s.vol} {...veeg.panHandlers}>
       <ScrollView contentContainerStyle={s.uitlegContainer}>
         <View style={[s.uitlegHero, { height: heroUitleg }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           {foto && foto !== 'weekplan' ? (
@@ -215,15 +229,17 @@ export default function Welkom() {
         </View>
         <View style={[s.onderaan, s.uitlegKnoppen]}>
           {stippen(uitlegIndex, UITLEG_SCHERMEN.length)}
-          <Pressable
-            style={s.knop}
-            onPress={() => (laatste ? naAanmelden() : setUitlegIndex(uitlegIndex + 1))}
-            accessibilityRole="button"
-          >
-            <Text style={s.knopTekst}>{t('uitleg.volgende')}</Text>
-          </Pressable>
+          <View style={s.knoppenRij}>
+            <Pressable style={s.knopTerug} onPress={() => ga('vorige')} accessibilityRole="button" accessibilityLabel={t('algemeen.terug')}>
+              <Ionicons name="arrow-back" size={22} color={KLEUR} />
+            </Pressable>
+            <Pressable style={[s.knop, s.knopVol]} onPress={() => ga('volgende')} accessibilityRole="button">
+              <Text style={s.knopTekst}>{t('uitleg.volgende')}</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
+      </View>
     );
   }
 
@@ -364,6 +380,10 @@ const s = StyleSheet.create({
   uitlegTekst: { alignItems: 'center', gap: 10, paddingHorizontal: 24, marginTop: -26, flex: 1 },
   badge: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: PAPIER },
   uitlegKnoppen: { paddingHorizontal: 24, marginTop: 20 },
+  vol: { flex: 1 },
+  knoppenRij: { flexDirection: 'row', gap: 12 },
+  knopTerug: { width: 58, borderRadius: 16, borderWidth: 1.5, borderColor: KLEUR, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  knopVol: { flex: 1 },
   aanmeldContainer: { flexGrow: 1, paddingBottom: 28, backgroundColor: PAPIER },
   terugRond: { position: 'absolute', top: 44, left: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.94)', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   terugInRond: { padding: 0, margin: 0 },
