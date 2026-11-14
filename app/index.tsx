@@ -11,6 +11,7 @@ import { voegAfgewezenToe } from '@/lib/planner/afwijzen';
 import { maakDbPool, planUitDatabase, vervangDbDag } from '@/lib/planner/dbplan';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { vervangDag, wisselGedaan } from '@/lib/planner/bijwerken';
+import { verwijderDag } from '@/lib/planner/kies';
 import { receptStatus } from '@/lib/planner/status';
 import { neemVertrekUitGezinsprofielVlag, startFase } from '@/lib/planner/startfase';
 import { laadFrigo } from '@/opslag/frigo';
@@ -37,7 +38,7 @@ import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorM
 import { vermijdOpties as vermijdKeuzesVoor, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
 import { KOOKTIJD_BEREIK, KooktijdCode } from '@/lib/kooktijd';
-import { alleDagenAfgerond, bevestigPlanDag, magDagWijzigen, magZelfKiezen, blokkadeNieuwPlan, openBevestigdeDagen, planZonderHoeveelheden, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleDagenAfgerond, bevestigPlanDag, magDagVerwijderen, magDagWijzigen, magZelfKiezen, blokkadeNieuwPlan, openBevestigdeDagen, planZonderHoeveelheden, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -100,16 +101,16 @@ function Chips<T extends string | number>({ opties, gekozen, label, onWissel }: 
 }
 
 /** Icoonknop voor een actie op één dag (WEEK-92). Het label blijft voor schermlezers en in de tooltip. */
-function ActieIcoon({ naam, label, onPress, aan, bezig }: { naam: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; aan?: boolean; bezig?: boolean }) {
+function ActieIcoon({ naam, label, onPress, aan, bezig, klein }: { naam: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; aan?: boolean; bezig?: boolean; klein?: boolean }) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
       hitSlop={8}
-      style={[s.actieIcoon, aan && s.actieIcoonAan]}
+      style={[s.actieIcoon, klein && s.actieIcoonKlein, aan && s.actieIcoonAan]}
     >
-      {bezig ? <ActivityIndicator size="small" color={PETROL} /> : <Ionicons name={naam} size={22} color={aan ? '#fff' : PETROL} />}
+      {bezig ? <ActivityIndicator size="small" color={PETROL} /> : <Ionicons name={naam} size={klein ? 18 : 22} color={aan ? '#fff' : PETROL} />}
     </Pressable>
   );
 }
@@ -124,6 +125,8 @@ export default function Weekplanning() {
   // WEEK-271: een korte melding op de pagina; met index hoort ze bij die kaart, met zelfKiezen krijgt ze die knop.
   const [melding, setMelding] = useState<{ tekst: string; index?: number; zelfKiezen?: boolean } | null>(null);
   const [bezigDag, setBezigDag] = useState<number | null>(null);
+  // WEEK-284: de kaart waarop de vraag "Deze dag van het weekmenu halen?" open staat (op de pagina, ook op het web).
+  const [verwijderVraag, setVerwijderVraag] = useState<number | null>(null);
   const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
   const [keuzes, setKeuzes] = useState<Keuzes>(STANDAARD_KEUZES);
   const [kalenderOpen, setKalenderOpen] = useState(false);
@@ -352,6 +355,16 @@ export default function Weekplanning() {
     }
   };
 
+  // WEEK-284: de dag van het weekmenu halen. Enkel een niet-bevestigd gerecht, dus niets op de boodschappenlijst.
+  const verwijderDagKnop = async (index: number) => {
+    setVerwijderVraag(null);
+    const dag = plan?.dagen[index];
+    if (!plan || !dag || !mag || !magDagVerwijderen(dag)) return;
+    const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: dag.recept.naam };
+    const bewaard = await wijzigPlan((huidig) => (magDagVerwijderen(huidig.dagen[index]) ? verwijderDag(huidig, index, verwacht) : huidig));
+    if (bewaard) setPlan(bewaard);
+  };
+
   // Zelf kiezen (WEEK-44): een ander gerecht uit de databank of de eigen recepten voor deze dag.
   const kiesZelf = (index: number) => {
     const dag = plan?.dagen[index];
@@ -564,14 +577,13 @@ export default function Weekplanning() {
                     <View style={s.kaartLinks}>
                     {/* WEEK-244: foto van keuken en soort gerecht, met de vlag van de keuken. */}
                     <GerechtFoto pad={recept.foto} stijl={recept.stijlen[0]} stijlFotos={stijlFotos} />
-                      {/* WEEK-269: geen vuilbakje meer; het boekje (Bereiding) staat als rond icoon in de rij en is altijd zichtbaar. */}
+                      {/* WEEK-284: wijzigen (bevestigen, ander gerecht, zelf kiezen, verwijderen) enkel zolang het gerecht niet bevestigd is. */}
+                      {wijzigbaar && (
                       <View style={s.actieRij}>
-                        {wijzigbaar && (
                           <>
                             <ActieIcoon
-                              naam={bevestigd ? 'checkmark-circle' : 'checkmark-circle-outline'}
-                              label={t(bevestigd ? 'planning.bevestigd' : 'planning.bevestigDeze')}
-                              aan={!!bevestigd}
+                              naam="checkmark-circle-outline"
+                              label={t('planning.bevestigDeze')}
                               onPress={() => (mag ? bevestigDagKnop(index) : toonBeheer(index))}
                             />
                             <ActieIcoon
@@ -581,8 +593,6 @@ export default function Weekplanning() {
                               onPress={() => (mag ? herdoeDag(index) : toonBeheer(index))}
                             />
                           </>
-                        )}
-                        {/* WEEK-272: zelf kiezen (of geen gerecht deze dag) ook na bevestigen, zolang het niet gekookt is. */}
                         {magZelfKiezen(kaarten.dagen[index]) && (
                           <ActieIcoon
                             naam="create-outline"
@@ -590,14 +600,15 @@ export default function Weekplanning() {
                             onPress={() => (mag ? kiesZelf(index) : toonBeheer(index))}
                           />
                         )}
-                        {heeftBereiding && (
+                        {magDagVerwijderen(kaarten.dagen[index]) && (
                           <ActieIcoon
-                            naam="book-outline"
-                            label={t('bereiding.icoon')}
-                            onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
+                            naam="trash-outline"
+                            label={t('planning.verwijderLabel', { dag: t(dagSleutel(dag)) })}
+                            onPress={() => (mag ? setVerwijderVraag(verwijderVraag === index ? null : index) : toonBeheer(index))}
                           />
                         )}
                       </View>
+                      )}
                     </View>
                     <View style={s.kaartInhoud}>
                     <View style={s.kaartKop}>
@@ -630,7 +641,29 @@ export default function Weekplanning() {
                     <View style={s.rij}>
                       <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[recept.soort] }]}>{t(`soort.${recept.soort}`)}</Text>
                       <Text style={s.min}>{t('algemeen.minuten', { n: recept.minuten })}</Text>
+                      {/* WEEK-284: het boekje (ingrediënten en bereiding) naast categorie en kooktijd, bij elk gerecht. */}
+                      {heeftBereiding && (
+                        <ActieIcoon
+                          klein
+                          naam="book-outline"
+                          label={t('bereiding.icoon')}
+                          onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
+                        />
+                      )}
                     </View>
+                    {verwijderVraag === index && wijzigbaar && (
+                      <View style={s.verwijderVak} accessibilityRole="alert">
+                        <Text style={s.verwijderTekst}>{t('planning.verwijderVraag')}</Text>
+                        <View style={s.verwijderKnoppen}>
+                          <Pressable style={[s.kleineKnop, s.verwijderNee]} onPress={() => setVerwijderVraag(null)} accessibilityRole="button">
+                            <Text style={s.verwijderNeeTekst}>{t('frigo.bewerkAnnuleer')}</Text>
+                          </Pressable>
+                          <Pressable style={[s.kleineKnop, s.verwijderJa]} onPress={() => verwijderDagKnop(index)} accessibilityRole="button">
+                            <Text style={s.verwijderJaTekst}>{t('planning.verwijderJa')}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                    )}
                     {melding && melding.index === index && (
             <View style={s.infoVak} accessibilityRole="alert">
               <Ionicons name="information-circle" size={20} color={PETROL} />
@@ -761,6 +794,15 @@ const s = StyleSheet.create({
   actieRij: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8 },
   actieIcoon: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, borderColor: PETROL, alignItems: 'center', justifyContent: 'center' },
   actieIcoonAan: { backgroundColor: PETROL },
+  // WEEK-284
+  actieIcoonKlein: { width: 32, height: 32, borderRadius: 16 },
+  verwijderVak: { backgroundColor: '#FBEAE5', borderRadius: 10, padding: 10, gap: 8, marginTop: 8 },
+  verwijderTekst: { color: '#7a2a14', fontSize: 13, fontWeight: '600' },
+  verwijderKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  verwijderNee: { borderColor: '#C9CFC7', backgroundColor: '#fff' },
+  verwijderNeeTekst: { color: '#444', fontSize: 13, fontWeight: '700' },
+  verwijderJa: { borderColor: '#B4472B', backgroundColor: '#B4472B' },
+  verwijderJaTekst: { color: '#fff', fontSize: 13, fontWeight: '700' },
   tweedeKnop: { borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, padding: 12, alignItems: 'center' },
   tweedeKnopTekst: { color: PETROL, fontWeight: '700', fontSize: 15 },
   knop: { backgroundColor: PETROL, borderRadius: 14, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },

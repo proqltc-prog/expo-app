@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.146.0] – 2026-11-14
+
+- Weekmenu: het vuilbakje is terug bij een gerecht dat nog niet bevestigd is; het haalt de hele dag van het weekmenu, na een korte vraag op de kaart. Een bevestigd gerecht ligt vast: geen Ander gerecht, Verwijderen of Zelf kiezen meer. Het boekje (ingrediënten en bereiding) staat naast categorie en kooktijd. (WEEK-284)
+- Het venster Product toevoegen past op een iPhone: Annuleren en Bewaren staan altijd zichtbaar onderaan, de velden scrollen. (WEEK-285)
+- Boodschappenlijst en In huis compacter op de smartphone: het tabblad heet Weekmenu, Andere producten staan altijd per categorie, zoeken en toevoegen zitten achter een icoon. De producten krijgen zo 133 px meer plaats. (WEEK-286)
+
+**Jira:** [WEEK-284](https://proqltc-1791495894841.atlassian.net/browse/WEEK-284), [WEEK-285](https://proqltc-1791495894841.atlassian.net/browse/WEEK-285), [WEEK-286](https://proqltc-1791495894841.atlassian.net/browse/WEEK-286) · **Confluence:** [WEEK-284 / 285 / 286](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886721)
+
 ## [0.145.0] – 2026-11-14
 
 - Gezinsruimte: de beheerder krijgt altijd het label "Beheerder" in de ledenlijst, ook zonder voornaam. (WEEK-282)

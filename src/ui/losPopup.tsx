@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { AFDELINGEN, Afdeling } from '@/data/ingredienten';
 import { leesLosInvoer, LosWijziging, ZELF_EENHEDEN } from '@/lib/frigo';
 import { eenheidNaam, Sleutel } from '@/i18n';
@@ -7,6 +7,7 @@ import { datumToestel, naarInvoerDatum, vandaag } from '@/lib/houdbaarheid';
 import { Ionicons } from '@expo/vector-icons';
 import { DatumKiezer } from '@/ui/datumKiezer';
 import { useTaal } from '@/ui/taal';
+import { popupHoogte } from '@/lib/popupHoogte';
 
 const ORANJE = '#E8680F';
 const INKT = '#17201A';
@@ -47,10 +48,12 @@ type Props = {
  * Velden die uit staan, behouden hun startwaarde. Tikken binnen het venster sluit niet.
  */
 export function LosPopup({ opties, onSluit, onBewaar }: Props) {
+  // WEEK-285: de hoogte volgt het zichtbare scherm (op een iPhone in Safari kleiner dan 100% door de werkbalken).
+  const { height } = useWindowDimensions();
   return (
     <Modal visible={opties !== null} transparent animationType="fade" onRequestClose={onSluit}>
       <Pressable style={s.achtergrond} onPress={onSluit}>
-        <Pressable style={s.venster} onPress={() => undefined}>
+        <Pressable style={[s.venster, { maxHeight: popupHoogte(height) }]} onPress={() => undefined}>
           {opties && <Inhoud key={opties.sleutel} opties={opties} onSluit={onSluit} onBewaar={onBewaar} />}
         </Pressable>
       </Pressable>
@@ -91,7 +94,9 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={s.inhoud}>
+    <>
+    {/* WEEK-285: enkel de velden scrollen; de knoppen staan eronder, altijd zichtbaar. */}
+    <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={s.inhoud}>
       <Text style={s.kop}>{opties.titel}</Text>
       <Text style={s.naam}>{opties.naam}</Text>
 
@@ -182,6 +187,7 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
         </>
       )}
 
+    </ScrollView>
       <View style={s.knoppen}>
         <Pressable style={[s.knop, s.knopLicht]} onPress={onSluit} accessibilityRole="button">
           <Text style={s.knopLichtTekst}>{t('frigo.bewerkAnnuleer')}</Text>
@@ -190,14 +196,15 @@ function Inhoud({ opties, onSluit, onBewaar }: { opties: PopupOpties; onSluit: (
           <Text style={s.knopTekst}>{t('frigo.bewerkBewaar')}</Text>
         </Pressable>
       </View>
-    </ScrollView>
+    </>
   );
 }
 
 const s = StyleSheet.create({
-  achtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  venster: { width: '100%', maxWidth: 480, maxHeight: '85%', backgroundColor: '#fff', borderRadius: 16, padding: 18 },
-  inhoud: { gap: 8 },
+  achtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 12 },
+  venster: { width: '100%', maxWidth: 480, backgroundColor: '#fff', borderRadius: 16, padding: 16, flexDirection: 'column' },
+  scroll: { flexShrink: 1, minHeight: 0 },
+  inhoud: { gap: 6, paddingBottom: 4 },
   kop: { fontSize: 18, fontWeight: '800', color: INKT },
   naam: { fontSize: 15, color: MUTED, marginBottom: 6 },
   label: { fontSize: 13, fontWeight: '700', color: MUTED, marginTop: 8 },
@@ -206,14 +213,14 @@ const s = StyleSheet.create({
   veldFout: { borderColor: '#B23A05' },
   fout: { color: '#B23A05', fontSize: 13 },
   rij: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: '#fff' },
+  chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 11, paddingVertical: 5, backgroundColor: '#fff' },
   chipTekst: { color: '#444' },
   chipTekstAan: { color: '#fff', fontWeight: '700' },
   datumRij: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   datumKnop: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff' },
   datumTekst: { color: INKT, fontSize: 15 },
   datumLeeg: { color: MUTED },
-  knoppen: { flexDirection: 'row', gap: 10, marginTop: 14 },
+  knoppen: { flexDirection: 'row', gap: 10, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#EEF1EC', marginTop: 4 },
   knop: { flex: 1, height: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   knopLicht: { borderWidth: 1, borderColor: '#ccc', backgroundColor: '#fff' },
   knopLichtTekst: { color: '#444', fontWeight: '700' },

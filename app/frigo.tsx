@@ -20,6 +20,8 @@ import { usePaginaInfo } from '@/ui/paginaInfo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
 import { ProductInvoer } from '@/ui/productInvoer';
 import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
+import { IcoonKnop } from '@/ui/icoonKnop';
+import { ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -56,6 +58,8 @@ export default function Frigo() {
   // Welke afdelingen open staan (WEEK-124); standaard is alles ingeklapt.
   const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   // WEEK-242: voor welk product de kalender van de houdbaarheid open staat (het oudste exemplaar), of null.
+  // WEEK-286: zoeken en toevoegen ingeklapt achter het zoekicoon.
+  const [zoekOpen, setZoekOpen] = useState(ZOEKEN_STANDAARD_OPEN);
   const [kalenderVoor, setKalenderVoor] = useState<{ id: string; waarde?: string } | null>(null);
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
@@ -181,24 +185,35 @@ export default function Frigo() {
   // Accentkleur van de actieve sheet: petrol voor planner-frigo, oranje voor losse producten (WEEK-75).
   const thema = sheetThema(sheet);
 
+  // WEEK-286: één compacte regel met de teller, het zoekicoon en (bij andere producten) de scanner; het veld klapt open.
   const kop = (
     <View>
-      <ProductInvoer
-        sheet={sheet}
-        accent={thema.accent}
-        accentZacht={thema.accentZacht}
-        staatOp={(code) => sheets(frigo).planner.some((f) => (f.code ? dbCodeVan(f.code) === code : f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase()))}
-        onReceptKies={(item, h) => voegCatalogusToe(item, h)}
-        onLosPlus={openNieuwLos}
-        scanKnop={
-          /* Scannen vanaf de frigo (WEEK-47). Een camera-icoon zodat de rij op een smal scherm past (WEEK-176). */
-          <Pressable style={[s.scan, { borderColor: thema.accent }]} onPress={() => router.navigate('/scan?van=frigo')} accessibilityRole="button" accessibilityLabel={t('frigo.scan')}>
-            <Ionicons name="camera-outline" size={22} color={thema.accent} />
-          </Pressable>
-        }
-      />
-      {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
-      {aantal ? <Text style={s.teller}>{tn('frigo.teller', aantal)}</Text> : <Text style={s.uitleg}>{t(legeTabUitleg('huis', sheet))}</Text>}
+      <View style={s.gereedschap}>
+        {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
+        <Text style={[aantal ? s.teller : s.uitleg, s.gereedschapTekst]} numberOfLines={aantal ? 2 : undefined}>
+          {aantal ? tn('frigo.teller', aantal) : t(legeTabUitleg('huis', sheet))}
+        </Text>
+        <IcoonKnop
+          naam={zoekOpen ? 'close' : sheet === 'los' ? 'add' : 'search'}
+          label={t(zoekOpen ? 'lijst.zoekSluit' : 'lijst.zoekOpen')}
+          kleur={thema.accent}
+          aan={zoekOpen}
+          onPress={() => setZoekOpen((o) => !o)}
+        />
+        {/* Scannen vanaf In huis (WEEK-47), enkel bij andere producten zoals voorheen. */}
+        {sheet === 'los' && <IcoonKnop naam="camera-outline" label={t('frigo.scan')} kleur={thema.accent} onPress={() => router.navigate('/scan?van=frigo')} />}
+      </View>
+      {zoekOpen && (
+        <ProductInvoer
+          sheet={sheet}
+          accent={thema.accent}
+          accentZacht={thema.accentZacht}
+          staatOp={(code) => sheets(frigo).planner.some((f) => (f.code ? dbCodeVan(f.code) === code : f.naam.toLowerCase() === ingredientNaam(code, taal).toLowerCase()))}
+          onReceptKies={(item, h) => voegCatalogusToe(item, h)}
+          onLosPlus={openNieuwLos}
+          autoFocus
+        />
+      )}
     </View>
   );
 
@@ -322,7 +337,9 @@ export default function Frigo() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
-  uitleg: { color: MUTED, marginTop: 12 },
+  uitleg: { color: MUTED },
+  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  gereedschapTekst: { flex: 1, minWidth: 0, marginVertical: 0 },
   invoer: { flexDirection: 'row', gap: 8, marginTop: 12 },
   plus: { width: 44, height: 44, borderRadius: 10, backgroundColor: KLEUR, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   plusTekst: { color: '#fff', fontSize: 24, fontWeight: '700' },
@@ -362,7 +379,7 @@ const s = StyleSheet.create({
   tellerBlok: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
   tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
   tellerTekstAan: { color: '#fff' },
-  streep: { height: 4, borderRadius: 2, marginTop: 10 },
+  streep: { height: 3, borderRadius: 2, marginTop: 6 },
   zoekVeld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', marginTop: 10 },
   resultaten: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
   leegTekst: { color: '#777' },

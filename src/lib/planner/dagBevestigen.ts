@@ -15,11 +15,16 @@ export function magDagWijzigen(dag: PlanDag): boolean {
 }
 
 /**
- * WEEK-272: zelf een ander gerecht kiezen of het gerecht weghalen ("Geen gerecht deze dag") mag zolang het niet gekookt is,
- * ook na bevestigen. Gekookt blijft vast.
+ * Zelf een ander gerecht kiezen of het gerecht weghalen ("Geen gerecht deze dag").
+ * WEEK-284: enkel zolang het gerecht niet bevestigd is; een bevestigd of gekookt gerecht ligt vast (vroeger WEEK-272: tot gekookt).
  */
 export function magZelfKiezen(dag: PlanDag | undefined): boolean {
-  return !!dag && !dag.gedaan;
+  return !!dag && magDagWijzigen(dag);
+}
+
+/** WEEK-284: het vuilbakje haalt de hele dag van het weekmenu, enkel bij een gerecht dat nog niet bevestigd is. */
+export function magDagVerwijderen(dag: PlanDag | undefined): boolean {
+  return !!dag && magDagWijzigen(dag);
 }
 
 /** De dagen die bevestigd zijn: enkel die horen op de boodschappenlijst. */

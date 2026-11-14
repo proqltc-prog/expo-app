@@ -22,13 +22,15 @@ type Props = {
   scanKnop?: ReactNode;
   /** WEEK-235: tekst in het losse-veld; standaard die van de frigo ("wat al in huis is"), de lijst geeft een eigen tekst. */
   losTekst?: string;
+  /** WEEK-286: na het openklappen met het zoekicoon staat de cursor meteen in het veld. */
+  autoFocus?: boolean;
 };
 
 /**
  * Invoer van de boodschappen- of frigo-pagina (WEEK-182): voor Recepten een zoekveld met een keuzelijst
  * uit de productdatabank (enkel de hoeveelheid is in te geven); voor Losse producten een naamveld dat via + de popup opent.
  */
-export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKies, onLosPlus, scanKnop, losTekst }: Props) {
+export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKies, onLosPlus, scanKnop, losTekst, autoFocus }: Props) {
   const { t, taal } = useTaal();
   const losLabel = losTekst ?? t('frigo.toevoegen');
   const [zoek, setZoek] = useState('');
@@ -50,6 +52,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
             setNieuw('');
           }}
           returnKeyType="done"
+          autoFocus={autoFocus}
           accessibilityLabel={losLabel}
         />
         <Pressable
@@ -77,7 +80,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
 
   return (
     <View style={s.blok}>
-      <TextInput style={s.veld} placeholder={t('frigo.zoekIngredient')} value={zoek} onChangeText={setZoek} accessibilityLabel={t('frigo.zoekIngredient')} />
+      <TextInput style={s.veld} placeholder={t('frigo.zoekIngredient')} value={zoek} onChangeText={setZoek} autoFocus={autoFocus} accessibilityLabel={t('frigo.zoekIngredient')} />
       {zoek.trim() ? (
         resultaten.length === 0 ? (
           <Text style={s.leeg}>{t('frigo.geenIngredient')}</Text>
@@ -125,8 +128,8 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
 }
 
 const s = StyleSheet.create({
-  blok: { gap: 8, marginTop: 10 },
-  invoer: { flexDirection: 'row', gap: 8, marginTop: 12, alignItems: 'center' },
+  blok: { gap: 8, marginTop: 6 },
+  invoer: { flexDirection: 'row', gap: 8, marginTop: 6, alignItems: 'center' },
   veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', color: INKT, minWidth: 0 },
   veldFlex: { flex: 1 },
   getal: { width: 110 },

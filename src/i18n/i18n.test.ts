@@ -184,10 +184,10 @@ describe('Frans: beleefdheidsvorm en vaste woordenlijst (WEEK-238)', () => {
 
 describe('namen In huis, Boodschappen, Voor het menu / Andere producten (WEEK-239)', () => {
   const verwacht = {
-    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Voor de weekplanner', ander: 'Andere producten' },
-    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Pour le planificateur', ander: 'Autres produits' },
-    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Für den Wochenplaner', ander: 'Andere Produkte' },
-    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'For the meal planner', ander: 'Other products' },
+    nl: { lijst: 'Boodschappen', huis: 'In huis', boven: 'Te kopen', menu: 'Weekmenu', ander: 'Andere producten' },
+    fr: { lijst: 'Courses', huis: 'À la maison', boven: 'À acheter', menu: 'Menu de la semaine', ander: 'Autres produits' },
+    de: { lijst: 'Einkauf', huis: 'Zuhause', boven: 'Zu kaufen', menu: 'Wochenmenü', ander: 'Andere Produkte' },
+    en: { lijst: 'Shopping', huis: 'At home', boven: 'To buy', menu: 'Weekly menu', ander: 'Other products' },
   } as const;
   for (const [taal, w] of Object.entries(verwacht) as [keyof typeof verwacht, (typeof verwacht)['nl']][]) {
     test(`${taal}: de tabs dragen de nieuwe namen`, () => {

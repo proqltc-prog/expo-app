@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { alleBevestigdeGekookt, bevestigPlanDag, blokkadeNieuwPlan, magZelfKiezen, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
+import { alleBevestigdeGekookt, bevestigPlanDag, blokkadeNieuwPlan, magDagVerwijderen, magZelfKiezen, bevestigdeDagen, heeftBevestigdPlan, magDagWijzigen, openBevestigdeDagen, alleDagenAfgerond, planZonderHoeveelheden, vraagtBevestigingVoorNieuwPlan, zichtbaarWeekmenu } from '@/lib/planner/dagBevestigen';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import type { PlanDag, Weekplan } from '@/lib/planner/types';
 
@@ -205,15 +205,30 @@ describe('WEEK-261/262: mag "Plan mijn week" een nieuw weekmenu maken?', () => {
   });
 });
 
-describe('WEEK-272: zelf kiezen of geen gerecht deze dag', () => {
-  test('mag bij een open en bij een bevestigd gerecht, niet bij een gekookt', () => {
+describe('WEEK-272/284: zelf kiezen of geen gerecht deze dag', () => {
+  test('WEEK-284: mag enkel bij een open gerecht, niet na bevestigen of koken', () => {
     assert.equal(magZelfKiezen(dag({ dag: 'maandag' })), true);
-    assert.equal(magZelfKiezen(dag({ dag: 'maandag', bevestigd: true })), true);
+    assert.equal(magZelfKiezen(dag({ dag: 'maandag', bevestigd: true })), false);
     assert.equal(magZelfKiezen(dag({ dag: 'maandag', bevestigd: true, gedaan: true })), false);
     assert.equal(magZelfKiezen(undefined), false);
   });
   test('regressie: vervangen en bevestigen blijven enkel voor open gerechten', () => {
     assert.equal(magDagWijzigen(dag({ dag: 'maandag', bevestigd: true })), false);
     assert.equal(magDagWijzigen(dag({ dag: 'maandag' })), true);
+  });
+});
+
+describe('WEEK-284: vuilbakje op de weekmenukaart', () => {
+  test('enkel bij een gerecht dat nog niet bevestigd en niet gekookt is', () => {
+    assert.equal(magDagVerwijderen(dag({ dag: 'maandag' })), true);
+    assert.equal(magDagVerwijderen(dag({ dag: 'maandag', bevestigd: true })), false);
+    assert.equal(magDagVerwijderen(dag({ dag: 'maandag', bevestigd: true, gedaan: true })), false);
+    assert.equal(magDagVerwijderen(undefined), false);
+  });
+  test('regressie: verwijderen volgt dezelfde regel als vervangen', () => {
+    for (const d of [dag({ dag: 'maandag' }), dag({ dag: 'maandag', bevestigd: true }), dag({ dag: 'maandag', gedaan: true })]) {
+      assert.equal(magDagVerwijderen(d), magDagWijzigen(d));
+      assert.equal(magZelfKiezen(d), magDagWijzigen(d));
+    }
   });
 });

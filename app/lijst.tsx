@@ -26,6 +26,8 @@ import { ProductInvoer } from '@/ui/productInvoer';
 import { SheetSchakelaar } from '@/ui/sheetSchakelaar';
 import { SectieKop } from '@/ui/sectieKop';
 import { usePaginaInfo } from '@/ui/paginaInfo';
+import { IcoonKnop } from '@/ui/icoonKnop';
+import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -79,6 +81,8 @@ export default function Lijst() {
   // De popup voor een los product: nieuw (bewerkId leeg) of wijzigen van het item met dat id.
   const [losPopup, setLosPopup] = useState<PopupOpties | null>(null);
   const [bewerkId, setBewerkId] = useState<string | null>(null);
+  // WEEK-286: zoeken en toevoegen ingeklapt achter het zoekicoon.
+  const [zoekOpen, setZoekOpen] = useState(ZOEKEN_STANDAARD_OPEN);
 
   useEffect(() => {
     laadWeergave().then(setWeergave);
@@ -228,14 +232,66 @@ export default function Lijst() {
   const sheetItems = useMemo(() => opSheet(zichtbaar, sheetLijst), [zichtbaar, sheetLijst]);
   // WEEK-144: receptgroepen in de volgorde van het weekplan, niet op weekdag.
   const dagVolgorde = useMemo(() => plan?.dagen.map((d) => d.dag), [plan]);
+  // WEEK-286: andere producten staan altijd per categorie; enkel bij het weekmenu kies je per gerecht.
+  const groep = weergaveVoorSheet(sheet, weergave);
   const data = useMemo(
-    () => maakSecties(sheetItems, weergave, dagVolgorde).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
+    () => maakSecties(sheetItems, groep, dagVolgorde).map((sectie) => ({ ...sectie, title: titel(sectie), data: zichtbareRegels(sectie.regels, sectie.sleutel, uitgeklapt) })),
     // titel() gebruikt de taal en het plan; daarom staan die in de afhankelijkheden
-    [sheetItems, weergave, dagVolgorde, taal, plan, uitgeklapt]
+    [sheetItems, groep, dagVolgorde, taal, plan, uitgeklapt]
   );
 
   // WEEK-137: de teller is de som van de tellers per recept of categorie in de huidige weergave.
-  const { open, totaal } = useMemo(() => telRegels(maakSecties(sheetItems, weergave, dagVolgorde)), [sheetItems, weergave, dagVolgorde]);
+  const { open, totaal } = useMemo(() => telRegels(maakSecties(sheetItems, groep, dagVolgorde)), [sheetItems, groep, dagVolgorde]);
+
+  // WEEK-286: één compacte regel (teller, groepering, zoekicoon) die mee scrolt; het zoekveld klapt open onder de regel.
+  const accent = sheetThema(sheet).accent;
+  const kop = (
+    <View>
+      <View style={s.gereedschap}>
+        <View style={s.tellerBlok}>
+          <Text style={s.tellerRegel} numberOfLines={totaal ? 2 : undefined}>
+            {totaal ? t('lijst.teller', { open, totaal }) : t(legeTabUitleg('lijst', sheet))}
+          </Text>
+          {gezin && (
+            <Text style={[s.gedeeld, status === 'offline' && s.offline]} numberOfLines={1}>
+              {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
+            </Text>
+          )}
+        </View>
+        {toonGroepering(sheet) && (
+          <Pressable
+            style={s.groepKnop}
+            onPress={() => kiesWeergave(andereWeergave(weergave))}
+            accessibilityRole="button"
+            accessibilityLabel={t('lijst.groepWissel', { huidig: t(weergave === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie') })}
+          >
+            <Ionicons name={(weergave === 'recept' ? 'restaurant-outline' : 'grid-outline') as IoniconNaam} size={16} color={ORANJE} />
+            <Text style={s.groepKnopTekst} numberOfLines={1}>{t(weergave === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie')}</Text>
+            <Ionicons name={'swap-vertical' as IoniconNaam} size={14} color={MUTED} />
+          </Pressable>
+        )}
+        <IcoonKnop
+          naam={(zoekOpen ? 'close' : sheet === 'los' ? 'add' : 'search') as IoniconNaam}
+          label={t(zoekOpen ? 'lijst.zoekSluit' : 'lijst.zoekOpen')}
+          kleur={accent}
+          aan={zoekOpen}
+          onPress={() => setZoekOpen((o) => !o)}
+        />
+      </View>
+      {zoekOpen && (
+        <ProductInvoer
+          sheet={sheet}
+          accent={accent}
+          accentZacht={sheetThema(sheet).accentZacht}
+          staatOp={(code) => staatOpLijst(items, code)}
+          onReceptKies={voegReceptToe}
+          onLosPlus={openNieuwLos}
+          losTekst={t('lijst.toevoegen')}
+          autoFocus
+        />
+      )}
+    </View>
+  );
 
   const hoofdTabs = (['winkels', 'boodschappen'] as const).map((h) => {
     const aan = hoofd === h;
@@ -259,7 +315,7 @@ export default function Lijst() {
           {t(h === 'winkels' ? 'lijst.tabWinkels' : 'lijst.tabBoodschappen')}
         </Text>
         {h === 'boodschappen' && (
-          <View style={[s.teller, aan && { backgroundColor: kleur, borderColor: kleur }]}>
+          <View style={[s.tabTeller, aan && { backgroundColor: kleur, borderColor: kleur }]}>
             <Text style={[s.tellerTekst, aan && { color: '#fff' }]}>{open}</Text>
           </View>
         )}
@@ -296,46 +352,9 @@ export default function Lijst() {
             aantallen={{ planner: opSheet(zichtbaar, 'recept').length, los: opSheet(zichtbaar, 'los').length }}
           />
           <View style={[s.streep, { backgroundColor: sheetThema(sheet).accent }]} />
-          <ProductInvoer
-            sheet={sheet}
-            accent={sheetThema(sheet).accent}
-            accentZacht={sheetThema(sheet).accentZacht}
-            staatOp={(code) => staatOpLijst(items, code)}
-            onReceptKies={voegReceptToe}
-            onLosPlus={openNieuwLos}
-            losTekst={t('lijst.toevoegen')}
-          />
 
-          {/* Groeperen per recept of per categorie. */}
-          <View style={s.groepering} accessibilityRole="tablist">
-            {(['categorie', 'recept'] as Weergave[]).map((w) => {
-              const aan = weergave === w;
-              return (
-                <Pressable
-                  key={w}
-                  style={[s.pil, aan && s.pilAan]}
-                  onPress={() => kiesWeergave(w)}
-                  accessibilityRole="tab"
-                  accessibilityState={{ selected: aan }}
-                >
-                  <Text style={[s.pilTekst, aan && s.pilTekstAan]}>
-                    {t(w === 'recept' ? 'lijst.perRecept' : 'lijst.perCategorie')}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          {gezin && (
-            <Text style={[s.gedeeld, status === 'offline' && s.offline]}>
-              {t('lijst.gedeeld', { status: t(`gezin.status.${status}` as Sleutel) })}
-            </Text>
-          )}
-          {/* WEEK-239: een lege tab legt kort uit waarvoor hij dient; de volledige uitleg zit onder het info-icoon. */}
-          <Text style={s.teller}>
-            {totaal ? t('lijst.teller', { open, totaal }) : t(legeTabUitleg('lijst', sheet))}
-          </Text>
           <SectionList
+            ListHeaderComponent={kop}
             sections={data}
             keyExtractor={(r, i) => `${r.sleutel}-${i}`}
             renderSectionHeader={({ section }) => {
@@ -376,7 +395,7 @@ export default function Lijst() {
                 </View>
                 <View style={s.tekstBlok}>
                   <Text style={[s.naam, item.afgevinkt && s.doorgehaald]}>{item.naam}</Text>
-                  {weergave === 'categorie' && item.recepten.length > 0 && (
+                  {groep === 'categorie' && item.recepten.length > 0 && (
                     <Text style={s.recepten} numberOfLines={1}>{item.recepten.join(' · ')}</Text>
                   )}
                   {gezin && item.door && !item.afgevinkt && <Text style={s.recepten}>{t('lijst.door', { naam: voornaam(item.door) })}</Text>}
@@ -450,11 +469,17 @@ export default function Lijst() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16 },
-  hoofdSchakelaar: { flexDirection: 'row', backgroundColor: MIST, borderRadius: 18, padding: 5, marginTop: 12 },
-  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 6, borderRadius: 14 },
+  // WEEK-286: compacter, zodat de producten meer plaats krijgen.
+  hoofdSchakelaar: { flexDirection: 'row', backgroundColor: MIST, borderRadius: 16, padding: 4, marginTop: 8 },
+  hoofdTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 7, paddingHorizontal: 6, borderRadius: 12 },
   hoofdTabAan: { backgroundColor: '#fff', shadowColor: '#17201A', shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
   hoofdTekst: { color: MUTED, fontWeight: '700', fontSize: 15, flexShrink: 1 },
-  teller: { color: '#666', marginVertical: 10 },
+  tabTeller: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, borderWidth: 1, borderColor: '#E4E8E1', alignItems: 'center', justifyContent: 'center' },
+  gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  tellerBlok: { flex: 1, minWidth: 0 },
+  tellerRegel: { color: '#555', fontSize: 14 },
+  groepKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 10, backgroundColor: ORANJE_ZACHT, flexShrink: 0 },
+  groepKnopTekst: { color: ORANJE, fontWeight: '700', fontSize: 13 },
   tellerTekst: { fontSize: 12, fontWeight: '700', color: MUTED },
   // WEEK-176: de pillen mogen op een smal scherm onder elkaar komen in plaats van af te snijden.
   groepering: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
@@ -464,10 +489,10 @@ const s = StyleSheet.create({
   pilTekstAan: { color: ORANJE },
   scanKnop: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#eef6f1', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   scanKnopTekst: { fontSize: 17 },
-  streep: { height: 4, borderRadius: 2, marginTop: 10 },
+  streep: { height: 3, borderRadius: 2, marginTop: 6 },
   actieGroep: { flexDirection: 'row', alignItems: 'center', gap: 0, flexShrink: 0 },
   actieKnop: { width: 26, height: 30, alignItems: 'center', justifyContent: 'center' },
-  gedeeld: { color: KLEUR, fontSize: 13, marginTop: 10 },
+  gedeeld: { color: KLEUR, fontSize: 12, marginTop: 2 },
   offline: { color: '#7a5b00' },
   gekocht: { fontSize: 12, color: KLEUR, marginTop: 2 },
   kop: { fontWeight: '700', fontSize: 14, color: '#444', marginTop: 14, marginBottom: 4 },
