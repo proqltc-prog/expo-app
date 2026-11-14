@@ -301,7 +301,8 @@ export default function Frigo() {
             accessibilityRole="button"
             accessibilityState={{ expanded: uitgeklapt.has(section.sleutel) }}
           >
-            <Text style={s.kop}>{section.title}</Text>
+            {/* WEEK-293: een lange titel wrapt, zodat het aantal en het pijltje altijd zichtbaar blijven. */}
+            <Text style={[s.kop, s.kopKrimp]}>{section.title}</Text>
             <Text style={s.groepTeller}>{section.regels.length}</Text>
             <Ionicons name={(uitgeklapt.has(section.sleutel) ? 'chevron-up' : 'chevron-down') as IoniconNaam} size={16} color={MUTED} />
           </Pressable>
@@ -399,6 +400,7 @@ const s = StyleSheet.create({
   chipTekstAan: { color: '#fff', fontWeight: '600' },
   kop: { fontWeight: '800', fontSize: 15, color: INKT, marginTop: 18, marginBottom: 2 },
   groepKop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  kopKrimp: { flexShrink: 1 },
   groepTeller: { color: MUTED, fontWeight: '700', fontSize: 13, flexShrink: 0 },
   item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, marginTop: 8, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#E4E8E1' },
   tekstBlok: { flex: 1 },

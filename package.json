@@ -1,6 +1,6 @@
 {
   "name": "gezond-boodschappen",
-  "version": "0.148.0",
+  "version": "0.149.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.test.json --test \"src/**/*.test.ts\"",
     "ingredienten": "node scripts/ingredienten-uit-databank.mjs",
+    "additieven": "node scripts/additieven-uit-openfoodfacts.mjs",
     "typecheck:logica": "tsc -p tsconfig.test.json",
     "check": "npm test && npm run typecheck:logica && npm run typecheck"
   },

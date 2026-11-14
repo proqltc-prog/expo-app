@@ -2,11 +2,11 @@
 // de voedingstabel gegroepeerd in plus- en minpunten, en de additieven (ingeklapt, met EU-waarschuwing: WEEK-224).
 // Gedeeld door het scanscherm en de productdetails in de frigo.
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { additiefWeergave } from '@/data/additieven';
+import { additiefWeergave, type AdditiefWeergave } from '@/data/additieven';
 import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditieven';
-import { getal, Sleutel } from '@/i18n';
+import { Sleutel, voedingGetal } from '@/i18n';
 import { isDrank, type Oordeel, type Product } from '@/lib/openfoodfacts';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
@@ -95,7 +95,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
   const ernst: EuStatus | null = telling.verboden ? 'verboden' : telling.waarschuwing ? 'waarschuwing' : null;
   const drank = isDrank(p);
   const tabel = voedingstabel(p, drank);
-  const g = (n: number) => getal(taal, n);
+  const g = (n: number) => voedingGetal(taal, n); // WEEK-291: geen afronding op 1 decimaal
 
   const waarde = (r: TabelRij) => (r.waarde === undefined ? '–' : `${g(r.waarde)} ${r.sleutel === 'kcal' ? 'kcal' : 'g'}`);
   const grensTekst = (grens: Grens) => {
@@ -133,6 +133,18 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
   ];
   const zichtbaar = groepen.filter((gr) => tabel[gr.sleutel].length > 0); // een lege groep verdwijnt
 
+  // WEEK-290: het EFSA-risico op te veel inname, in gewone taal, met de link naar het advies.
+  const Efsa = ({ efsa }: { efsa: NonNullable<AdditiefWeergave['efsa']> }) => (
+    <View style={s.efsa}>
+      <Text style={s.efsaTekst}>{t(`efsa.${efsa.risico}`, { bron: efsa.jaar ? `EFSA (${efsa.jaar})` : 'EFSA' })}</Text>
+      {efsa.url ? (
+        <Pressable onPress={() => Linking.openURL(efsa.url!)} accessibilityRole="link" hitSlop={6}>
+          <Text style={s.efsaLink}>{t('efsa.link')}</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+
   return (
     <View style={s.root}>
       <Kaart titel={t('scan.eigenTitel')} kant={t('scan.eigenLabel')} nadruk>
@@ -155,6 +167,8 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
           <Text style={s.klein}>65</Text>
           <Text style={s.klein}>100</Text>
         </View>
+        {/* WEEK-290: zeg waarom de score niet hoger kan. */}
+        {oordeel.plafond && <Text style={s.plafond}>{t(`scan.plafond.${oordeel.plafond.reden}`)}</Text>}
       </Kaart>
 
       <Kaart titel={t('scan.nutriscoreTitel')} kant={t('scan.bronOff')}>
@@ -215,12 +229,15 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
         {additievenOpen &&
           (p.additieven.length ? (
             additievenMetRegel(p.additieven).map(({ tag, regel }) => {
-              const { code, omschrijving } = additiefWeergave(tag, taal);
+              const { code, omschrijving, efsa } = additiefWeergave(tag, taal);
               if (!regel) {
                 return (
                   <View key={tag} style={s.additief}>
                     <Text style={s.additiefCode}>{code}</Text>
-                    <Text style={s.additiefTekst}>{omschrijving ?? ''}</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.additiefTekst}>{omschrijving ?? ''}</Text>
+                      {efsa && <Efsa efsa={efsa} />}
+                    </View>
                   </View>
                 );
               }
@@ -237,6 +254,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
                     </Text>
                     <Text style={[s.euTekst, { color: stijl.tekst }]}>{t(`eu.${regel.status}`)}</Text>
                     <Text style={s.klein}>{t(`eu.bron.${regel.bron}` as Sleutel)}</Text>
+                    {efsa && <Efsa efsa={efsa} />}
                   </View>
                 </View>
               );
@@ -283,6 +301,10 @@ const s = StyleSheet.create({
   additief: { flexDirection: 'row', alignItems: 'baseline', gap: 10, paddingVertical: 4 },
   additiefCode: { minWidth: 64, fontWeight: '800', color: ACCENT },
   additiefTekst: { flex: 1, color: INKT },
+  plafond: { fontSize: 13, color: INKT, fontWeight: '600' },
+  efsa: { marginTop: 3, gap: 2 },
+  efsaTekst: { fontSize: 12, lineHeight: 17, color: '#7A4A06' },
+  efsaLink: { fontSize: 12, fontWeight: '700', color: '#1D5A38', textDecorationLine: 'underline' },
   euBalk: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 8, paddingVertical: 7, paddingHorizontal: 10 },
   euBalkTekst: { flex: 1, fontSize: 13, fontWeight: '600' },
   euAdditief: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 8, padding: 10 },

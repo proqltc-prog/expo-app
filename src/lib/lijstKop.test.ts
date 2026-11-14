@@ -1,8 +1,28 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { andereWeergave, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
-import { secties } from '@/lib/lijst';
+import { andereWeergave, teKopen, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import { secties, type LijstItem } from '@/lib/lijst';
 import { vertaal, TALEN } from '@/i18n';
+
+describe('WEEK-292: teller Te kopen = som van beide tabbladen, zonder afgevinkte producten', () => {
+  const recept = (naam: string, afgevinkt = false): LijstItem => ({ id: `r-${naam}`, naam, categorie: 'avondeten', afgevinkt, eenheid: 'g', afdeling: 'groenten-fruit', recept: { dag: 'maandag', naam: 'Pasta' } });
+  const los = (naam: string, afgevinkt = false): LijstItem => ({ id: `l-${naam}`, naam, categorie: 'extra', afgevinkt, afdeling: 'diepvries' });
+
+  test('de situatie uit de schermafdruk: 6 open in het weekmenu, 1 afgevinkt ander product', () => {
+    const items = ['ui', 'look', 'paprika', 'tomaat', 'courgette', 'pasta'].map((n) => recept(n)).concat(los('Glaces', true));
+    assert.deepEqual(teKopen(items, 'recept'), { planner: 6, los: 0, totaal: 6 });
+  });
+
+  test('afgevinkt telt nergens mee', () => {
+    const items = [recept('ui', true), recept('look'), los('chips'), los('wc-papier', true)];
+    assert.deepEqual(teKopen(items, 'categorie'), { planner: 1, los: 1, totaal: 2 });
+  });
+
+  test('alles afgevinkt of leeg geeft 0', () => {
+    assert.deepEqual(teKopen([], 'recept'), { planner: 0, los: 0, totaal: 0 });
+    assert.deepEqual(teKopen([recept('ui', true), los('chips', true)], 'recept').totaal, 0);
+  });
+});
 
 describe('WEEK-286: compacte kop van boodschappenlijst en In huis', () => {
   test('groeperen per gerecht enkel bij het weekmenu', () => {

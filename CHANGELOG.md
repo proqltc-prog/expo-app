@@ -8,6 +8,29 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.149.0] – 2026-11-14
+
+**WEEK-290** – Eerlijkere eigen score en alle additieven met naam en EFSA-risico ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-290) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- De eigen score telt nu ook additieven mee, enkel op basis van officiële bronnen: −15 per additief met een EU-waarschuwing of dat niet meer toegelaten is (en dan hoogstens 39, "Slecht"), −5 per additief met een EFSA-risico op te veel inname, −10 voor zoetstoffen in een drank.
+- Ultrabewerkt (NOVA 4) kost nu 20 punten en is nooit nog "Goed" (hoogstens 64).
+- Onder de score staat waarom ze niet hoger kan.
+- Alle additieven (674) hebben een naam en functie in vier talen, uit de lijst van Open Food Facts (`npm run additieven`). E133 en E950 tonen nu "Briljantblauw FCF" en "Acesulfaam-K". Een onbekend nummer toont "naam onbekend".
+- Bij een additief met EFSA-risico: uitleg in gewone taal en een link naar het EFSA-advies.
+- Voorbeeld: Monster Ultra Paradise gaat van 85 (Goed) naar 39 (Slecht).
+
+**WEEK-291** – Voedingstabel van de scanner zonder afronding ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-291) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Waarden en grenzen tonen hun decimalen (tot op de milligram): zout 0,16 g blijft 0,16 g, de grens 0,75 g blijft 0,75 g.
+
+**WEEK-292** – Boodschappenlijst: teller Te kopen = som van Weekmenu en Andere producten ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-292) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Te kopen telt wat nog te kopen is op beide tabbladen; afgevinkte producten tellen nergens mee, ook niet op de tabbladen.
+
+**WEEK-293** – In huis: aantal naast een lange gerechtnaam altijd zichtbaar ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-293) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Een lange titel wrapt; het aantal en het pijltje blijven rechts staan. Ook: E14XX toont "Gemodificeerde zetmelen · verdikkingsmiddel".
+
 ## [0.148.0] – 2026-11-14
 
 **Jira:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/browse/WEEK-288) · **Confluence:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886744)

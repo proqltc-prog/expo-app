@@ -7,6 +7,7 @@ import {
   eenheidNaam,
   hoeveelheidTekst,
   getal,
+  voedingGetal,
   isTaal,
   kiesTaal,
   TALEN,
@@ -109,6 +110,22 @@ describe('isTaal', () => {
     assert.ok(isTaal('nl'));
     assert.ok(!isTaal('it'));
     assert.ok(!isTaal(5));
+  });
+});
+
+describe('voedingGetal (WEEK-291)', () => {
+  test('geen afronding op 1 decimaal: de decimalen blijven staan', () => {
+    assert.equal(voedingGetal('nl', 0.16), '0,16');
+    assert.equal(voedingGetal('nl', 11.25), '11,25');
+    assert.equal(voedingGetal('en', 0.75), '0.75');
+    assert.equal(voedingGetal('nl', 0.025), '0,025');
+  });
+
+  test('rekenresten verdwijnen, overbodige nullen ook', () => {
+    assert.equal(voedingGetal('nl', 0.16000000000000003), '0,16');
+    assert.equal(voedingGetal('nl', 3), '3');
+    assert.equal(voedingGetal('nl', 1.5), '1,5');
+    assert.equal(voedingGetal('de', 0.9), '0,9');
   });
 });
 
