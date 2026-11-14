@@ -187,19 +187,18 @@ export default function Welkom() {
               {[WEEKPLAN_BORDEN.slice(0, BORDEN_BOVEN), WEEKPLAN_BORDEN.slice(BORDEN_BOVEN)].map((rij, r) => (
                 <View key={r} style={s.bordenRij}>
                   {rij.map((dag, i) => {
-                    const maat = Math.min(Math.round((Math.min(schermBreedte, 520) - 32 - 3 * 10) / 4), Math.round((heroUitleg - 150) / 2));
+                    const maat = Math.min(Math.round((Math.min(schermBreedte, 520) - 32 - 3 * 10) / 4), Math.round((heroUitleg - 230) / 2));
                     return (
                       <View key={dag} style={[s.bord, { width: maat + 8 }]}>
                         <View style={[s.bordRand, { width: maat, height: maat, borderRadius: maat / 2 }]}>
                           <Image source={WEEK_BORD[dag]} style={s.vulFoto} resizeMode="cover" />
                         </View>
-                        {/* Een klein kalendertje met de afgekorte dag (MA, DI …), net onder het bord: niets op het eten. */}
+                        {/* Een scheurkalendertje met de afgekorte dag (MA, DI …), los onder het bord: niets op het eten. */}
                         <View style={s.kalender}>
-                          <View style={[s.kalenderKop, { backgroundColor: ACCENTEN[(r * BORDEN_BOVEN + i) % ACCENTEN.length] }]}>
-                            <View style={s.kalenderRing} />
-                            <View style={s.kalenderRing} />
-                          </View>
-                          <Text style={[s.kalenderDag, { color: ACCENTEN[(r * BORDEN_BOVEN + i) % ACCENTEN.length] }]}>{dagKort(t(`dag.${dag}` as Sleutel))}</Text>
+                          <View style={s.kalenderKop} />
+                          <Text style={s.kalenderDag}>{dagKort(t(`dag.${dag}` as Sleutel))}</Text>
+                          <View style={[s.kalenderRing, s.kalenderRingLinks]} />
+                          <View style={[s.kalenderRing, s.kalenderRingRechts]} />
                         </View>
                       </View>
                     );
@@ -367,15 +366,17 @@ const s = StyleSheet.create({
   stapChipTekst: { color: INKT, fontWeight: '800', fontSize: 13 },
   overslaan: { position: 'absolute', top: 48, right: 20, backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 999, paddingVertical: 6, paddingHorizontal: 14 },
   overslaanTekst: { color: KLEUR, fontWeight: '800', fontSize: 13 },
-  borden: { flex: 1, justifyContent: 'center', gap: 16, paddingTop: 70, paddingBottom: 34 },
+  borden: { flex: 1, justifyContent: 'center', gap: 16, paddingTop: 92, paddingBottom: 30 },
   bordenRij: { flexDirection: 'row', justifyContent: 'center', gap: 10 },
   bord: { alignItems: 'center' },
   bordRand: { overflow: 'hidden', borderWidth: 3, borderColor: '#fff', backgroundColor: '#fff', shadowColor: '#3A2A12', shadowOpacity: 0.18, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 4 },
   bordenOvergang: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 36 },
-  kalender: { width: 36, marginTop: -14, borderRadius: 8, backgroundColor: '#fff', overflow: 'hidden', alignItems: 'center', shadowColor: '#3A2A12', shadowOpacity: 0.22, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
-  kalenderKop: { width: '100%', height: 9, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
-  kalenderRing: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#fff' },
-  kalenderDag: { fontSize: 13, fontWeight: '900', letterSpacing: 0.5, paddingVertical: 2 },
+  kalender: { width: 40, marginTop: 12, borderRadius: 9, backgroundColor: '#fff', alignItems: 'center', borderWidth: 1, borderColor: '#E7DCCB', shadowColor: '#3A2A12', shadowOpacity: 0.12, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
+  kalenderKop: { width: '100%', height: 11, backgroundColor: KLEUR, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
+  kalenderRing: { position: 'absolute', top: -4, width: 5, height: 9, borderRadius: 3, backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#9AA7A0' },
+  kalenderRingLinks: { left: 9 },
+  kalenderRingRechts: { right: 9 },
+  kalenderDag: { fontSize: 14, fontWeight: '800', color: INKT, letterSpacing: 0.5, paddingTop: 3, paddingBottom: 4 },
   uitlegTekst: { alignItems: 'center', gap: 10, paddingHorizontal: 24, marginTop: -26, flex: 1 },
   badge: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: PAPIER },
   vol: { flex: 1 },
