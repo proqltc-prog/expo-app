@@ -45,6 +45,9 @@ describe('ingrediënten lezen (WEEK-308)', () => {
     ]);
     assert.deepEqual(leesIngredienten(undefined), []);
   });
+  test('liggende streepjes rond allergenen vallen weg (steekproef WEEK-309)', () => {
+    assert.equal(leesIngredienten([{ id: 'en:lactose', text: '_lactose_' }])[0].tekst, 'lactose');
+  });
 });
 
 describe('ingrediënt beoordelen (WEEK-308)', () => {

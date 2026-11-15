@@ -21,7 +21,8 @@ export function leesIngredienten(ruw: unknown): Ingredient[] {
   for (const i of ruw as Record<string, unknown>[]) {
     if (!i || typeof i !== 'object') continue;
     const id = typeof i.id === 'string' ? i.id : '';
-    const tekst = typeof i.text === 'string' ? i.text.trim() : '';
+    // Open Food Facts duidt allergenen aan met liggende streepjes ("_lactose_"): die tonen we niet (WEEK-309).
+    const tekst = typeof i.text === 'string' ? i.text.replace(/_/g, '').trim() : '';
     if (!id && !tekst) continue;
     const procent = typeof i.percent === 'number' ? i.percent : undefined;
     uit.push({ id, tekst: tekst || leesbaar(id), ...(procent !== undefined ? { procent } : {}) });
