@@ -40,3 +40,23 @@ export const UITLEG_SCHERMEN: readonly UitlegScherm[] = [
   { icoon: 'leaf-outline', kleur: '#6B8F2A', titel: 'uitleg.seizoen.titel', tekst: 'uitleg.seizoen.tekst' },
   { icoon: 'storefront-outline', kleur: '#B5562A', titel: 'uitleg.winkels.titel', tekst: 'uitleg.winkels.tekst' },
 ];
+
+/** WEEK-289: waar je heen gaat op de uitlegschermen: een ander scherm, terug naar de start of verder naar aanmelden. */
+export type UitlegStap = { soort: 'scherm'; index: number } | { soort: 'start' } | { soort: 'aanmelden' };
+
+export function uitlegNaar(index: number, richting: 'vorige' | 'volgende', totaal: number): UitlegStap {
+  if (richting === 'vorige') return index <= 0 ? { soort: 'start' } : { soort: 'scherm', index: index - 1 };
+  return index >= totaal - 1 ? { soort: 'aanmelden' } : { soort: 'scherm', index: index + 1 };
+}
+
+/** Minimale afstand (pixels) voor een veeg; korter is een tik of gewoon scrollen. */
+export const VEEG_MIN = 50;
+
+/**
+ * WEEK-289: een horizontale veeg op de uitlegschermen. Naar links = volgende, naar rechts = vorige.
+ * Enkel als de beweging duidelijk meer horizontaal dan verticaal is, zodat verticaal scrollen blijft werken.
+ */
+export function veegRichting(dx: number, dy: number): 'vorige' | 'volgende' | null {
+  if (Math.abs(dx) < VEEG_MIN || Math.abs(dx) < Math.abs(dy) * 1.5) return null;
+  return dx < 0 ? 'volgende' : 'vorige';
+}

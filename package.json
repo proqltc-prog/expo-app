@@ -1,6 +1,6 @@
 {
   "name": "gezond-boodschappen",
-  "version": "0.149.0",
+  "version": "0.150.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -11,7 +11,6 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.test.json --test \"src/**/*.test.ts\"",
     "ingredienten": "node scripts/ingredienten-uit-databank.mjs",
-    "additieven": "node scripts/additieven-uit-openfoodfacts.mjs",
     "typecheck:logica": "tsc -p tsconfig.test.json",
     "check": "npm test && npm run typecheck:logica && npm run typecheck"
   },
@@ -26,6 +25,7 @@
     "expo-image": "~3.0.11",
     "expo-image-manipulator": "~14.0.8",
     "expo-image-picker": "~17.0.11",
+    "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.0",
     "expo-localization": "~17.0.0",
     "expo-router": "~6.0.0",

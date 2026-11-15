@@ -8,6 +8,26 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.150.0] – 2026-11-14
+
+**WEEK-289** – Sfeerfoto's op de startpagina en in Aan de slag ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-289) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))
+
+- Startpagina: grote sfeerfoto bovenaan die zacht overloopt in een warme crème, het logo als wit badge half over de foto.
+- Startpagina: woordmerk in twee kleuren (Fa + menu), slogan met een sierlijntje en één rustige regel met drie kenmerken (Weekmenu, Boodschappen, Gezond en vers).
+- Aan de slag: elke foto groot bovenaan zoals op de start, met stapteller (1/7) en Overslaan; daaronder dezelfde opbouw als de startpagina: icoon in een witte badge half over de foto, grote titel, sierlijntje met blaadje en de uitleg in de stijl van de slogan.
+- Aan de slag: slanke navigatie onderaan (rond terugknopje, stippen, rond knopje met pijl; vinkje op het laatste scherm) en vegen: naar links = volgende, naar rechts = vorige.
+- Plan je week: zeven ronde borden, volledig zichtbaar, met de dag voluit eronder (in de taal van de app); één dag uitgelicht als volle pil.
+- Meld je aan: nieuw ontwerp met foto bovenaan, logo, witte Google-knop, Verder zonder account als hoofdknop en de waarschuwing in een kaartje.
+- Gezinsprofiel: zelfde stijl als de startpagina: sfeerfoto bovenaan met ronde terug- en infoknop erover, icoon in een witte badge, grote titel met sierlijntje, intro in slogan-stijl; Taal, Gezinsruimte, Gezin en Adres als witte kaarten met icoon.
+
+**WEEK-294** – Gezinsprofiel: Gezin en Gezinsruimte samen ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-294) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))
+
+- Eén blok Gezin met "Wie eet er mee?" en "Samen delen" (voornaam en gezinsruimte); de blokken zijn nu Taal, Gezin en Adres.
+- "Jouw voornaam (verplicht)" staat er vooraf bij; labels niet meer in hoofdletters.
+- De ronde terug- en infoknop boven de foto hebben een schaduw, zodat ze bij het scrollen zichtbaar blijven.
+- Acht gratis Pexels-foto's in de app (samen ongeveer 0,7 MB, werkt offline), zonder gezichten of merken; bronnen in assets/welkom/BRONNEN.md.
+- Nieuw pakket expo-linear-gradient voor de kleurovergang op de foto's.
+
 ## [0.149.0] – 2026-11-14
 
 **WEEK-300** – Geen productdetails meer in In huis ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-300) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
