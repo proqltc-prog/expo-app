@@ -5,7 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
 import { datumToestel, houdbaarStatus, vandaag } from '@/lib/houdbaarheid';
 import { DatumKiezer } from '@/ui/datumKiezer';
-import { beoordeel, Product } from '@/lib/openfoodfacts';
+import { Product } from '@/lib/openfoodfacts';
 import { ScanBlokken } from '@/ui/scanBlokken';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
@@ -46,7 +46,7 @@ type IoniconNaam = ComponentProps<typeof Ionicons>['name'];
 function ProductDetails({ product: p }: { product: Product }) {
   return (
     <View style={s.productBlok}>
-      <ScanBlokken product={p} oordeel={beoordeel(p)} />
+      <ScanBlokken product={p} />
     </View>
   );
 }

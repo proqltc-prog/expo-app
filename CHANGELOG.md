@@ -10,6 +10,11 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.149.0] – 2026-11-14
 
+**WEEK-299** – Geen eigen score meer ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-299) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- "Onze berekening" is weg uit de scanner en de productdetails. Je ziet nog de Nutri-Score, NOVA, de voedingstabel met plus- en minpunten, en de additieven met EU-waarschuwing.
+- De scanner wist zijn resultaat nu ook wanneer je hem verlaat. Via het camera-icoon in In huis is een vorige scan zo zelfs geen ogenblik meer te zien.
+
 **WEEK-290** – Eerlijkere eigen score en alle additieven met naam en EFSA-risico ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-290) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 
 - De eigen score telt nu ook additieven mee, enkel op basis van officiële bronnen: −15 per additief met een EU-waarschuwing of dat niet meer toegelaten is (en dan hoogstens 39, "Slecht"), −5 per additief met een EFSA-risico op te veel inname, −10 voor zoetstoffen in een drank.

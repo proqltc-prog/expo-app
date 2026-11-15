@@ -1,4 +1,4 @@
-// Het resultaat van een gescand product (WEEK-220): onze eigen berekening bovenaan, dan Nutri-Score en NOVA,
+// Het resultaat van een gescand product (WEEK-220): Nutri-Score en NOVA (WEEK-299: geen eigen score meer),
 // de voedingstabel gegroepeerd in plus- en minpunten, en de additieven (ingeklapt, met EU-waarschuwing: WEEK-224).
 // Gedeeld door het scanscherm en de productdetails in de frigo.
 import { useState } from 'react';
@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { additiefWeergave, type AdditiefWeergave } from '@/data/additieven';
 import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditieven';
 import { Sleutel, voedingGetal } from '@/i18n';
-import { isDrank, type Oordeel, type Product } from '@/lib/openfoodfacts';
+import { isDrank, type Product } from '@/lib/openfoodfacts';
 import { additievenGekend } from '@/lib/score';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
@@ -31,7 +31,6 @@ const NOVA: { groep: number; bg: string; tekst: string }[] = [
   { groep: 3, bg: '#E8A33D', tekst: '#3a2400' },
   { groep: 4, bg: '#B3402A', tekst: '#fff' },
 ];
-const SCHAAL = { slecht: '#B3402A', matig: '#E8A33D', goed: '#2e7d4f' };
 
 // Icoon en kleur per beoordeling in de tabel: vierkantje met icoon en een gekleurd label voor de waarde.
 const STIJL: Record<Beoordeling, { icoon: keyof typeof Ionicons.glyphMap; bg: string; tekst: string }> = {
@@ -46,11 +45,6 @@ const EU_STIJL: Record<EuStatus, { rand: string; bg: string; tekst: string }> = 
   verboden: { rand: '#B3402A', bg: '#F8DCD3', tekst: '#8A2C14' },
   waarschuwing: { rand: '#E8A33D', bg: '#FBEBCF', tekst: '#7A4A06' },
 };
-
-/** WEEK-295: "a", "a en b", "a, b en c". */
-function lijstTekst(delen: string[], en: string): string {
-  return delen.length <= 1 ? (delen[0] ?? '') : `${delen.slice(0, -1).join(', ')} ${en} ${delen[delen.length - 1]}`;
-}
 
 const LABEL: Record<RijSleutel, Sleutel> = {
   kcal: 'voeding.kcal',
@@ -94,7 +88,7 @@ function Kaart({ titel, kant, nadruk, children }: { titel: string; kant?: string
   );
 }
 
-export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel: Oordeel }) {
+export function ScanBlokken({ product: p }: { product: Product }) {
   const { t, tn, taal } = useTaal();
   const [additievenOpen, setAdditievenOpen] = useState(false); // standaard ingeklapt
   const telling = telEuRegels(p.additieven);
@@ -153,45 +147,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
 
   return (
     <View style={s.root}>
-      <Kaart titel={t('scan.eigenTitel')} kant={t('scan.eigenLabel')} nadruk>
-        {/* WEEK-295: ontbreken cruciale gegevens, dan geen score maar een duidelijke melding. */}
-        {oordeel.onvoldoende ? (
-          <View style={s.onvoldoende}>
-            <Ionicons name="help-circle-outline" size={22} color="#7A4A06" />
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={s.onvoldoendeTitel}>{t('scan.onvoldoende.titel')}</Text>
-              <Text style={s.onvoldoendeTekst}>
-                {t('scan.onvoldoende.tekst', { wat: lijstTekst(oordeel.onvoldoende.map((o) => t(`scan.ontbreekt.${o}` as Sleutel)), t('scan.ontbreekt.en')) })}
-              </Text>
-            </View>
-          </View>
-        ) : (
-        <>
-        <View style={s.scoreRij}>
-          <Text style={s.score}>{oordeel.score}</Text>
-          <Text style={s.uitleg}>{t('scan.eigenVan')} · </Text>
-          <Text style={[s.scoreLabel, { color: SCHAAL[oordeel.label] }]}>{t(`oordeel.${oordeel.label}`)}</Text>
-        </View>
-        <View style={s.schaalWrap}>
-          <View style={s.schaal}>
-            <View style={{ flex: 40, backgroundColor: SCHAAL.slecht }} />
-            <View style={{ flex: 25, backgroundColor: SCHAAL.matig }} />
-            <View style={{ flex: 35, backgroundColor: SCHAAL.goed }} />
-          </View>
-          <Text style={[s.pijl, { left: `${oordeel.score}%` }]}>▼</Text>
-        </View>
-        <View style={s.schaalGetallen}>
-          <Text style={s.klein}>0</Text>
-          <Text style={s.klein}>40</Text>
-          <Text style={s.klein}>65</Text>
-          <Text style={s.klein}>100</Text>
-        </View>
-        {/* WEEK-290: zeg waarom de score niet hoger kan. */}
-        {oordeel.plafond && <Text style={s.plafond}>{t(`scan.plafond.${oordeel.plafond.reden}`)}</Text>}
-        </>
-        )}
-      </Kaart>
-
+      {/* WEEK-299: geen eigen score meer; enkel de officiële gegevens van Open Food Facts. */}
       <Kaart titel={t('scan.nutriscoreTitel')} kant={t('scan.bronOff')}>
         {p.nutriscore ? (
           <Balk

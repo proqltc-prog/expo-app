@@ -3,7 +3,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TerugKnop } from '@/ui/terugKnop';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
-import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
+import { afdelingUitCategorieen, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { maakScanSessie } from '@/lib/scanSessie';
@@ -35,7 +35,7 @@ const LIJN = '#E4E8E1';
 type Status =
   | { soort: 'scannen' }
   | { soort: 'laden'; barcode: string }
-  | { soort: 'gevonden'; product: Product; oordeel: Oordeel }
+  | { soort: 'gevonden'; product: Product }
   | { soort: 'niet-gevonden'; barcode: string }
   | { soort: 'fout' };
 
@@ -78,6 +78,12 @@ function ScanInhoud() {
       laadScanTeller().then(setTeller);
       laadLijst().then(setLijstItems);
       laadFrigo().then(setFrigoItems);
+      // WEEK-297: ook bij het verlaten van de scanner het resultaat wissen, zodat het de volgende keer
+      // (bv. via het camera-icoon in In huis) zelfs geen ogenblik meer te zien is.
+      return () => {
+        sessie.current.nieuw();
+        setStatus({ soort: 'scannen' });
+      };
     }, [van, item, lijstItem])
   );
 
@@ -109,7 +115,7 @@ function ScanInhoud() {
     try {
       const product = await zoekProduct(data, taal);
       if (!sessie.current.actueel(mijnSessie)) return; // WEEK-297: de scanner werd intussen opnieuw geopend
-      setStatus(product ? { soort: 'gevonden', product, oordeel: beoordeel(product) } : { soort: 'niet-gevonden', barcode: data });
+      setStatus(product ? { soort: 'gevonden', product } : { soort: 'niet-gevonden', barcode: data });
     } catch {
       if (sessie.current.actueel(mijnSessie)) setStatus({ soort: 'fout' });
     }
@@ -246,7 +252,7 @@ function ScanInhoud() {
     );
   }
 
-  const { product: p, oordeel } = status;
+  const { product: p } = status;
   const acties = scanActies(van, item);
 
   return (
@@ -254,8 +260,8 @@ function ScanInhoud() {
       <Text style={s.productNaam}>{p.naam || t('scan.onbekend')}</Text>
       {p.merk ? <Text style={s.merk}>{p.merk}</Text> : null}
 
-      {/* WEEK-220: Nutri-Score, NOVA, onze berekening, tabel en additieven (standaard ingeklapt). */}
-      <ScanBlokken product={p} oordeel={oordeel} />
+      {/* WEEK-220: Nutri-Score, NOVA, tabel en additieven (standaard ingeklapt). */}
+      <ScanBlokken product={p} />
 
       {/* Per product (WEEK-70): het gescande product gaat enkel naar het lijstitem waarvandaan gescand werd. */}
       {van === 'lijst' && lijstItem && (() => {
