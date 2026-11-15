@@ -33,6 +33,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 **WEEK-297** – Vorige scan blijft niet meer staan ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-297) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 
 - Telkens je de scanner opent (via Scan of In huis) start hij bij de camera.
+- Ook een scan die nog aan het zoeken was toen je de scanner opnieuw opende, verschijnt niet meer.
 
 **WEEK-298** – 5 gratis scans en nieuwe knoppen ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-298) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 

@@ -6,6 +6,7 @@ import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-ca
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
+import { maakScanSessie } from '@/lib/scanSessie';
 import { scanActies } from '@/lib/scanActies';
 import { laadScanTeller, registreerBonusScans, registreerScan } from '@/opslag/scanteller';
 import { bekijkBeloondFilmpje } from '@/opslag/advertentie';
@@ -55,6 +56,7 @@ function ScanInhoud() {
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
+  const sessie = useRef(maakScanSessie()); // WEEK-297
   // Scanlimiet (WEEK-34, WEEK-38, WEEK-298): 5 gratis per dag (GRATIS_SCANS_PER_DAG), plus bonusscans van het reclamefilmpje.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
   // Reclamefilmpje voor extra scans (WEEK-38): knop uitgeschakeld tijdens het laden.
@@ -70,6 +72,7 @@ function ScanInhoud() {
     useCallback(() => {
       // WEEK-297: een vorige scan wordt niet bewaard: telkens de scanner opent, start hij bij de camera.
       bezig.current = false;
+      sessie.current.nieuw(); // een scan die nog bezig is, toont zijn resultaat niet meer
       setStatus({ soort: 'scannen' });
       setBevestiging(null);
       laadScanTeller().then(setTeller);
@@ -99,13 +102,16 @@ function ScanInhoud() {
       bezig.current = false;
       return;
     }
+    const mijnSessie = sessie.current.huidig();
     setTeller(await registreerScan());
+    if (!sessie.current.actueel(mijnSessie)) return;
     setStatus({ soort: 'laden', barcode: data });
     try {
       const product = await zoekProduct(data, taal);
+      if (!sessie.current.actueel(mijnSessie)) return; // WEEK-297: de scanner werd intussen opnieuw geopend
       setStatus(product ? { soort: 'gevonden', product, oordeel: beoordeel(product) } : { soort: 'niet-gevonden', barcode: data });
     } catch {
-      setStatus({ soort: 'fout' });
+      if (sessie.current.actueel(mijnSessie)) setStatus({ soort: 'fout' });
     }
   };
 
@@ -120,6 +126,7 @@ function ScanInhoud() {
 
   const opnieuw = () => {
     bezig.current = false;
+    sessie.current.nieuw();
     setStatus({ soort: 'scannen' });
   };
 
