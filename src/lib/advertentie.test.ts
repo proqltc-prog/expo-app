@@ -16,8 +16,8 @@ test('kiesEenheid: een ingevulde echte eenheid wint', () => {
   assert.equal(kiesEenheid(' ca-app-pub-1/2 ', TEST), 'ca-app-pub-1/2');
 });
 
-test('beloning voor scans is 10 extra scans', () => {
-  assert.equal(beloningVoor('scans'), 10);
+test('beloning voor scans is 5 extra scans (WEEK-311)', () => {
+  assert.equal(beloningVoor('scans'), 5);
 });
 
 // Regressie: een bekeken filmpje mag het aantal scans van vandaag niet laten vallen.

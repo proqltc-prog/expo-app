@@ -8,6 +8,11 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.152.1] – 2026-11-15
+
+- **WEEK-311** – Scanner: een reclamefilmpje geeft opnieuw 5 scans (was 10), evenveel als de gratis scans per dag. Geldt ook voor scannen vanuit In huis. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-311
+- Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
 ## [0.152.0] – 2026-11-15
 
 ### Nieuw
