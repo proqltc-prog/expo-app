@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { berekenScore, DREMPELS, ENERGIEARM_KCAL, labelVoor, niveauVan, ontbrekendeGegevens, PLAFOND, PUNTEN } from '@/lib/score';
+import { additievenGekend, berekenScore, DREMPELS, ENERGIEARM_KCAL, labelVoor, niveauVan, ontbrekendeGegevens, PLAFOND, PUNTEN } from '@/lib/score';
 import type { Product } from '@/lib/openfoodfacts';
 
 const basis: Product = { barcode: '1', naam: 'Test', additieven: [] };
@@ -209,5 +209,18 @@ describe('bonussen (WEEK-296)', () => {
   test('zonder NOVA of ingrediëntenlijst: niet genoeg gegevens, ook al zijn er geen additieven', () => {
     assert.deepEqual(berekenScore({ ...kefir, nova: undefined }, true).onvoldoende, ['nova']);
     assert.deepEqual(berekenScore({ ...kefir, ingredientenBekend: false }, true).onvoldoende, ['ingredienten']);
+  });
+});
+
+describe('additievenGekend (WEEK-296)', () => {
+  const basis = { barcode: '1', naam: 'x', additieven: [] } as unknown as Product;
+  test('met ingrediëntenlijst zijn de additieven gekend, ook als er geen zijn', () => {
+    assert.equal(additievenGekend({ ...basis, ingredientenBekend: true }), true);
+  });
+  test('zonder ingrediëntenlijst zijn de additieven niet gekend (geen "Additieven (0)")', () => {
+    assert.equal(additievenGekend({ ...basis, ingredientenBekend: false }), false);
+  });
+  test('een oud bewaard product zonder het veld telt als niet gekend', () => {
+    assert.equal(additievenGekend({ ...basis }), false);
   });
 });

@@ -383,6 +383,7 @@ export const de: Vertalingen = {
   'scan.eigenLabel': 'eigener Wert',
   'scan.eigenVan': 'von 100',
   'scan.additievenAantal': 'Zusatzstoffe ({n})',
+  'scan.additievenOnbekend': 'Unbekannt: Für dieses Produkt gibt es keine Zutatenliste.',
   'scan.euVerboden_1': '{n} in der EU nicht mehr zugelassen',
   'scan.euVerboden_n': '{n} in der EU nicht mehr zugelassen',
   'scan.euWaarschuwing_1': '{n} mit EU-Pflichthinweis',

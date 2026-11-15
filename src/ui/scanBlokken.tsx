@@ -8,6 +8,7 @@ import { additiefWeergave, type AdditiefWeergave } from '@/data/additieven';
 import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditieven';
 import { Sleutel, voedingGetal } from '@/i18n';
 import { isDrank, type Oordeel, type Product } from '@/lib/openfoodfacts';
+import { additievenGekend } from '@/lib/score';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
 
@@ -225,7 +226,14 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
         ))}
       </View>
 
-      {/* WEEK-224: ook ingeklapt zie je of er een additief tussen zit waar de EU-wet iets over zegt. */}
+      {/* WEEK-296: zonder ingrediëntenlijst geen "Additieven (0)": we weten het dan gewoon niet. */}
+      {!additievenGekend(p) && p.additieven.length === 0 ? (
+        <View style={s.kaart}>
+          <Text style={s.kaartTitel}>{t('scan.additieven')}</Text>
+          <Text style={s.uitleg}>{t('scan.additievenOnbekend')}</Text>
+        </View>
+      ) : (
+      /* WEEK-224: ook ingeklapt zie je of er een additief tussen zit waar de EU-wet iets over zegt. */
       <View style={[s.kaart, ernst && { borderColor: EU_STIJL[ernst].rand, borderWidth: 1.5 }]}>
         <Pressable
           style={s.additievenKop}
@@ -283,6 +291,7 @@ export function ScanBlokken({ product: p, oordeel }: { product: Product; oordeel
             <Text style={s.uitleg}>{t('scan.geenAdditieven')}</Text>
           ))}
       </View>
+      )}
     </View>
   );
 }

@@ -384,6 +384,7 @@ export const nl = {
   'scan.eigenLabel': 'eigen score',
   'scan.eigenVan': 'van 100',
   'scan.additievenAantal': 'Additieven ({n})',
+  'scan.additievenOnbekend': 'Niet gekend: er is geen ingrediëntenlijst voor dit product.',
   'scan.euVerboden_1': '{n} niet meer toegelaten in de EU',
   'scan.euVerboden_n': '{n} niet meer toegelaten in de EU',
   'scan.euWaarschuwing_1': '{n} met verplichte EU-waarschuwing',

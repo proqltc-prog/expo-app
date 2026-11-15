@@ -83,6 +83,13 @@ export function ontbrekendeGegevens(p: Product): Ontbrekend[] {
   if (p.vet === undefined || p.suikers === undefined || p.zout === undefined) uit.push('voeding');
   return uit;
 }
+/**
+ * WEEK-296: zonder ingrediëntenlijst weten we niet welke additieven erin zitten. Dan tonen we geen aantal
+ * ("Additieven (0)") maar "niet gekend".
+ */
+export function additievenGekend(p: Product): boolean {
+  return p.ingredientenBekend === true;
+}
 export const VEZELS_VEEL = 6; // g per 100 g
 export const EIWIT_VEEL_ENERGIE = 0.2; // aandeel van de energie
 const KCAL_PER_G_EIWIT = 4;

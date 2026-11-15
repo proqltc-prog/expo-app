@@ -29,6 +29,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 - Geen additieven (ingrediëntenlijst gekend) +10, NOVA 1 +5, energiearm volgens de EU (hoogstens 20 kcal/100 ml of 40 kcal/100 g) +5. Volle kefir gaat van 60 naar 75.
 - NOVA en ingrediëntenlijst moeten allebei gekend zijn, anders "Niet genoeg gegevens" (ook voor oude bewaarde producten: opnieuw scannen).
+- Zonder ingrediëntenlijst staat er niet meer "Additieven (0)" maar "Additieven: niet gekend".
 
 **WEEK-297** – Vorige scan blijft niet meer staan ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-297) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 
