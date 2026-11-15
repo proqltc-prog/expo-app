@@ -8,6 +8,17 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.151.0] – 2026-11-15
+
+### Nieuw
+- **WEEK-302** – Scanner: historiek van gescande producten (op dit toestel, hoogstens 50). Opnieuw bekijken kost geen scan; ook bereikbaar als de scans van vandaag op zijn. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-302
+- **WEEK-303** – Scanner: twee producten vergelijken (Nutri-Score, NOVA, voedingswaarden, additieven, allergenen), met een vinkje bij het beste per regel. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-303
+- **WEEK-304** – Scanner: scanresultaat delen via het deelmenu van het toestel, met de link naar Open Food Facts. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-304
+- **WEEK-305** – Scanner: de 14 EU-allergenen bij elk product, plus "kan sporen bevatten van"; zonder ingrediëntenlijst "niet gekend". Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-305
+- **WEEK-306** – Scanner: gezonder alternatief (indien gekend) bij Nutri-Score C, D of E: tot 3 producten uit dezelfde soort, verkocht in België, met een betere Nutri-Score. Enkel in de app op het toestel (de zoekdienst van Open Food Facts laat geen vragen uit een webbrowser toe). Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-306
+
+Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
 ## [0.150.1] – 2026-11-15
 
 ### Opgelost

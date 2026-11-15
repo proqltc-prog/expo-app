@@ -1,9 +1,13 @@
 import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { TerugKnop } from '@/ui/terugKnop';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
-import { afdelingUitCategorieen, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
+import { afdelingUitCategorieen, Alternatief, Product, scanNaam, zoekProduct, zoektAlternatief } from '@/lib/openfoodfacts';
+import type { HistoriekItem } from '@/lib/scanHistoriek';
+import { deelTekst } from '@/lib/scanDelen';
+import { bewaarInHistoriek, laadHistoriek, wisHistoriek } from '@/opslag/scanHistoriek';
+import { Alternatieven, HistoriekScherm, VergelijkScherm } from '@/ui/scanExtra';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { maakScanSessie } from '@/lib/scanSessie';
@@ -37,7 +41,10 @@ type Status =
   | { soort: 'laden'; barcode: string }
   | { soort: 'gevonden'; product: Product }
   | { soort: 'niet-gevonden'; barcode: string }
-  | { soort: 'fout' };
+  | { soort: 'fout' }
+  // WEEK-302/303: de historiek (eventueel met een product al gekozen om te vergelijken) en de vergelijking.
+  | { soort: 'historiek'; voorgekozen?: string }
+  | { soort: 'vergelijk'; a: Product; b: Product };
 
 // WEEK-177: de uitleg zit in de koptekst; de popup hangt in de wrapper, zodat elke weergave hem kan tonen.
 export default function Scan() {
@@ -68,6 +75,7 @@ function ScanInhoud() {
   const { van, item, lijstItem } = useLocalSearchParams<{ van?: string; item?: string; lijstItem?: string }>();
   const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [frigoItems, setFrigoItems] = useState<FrigoItem[]>([]);
+  const [historiek, setHistoriek] = useState<HistoriekItem[]>([]); // WEEK-302
   useFocusEffect(
     useCallback(() => {
       // WEEK-297: een vorige scan wordt niet bewaard: telkens de scanner opent, start hij bij de camera.
@@ -78,6 +86,7 @@ function ScanInhoud() {
       laadScanTeller().then(setTeller);
       laadLijst().then(setLijstItems);
       laadFrigo().then(setFrigoItems);
+      laadHistoriek().then(setHistoriek);
       // WEEK-297: ook bij het verlaten van de scanner het resultaat wissen, zodat het de volgende keer
       // (bv. via het camera-icoon in In huis) zelfs geen ogenblik meer te zien is.
       return () => {
@@ -86,19 +95,6 @@ function ScanInhoud() {
       };
     }, [van, item, lijstItem])
   );
-
-  if (!toestemming) return <View style={s.midden}><ActivityIndicator /></View>;
-
-  if (!toestemming.granted) {
-    return (
-      <View style={s.midden}>
-        <Text style={s.tekst}>{t('scan.cameraNodig')}</Text>
-        <Pressable style={s.knop} onPress={vraagToestemming}>
-          <Text style={s.knopTekst}>{t('scan.cameraToestaan')}</Text>
-        </Pressable>
-      </View>
-    );
-  }
 
   const opScan = async ({ data }: BarcodeScanningResult) => {
     setBevestiging(null);
@@ -116,6 +112,7 @@ function ScanInhoud() {
       const product = await zoekProduct(data, taal);
       if (!sessie.current.actueel(mijnSessie)) return; // WEEK-297: de scanner werd intussen opnieuw geopend
       setStatus(product ? { soort: 'gevonden', product } : { soort: 'niet-gevonden', barcode: data });
+      if (product) bewaarInHistoriek(product).then(setHistoriek); // WEEK-302
     } catch {
       if (sessie.current.actueel(mijnSessie)) setStatus({ soort: 'fout' });
     }
@@ -174,6 +171,77 @@ function ScanInhoud() {
     router.navigate('/lijst');
   };
 
+  // WEEK-302: een product uit de historiek opnieuw bekijken; kost geen scan.
+  const toonProduct = (product: Product) => {
+    bezig.current = true;
+    setBevestiging(null);
+    setStatus({ soort: 'gevonden', product });
+  };
+
+  // WEEK-306: een alternatief opzoeken (kost geen scan) en in de historiek zetten, zodat je het kan vergelijken.
+  const toonAlternatief = async (alt: Alternatief) => {
+    bezig.current = true;
+    const mijnSessie = sessie.current.nieuw();
+    setStatus({ soort: 'laden', barcode: alt.barcode });
+    try {
+      const product = await zoekProduct(alt.barcode, taal);
+      if (!sessie.current.actueel(mijnSessie)) return;
+      setStatus(product ? { soort: 'gevonden', product } : { soort: 'niet-gevonden', barcode: alt.barcode });
+      if (product) bewaarInHistoriek(product).then(setHistoriek);
+    } catch {
+      if (sessie.current.actueel(mijnSessie)) setStatus({ soort: 'fout' });
+    }
+  };
+
+  // WEEK-304: delen via het deelmenu van het toestel.
+  const deel = async (product: Product) => {
+    try {
+      await Share.share({ message: deelTekst(product, taal) });
+    } catch {
+      if (Platform.OS === 'web') window.alert(t('scan.deelNiet'));
+      else Alert.alert(t('scan.delen'), t('scan.deelNiet'));
+    }
+  };
+
+  const historiekKnop = (
+    <Pressable style={s.historiekKnop} onPress={() => setStatus({ soort: 'historiek' })} accessibilityRole="button" accessibilityLabel={t('scan.historiek')}>
+      <Ionicons name="time-outline" size={18} color="#fff" />
+      <Text style={s.historiekTekst}>{t('scan.historiek')}</Text>
+    </Pressable>
+  );
+
+  if (status.soort === 'historiek') {
+    return (
+      <HistoriekScherm
+        historiek={historiek}
+        voorgekozen={status.voorgekozen}
+        onOpen={toonProduct}
+        onVergelijk={(a, b) => setStatus({ soort: 'vergelijk', a, b })}
+        onWis={async () => { await wisHistoriek(); setHistoriek([]); }}
+        onSluit={opnieuw}
+      />
+    );
+  }
+
+  if (status.soort === 'vergelijk') {
+    return <VergelijkScherm a={status.a} b={status.b} onOpen={toonProduct} onSluit={() => setStatus({ soort: 'historiek' })} />;
+  }
+
+  if (!toestemming) return <View style={s.midden}><ActivityIndicator /></View>;
+
+  // WEEK-302: zonder camera kan je de historiek nog bekijken.
+  if (!toestemming.granted && status.soort === 'scannen') {
+    return (
+      <View style={s.midden}>
+        <Text style={s.tekst}>{t('scan.cameraNodig')}</Text>
+        <Pressable style={s.knop} onPress={vraagToestemming}>
+          <Text style={s.knopTekst}>{t('scan.cameraToestaan')}</Text>
+        </Pressable>
+        {historiek.length > 0 && historiekKnop}
+      </View>
+    );
+  }
+
   const rest = resterendeScans(teller, new Date());
 
   // Beloond filmpje (WEEK-38): pas na een volledig bekeken filmpje komen er extra scans bij.
@@ -195,6 +263,7 @@ function ScanInhoud() {
       return (
         <View style={s.midden}>
           <Text style={s.tekst}>{t('scan.limietWeb', { limiet: GRATIS_SCANS_PER_DAG })}</Text>
+          {historiek.length > 0 && historiekKnop}
         </View>
       );
     }
@@ -204,6 +273,7 @@ function ScanInhoud() {
         <Pressable style={s.knop} onPress={kijkFilmpje} disabled={filmpjeBezig}>
           <Text style={s.knopTekst}>{t('scan.filmpje', { n: BELONING_SCANS })}</Text>
         </Pressable>
+        {historiek.length > 0 && historiekKnop}
       </View>
     );
   }
@@ -233,6 +303,8 @@ function ScanInhoud() {
         {scanTerug(van) !== undefined && (
           <TerugKnop onPress={annuleer} kleur="#fff" style={s.annuleer} />
         )}
+        {/* WEEK-302: de historiek, onderaan op de camera (bovenaan staan de terugknop en de bevestiging). */}
+        <View style={s.historiekPlaats}>{historiekKnop}</View>
       </View>
     );
   }
@@ -262,6 +334,24 @@ function ScanInhoud() {
 
       {/* WEEK-220: Nutri-Score, NOVA, tabel en additieven (standaard ingeklapt). */}
       <ScanBlokken product={p} />
+
+      {/* WEEK-306: gezonder alternatief, enkel bij een gekende Nutri-Score C, D of E. Niet op de website: de zoekdienst
+          van Open Food Facts laat geen vragen uit een webbrowser toe (CORS); in de app op het toestel werkt het wel. */}
+      {Platform.OS !== 'web' && zoektAlternatief(p) && <Alternatieven key={p.barcode} product={p} onOpen={toonAlternatief} />}
+
+      {/* WEEK-303/304: vergelijken met een ander gescand product, en delen. */}
+      <View style={s.knoppen}>
+        {historiek.some((h) => h.product.barcode !== p.barcode) && (
+          <Pressable style={[s.knop, s.knopMetIcoon, s.knopZacht, { flex: 1 }]} onPress={() => setStatus({ soort: 'historiek', voorgekozen: p.barcode })} accessibilityRole="button">
+            <Ionicons name="git-compare-outline" size={18} color={KLEUR} />
+            <Text style={[s.knopTekst, s.knopZachtTekst]}>{t('scan.vergelijken')}</Text>
+          </Pressable>
+        )}
+        <Pressable style={[s.knop, s.knopMetIcoon, s.knopZacht, { flex: 1 }]} onPress={() => deel(p)} accessibilityRole="button">
+          <Ionicons name="share-social-outline" size={18} color={KLEUR} />
+          <Text style={[s.knopTekst, s.knopZachtTekst]}>{t('scan.delen')}</Text>
+        </Pressable>
+      </View>
 
       {/* Per product (WEEK-70): het gescande product gaat enkel naar het lijstitem waarvandaan gescand werd. */}
       {van === 'lijst' && lijstItem && (() => {
@@ -343,4 +433,7 @@ const s = StyleSheet.create({
   merk: { color: MUTED },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
   bron: { color: MUTED, fontSize: 12, marginTop: 12, textAlign: 'center' },
+  historiekPlaats: { position: 'absolute', bottom: 24, left: 0, right: 0, alignItems: 'center' },
+  historiekKnop: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(15,107,102,0.92)', borderRadius: 22, paddingVertical: 10, paddingHorizontal: 14 },
+  historiekTekst: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });

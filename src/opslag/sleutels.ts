@@ -31,4 +31,6 @@ export const SLEUTEL = {
   receptenDb: 'receptendb:v1',
   /** Eerder ingevulde andere producten, voor de voorstellen bij het zoeken (WEEK-288): enkel lokaal. */
   losVoorstellen: 'losvoorstellen:v1',
+  /** Gescande producten (WEEK-302): enkel lokaal, niet in de gezinssynchronisatie. */
+  scanHistoriek: 'scanhistoriek:v1',
 } as const;

@@ -9,6 +9,7 @@ import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditie
 import { Sleutel, voedingGetal } from '@/i18n';
 import { isDrank, type Product } from '@/lib/openfoodfacts';
 import { additievenGekend } from '@/lib/score';
+import { allergeenNaam, allergenenStatus } from '@/lib/allergenen';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
 
@@ -171,6 +172,30 @@ export function ScanBlokken({ product: p }: { product: Product }) {
         )}
         <Text style={s.uitleg}>{t('scan.novaUitleg')}</Text>
       </Kaart>
+
+      {/* WEEK-305: de 14 EU-allergenen bij elk product; zonder ingrediëntenlijst: niet gekend. */}
+      {(() => {
+        const a = allergenenStatus(p);
+        const lijst = (codes: Parameters<typeof allergeenNaam>[0][]) => codes.map((c) => allergeenNaam(c, taal)).join(', ');
+        return (
+          <View style={[s.kaart, a.soort === 'bevat' && { borderColor: EU_STIJL.waarschuwing.rand, borderWidth: 1.5 }]}>
+            <View style={s.kaartKop}>
+              <Text style={s.kaartTitel}>{t('scan.allergenen')}</Text>
+              <Text style={s.kant}>{t('scan.bronOff')}</Text>
+            </View>
+            {a.soort === 'bevat' && (
+              <View style={[s.euBalk, { backgroundColor: EU_STIJL.waarschuwing.bg }]}>
+                <Ionicons name="warning-outline" size={17} color={EU_STIJL.waarschuwing.tekst} />
+                <Text style={[s.euBalkTekst, { color: EU_STIJL.waarschuwing.tekst }]}>{t('scan.allergenenBevat', { lijst: lijst(a.bevat) })}</Text>
+              </View>
+            )}
+            {a.soort === 'geen' && <Text style={s.additiefTekst}>{t('scan.allergenenGeen')}</Text>}
+            {a.soort === 'onbekend' && <Text style={s.uitleg}>{t('scan.allergenenOnbekend')}</Text>}
+            {a.soort !== 'onbekend' && a.sporen.length > 0 && <Text style={s.additiefTekst}>{t('scan.allergenenSporen', { lijst: lijst(a.sporen) })}</Text>}
+            <Text style={s.uitleg}>{t('scan.allergenenUitleg')}</Text>
+          </View>
+        );
+      })()}
 
       <Text style={s.kop}>{t(drank ? 'scan.per100ml' : 'scan.per100')}</Text>
       <View style={s.tabel}>

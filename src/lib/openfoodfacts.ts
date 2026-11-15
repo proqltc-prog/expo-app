@@ -1,5 +1,6 @@
 import type { Afdeling } from '@/data/ingredienten';
 import { berekenScore, type Oordeel } from '@/lib/score';
+import { allergeenCodes } from '@/lib/allergenen';
 
 export type { Oordeel, OordeelLabel, Reden, RedenCode } from '@/lib/score';
 
@@ -22,6 +23,10 @@ export type Product = {
   zout?: number;
   /** Categorieën van Open Food Facts (bv. "en:dairies"), om de winkelafdeling te bepalen (WEEK-35). */
   categorieen?: string[];
+  /** WEEK-305: EU-allergenen die het product bevat (bv. "milk"). Ontbreekt bij oude bewaarde producten. */
+  allergenen?: string[];
+  /** WEEK-305: "kan sporen bevatten van". */
+  sporen?: string[];
 };
 
 const BASIS = 'https://world.openfoodfacts.org/api/v2/product';
@@ -37,6 +42,8 @@ const VELDEN = [
   'ingredients_n',
   'nutriments',
   'categories_tags',
+  'allergens_tags',
+  'traces_tags',
 ].join(',');
 
 /** WEEK-295: een ingrediëntenlijst als tekst of als ontlede lijst. */
@@ -82,7 +89,69 @@ export async function zoekProduct(barcode: string, taal = 'nl'): Promise<Product
     vezels: getal(n.fiber_100g),
     zout: getal(n.salt_100g),
     categorieen: Array.isArray(p.categories_tags) ? p.categories_tags.filter((c: unknown) => typeof c === 'string') : [],
+    allergenen: allergeenCodes(p.allergens_tags),
+    sporen: allergeenCodes(p.traces_tags),
   };
+}
+
+/** WEEK-306: een mogelijk gezonder product uit dezelfde categorie. */
+export type Alternatief = { barcode: string; naam: string; merk?: string; nutriscore: string };
+
+const NUTRI_LETTERS = ['a', 'b', 'c', 'd', 'e'];
+
+/** WEEK-306: enkel bij een gekende Nutri-Score C, D of E en een gekende categorie zoeken we een alternatief. */
+export function zoektAlternatief(p: Pick<Product, 'nutriscore' | 'categorieen'>): boolean {
+  return !!p.nutriscore && ['c', 'd', 'e'].includes(p.nutriscore) && !!specifiekeCategorie(p.categorieen);
+}
+
+/** De meest specifieke Engelse categorie (Open Food Facts zet de algemene eerst). */
+export function specifiekeCategorie(categorieen: readonly string[] = []): string | undefined {
+  return [...categorieen].reverse().find((c) => c.startsWith('en:'));
+}
+
+/** WEEK-306: de zoekvraag aan de zoekdienst van Open Food Facts: zelfde categorie, in België, betere Nutri-Score. */
+export function alternatiefUrl(p: Pick<Product, 'nutriscore' | 'categorieen'>, aantal = 6): string | undefined {
+  const categorie = specifiekeCategorie(p.categorieen);
+  const index = p.nutriscore ? NUTRI_LETTERS.indexOf(p.nutriscore) : -1;
+  if (!categorie || index <= 0) return undefined;
+  const beter = NUTRI_LETTERS.slice(0, index);
+  const q = `categories_tags:"${categorie}" AND nutrition_grades:(${beter.join(' OR ')}) AND countries_tags:"en:belgium"`;
+  const velden = ['code', 'product_name', 'brands', 'nutrition_grades'].join(',');
+  return `https://search.openfoodfacts.org/search?q=${encodeURIComponent(q)}&page_size=${aantal}&fields=${velden}&sort_by=-unique_scans_n`;
+}
+
+/** WEEK-306: zet het antwoord van de zoekdienst om; zonder naam, zonder betere score of hetzelfde product valt weg. */
+export function leesAlternatieven(data: unknown, p: Pick<Product, 'barcode' | 'nutriscore'>, max = 3): Alternatief[] {
+  const hits = (data as { hits?: unknown })?.hits;
+  if (!Array.isArray(hits)) return [];
+  const grens = p.nutriscore ? NUTRI_LETTERS.indexOf(p.nutriscore) : -1;
+  const uit: Alternatief[] = [];
+  for (const h of hits as Record<string, unknown>[]) {
+    const barcode = typeof h.code === 'string' ? h.code : '';
+    const naam = typeof h.product_name === 'string' ? h.product_name.trim() : '';
+    const score = typeof h.nutrition_grades === 'string' ? h.nutrition_grades : '';
+    const index = NUTRI_LETTERS.indexOf(score);
+    if (!barcode || !naam || barcode === p.barcode || index < 0 || index >= grens) continue;
+    if (uit.some((a) => a.barcode === barcode)) continue;
+    const merken = Array.isArray(h.brands) ? h.brands.filter((m): m is string => typeof m === 'string') : typeof h.brands === 'string' ? [h.brands] : [];
+    uit.push({ barcode, naam, ...(merken[0] ? { merk: merken[0].trim() } : {}), nutriscore: score });
+    if (uit.length >= max) break;
+  }
+  return uit;
+}
+
+/** WEEK-306: zoekt gezondere alternatieven. Enkel na een tik van de gebruiker (spaart de dienst van Open Food Facts). */
+export async function zoekAlternatieven(p: Product): Promise<Alternatief[]> {
+  const url = alternatiefUrl(p);
+  if (!url) return [];
+  const res = await fetch(url, { headers: { 'User-Agent': 'GezondBoodschappen/0.1 (github.com/Proqltc-prog/expo-app)' } });
+  if (!res.ok) throw new Error(`zoekdienst ${res.status}`);
+  return leesAlternatieven(await res.json(), p);
+}
+
+/** WEEK-304: de pagina van het product op Open Food Facts. */
+export function productLink(barcode: string): string {
+  return `https://world.openfoodfacts.org/product/${encodeURIComponent(barcode)}`;
 }
 
 /** Of het product een drank is (dan gelden de drempels per 100 ml). */
