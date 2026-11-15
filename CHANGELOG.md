@@ -10,6 +10,10 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.149.0] – 2026-11-14
 
+**WEEK-300** – Geen productdetails meer in In huis ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-300) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- De link "Productdetails" bij de producten in In huis is weg. De gegevens van een product zie je enkel nog in de scanner.
+
 **WEEK-299** – Geen eigen score meer ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-299) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 
 - "Onze berekening" is weg uit de scanner en de productdetails. Je ziet nog de Nutri-Score, NOVA, de voedingstabel met plus- en minpunten, en de additieven met EU-waarschuwing.

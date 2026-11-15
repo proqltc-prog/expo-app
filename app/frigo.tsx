@@ -5,8 +5,6 @@ import { router, useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
 import { datumToestel, houdbaarStatus, vandaag } from '@/lib/houdbaarheid';
 import { DatumKiezer } from '@/ui/datumKiezer';
-import { Product } from '@/lib/openfoodfacts';
-import { ScanBlokken } from '@/ui/scanBlokken';
 import { markeerOntbrekend } from '@/lib/planner/status';
 import { wijzigPlan } from '@/opslag/plan';
 import { koppelingGedaan, laadFrigo, wijzigFrigo, zetKoppelingGedaan } from '@/opslag/frigo';
@@ -42,15 +40,6 @@ const INKT = '#17201A';
 const MUTED = '#5E6B63';
 type IoniconNaam = ComponentProps<typeof Ionicons>['name'];
 
-/** Productdetails van een gescand frigo-item (WEEK-49): dezelfde blokken als het scanscherm (WEEK-220). */
-function ProductDetails({ product: p }: { product: Product }) {
-  return (
-    <View style={s.productBlok}>
-      <ScanBlokken product={p} />
-    </View>
-  );
-}
-
 export default function Frigo() {
   const { t, tn, taal } = useTaal();
   // WEEK-177: uitleg via een infoknop rechtsboven in de koptekst; de tekst beschrijft beide sheets.
@@ -63,8 +52,6 @@ export default function Frigo() {
   const [bewerkIds, setBewerkIds] = useState<string[] | null>(null);
   // WEEK-222: de popup bewerkt een receptingrediënt (enkel hoeveelheid en eenheid) in plaats van een los product.
   const [bewerkRecept, setBewerkRecept] = useState(false);
-  // Welk product de details open heeft staan (WEEK-49); één tegelijk.
-  const [open, setOpen] = useState<string | null>(null);
   // Welke afdelingen open staan (WEEK-124); standaard is alles ingeklapt.
   const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
   // WEEK-242: voor welk product de kalender van de houdbaarheid open staat (het oudste exemplaar), of null.
@@ -308,7 +295,6 @@ export default function Frigo() {
           </Pressable>
         )}
         renderItem={({ item }) => {
-          const toon = open === item.sleutel && !!item.product;
           return (
             <View>
               <View style={s.item}>
@@ -365,13 +351,7 @@ export default function Frigo() {
                   )}
                 </View>
               )}
-              {/* Details (WEEK-49): openen als het product gescand is, anders scannen om ze toe te voegen. */}
-              {item.product ? (
-                <Pressable onPress={() => setOpen(toon ? null : item.sleutel)} accessibilityRole="button" accessibilityState={{ expanded: toon }}>
-                  <Text style={s.rijLink}>{t('frigo.productDetails')} {toon ? '▴' : '▾'}</Text>
-                </Pressable>
-              ) : null /* WEEK-120: geen scanlink per losse product; de scanknop bovenaan volstaat. */}
-              {toon && item.product ? <ProductDetails product={item.product} /> : null}
+              {/* WEEK-300: geen productdetails meer bij de producten in In huis. */}
             </View>
           );
         }}
@@ -415,7 +395,6 @@ const s = StyleSheet.create({
   houdbaarRij: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
   houdbaarKies: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   zonderMarge: { marginBottom: 0 },
-  productBlok: { gap: 6, marginBottom: 12 },
   houdbaar: { fontSize: 12, color: '#777', marginTop: 2 },
   bijna: { color: ORANJE, fontWeight: '700' },
   verlopen: { color: '#B23A05', fontWeight: '700' },
