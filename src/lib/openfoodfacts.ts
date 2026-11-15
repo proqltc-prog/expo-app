@@ -1,6 +1,7 @@
 import type { Afdeling } from '@/data/ingredienten';
 import { berekenScore, type Oordeel } from '@/lib/score';
 import { allergeenCodes } from '@/lib/allergenen';
+import { leesIngredienten, leesNovaRedenen, type Ingredient, type NovaReden } from '@/lib/ingredienten';
 
 export type { Oordeel, OordeelLabel, Reden, RedenCode } from '@/lib/score';
 
@@ -27,6 +28,10 @@ export type Product = {
   allergenen?: string[];
   /** WEEK-305: "kan sporen bevatten van". */
   sporen?: string[];
+  /** WEEK-307: waarom het product zijn NOVA-groep krijgt. Ontbreekt bij oude bewaarde producten. */
+  novaRedenen?: NovaReden[];
+  /** WEEK-308: de ingrediënten (bovenste niveau). Ontbreekt bij oude bewaarde producten. */
+  ingredienten?: Ingredient[];
 };
 
 const BASIS = 'https://world.openfoodfacts.org/api/v2/product';
@@ -44,6 +49,8 @@ const VELDEN = [
   'categories_tags',
   'allergens_tags',
   'traces_tags',
+  'nova_groups_markers',
+  'ingredients',
 ].join(',');
 
 /** WEEK-295: een ingrediëntenlijst als tekst of als ontlede lijst. */
@@ -91,6 +98,8 @@ export async function zoekProduct(barcode: string, taal = 'nl'): Promise<Product
     categorieen: Array.isArray(p.categories_tags) ? p.categories_tags.filter((c: unknown) => typeof c === 'string') : [],
     allergenen: allergeenCodes(p.allergens_tags),
     sporen: allergeenCodes(p.traces_tags),
+    novaRedenen: leesNovaRedenen(p.nova_groups_markers, getal(p.nova_group)),
+    ingredienten: leesIngredienten(p.ingredients),
   };
 }
 

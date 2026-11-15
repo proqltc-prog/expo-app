@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.152.0] – 2026-11-15
+
+### Nieuw
+- **WEEK-307** – Scanner: bij NOVA staat waarom het product die groep krijgt (bv. "NOVA 4 door: melkpoeder"), volgens Open Food Facts. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-307
+- **WEEK-308** – Scanner: de ingrediëntenlijst, ingeklapt, met een teller positief en negatief en per ingrediënt de reden (eigen inschatting). Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-308
+- **WEEK-309** – Steekproef van 100 producten (gezond en ongezond) door de scanner gehaald. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-309
+
+Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
 ## [0.151.0] – 2026-11-15
 
 ### Nieuw

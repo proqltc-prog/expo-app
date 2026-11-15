@@ -10,6 +10,7 @@ import { Sleutel, voedingGetal } from '@/i18n';
 import { isDrank, type Product } from '@/lib/openfoodfacts';
 import { additievenGekend } from '@/lib/score';
 import { allergeenNaam, allergenenStatus } from '@/lib/allergenen';
+import { beoordeelIngredienten, novaRedenTekst } from '@/lib/ingredienten';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
 
@@ -92,6 +93,7 @@ function Kaart({ titel, kant, nadruk, children }: { titel: string; kant?: string
 export function ScanBlokken({ product: p }: { product: Product }) {
   const { t, tn, taal } = useTaal();
   const [additievenOpen, setAdditievenOpen] = useState(false); // standaard ingeklapt
+  const [ingredientenOpen, setIngredientenOpen] = useState(false); // WEEK-308: standaard ingeklapt
   const telling = telEuRegels(p.additieven);
   const ernst: EuStatus | null = telling.verboden ? 'verboden' : telling.waarschuwing ? 'waarschuwing' : null;
   const drank = isDrank(p);
@@ -170,6 +172,23 @@ export function ScanBlokken({ product: p }: { product: Product }) {
         ) : (
           <Text style={s.uitleg}>{t('scan.novaOnbekend')}</Text>
         )}
+        {/* WEEK-307: wat de NOVA-groep veroorzaakt, volgens Open Food Facts. */}
+        {p.nova && p.novaRedenen?.length ? (
+          <Text style={s.novaReden}>
+            {t('scan.novaReden', {
+              groep: p.nova,
+              lijst: p.novaRedenen
+                .map((r) =>
+                  r.soort === 'additief'
+                    ? [additiefWeergave(r.id, taal).code, additiefWeergave(r.id, taal).omschrijving?.split(' · ')[0]].filter(Boolean).join(' ')
+                    : r.soort === 'categorie'
+                      ? `${t('scan.novaRedenCategorie')} (${novaRedenTekst(r)})`
+                      : novaRedenTekst(r, p.ingredienten)
+                )
+                .join(', '),
+            })}
+          </Text>
+        ) : null}
         <Text style={s.uitleg}>{t('scan.novaUitleg')}</Text>
       </Kaart>
 
@@ -206,6 +225,61 @@ export function ScanBlokken({ product: p }: { product: Product }) {
           </View>
         ))}
       </View>
+
+      {/* WEEK-308: de ingrediëntenlijst, ingeklapt, met een teller positief en negatief (eigen inschatting). */}
+      {(() => {
+        if (!p.ingredienten?.length) {
+          return (
+            <View style={s.kaart}>
+              <Text style={s.kaartTitel}>{t('scan.ingredientenTitel')}</Text>
+              <Text style={s.uitleg}>{t('scan.additievenOnbekend')}</Text>
+            </View>
+          );
+        }
+        const b = beoordeelIngredienten(p.ingredienten, p.nova, p.novaRedenen);
+        return (
+          <View style={s.kaart}>
+            <Pressable
+              style={s.additievenKop}
+              onPress={() => setIngredientenOpen((o) => !o)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: ingredientenOpen }}
+              accessibilityLabel={`${t('scan.ingredienten', { n: b.lijst.length })}, ${t('scan.ingredientenTeller', { plus: b.positief, min: b.negatief })}`}
+            >
+              <Text style={[s.kaartTitel, { flex: 1 }]}>{t('scan.ingredienten', { n: b.lijst.length })}</Text>
+              <View style={[s.teller, { backgroundColor: STIJL.goed.bg }]}>
+                <Ionicons name="checkmark" size={14} color={STIJL.goed.tekst} />
+                <Text style={[s.tellerTekst, { color: STIJL.goed.tekst }]}>{b.positief}</Text>
+              </View>
+              <View style={[s.teller, { backgroundColor: STIJL.teVeel.bg }]}>
+                <Ionicons name="close" size={14} color={STIJL.teVeel.tekst} />
+                <Text style={[s.tellerTekst, { color: STIJL.teVeel.tekst }]}>{b.negatief}</Text>
+              </View>
+              <Ionicons name={ingredientenOpen ? 'chevron-up' : 'chevron-down'} size={18} color={MUTED} />
+            </Pressable>
+            {ingredientenOpen && (
+              <>
+                {b.lijst.map((i, n) => {
+                  const kleur = i.oordeel.soort === 'positief' ? STIJL.goed : i.oordeel.soort === 'negatief' ? STIJL.teVeel : null;
+                  return (
+                    <View key={`${i.id}-${n}`} style={s.ingredient}>
+                      <View style={[s.ingredientIcoon, { backgroundColor: kleur?.bg ?? '#EEEEE8' }]}>
+                        <Ionicons name={i.oordeel.soort === 'positief' ? 'checkmark' : i.oordeel.soort === 'negatief' ? 'close' : 'remove'} size={14} color={kleur?.tekst ?? MUTED} />
+                      </View>
+                      <Text style={s.additiefTekst}>
+                        {i.tekst}
+                        {i.procent !== undefined ? ` ${voedingGetal(taal, i.procent)} %` : ''}
+                        {i.oordeel.reden ? <Text style={[s.klein, { color: kleur?.tekst ?? MUTED }]}>{`  ${t(`ingredient.reden.${i.oordeel.reden}` as Sleutel)}`}</Text> : null}
+                      </Text>
+                    </View>
+                  );
+                })}
+                <Text style={s.uitleg}>{t('scan.ingredientenUitleg')}</Text>
+              </>
+            )}
+          </View>
+        );
+      })()}
 
       {/* WEEK-296: zonder ingrediëntenlijst geen "Additieven (0)": we weten het dan gewoon niet. */}
       {!additievenGekend(p) && p.additieven.length === 0 ? (
@@ -323,4 +397,9 @@ const s = StyleSheet.create({
   euAdditief: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 8, padding: 10 },
   euIcoon: { width: 24, height: 24, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
   euTekst: { fontSize: 13, marginTop: 2 },
+  novaReden: { fontSize: 13, lineHeight: 18, color: INKT, fontWeight: '600' },
+  teller: { flexDirection: 'row', alignItems: 'center', gap: 2, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8, marginRight: 6 },
+  tellerTekst: { fontSize: 13, fontWeight: '800' },
+  ingredient: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 3 },
+  ingredientIcoon: { width: 22, height: 22, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
 });
