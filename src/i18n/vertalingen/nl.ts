@@ -431,6 +431,8 @@ export const nl = {
   'scan.filmpjeTitel': 'Extra scans',
   'scan.bron': 'Gegevens: Open Food Facts (openfoodfacts.org). Geen medisch advies.',
   'scan.terug': 'Terug',
+  'scan.sluiten': 'Sluiten',
+  'scan.toevoegen': 'Toevoegen',
   'scan.annuleer': 'Annuleer',
 
   'voeding.kcal': 'Calorieën',

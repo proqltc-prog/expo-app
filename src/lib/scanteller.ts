@@ -1,7 +1,8 @@
 // Scanlimiet (WEEK-34): 10 scans per dag per toestel (WEEK-51; was 3).
 // Reclamefilmpjes (WEEK-38) geven extra scans voor die dag: dat staat in `bonus`.
 
-export const GRATIS_SCANS_PER_DAG = 10;
+// WEEK-298: 5 gratis scans per dag (was 10).
+export const GRATIS_SCANS_PER_DAG = 5;
 
 export type ScanTeller = { dag: string; aantal: number; bonus?: number };
 

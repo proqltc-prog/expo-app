@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { berekenScore, DREMPELS, labelVoor, niveauVan, ontbrekendeGegevens, PLAFOND, PUNTEN } from '@/lib/score';
+import { berekenScore, DREMPELS, ENERGIEARM_KCAL, labelVoor, niveauVan, ontbrekendeGegevens, PLAFOND, PUNTEN } from '@/lib/score';
 import type { Product } from '@/lib/openfoodfacts';
 
 const basis: Product = { barcode: '1', naam: 'Test', additieven: [] };
@@ -139,13 +139,13 @@ describe('berekenScore: additieven, streng (WEEK-295)', () => {
   });
 
   test('een plafond wordt enkel vermeld als het de score verlaagt', () => {
-    const o = berekenScore({ ...vol, suikers: 30, vet: 20, nova: 4, additieven: [] }, false); // −25 −25 −25 = 25
-    assert.equal(o.score, 25);
+    const o = berekenScore({ ...vol, suikers: 30, vet: 20, nova: 4, additieven: [] }, false); // −25 −25 −25 +10 (geen additieven) = 35
+    assert.equal(o.score, 35);
     assert.equal(o.plafond, undefined);
   });
 
   test('regressie: de punten en plafonds staan zoals afgesproken', () => {
-    assert.deepEqual(PUNTEN, { midden: -10, hoog: -25, nova4: -25, vezels: 5, eiwit: 5, additief: -5, efsaMatig: -10, efsaHoog: -15, additiefEu: -25, zoetstof: -15 });
+    assert.deepEqual(PUNTEN, { midden: -10, hoog: -25, nova4: -25, vezels: 5, eiwit: 5, additief: -5, efsaMatig: -10, efsaHoog: -15, additiefEu: -25, zoetstof: -15, geenAdditieven: 10, nova1: 5, energiearm: 5 });
     assert.deepEqual(PLAFOND, { verboden: 0, additiefEu: 25, efsaHoog: 39, nova4: 49 });
   });
 });
@@ -165,8 +165,8 @@ describe('niet genoeg gegevens (WEEK-295)', () => {
     assert.deepEqual(berekenScore({ ...vol, nova: undefined, ingredientenBekend: false }, true).onvoldoende, ['nova', 'ingredienten']);
   });
 
-  test('een oud bewaard product zonder het veld ingredientenBekend telt als gekend', () => {
-    assert.deepEqual(ontbrekendeGegevens({ ...vol, ingredientenBekend: undefined }), []);
+  test('WEEK-296: een oud bewaard product zonder het veld ingredientenBekend telt als niet gekend', () => {
+    assert.deepEqual(ontbrekendeGegevens({ ...vol, ingredientenBekend: undefined }), ['ingredienten']);
   });
 });
 
@@ -176,5 +176,38 @@ describe('labelVoor (regressie: grenzen ongewijzigd)', () => {
     assert.equal(labelVoor(64), 'matig');
     assert.equal(labelVoor(40), 'matig');
     assert.equal(labelVoor(39), 'slecht');
+  });
+});
+
+describe('bonussen (WEEK-296)', () => {
+  // Volle kefir als drank: vet 3,5 (midden), verzadigd 2,6 (hoog), suikers 4 (midden), zout laag, veel eiwit.
+  const kefir: Product = { ...basis, nova: 1, ingredientenBekend: true, kcal: 62, vet: 3.5, verzadigd: 2.6, suikers: 4, zout: 0.1, eiwitten: 3.5, additieven: [] };
+
+  test('acceptatie: volle kefir zonder additieven, NOVA 1 gaat van 60 naar 75', () => {
+    const o = berekenScore(kefir, true); // −10 −25 −10 +5 (eiwit) +5 (NOVA 1) +10 (geen additieven)
+    assert.equal(o.score, 75);
+    assert.equal(o.label, 'goed');
+    assert.ok(o.redenen.some((r) => r.code === 'geenAdditieven'));
+    assert.ok(o.redenen.some((r) => r.code === 'nova1'));
+  });
+
+  test('geen bonus voor geen additieven als er één additief is', () => {
+    assert.ok(!berekenScore({ ...kefir, additieven: ['E300'] }, true).redenen.some((r) => r.code === 'geenAdditieven'));
+  });
+
+  test('energiearm volgens de EU: hoogstens 20 kcal per 100 ml (drank) of 40 kcal per 100 g', () => {
+    assert.deepEqual(ENERGIEARM_KCAL, { voeding: 40, drank: 20 });
+    assert.ok(berekenScore({ ...kefir, kcal: 20 }, true).redenen.some((r) => r.code === 'energiearm'));
+    assert.ok(!berekenScore({ ...kefir, kcal: 21 }, true).redenen.some((r) => r.code === 'energiearm'));
+    assert.ok(berekenScore({ ...kefir, kcal: 40 }, false).redenen.some((r) => r.code === 'energiearm'));
+  });
+
+  test('de score blijft hoogstens 100', () => {
+    assert.equal(berekenScore({ ...basis, nova: 1, ingredientenBekend: true, kcal: 10, vet: 0, verzadigd: 0, suikers: 0, zout: 0, additieven: [] }, true).score, 100);
+  });
+
+  test('zonder NOVA of ingrediëntenlijst: niet genoeg gegevens, ook al zijn er geen additieven', () => {
+    assert.deepEqual(berekenScore({ ...kefir, nova: undefined }, true).onvoldoende, ['nova']);
+    assert.deepEqual(berekenScore({ ...kefir, ingredientenBekend: false }, true).onvoldoende, ['ingredienten']);
   });
 });

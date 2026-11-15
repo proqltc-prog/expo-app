@@ -29,7 +29,8 @@ export type RedenCode =
   | 'suikersMidden' | 'suikersHoog'
   | 'zoutMidden' | 'zoutHoog'
   | 'nova4' | 'vezels' | 'eiwit'
-  | 'additief' | 'efsaMatig' | 'efsaHoog' | 'additiefEu' | 'verboden' | 'zoetstof';
+  | 'additief' | 'efsaMatig' | 'efsaHoog' | 'additiefEu' | 'verboden' | 'zoetstof'
+  | 'geenAdditieven' | 'nova1' | 'energiearm';
 
 /** Een reden is taalonafhankelijk. Het scherm toont ze niet meer apart: de voedingstabel (`voedingstabel.ts`) zegt per stof waarom. */
 export type Reden = { code: RedenCode; punten: number; waarde?: number; additief?: string };
@@ -60,16 +61,25 @@ export const PUNTEN = {
   efsaHoog: -15,
   additiefEu: -25,
   zoetstof: -15,
+  // WEEK-296: bonussen.
+  geenAdditieven: 10,
+  nova1: 5,
+  energiearm: 5,
 } as const;
+/** WEEK-296: "energiearm" volgens Verordening (EG) 1924/2006: hoogstens 40 kcal per 100 g, of 20 kcal per 100 ml voor een drank. */
+export const ENERGIEARM_KCAL = { voeding: 40, drank: 20 } as const;
 /** WEEK-295: de hoogste score die nog kan; het strengste plafond telt. Verboden in de EU = 0. */
 export const PLAFOND: Record<PlafondReden, number> = { verboden: 0, additiefEu: 25, efsaHoog: 39, nova4: 49 };
 const PLAFOND_VOLGORDE: PlafondReden[] = ['verboden', 'additiefEu', 'efsaHoog', 'nova4'];
 
-/** WEEK-295: welke cruciale gegevens ontbreken. Een oud bewaard product zonder het veld ingredientenBekend telt als gekend. */
+/**
+ * WEEK-295/WEEK-296: welke cruciale gegevens ontbreken. NOVA en de ingrediëntenlijst moeten gekend zijn; een oud bewaard
+ * product zonder het veld ingredientenBekend telt als niet gekend (opnieuw scannen).
+ */
 export function ontbrekendeGegevens(p: Product): Ontbrekend[] {
   const uit: Ontbrekend[] = [];
   if (p.nova === undefined) uit.push('nova');
-  if (p.ingredientenBekend === false) uit.push('ingredienten');
+  if (p.ingredientenBekend !== true) uit.push('ingredienten');
   if (p.vet === undefined || p.suikers === undefined || p.zout === undefined) uit.push('voeding');
   return uit;
 }
@@ -101,6 +111,10 @@ export function berekenScore(p: Product, drank: boolean): Oordeel {
     redenen.push({ code, punten, waarde: v });
   }
   if (p.nova === 4) redenen.push({ code: 'nova4', punten: PUNTEN.nova4 });
+  // WEEK-296: bonussen voor onbewerkt, zonder additieven en energiearm.
+  if (p.nova === 1) redenen.push({ code: 'nova1', punten: PUNTEN.nova1 });
+  if (p.ingredientenBekend === true && !p.additieven.some((a) => eNummer(a))) redenen.push({ code: 'geenAdditieven', punten: PUNTEN.geenAdditieven });
+  if (p.kcal !== undefined && p.kcal <= ENERGIEARM_KCAL[drank ? 'drank' : 'voeding']) redenen.push({ code: 'energiearm', punten: PUNTEN.energiearm, waarde: p.kcal });
   if ((p.vezels ?? 0) >= VEZELS_VEEL) redenen.push({ code: 'vezels', punten: PUNTEN.vezels, waarde: p.vezels });
   if (p.eiwitten !== undefined && p.kcal && (p.eiwitten * KCAL_PER_G_EIWIT) / p.kcal >= EIWIT_VEEL_ENERGIE) {
     redenen.push({ code: 'eiwit', punten: PUNTEN.eiwit, waarde: p.eiwitten });

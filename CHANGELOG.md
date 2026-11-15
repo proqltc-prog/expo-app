@@ -25,6 +25,20 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Strenger voor additieven: elk additief −5, zoetstof −15 per stuk, EFSA matig −10, EFSA hoog −15 (hoogstens 39), EU-waarschuwing −25 (hoogstens 25), verboden in de EU = 0; NOVA 4 −25 (hoogstens 49).
 - Monster Ultra Paradise geeft nu 0, met of zonder E102 in de gegevens.
 
+**WEEK-296** – Bonussen: geen additieven, NOVA 1, energiearm ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-296) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Geen additieven (ingrediëntenlijst gekend) +10, NOVA 1 +5, energiearm volgens de EU (hoogstens 20 kcal/100 ml of 40 kcal/100 g) +5. Volle kefir gaat van 60 naar 75.
+- NOVA en ingrediëntenlijst moeten allebei gekend zijn, anders "Niet genoeg gegevens" (ook voor oude bewaarde producten: opnieuw scannen).
+
+**WEEK-297** – Vorige scan blijft niet meer staan ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-297) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Telkens je de scanner opent (via Scan of In huis) start hij bij de camera.
+
+**WEEK-298** – 5 gratis scans en nieuwe knoppen ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-298) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- 5 gratis scans per dag in plaats van 10.
+- Resultaat op de pagina Scan: enkel "Sluiten". Vanuit In huis: "Sluiten" en "Toevoegen". Met icoon.
+
 **WEEK-291** – Voedingstabel van de scanner zonder afronding ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-291) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
 
 - Waarden en grenzen tonen hun decimalen (tot op de milligram): zout 0,16 g blijft 0,16 g, de grens 0,75 g blijft 0,75 g.

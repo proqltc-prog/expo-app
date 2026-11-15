@@ -430,6 +430,8 @@ export const fr: Vertalingen = {
   'scan.filmpjeTitel': 'Scans supplémentaires',
   'scan.bron': 'Données : Open Food Facts (openfoodfacts.org). Pas un avis médical.',
   'scan.terug': 'Retour',
+  'scan.sluiten': 'Fermer',
+  'scan.toevoegen': 'Ajouter',
   'scan.annuleer': 'Annuler',
 
   'voeding.kcal': 'Calories',

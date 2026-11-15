@@ -6,6 +6,7 @@ import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-ca
 import { afdelingUitCategorieen, beoordeel, Oordeel, Product, scanNaam, zoekProduct } from '@/lib/openfoodfacts';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
+import { scanActies } from '@/lib/scanActies';
 import { laadScanTeller, registreerBonusScans, registreerScan } from '@/opslag/scanteller';
 import { bekijkBeloondFilmpje } from '@/opslag/advertentie';
 import { BELONING_SCANS, beloningVoor } from '@/lib/beloning';
@@ -54,7 +55,7 @@ function ScanInhoud() {
   const [toestemming, vraagToestemming] = useCameraPermissions();
   const [status, setStatus] = useState<Status>({ soort: 'scannen' });
   const bezig = useRef(false);
-  // Scanlimiet (WEEK-34, WEEK-38): 10 gratis per dag (GRATIS_SCANS_PER_DAG), plus bonusscans van het reclamefilmpje.
+  // Scanlimiet (WEEK-34, WEEK-38, WEEK-298): 5 gratis per dag (GRATIS_SCANS_PER_DAG), plus bonusscans van het reclamefilmpje.
   const [teller, setTeller] = useState<ScanTeller | null>(null);
   // Reclamefilmpje voor extra scans (WEEK-38): knop uitgeschakeld tijdens het laden.
   const [filmpjeBezig, setFilmpjeBezig] = useState(false);
@@ -67,10 +68,14 @@ function ScanInhoud() {
   const [frigoItems, setFrigoItems] = useState<FrigoItem[]>([]);
   useFocusEffect(
     useCallback(() => {
+      // WEEK-297: een vorige scan wordt niet bewaard: telkens de scanner opent, start hij bij de camera.
+      bezig.current = false;
+      setStatus({ soort: 'scannen' });
+      setBevestiging(null);
       laadScanTeller().then(setTeller);
       laadLijst().then(setLijstItems);
       laadFrigo().then(setFrigoItems);
-    }, [])
+    }, [van, item, lijstItem])
   );
 
   if (!toestemming) return <View style={s.midden}><ActivityIndicator /></View>;
@@ -235,6 +240,7 @@ function ScanInhoud() {
   }
 
   const { product: p, oordeel } = status;
+  const acties = scanActies(van, item);
 
   return (
     <ScrollView contentContainerStyle={s.resultaat}>
@@ -280,31 +286,25 @@ function ScanInhoud() {
           </View>
         );
       })()}
-      {/* Details van een frigo-item (WEEK-49): enkel de gegevens koppelen, het item zelf blijft zoals het is. */}
-      {item ? (
+      {/* WEEK-298: pagina Scan: enkel Sluiten (terug naar de camera). Vanaf In huis: Sluiten (terug naar In huis) en
+          Toevoegen (het product of de details gaan naar In huis). De boodschappenlijst houdt haar eigen knoppen. */}
+      {acties !== 'lijst' && (
         <View style={s.knoppen}>
-          <Pressable style={[s.knop, { flex: 1, backgroundColor: ORANJE }]} onPress={opnieuw}>
-            <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
+          <Pressable
+            style={[s.knop, s.knopMetIcoon, { flex: 1 }, acties.includes('toevoegen') && s.knopZacht]}
+            onPress={acties.includes('toevoegen') ? annuleer : opnieuw}
+            accessibilityRole="button"
+          >
+            <Ionicons name="close" size={20} color={acties.includes('toevoegen') ? KLEUR : '#fff'} />
+            <Text style={[s.knopTekst, acties.includes('toevoegen') && s.knopZachtTekst]}>{t('scan.sluiten')}</Text>
           </Pressable>
-          <Pressable style={[s.knop, { flex: 1 }]} onPress={() => bewaarDetails(item, p)}>
-            <Text style={s.knopTekst}>{t('scan.detailsBewaren')}</Text>
-          </Pressable>
+          {acties.includes('toevoegen') && (
+            <Pressable style={[s.knop, s.knopMetIcoon, { flex: 1 }]} onPress={() => (item ? bewaarDetails(item, p) : naarFrigo(p))} accessibilityRole="button">
+              <Ionicons name="add" size={22} color="#fff" />
+              <Text style={s.knopTekst}>{t('scan.toevoegen')}</Text>
+            </Pressable>
+          )}
         </View>
-      ) : van === 'frigo' ? (
-        /* Scannen vanaf de frigo (WEEK-47): het product gaat direct in de frigo. */
-        <View style={s.knoppen}>
-          <Pressable style={[s.knop, { flex: 1, backgroundColor: ORANJE }]} onPress={opnieuw}>
-            <Text style={s.knopTekst}>{t('scan.afwijzen')}</Text>
-          </Pressable>
-          <Pressable style={[s.knop, { flex: 1 }]} onPress={() => naarFrigo(p)}>
-            <Text style={s.knopTekst}>{t('scan.inFrigo')}</Text>
-          </Pressable>
-        </View>
-      ) : (
-        /* Gewoon scannen (WEEK-71): enkel terug naar de camera, geen afwijzen of op de lijst zetten. */
-        <Pressable style={s.knop} onPress={opnieuw} accessibilityRole="button">
-          <Text style={s.knopTekst}>{t('scan.terug')}</Text>
-        </Pressable>
       )}
       <Text style={s.bron}>{t('scan.bron')}</Text>
     </ScrollView>
@@ -317,6 +317,9 @@ const s = StyleSheet.create({
   midden: { flex: 1, backgroundColor: PAPIER, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
   tekst: { fontSize: 16, textAlign: 'center', color: INKT },
   knop: { backgroundColor: KLEUR, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 20, alignItems: 'center' },
+  knopMetIcoon: { flexDirection: 'row', justifyContent: 'center', gap: 8 },
+  knopZacht: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: KLEUR },
+  knopZachtTekst: { color: KLEUR },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   annuleer: { position: 'absolute', top: 16, left: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
