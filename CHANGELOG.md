@@ -8,6 +8,11 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.150.1] – 2026-11-15
+
+### Opgelost
+- **WEEK-301** – In huis toont de ingrediënten van het weekmenu in de taal van het toestel, ook als een gezinslid met een andere taal ze afvinkte (bv. "bloemkool" in plaats van "chou-fleur"). Enkel de weergave: de bewaarde naam verandert niet. Zelf getypte losse producten blijven zoals ze getypt zijn, net als op de boodschappenlijst. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-301 · Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
 ## [0.150.0] – 2026-11-14
 
 **WEEK-289** – Sfeerfoto's op de startpagina en in Aan de slag ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-289) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))
