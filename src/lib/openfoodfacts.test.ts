@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { afdelingUitCategorieen, beoordeel, isDrank, Product, productNaam, scanNaam } from '@/lib/openfoodfacts';
+import { afdelingUitCategorieen, beoordeel, ingredientenGekend, isDrank, Product, productNaam, scanNaam } from '@/lib/openfoodfacts';
 
 const basis: Product = { barcode: '1', naam: 'Test', additieven: [] };
 
@@ -59,5 +59,14 @@ describe('gescand product naar de frigo (WEEK-35)', () => {
     assert.equal(scanNaam({ merk: 'Danone, Activia', naam: 'Yoghurt' }, '?'), 'Danone – Yoghurt');
     assert.equal(scanNaam({ naam: 'Melk' }, '?'), 'Melk');
     assert.equal(scanNaam({ merk: 'Lidl', naam: '' }, 'Onbekend product'), 'Lidl – Onbekend product');
+  });
+});
+
+describe('ingrediëntenlijst gekend (WEEK-295)', () => {
+  test('tekst of ontlede lijst telt; leeg of ontbrekend niet', () => {
+    assert.equal(ingredientenGekend({ ingredients_text: 'water, cafeïne' }), true);
+    assert.equal(ingredientenGekend({ ingredients_n: 12 }), true);
+    assert.equal(ingredientenGekend({ ingredients_text: '  ', ingredients_n: 0 }), false);
+    assert.equal(ingredientenGekend({}), false);
   });
 });

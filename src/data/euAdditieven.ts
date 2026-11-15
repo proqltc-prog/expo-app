@@ -1,5 +1,6 @@
 // Additieven waar de Europese wet iets over zegt (WEEK-224). Pure data en logica, zonder React Native.
-// Enkel de wet zelf, geen eigen oordeel en geen teksten van IARC of EFSA (zie WEEK-220, "bewust niet opgenomen").
+// Enkel de wet zelf, geen eigen oordeel en geen teksten van IARC (zie WEEK-220). Het EFSA-risico op te veel inname
+// staat sinds WEEK-290 apart, in additieven.ts (uit de lijst van Open Food Facts).
 //  - waarschuwing: kleurstoffen waarvoor de verpakking verplicht vermeldt "kan de activiteit en de aandacht van
 //    kinderen nadelig beïnvloeden" (Verordening (EG) 1333/2008, bijlage V).
 //  - verboden: additieven die in de EU niet meer toegelaten zijn. Ze kunnen nog opduiken in oude gegevens van

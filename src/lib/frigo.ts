@@ -215,6 +215,8 @@ export function leesProduct(ruw: unknown): Product | undefined {
     if (typeof v === 'number' && Number.isFinite(v)) p[k] = v;
   }
   if (Array.isArray(ruw.categorieen)) p.categorieen = ruw.categorieen.filter((c): c is string => typeof c === 'string');
+  // WEEK-295: of er een ingrediëntenlijst is, anders kan de score niet zeggen dat er gegevens ontbreken.
+  if (typeof ruw.ingredientenBekend === 'boolean') p.ingredientenBekend = ruw.ingredientenBekend;
   return p;
 }
 

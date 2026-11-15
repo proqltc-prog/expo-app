@@ -76,6 +76,16 @@ export function getal(taal: Taal, waarde: number, maxDecimalen = 1): string {
   return new Intl.NumberFormat(LOCALE[taal], { maximumFractionDigits: maxDecimalen }).format(waarde);
 }
 
+/**
+ * WEEK-291: een voedingswaarde of grens in de voedingstabel van de scanner, zonder afronding op 1 decimaal:
+ * 0,16 g blijft 0,16 g en 11,25 g blijft 11,25 g. Tot op de milligram (3 decimalen), zodat rekenresten van
+ * Open Food Facts (0,16000000000000003) niet op het scherm komen. Overbodige nullen vallen weg.
+ */
+export const VOEDING_DECIMALEN = 3;
+export function voedingGetal(taal: Taal, waarde: number): string {
+  return getal(taal, waarde, VOEDING_DECIMALEN);
+}
+
 // Lijstcategorieën: vroeger bewaard als Nederlandse naam, nu als code.
 const OUDE_CATEGORIEEN: Record<string, string> = {
   Avondeten: 'avondeten',
