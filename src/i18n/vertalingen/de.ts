@@ -423,6 +423,8 @@ export const de: Vertalingen = {
   'scan.alternatiefUitleg': 'Aus derselben Kategorie, in Belgien verkauft, mit besserem Nutri-Score. Tippe zum Ansehen.',
   'scan.alternatiefGeen': 'Keine gesündere Alternative für dieses Produkt bekannt.',
   'scan.alternatiefFout': 'Die Suche funktioniert gerade nicht. Versuche es später erneut.',
+  'scan.nutriSamenvatting': 'Pluspunkte: {plus} · Minuspunkte: {min}',
+  'scan.novaMeer': 'Mehr zu NOVA',
   'scan.novaReden': 'NOVA {groep} wegen: {lijst}.',
   'scan.novaRedenCategorie': 'Produktart',
   'scan.ingredientenTitel': 'Zutaten',

@@ -424,6 +424,8 @@ export const nl = {
   'scan.alternatiefUitleg': 'Uit dezelfde soort, verkocht in België, met een betere Nutri-Score. Tik om te bekijken.',
   'scan.alternatiefGeen': 'Geen gezonder alternatief gekend voor dit product.',
   'scan.alternatiefFout': 'Zoeken lukt nu niet. Probeer het later opnieuw.',
+  'scan.nutriSamenvatting': 'Pluspunten: {plus} · minpunten: {min}',
+  'scan.novaMeer': 'Meer uitleg over NOVA',
   'scan.novaReden': 'NOVA {groep} door: {lijst}.',
   'scan.novaRedenCategorie': 'soort product',
   'scan.ingredientenTitel': 'Ingrediënten',

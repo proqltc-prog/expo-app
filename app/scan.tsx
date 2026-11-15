@@ -333,7 +333,8 @@ function ScanInhoud() {
       {p.merk ? <Text style={s.merk}>{p.merk}</Text> : null}
 
       {/* WEEK-220: Nutri-Score, NOVA, tabel en additieven (standaard ingeklapt). */}
-      <ScanBlokken product={p} />
+      {/* WEEK-310: key per product, zodat elk product ingeklapt begint. */}
+      <ScanBlokken key={p.barcode} product={p} />
 
       {/* WEEK-306: gezonder alternatief, enkel bij een gekende Nutri-Score C, D of E. Niet op de website: de zoekdienst
           van Open Food Facts laat geen vragen uit een webbrowser toe (CORS); in de app op het toestel werkt het wel. */}

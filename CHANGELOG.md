@@ -13,6 +13,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 ### Nieuw
 - **WEEK-307** – Scanner: bij NOVA staat waarom het product die groep krijgt (bv. "NOVA 4 door: melkpoeder"), volgens Open Food Facts. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-307
 - **WEEK-308** – Scanner: de ingrediëntenlijst, ingeklapt, met een teller positief en negatief en per ingrediënt de reden (eigen inschatting). Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-308
+- **WEEK-310** – Scanner: de balken van Nutri-Score en NOVA blijven; uitleg en tabellen zitten ingeklapt eronder met een korte samenvatting en een pijltje. Onder NOVA staan de ingrediënten en additieven (wat NOVA gebruikt). Allergenen altijd open onder NOVA. Elk nieuw product begint weer ingeklapt. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-310
 - **WEEK-309** – Steekproef van 100 producten (gezond en ongezond) door de scanner gehaald. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-309
 
 Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
