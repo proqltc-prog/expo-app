@@ -8,8 +8,8 @@ const avond = new Date(2026, 9, 11, 23, 59);
 const morgen = new Date(2026, 9, 12, 0, 1);
 
 describe('scanlimiet (WEEK-34)', () => {
-  test('gratis: 10 scans per dag', () => {
-    assert.equal(GRATIS_SCANS_PER_DAG, 10);
+  test('gratis: 5 scans per dag (WEEK-298)', () => {
+    assert.equal(GRATIS_SCANS_PER_DAG, 5);
     let teller = null;
     for (let i = 0; i < GRATIS_SCANS_PER_DAG; i++) {
       assert.equal(magScannen(teller, ochtend), true);

@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { additiefWeergave, eNummer } from '@/data/additieven';
+import { additiefInfo, additiefWeergave, eNummer, functieVan } from '@/data/additieven';
+import { ADDITIEVEN_OFF } from '@/data/additieven.gegenereerd';
 
 describe('eNummer (WEEK-71)', () => {
   test('haalt het E-nummer uit een Open Food Facts-tag', () => {
@@ -15,6 +16,48 @@ describe('eNummer (WEEK-71)', () => {
     assert.equal(eNummer(''), null);
     assert.equal(eNummer('en:e160abc'), null);
   });
+
+  test('WEEK-290: varianten met een Romeins cijfer', () => {
+    assert.equal(eNummer('en:e322i'), 'E322I');
+    assert.equal(eNummer('en:e420ii'), 'E420II');
+    assert.equal(eNummer('en:e440aiv'), 'E440AIV');
+    assert.equal(eNummer('en:e163xi'), 'E163XI');
+    assert.equal(eNummer('en:e14xx'), 'E14XX');
+    assert.equal(additiefWeergave('en:e14xx', 'nl').omschrijving, 'Gemodificeerde zetmelen · verdikkingsmiddel');
+  });
+});
+
+describe('volledige lijst uit Open Food Facts (WEEK-290)', () => {
+  test('E133 en E950 hebben nu een naam en functie', () => {
+    assert.deepEqual(additiefWeergave('E133', 'nl'), {
+      code: 'E133',
+      omschrijving: 'Briljantblauw FCF · kleurstof',
+      efsa: { risico: 'matig', jaar: '2010', url: 'https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1853' },
+    });
+    assert.equal(additiefWeergave('en:e950', 'nl').omschrijving, 'Acesulfaam-K · zoetstof');
+    assert.equal(additiefWeergave('en:e950', 'fr').omschrijving, 'Acésulfame K · édulcorant');
+  });
+
+  test('een variant zonder eigen regel valt terug op het basisnummer', () => {
+    assert.equal(additiefInfo('en:e330i', 'nl')?.naam, 'Citroenzuur'); // E330I staat niet in de lijst, E330 wel
+    assert.equal(additiefInfo('en:palm-oil', 'nl'), null); // geen E-nummer
+  });
+
+  test('functieVan herkent zoetstoffen', () => {
+    for (const code of ['E950', 'E951', 'E955', 'E954', 'E960']) assert.equal(functieVan(code), 'zoetstof', code);
+    assert.equal(functieVan('E330'), 'zuurteregelaar');
+    assert.equal(functieVan('en:palm-oil'), null);
+  });
+
+  test('de lijst is volledig genoeg en elke rij heeft vier namen', () => {
+    const rijen = Object.entries(ADDITIEVEN_OFF);
+    assert.ok(rijen.length > 600, `${rijen.length} additieven`);
+    for (const [code, [namen]] of rijen) {
+      assert.match(code, /^E\d{3,4}[A-Z]*$/);
+      assert.equal(namen.length, 4, code);
+      assert.ok(namen.every((n) => n && !/^E\d/.test(n)), code);
+    }
+  });
 });
 
 describe('additiefWeergave (WEEK-71)', () => {
@@ -24,8 +67,9 @@ describe('additiefWeergave (WEEK-71)', () => {
     assert.equal(additiefWeergave('en:e951', 'en').omschrijving, 'Aspartame · sweetener');
   });
 
-  test('een onbekend E-nummer toont de code zonder verzonnen uitleg', () => {
-    assert.deepEqual(additiefWeergave('en:e999-iets', 'nl'), { code: 'E999', omschrijving: null });
+  test('een onbekend E-nummer toont de code met "naam onbekend", zonder verzonnen uitleg (WEEK-290)', () => {
+    assert.deepEqual(additiefWeergave('en:e1999-iets', 'nl'), { code: 'E1999', omschrijving: 'naam onbekend' });
+    assert.equal(additiefWeergave('en:e1999', 'fr').omschrijving, 'nom inconnu');
   });
 
   test('een tag zonder E-nummer toont de tag in hoofdletters', () => {

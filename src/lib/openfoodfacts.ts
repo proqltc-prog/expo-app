@@ -10,6 +10,8 @@ export type Product = {
   nutriscore?: string; // a–e
   nova?: number; // 1–4 (4 = ultrabewerkt)
   additieven: string[];
+  /** WEEK-295: heeft Open Food Facts een ingrediëntenlijst? Zonder lijst zijn de additieven niet gekend. Ontbreekt bij oude bewaarde producten. */
+  ingredientenBekend?: boolean;
   kcal?: number; // per 100 g
   suikers?: number; // g per 100 g
   eiwitten?: number; // g per 100 g
@@ -31,9 +33,18 @@ const VELDEN = [
   'nutriscore_grade',
   'nova_group',
   'additives_tags',
+  'ingredients_text',
+  'ingredients_n',
   'nutriments',
   'categories_tags',
 ].join(',');
+
+/** WEEK-295: een ingrediëntenlijst als tekst of als ontlede lijst. */
+export function ingredientenGekend(p: Record<string, unknown>): boolean {
+  const tekst = p.ingredients_text;
+  const aantal = p.ingredients_n;
+  return (typeof tekst === 'string' && tekst.trim().length > 0) || (typeof aantal === 'number' && aantal > 0);
+}
 
 /** Productnaam in de gevraagde taal, anders de algemene naam; leeg als er geen naam is. */
 export function productNaam(p: Record<string, unknown>, taal: string): string {
@@ -61,6 +72,7 @@ export async function zoekProduct(barcode: string, taal = 'nl'): Promise<Product
     nutriscore: typeof p.nutriscore_grade === 'string' && /^[a-e]$/.test(p.nutriscore_grade) ? p.nutriscore_grade : undefined,
     nova: getal(p.nova_group),
     additieven: (p.additives_tags ?? []).map((t: string) => t.replace(/^en:/, '').toUpperCase()),
+    ingredientenBekend: ingredientenGekend(p),
     kcal: getal(n['energy-kcal_100g']),
     suikers: getal(n.sugars_100g),
     eiwitten: getal(n.proteins_100g),

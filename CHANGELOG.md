@@ -28,6 +28,60 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Acht gratis Pexels-foto's in de app (samen ongeveer 0,7 MB, werkt offline), zonder gezichten of merken; bronnen in assets/welkom/BRONNEN.md.
 - Nieuw pakket expo-linear-gradient voor de kleurovergang op de foto's.
 
+## [0.149.0] – 2026-11-14
+
+**WEEK-300** – Geen productdetails meer in In huis ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-300) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- De link "Productdetails" bij de producten in In huis is weg. De gegevens van een product zie je enkel nog in de scanner.
+
+**WEEK-299** – Geen eigen score meer ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-299) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- "Onze berekening" is weg uit de scanner en de productdetails. Je ziet nog de Nutri-Score, NOVA, de voedingstabel met plus- en minpunten, en de additieven met EU-waarschuwing.
+- De scanner wist zijn resultaat nu ook wanneer je hem verlaat. Via het camera-icoon in In huis is een vorige scan zo zelfs geen ogenblik meer te zien.
+
+**WEEK-290** – Eerlijkere eigen score en alle additieven met naam en EFSA-risico ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-290) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- De eigen score telt nu ook additieven mee, enkel op basis van officiële bronnen: −15 per additief met een EU-waarschuwing of dat niet meer toegelaten is (en dan hoogstens 39, "Slecht"), −5 per additief met een EFSA-risico op te veel inname, −10 voor zoetstoffen in een drank.
+- Ultrabewerkt (NOVA 4) kost nu 20 punten en is nooit nog "Goed" (hoogstens 64).
+- Onder de score staat waarom ze niet hoger kan.
+- Alle additieven (674) hebben een naam en functie in vier talen, uit de lijst van Open Food Facts (`npm run additieven`). E133 en E950 tonen nu "Briljantblauw FCF" en "Acesulfaam-K". Een onbekend nummer toont "naam onbekend".
+- Bij een additief met EFSA-risico: uitleg in gewone taal en een link naar het EFSA-advies.
+- Voorbeeld: Monster Ultra Paradise gaat van 85 (Goed) naar 39 (Slecht).
+
+**WEEK-295** – Strengere score en "niet genoeg gegevens" ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-295) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Ontbreken NOVA, de ingrediëntenlijst of vet/suikers/zout, dan geen score maar "Niet genoeg gegevens om een score te berekenen", met wat er ontbreekt.
+- Strenger voor additieven: elk additief −5, zoetstof −15 per stuk, EFSA matig −10, EFSA hoog −15 (hoogstens 39), EU-waarschuwing −25 (hoogstens 25), verboden in de EU = 0; NOVA 4 −25 (hoogstens 49).
+- Monster Ultra Paradise geeft nu 0, met of zonder E102 in de gegevens.
+
+**WEEK-296** – Bonussen: geen additieven, NOVA 1, energiearm ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-296) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Geen additieven (ingrediëntenlijst gekend) +10, NOVA 1 +5, energiearm volgens de EU (hoogstens 20 kcal/100 ml of 40 kcal/100 g) +5. Volle kefir gaat van 60 naar 75.
+- NOVA en ingrediëntenlijst moeten allebei gekend zijn, anders "Niet genoeg gegevens" (ook voor oude bewaarde producten: opnieuw scannen).
+- Zonder ingrediëntenlijst staat er niet meer "Additieven (0)" maar "Additieven: niet gekend".
+
+**WEEK-297** – Vorige scan blijft niet meer staan ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-297) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Telkens je de scanner opent (via Scan of In huis) start hij bij de camera.
+- Ook een scan die nog aan het zoeken was toen je de scanner opnieuw opende, verschijnt niet meer.
+
+**WEEK-298** – 5 gratis scans en nieuwe knoppen ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-298) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- 5 gratis scans per dag in plaats van 10.
+- Resultaat op de pagina Scan: enkel "Sluiten". Vanuit In huis: "Sluiten" en "Toevoegen". Met icoon.
+
+**WEEK-291** – Voedingstabel van de scanner zonder afronding ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-291) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Waarden en grenzen tonen hun decimalen (tot op de milligram): zout 0,16 g blijft 0,16 g, de grens 0,75 g blijft 0,75 g.
+
+**WEEK-292** – Boodschappenlijst: teller Te kopen = som van Weekmenu en Andere producten ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-292) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Te kopen telt wat nog te kopen is op beide tabbladen; afgevinkte producten tellen nergens mee, ook niet op de tabbladen.
+
+**WEEK-293** – In huis: aantal naast een lange gerechtnaam altijd zichtbaar ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-293) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793))
+
+- Een lange titel wrapt; het aantal en het pijltje blijven rechts staan. Ook: E14XX toont "Gemodificeerde zetmelen · verdikkingsmiddel".
+
 ## [0.148.0] – 2026-11-14
 
 **Jira:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/browse/WEEK-288) · **Confluence:** [WEEK-288](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/25886744)
