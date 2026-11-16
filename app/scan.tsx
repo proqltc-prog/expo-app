@@ -4,10 +4,10 @@ import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, Share, Style
 import { TerugKnop } from '@/ui/terugKnop';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, Alternatief, Product, scanNaam, zoekProduct, zoektAlternatief } from '@/lib/openfoodfacts';
-import type { HistoriekItem } from '@/lib/scanHistoriek';
+import { vorigeVanZelfdeSoort, type HistoriekItem } from '@/lib/scanHistoriek';
 import { deelTekst } from '@/lib/scanDelen';
 import { bewaarInHistoriek, laadHistoriek, wisHistoriek } from '@/opslag/scanHistoriek';
-import { Alternatieven, HistoriekScherm, VergelijkScherm } from '@/ui/scanExtra';
+import { Alternatieven, HistoriekScherm, NutriLetter, VergelijkScherm } from '@/ui/scanExtra';
 import { voegProductToe, voegZelfToe } from '@/lib/frigo';
 import { GRATIS_SCANS_PER_DAG, magScannen, resterendeScans, ScanTeller } from '@/lib/scanteller';
 import { maakScanSessie } from '@/lib/scanSessie';
@@ -44,7 +44,7 @@ type Status =
   | { soort: 'fout' }
   // WEEK-302/303: de historiek (eventueel met een product al gekozen om te vergelijken) en de vergelijking.
   | { soort: 'historiek'; voorgekozen?: string }
-  | { soort: 'vergelijk'; a: Product; b: Product };
+  | { soort: 'vergelijk'; a: Product; b: Product; terug?: Product };
 
 // WEEK-177: de uitleg zit in de koptekst; de popup hangt in de wrapper, zodat elke weergave hem kan tonen.
 export default function Scan() {
@@ -224,7 +224,9 @@ function ScanInhoud() {
   }
 
   if (status.soort === 'vergelijk') {
-    return <VergelijkScherm a={status.a} b={status.b} onOpen={toonProduct} onSluit={() => setStatus({ soort: 'historiek' })} />;
+    // WEEK-313: vanaf de balk "Vergelijk met" keert Sluiten terug naar het product; anders naar de historiek.
+    const terug = status.terug;
+    return <VergelijkScherm a={status.a} b={status.b} onOpen={toonProduct} onSluit={() => setStatus(terug ? { soort: 'gevonden', product: terug } : { soort: 'historiek' })} />;
   }
 
   if (!toestemming) return <View style={s.midden}><ActivityIndicator /></View>;
@@ -303,8 +305,35 @@ function ScanInhoud() {
         {scanTerug(van) !== undefined && (
           <TerugKnop onPress={annuleer} kleur="#fff" style={s.annuleer} />
         )}
-        {/* WEEK-302: de historiek, onderaan op de camera (bovenaan staan de terugknop en de bevestiging). */}
-        <View style={s.historiekPlaats}>{historiekKnop}</View>
+        {/* WEEK-302/313: onderaan op de camera de laatste 3 scans (tik: openen, lang drukken: vergelijken) en "Alle". */}
+        <View style={s.historiekPlaats}>
+          {historiek.length > 0 ? (
+            <View style={s.laatst}>
+              <View style={s.laatstKop}>
+                <Text style={s.laatstTitel}>{t('scan.laatstGescand')}</Text>
+                <Pressable onPress={() => setStatus({ soort: 'historiek' })} accessibilityRole="button" hitSlop={8}>
+                  <Text style={s.laatstAlle}>{t('scan.laatstAlle')} ›</Text>
+                </Pressable>
+              </View>
+              <View style={s.laatstRij}>
+                {historiek.slice(0, 3).map((h) => (
+                  <Pressable
+                    key={h.product.barcode}
+                    style={s.laatstItem}
+                    onPress={() => toonProduct(h.product)}
+                    onLongPress={() => setStatus({ soort: 'historiek', voorgekozen: h.product.barcode })}
+                    accessibilityRole="button"
+                    accessibilityLabel={h.product.naam || t('scan.onbekend')}
+                  >
+                    <NutriLetter letter={h.product.nutriscore} />
+                    <Text style={s.laatstNaam} numberOfLines={2}>{h.product.naam || t('scan.onbekend')}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              {historiek.length > 1 && <Text style={s.laatstUitleg}>{t('scan.laatstUitleg')}</Text>}
+            </View>
+          ) : null}
+        </View>
       </View>
     );
   }
@@ -326,11 +355,22 @@ function ScanInhoud() {
 
   const { product: p } = status;
   const acties = scanActies(van, item);
+  const vorige = vorigeVanZelfdeSoort(historiek, p);
 
   return (
     <ScrollView contentContainerStyle={s.resultaat}>
       <Text style={s.productNaam}>{p.naam || t('scan.onbekend')}</Text>
       {p.merk ? <Text style={s.merk}>{p.merk}</Text> : null}
+
+      {/* WEEK-313: een vorige scan van dezelfde soort (bv. yoghurt na yoghurt): meteen vergelijken. */}
+      {vorige && (
+        <Pressable style={s.vergelijkBalk} onPress={() => setStatus({ soort: 'vergelijk', a: vorige, b: p, terug: p })} accessibilityRole="button">
+          <Ionicons name="git-compare-outline" size={20} color="#fff" />
+          <Text style={s.vergelijkBalkTekst} numberOfLines={2}>{t('scan.vergelijkMet', { naam: vorige.naam || t('scan.onbekend') })}</Text>
+          <NutriLetter letter={vorige.nutriscore} />
+          <Ionicons name="chevron-forward" size={18} color="#fff" />
+        </Pressable>
+      )}
 
       {/* WEEK-220: Nutri-Score, NOVA, tabel en additieven (standaard ingeklapt). */}
       {/* WEEK-310: key per product, zodat elk product ingeklapt begint. */}
@@ -434,7 +474,17 @@ const s = StyleSheet.create({
   merk: { color: MUTED },
   knoppen: { flexDirection: 'row', gap: 10, marginTop: 16 },
   bron: { color: MUTED, fontSize: 12, marginTop: 12, textAlign: 'center' },
-  historiekPlaats: { position: 'absolute', bottom: 24, left: 0, right: 0, alignItems: 'center' },
+  historiekPlaats: { position: 'absolute', bottom: 24, left: 12, right: 12, alignItems: 'center' },
+  laatst: { alignSelf: 'stretch', backgroundColor: 'rgba(15,107,102,0.92)', borderRadius: 14, padding: 10, gap: 8 },
+  laatstKop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  laatstTitel: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  laatstAlle: { color: '#fff', fontWeight: '700', fontSize: 14, textDecorationLine: 'underline' },
+  laatstRij: { flexDirection: 'row', gap: 8 },
+  laatstItem: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#fff', borderRadius: 10, padding: 6 },
+  laatstNaam: { flex: 1, minWidth: 0, color: INKT, fontSize: 12, fontWeight: '600' },
+  laatstUitleg: { color: '#fff', fontSize: 12, opacity: 0.9 },
+  vergelijkBalk: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: KLEUR, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 12, marginTop: 10 },
+  vergelijkBalkTekst: { flex: 1, minWidth: 0, color: '#fff', fontWeight: '700', fontSize: 14 },
   historiekKnop: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(15,107,102,0.92)', borderRadius: 22, paddingVertical: 10, paddingHorizontal: 14 },
   historiekTekst: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });
