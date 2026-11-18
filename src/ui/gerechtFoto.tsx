@@ -29,7 +29,8 @@ export function VlagTeken({ vlag }: { vlag: Vlag }) {
     return (
       <View style={[s.vlag, s.midden]}>
         {vlag.teken === 'olijf' && <Ionicons name="leaf" size={14} color="#5B7F2A" />}
-        {vlag.teken === 'gezin' && <Ionicons name="heart" size={13} color="#C62828" />}
+        {/* WEEK-316: een huisje i.p.v. een hartje, zodat het niet op een favoriet lijkt. */}
+        {vlag.teken === 'gezin' && <Ionicons name="home" size={13} color="#B4472B" />}
         {vlag.teken === 'stokjes' && (
           <View style={s.stokjes}>
             <View style={[s.stokje, { transform: [{ rotate: '-18deg' }] }]} />

@@ -8,9 +8,7 @@ import {
   moetVragen,
   naarRij,
   normaliseerBeoordelingen,
-  Reden,
   teVersturen,
-  wisselReden,
   zetSterren,
 } from '@/lib/beoordeling';
 import { SLEUTEL } from './sleutels';
@@ -37,13 +35,6 @@ function wijzig(stap: (lijst: Beoordeling[], nu: string) => Beoordeling[]): Prom
 /** Zet de sterren van een gerecht en probeert ze meteen te versturen. */
 export async function bewaarSterren(receptId: number, sterren: number): Promise<Beoordeling[]> {
   const lijst = await wijzig((l, nu) => zetSterren(l, receptId, sterren, nu));
-  void verstuurBeoordelingen();
-  return lijst;
-}
-
-/** Zet een reden aan of uit en probeert ze meteen te versturen. */
-export async function bewaarReden(receptId: number, reden: Reden): Promise<Beoordeling[]> {
-  const lijst = await wijzig((l, nu) => wisselReden(l, receptId, reden, nu));
   void verstuurBeoordelingen();
   return lijst;
 }

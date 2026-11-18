@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Moment, Soort } from '@/data/recept';
@@ -30,9 +30,11 @@ import { zetLijstBijPlan as zetLijstBijPlanOpslag } from '@/opslag/lijstBijPlan'
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
-import { bewaarReden, bewaarSterren, laadBeoordelingen, verstuurBeoordelingen, moetSterrenVragen } from '@/opslag/beoordelingen';
+import { bewaarSterren, laadBeoordelingen, verstuurBeoordelingen, moetSterrenVragen } from '@/opslag/beoordelingen';
 import { Beoordeling, dbReceptId } from '@/lib/beoordeling';
 import { SterrenVraag } from '@/ui/sterrenVraag';
+import { laadFavorieten, wisselFavorietOpslag } from '@/opslag/favorieten';
+import { Favoriet, favorietIds } from '@/lib/favorieten';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { dagSleutel, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
@@ -45,6 +47,8 @@ import { alleDagenAfgerond, bevestigPlanDag, magDagVerwijderen, magDagWijzigen, 
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
+// WEEK-316: het hartje van de favorieten (dezelfde kleur als in Zelf kiezen).
+const HART = '#d81b60';
 const ORANJE = '#E8680F';
 const ORANJE_ZACHT = '#FDE8D6';
 const PAPIER = '#F8F8F4';
@@ -134,6 +138,10 @@ export default function Weekplanning() {
   // WEEK-316: sterren na Gekookt. `sterrenVoor` = het gerecht waarvoor het venster open staat.
   const [sterrenVoor, setSterrenVoor] = useState<{ receptId: number; naam: string } | null>(null);
   const [beoordelingen, setBeoordelingen] = useState<Beoordeling[]>([]);
+  // WEEK-316: favorieten (hartje) ook op de kaarten van het weekmenu; gedeeld in het gezin.
+  const [favorieten, zetFavorieten] = useState<Favoriet[]>([]);
+  const favIds = useMemo(() => favorietIds(favorieten), [favorieten]);
+  const setFavorieten = (p: Promise<Favoriet[]>) => p.then(zetFavorieten);
   const [keuzes, setKeuzes] = useState<Keuzes>(STANDAARD_KEUZES);
   const [kalenderOpen, setKalenderOpen] = useState(false);
   // De stap waarin het weekmenu staat; met een bestaand plan opent het direct op het plan (WEEK-68 deel 4b).
@@ -167,6 +175,7 @@ export default function Weekplanning() {
   useEffect(() => {
     const stop = [
       bijWijziging('plan', () => laadPlan().then(setPlan)),
+      bijWijziging('favoriet', () => void laadFavorieten().then(zetFavorieten)),
       bijWijziging('profiel', () => laadProfiel().then(setProfiel)),
     ];
     return () => stop.forEach((f) => f());
@@ -214,6 +223,7 @@ export default function Weekplanning() {
       laadLeden().then(setLeden).catch(() => setLeden([]));
       // WEEK-316: sterren die nog niet in de databank staan (bv. offline gegeven), gaan nu mee.
       laadBeoordelingen().then(setBeoordelingen);
+      laadFavorieten().then(zetFavorieten);
       void verstuurBeoordelingen();
     }, [])
   );
@@ -652,6 +662,18 @@ export default function Weekplanning() {
                       )}
                     </View>
                     {/* WEEK-284: het boekje (ingrediënten en bereiding) rechtsboven op de kaart, bij elk gerecht. */}
+                    <View style={s.kopIconen}>
+                    {/* WEEK-316: favoriet (hartje) op de kaart, naast het boekje; niet op de foto. */}
+                    <Pressable
+                      onPress={() => void setFavorieten(wisselFavorietOpslag(recept.id))}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: favIds.has(recept.id) }}
+                      accessibilityLabel={t(favIds.has(recept.id) ? 'kies.favorietUit' : 'kies.favorietAan', { naam: inTaal(recept, taal).naam })}
+                      hitSlop={8}
+                      style={[s.actieIcoon, s.actieIcoonKlein, s.hartIcoon]}
+                    >
+                      <Ionicons name={favIds.has(recept.id) ? 'heart' : 'heart-outline'} size={18} color={HART} />
+                    </Pressable>
                     {heeftBereiding && (
                       <ActieIcoon
                         klein
@@ -660,6 +682,7 @@ export default function Weekplanning() {
                         onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
                       />
                     )}
+                    </View>
                     </View>
                     {/* WEEK-151: de titel krijgt de volle breedte; het boekje staat op de rij met het label. */}
                     <Text style={s.naam}>{inTaal(recept, taal).naam}</Text>
@@ -733,7 +756,6 @@ export default function Weekplanning() {
         beoordeling={beoordelingen.find((b) => b.receptId === sterrenVoor?.receptId)}
         t={(k, w) => t(k as Sleutel, w)}
         onSterren={(n) => sterrenVoor && void bewaarSterren(sterrenVoor.receptId, n).then(setBeoordelingen)}
-        onReden={(r) => sterrenVoor && void bewaarReden(sterrenVoor.receptId, r).then(setBeoordelingen)}
         onSluit={() => setSterrenVoor(null)}
       />
 
@@ -830,6 +852,8 @@ const s = StyleSheet.create({
   actieIcoonAan: { backgroundColor: PETROL },
   // WEEK-284
   actieIcoonKlein: { width: 32, height: 32, borderRadius: 16 },
+  kopIconen: { flexDirection: 'row', gap: 8 },
+  hartIcoon: { borderColor: HART },
   kaartKopRij: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 },
   gedaanOnderFoto: { alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 8, maxWidth: 96 },
   vensterAchtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
