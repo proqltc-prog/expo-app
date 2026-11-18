@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { wachtOpAanmelding } from '@/opslag/aanmelden';
+import { vergeetAfmelding, wachtOpAanmelding } from '@/opslag/aanmelden';
 import { haalGezinNaAanmelden } from '@/opslag/sync';
 import { laadProfiel } from '@/opslag/profiel';
 import { isProfielIngesteld } from '@/lib/profiel';
@@ -28,7 +28,10 @@ export default function Aangemeld() {
     (async () => {
       const aangemeld = await wachtOpAanmelding(MAX_WACHTEN_MS, () => gestopt);
       if (gestopt) return;
-      if (aangemeld) await haalGezinNaAanmelden();
+      if (aangemeld) {
+        await vergeetAfmelding();
+        await haalGezinNaAanmelden();
+      }
       const ingesteld = isProfielIngesteld(await laadProfiel());
       if (!gestopt) router.replace(bestemmingNaAanmelden(aangemeld, ingesteld));
     })();
