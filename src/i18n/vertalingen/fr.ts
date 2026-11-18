@@ -546,7 +546,6 @@ export const fr: Vertalingen = {
   'sterren.vraag': 'C’était comment ?',
   'sterren.label': '{n} étoiles sur 5',
   'sterren.bedankt': 'Merci !',
-  'sterren.klaar': 'Terminé',
   'sterren.later': 'Plus tard',
   'howto.sterren': '**Étoiles**\nAprès « Cuisiné », l’application demande comment était le plat. Votre note nous aide à améliorer les plats ; elle est enregistrée sans nom ni e-mail.',
   'profiel.gezin': 'Famille',

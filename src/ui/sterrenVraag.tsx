@@ -1,10 +1,14 @@
 // Sterren na Gekookt (WEEK-316): een klein venster "Hoe was het?" met 5 sterren, meteen na een tik op Gekookt.
 // Een venster en geen regel op de kaart: na het laatste gerecht verdwijnen de kaarten (WEEK-125).
 // Niet verplicht: "Later" of naast het venster tikken sluit het. Enkel sterren, geen redenen (afspraak eigenaar).
+// Na een ster: "Bedankt!" en het venster sluit vanzelf na 2 seconden.
 import { Ionicons } from '@expo/vector-icons';
+import { useEffect } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Beoordeling } from '@/lib/beoordeling';
 
+/** Na een ster sluit het venster vanzelf na zoveel milliseconden. */
+const SLUIT_NA_MS = 2000;
 const GOUD = '#f5a623';
 const PETROL = '#0F6B66';
 
@@ -19,6 +23,13 @@ type Props = {
 
 export function SterrenVraag({ naam, beoordeling, t, onSterren, onSluit }: Props) {
   const sterren = beoordeling?.sterren ?? 0;
+  const open = naam !== undefined;
+  // Na een ster sluit het venster vanzelf (SLUIT_NA_MS); een nieuwe ster binnen die tijd start de teller opnieuw.
+  useEffect(() => {
+    if (!open || !sterren) return;
+    const klok = setTimeout(onSluit, SLUIT_NA_MS);
+    return () => clearTimeout(klok);
+  }, [open, sterren, beoordeling?.op]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Modal visible={naam !== undefined} transparent animationType="fade" onRequestClose={onSluit}>
       <Pressable style={s.achtergrond} onPress={onSluit}>
@@ -40,10 +51,14 @@ export function SterrenVraag({ naam, beoordeling, t, onSterren, onSluit }: Props
               </Pressable>
             ))}
           </View>
-          {sterren > 0 && <Text style={s.bedankt}>{t('sterren.bedankt')}</Text>}
-          <Pressable style={[s.knop, sterren ? s.knopKlaar : s.knopLater]} onPress={onSluit} accessibilityRole="button">
-            <Text style={[s.knopTekst, !sterren && s.knopTekstLater]}>{t(sterren ? 'sterren.klaar' : 'sterren.later')}</Text>
-          </Pressable>
+          {/* Afspraak eigenaar: enkel de knop Later; na een ster "Bedankt!" en het venster sluit vanzelf na 2 seconden. */}
+          {sterren > 0 ? (
+            <Text style={s.bedankt} accessibilityLiveRegion="polite">{t('sterren.bedankt')}</Text>
+          ) : (
+            <Pressable style={s.knop} onPress={onSluit} accessibilityRole="button">
+              <Text style={s.knopTekst}>{t('sterren.later')}</Text>
+            </Pressable>
+          )}
         </Pressable>
       </Pressable>
     </Modal>
@@ -57,10 +72,7 @@ const s = StyleSheet.create({
   naam: { fontSize: 15, color: '#555', textAlign: 'center' },
   sterren: { flexDirection: 'row', marginVertical: 4 },
   ster: { paddingHorizontal: 3 },
-  bedankt: { fontSize: 14, color: '#555' },
-  knop: { marginTop: 6, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 28, minHeight: 44, justifyContent: 'center' },
-  knopKlaar: { backgroundColor: PETROL },
-  knopLater: { borderWidth: 1.5, borderColor: PETROL },
-  knopTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  knopTekstLater: { color: PETROL },
+  bedankt: { fontSize: 16, fontWeight: '700', color: PETROL, minHeight: 44, textAlignVertical: 'center', marginTop: 6 },
+  knop: { marginTop: 6, borderRadius: 12, borderWidth: 1.5, borderColor: PETROL, paddingVertical: 10, paddingHorizontal: 28, minHeight: 44, justifyContent: 'center' },
+  knopTekst: { color: PETROL, fontWeight: '700', fontSize: 15 },
 });

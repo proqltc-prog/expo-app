@@ -12,7 +12,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 **Jira:** [WEEK-316](https://proqltc-1791495894841.atlassian.net/browse/WEEK-316) (nieuwe functionaliteit) · **Confluence:** [WEEK-316](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27066369)
 
-- Na "Gekookt" vraagt een klein venster "Hoe was het?" met 1 tot 5 sterren. Enkel sterren, geen extra vragen.
+- Na "Gekookt" vraagt een klein venster "Hoe was het?" met 1 tot 5 sterren en enkel de knop "Later". Na een ster verschijnt "Bedankt!" en sluit het venster na 2 seconden.
 - Weekmenu: een hartje rechtsboven op de kaart (naast het boekje) maakt het gerecht een favoriet, dezelfde favorieten als in Zelf kiezen.
 - Op de foto van een gerecht zonder keuken staat een huisje in plaats van een hartje, zodat het niet op een favoriet lijkt.
 - De vraag komt terug zolang er voor dat gerecht geen score is ("Later" vraagt het de volgende keer opnieuw); na een score niet meer.

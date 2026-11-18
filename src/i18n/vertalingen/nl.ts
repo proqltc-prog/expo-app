@@ -547,7 +547,6 @@ export const nl = {
   'sterren.vraag': 'Hoe was het?',
   'sterren.label': '{n} van 5 sterren',
   'sterren.bedankt': 'Bedankt!',
-  'sterren.klaar': 'Klaar',
   'sterren.later': 'Later',
   'howto.sterren': '**Sterren**\nNa Gekookt vraagt de app hoe het gerecht was. Je score helpt ons de gerechten te verbeteren; ze wordt zonder naam of e-mail bewaard.',
   'profiel.gezin': 'Gezin',
