@@ -542,6 +542,11 @@ async function koppel(gezin: Gezin): Promise<void> {
   await abonneer(gezin);
 }
 
+/** Bij afmelden (WEEK-314): de koppeling met de gezinsruimte op dit toestel stopt; de gezinsruimte zelf blijft. */
+export function koppelLosBijAfmelden(): Promise<void> {
+  return koppelLos();
+}
+
 async function koppelLos(): Promise<void> {
   stopAbonnement();
   await naElkaar(async () => {

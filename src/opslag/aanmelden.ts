@@ -1,8 +1,12 @@
 // Koppelen van de anonieme account aan Google (WEEK-166). Enkel de verbinding met Supabase en de terugkeer van de aanbieder.
 import { Linking, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { leesTokensUitUrl, Aanbieder, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
+import { googleVragen, teWissenBijAfmelden } from '@/lib/afmelden';
+import { SLEUTEL } from './sleutels';
 import { supabase } from './supabase';
+import { koppelLosBijAfmelden } from './sync';
 
 /** Is het toestel nog anoniem aangemeld (dus nog niet gekoppeld aan een account)? */
 export async function isAnoniem(): Promise<boolean> {
@@ -32,7 +36,7 @@ export async function koppel(aanbieder: Aanbieder): Promise<void> {
   const { web, redirectTo } = terugkeer();
   const { data, error } = await sb.auth.linkIdentity({
     provider: aanbieder,
-    options: { redirectTo, skipBrowserRedirect: !web },
+    options: { redirectTo, skipBrowserRedirect: !web, ...googleVragen(await naAfmelden()) },
   });
   if (error) throw error;
   await openAanbieder(data, web);
@@ -45,7 +49,7 @@ export async function inlogMet(aanbieder: Aanbieder): Promise<void> {
   const { web, redirectTo } = terugkeer();
   const { data, error } = await sb.auth.signInWithOAuth({
     provider: aanbieder,
-    options: { redirectTo, skipBrowserRedirect: !web },
+    options: { redirectTo, skipBrowserRedirect: !web, ...googleVragen(await naAfmelden()) },
   });
   if (error) throw error;
   await openAanbieder(data, web);
@@ -110,4 +114,44 @@ export function luisterNaarTerugkeer(): () => void {
     if (url) void verwerkTerugkeer(url);
   });
   return () => sub.remove();
+}
+
+/** Het e-mailadres van het account waarmee dit toestel aangemeld is; undefined als het anoniem of niet aangemeld is (WEEK-314). */
+export async function aangemeldAls(): Promise<string | undefined> {
+  const sb = supabase();
+  if (!sb) return undefined;
+  const { data } = await sb.auth.getSession();
+  const gebruiker = data.session?.user;
+  if (!gebruiker || gebruiker.is_anonymous) return undefined;
+  return gebruiker.email ?? '';
+}
+
+/** Is dit toestel afgemeld sinds de laatste aanmelding? Dan laat Google het account kiezen (WEEK-314). */
+async function naAfmelden(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(SLEUTEL.afgemeld)) === 'ja';
+  } catch {
+    return false;
+  }
+}
+
+/** Na een geslaagde aanmelding vraagt Google niet meer telkens het account (WEEK-314). */
+export async function vergeetAfmelding(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(SLEUTEL.afgemeld);
+  } catch {
+    // geen opslag: dan vraagt Google de volgende keer nog eens het account
+  }
+}
+
+/**
+ * Afmelden op dit toestel (WEEK-314). De gezinsruimte en het account blijven bestaan; andere toestellen blijven aangemeld.
+ * De koppeling met de gezinsruimte stopt en de persoonlijke gegevens op het toestel worden gewist.
+ */
+export async function meldAf(): Promise<void> {
+  const sb = supabase();
+  await koppelLosBijAfmelden();
+  if (sb) await sb.auth.signOut({ scope: 'local' });
+  await AsyncStorage.multiRemove(teWissenBijAfmelden(SLEUTEL));
+  await AsyncStorage.setItem(SLEUTEL.afgemeld, 'ja');
 }

@@ -22,6 +22,8 @@ import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
 import { Inklapbaar } from '@/ui/inklapbaar';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
+import { aangemeldAls, meldAf } from '@/opslag/aanmelden';
+import { ROUTE_WELKOM } from '@/lib/welkom';
 import { wisselGroep } from '@/lib/groepen';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
@@ -70,6 +72,11 @@ export default function ProfielScherm() {
   const [mag, setMag] = useState(false);
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
   const [plaatsFout, setPlaatsFout] = useState(false);
+  // WEEK-314: met welk account dit toestel aangemeld is (undefined: anoniem of niet aangemeld, dan geen afmeldknop).
+  const [account, setAccount] = useState<string | undefined>(undefined);
+  const [afmeldVraag, setAfmeldVraag] = useState(false);
+  const [afmeldBezig, setAfmeldBezig] = useState(false);
+  const [afmeldFout, setAfmeldFout] = useState(false);
   // Enkel het antwoord op de laatst ingevoerde postcode telt.
   const laatstePostcode = useRef('');
   // WEEK-193: "Hoe werkt het?" zit achter het info-icoon rechtsboven, niet meer bovenaan de pagina.
@@ -91,6 +98,9 @@ export default function ProfielScherm() {
         .then(async (gezin) => (gezin ? magGezinsprofielWijzigen(true, await laadBeheerderId(), await ikId()) : true))
         .catch(() => false)
         .then(setMag);
+      aangemeldAls().then(setAccount).catch(() => setAccount(undefined));
+      setAfmeldVraag(false);
+      setAfmeldFout(false);
       // WEEK-100: bij elk vertrek (knop, menu of bewaren) onthouden zodat de weekplanner opnieuw start.
       return () => onthoudVertrekUitGezinsprofiel();
     }, [])
@@ -122,6 +132,21 @@ export default function ProfielScherm() {
       .catch(() => {
         if (laatstePostcode.current === pc) setPlaatsFout(true);
       });
+  };
+
+  // WEEK-314: afmelden op dit toestel; daarna het startscherm om (eventueel met een ander account) aan te melden.
+  const afmelden = async () => {
+    setAfmeldFout(false);
+    setAfmeldBezig(true);
+    try {
+      await meldAf();
+      router.replace(ROUTE_WELKOM);
+    } catch {
+      setAfmeldFout(true);
+    } finally {
+      setAfmeldBezig(false);
+      setAfmeldVraag(false);
+    }
   };
 
   const bewaar = async () => {
@@ -226,6 +251,33 @@ export default function ProfielScherm() {
       </View>
       </Inklapbaar>
 
+      {account !== undefined && (
+        <Inklapbaar titel={t('profiel.account')} icoon="person-circle-outline" open={uitgeklapt.has('account')} onWissel={() => wissel('account')}>
+          <View style={s.kaart}>
+            {!!account && <Text style={s.label}>{t('account.aangemeldAls', { email: account })}</Text>}
+            {afmeldVraag ? (
+              <View style={s.info}>
+                <Text style={s.hint}>{t('account.afmeldVraag')}</Text>
+                <View style={s.chips}>
+                  <Pressable style={[s.chip, s.chipActief]} onPress={afmelden} disabled={afmeldBezig} accessibilityRole="button">
+                    <Text style={[s.chipTekst, s.chipTekstActief]}>{t('account.jaAfmelden')}</Text>
+                  </Pressable>
+                  <Pressable style={s.chip} onPress={() => setAfmeldVraag(false)} disabled={afmeldBezig} accessibilityRole="button">
+                    <Text style={s.chipTekst}>{t('aangemeld.annuleren')}</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <Pressable style={s.afmeldKnop} onPress={() => setAfmeldVraag(true)} accessibilityRole="button">
+                <Ionicons name="log-out-outline" size={18} color={KLEUR} />
+                <Text style={s.chipTekst}>{t('account.afmelden')}</Text>
+              </Pressable>
+            )}
+            {afmeldFout && <Text style={s.fout}>{t('account.fout')}</Text>}
+          </View>
+        </Inklapbaar>
+      )}
+
       {fouten.map((f) => (
         <Text key={f} style={s.fout}>• {t(`fout.${f}` as Sleutel, { max: FOUT_MAX[f] ?? '' })}</Text>
       ))}
@@ -277,6 +329,7 @@ const s = StyleSheet.create({
   chipActief: { backgroundColor: KLEUR },
   chipTekst: { color: KLEUR, fontWeight: '600' },
   chipTekstActief: { color: '#fff' },
+  afmeldKnop: { flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 14, minHeight: 40 },
   knop: { backgroundColor: KLEUR, borderRadius: 16, paddingVertical: 17, alignItems: 'center', marginTop: 12 },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 17 },
 });
