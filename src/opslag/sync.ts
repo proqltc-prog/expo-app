@@ -12,6 +12,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 import { ikBeheerder } from '@/lib/gezinbeheer';
 import { normaliseerFrigo } from '@/lib/frigo';
 import { normaliseerEigen } from '@/lib/eigenrecepten';
+import { normaliseerFavorieten } from '@/lib/favorieten';
 import { leesLijstItem, normaliseerLijst } from '@/lib/lijst';
 import { normaliseerWeekplan } from '@/lib/planner/normaliseer';
 import { normaliseerProfiel } from '@/lib/profiel';
@@ -72,6 +73,13 @@ const ITEMBRONNEN: Partial<Record<ItemSoort, ItemBron>> = {
     lees: (d) => normaliseerEigen([d])[0] ?? null,
     normaliseer: normaliseerEigen,
     tijdVan: (i) => (i as { bijgewerkt?: string }).bijgewerkt,
+  },
+  // WEEK-315: de favoriete recepten (hartje) zijn voor het hele gezin dezelfde.
+  favoriet: {
+    sleutel: SLEUTEL.favorieten,
+    lees: (d) => normaliseerFavorieten([d])[0] ?? null,
+    normaliseer: normaliseerFavorieten,
+    tijdVan: (i) => (i as { op?: string }).op,
   },
 };
 
@@ -247,7 +255,7 @@ export async function verstuur(): Promise<void> {
       if (!gezin || !sb) return;
       const t = await naElkaar(laadToestand);
       // Per item maar één rij (de nieuwste): twee keer dezelfde id in één batch weigert de database (WEEK-27).
-      // Alleen soorten die dit toestel nog kent (WEEK-72: favorieten zijn verwijderd).
+      // Alleen soorten die dit toestel kent (WEEK-72 schrapte de oude favorieten; WEEK-315 brengt ze terug als hartje).
       // WEEK-168/276: enkel de beheerder deelt het gezinsprofiel en de eigen gerechten; de database weigert ze voor de andere leden.
       const magProfiel = ikBeheerder(await laadBeheerderId(), await ikId());
       const soorten = teVersturenSoorten(

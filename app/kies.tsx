@@ -1,5 +1,6 @@
 import { ACCENT } from '@/ui/kleuren';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Moment, MOMENTEN, Soort, SOORTEN, StijlCode } from '@/data/recept';
@@ -23,7 +24,9 @@ import { laadProfiel } from '@/opslag/profiel';
 import { laadKeuzes, laadPlan, wijzigPlan } from '@/opslag/plan';
 import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
 import { useMagGerechtenBeheren } from '@/ui/magGerechten';
-import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
+import { bijWijziging, ikId, laadLeden, GezinsLid } from '@/opslag/sync';
+import { laadFavorieten, wisselFavorietOpslag } from '@/opslag/favorieten';
+import { Favoriet, favorietIds, filterFavorieten } from '@/lib/favorieten';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
@@ -36,6 +39,8 @@ import { usePaginaInfo } from '@/ui/paginaInfo';
 // Twee gevallen: een bestaande dag vervangen (index, gemaaktOp, naam meegegeven) of een nieuwe maaltijd toevoegen.
 
 const KLEUR = '#2e7d4f';
+// WEEK-315: het hartje van de favorieten.
+const HART = '#d81b60';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 const isMoment = (x: unknown): x is Moment => MOMENTEN.includes(x as Moment);
@@ -65,6 +70,17 @@ export default function Kies() {
   const [profiel, setProfiel] = useState<Profiel | null>(null);
   // Tekst als een ander gezinslid het weekplan beheert: dan kies je hier niets (WEEK-30).
   const [geenRecht, setGeenRecht] = useState<string | null>(null);
+  // WEEK-315: favoriete gerechten (hartje) en de filter "enkel favorieten".
+  const [favorieten, setFavorieten] = useState<Favoriet[]>([]);
+  const [enkelFavorieten, setEnkelFavorieten] = useState(false);
+  const favIds = useMemo(() => favorietIds(favorieten), [favorieten]);
+
+  // Een hartje van een ander gezinslid komt meteen binnen.
+  useEffect(() => bijWijziging('favoriet', () => void laadFavorieten().then(setFavorieten)), []);
+
+  const wisselHart = async (id: string) => {
+    setFavorieten(await wisselFavorietOpslag(id));
+  };
 
   // De voorkeuren van het weekmenu gelden ook hier als filter.
   useFocusEffect(
@@ -78,6 +94,7 @@ export default function Kies() {
       });
       setZoek(''); // WEEK-216: elke keer met een leeg zoekveld beginnen
       laadEigenRecepten().then(setEigen);
+      laadFavorieten().then(setFavorieten);
       // WEEK-197: het profiel en de databankrecepten laden in één keten, zonder het profiel als afhankelijkheid.
       // Het profiel is elke keer een nieuw object; stond het in de afhankelijkheden, dan startte dit scherm zichzelf opnieuw.
       laadProfiel()
@@ -101,7 +118,7 @@ export default function Kies() {
 
   const filter = { moment, kooktijden, stijlen, vermijd, soorten, zoek, taal };
 
-  const keuzes = useMemo<Keuze[]>(() => {
+  const alleKeuzes = useMemo<Keuze[]>(() => {
     if (tab === 'ontdek') {
       return kiesbarePoolRecepten(dbPool, filter).map((k) => ({
         id: k.recept.id,
@@ -120,6 +137,7 @@ export default function Kies() {
       recept: eigenNaarPlanRecept(r, gezin),
     }));
   }, [tab, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, soorten, zoek, taal]);
+  const keuzes = useMemo(() => filterFavorieten(alleKeuzes, favIds, enkelFavorieten), [alleKeuzes, favIds, enkelFavorieten]);
 
   // WEEK-272: geen gerecht op deze dag. Ingrediënten op de boodschappenlijst gaan weg; wat al in huis is, blijft.
   const geenGerecht = async () => {
@@ -223,25 +241,54 @@ export default function Kies() {
             </Pressable>
           );
         })}
+        {/* WEEK-315: filter op favorieten, enkel een hartje (geen tekst). */}
+        <Pressable
+          style={[s.hartFilter, enkelFavorieten && s.hartFilterAan]}
+          onPress={() => setEnkelFavorieten((aan) => !aan)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: enkelFavorieten }}
+          accessibilityLabel={t('kies.filterFavorieten')}
+          hitSlop={4}
+        >
+          <Ionicons name="heart" size={22} color={enkelFavorieten ? '#fff' : HART} />
+        </Pressable>
       </View>
-      {bezig && <ActivityIndicator color={KLEUR} style={{ marginVertical: 8 }} />}
+      {bezig &&<ActivityIndicator color={KLEUR} style={{ marginVertical: 8 }} />}
       <FlatList
         data={keuzes}
         keyExtractor={(k) => k.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={s.lijst}
-        ListEmptyComponent={<Text style={s.leeg}>{tab === 'ontdek' ? t('kies.leeg') : t('kies.gezinLeeg')}</Text>}
-        renderItem={({ item }) => (
-          <Pressable style={s.rij} onPress={() => kies(item)} disabled={bezig} accessibilityRole="button">
-            <View style={{ flex: 1 }}>
-              <Text style={s.naam}>{item.naam}</Text>
-              <View style={s.meta}>
-                <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[item.soort] }]}>{t(`soort.${item.soort}`)}</Text>
-                <Text style={s.min}>{t('algemeen.minuten', { n: item.minuten })}</Text>
-              </View>
+        ListEmptyComponent={
+          <Text style={s.leeg}>
+            {enkelFavorieten && !favIds.size ? t('kies.geenFavorieten') : tab === 'ontdek' ? t('kies.leeg') : t('kies.gezinLeeg')}
+          </Text>
+        }
+        renderItem={({ item }) => {
+          const fav = favIds.has(item.id);
+          return (
+            <View style={s.rij}>
+              <Pressable style={s.rijKies} onPress={() => kies(item)} disabled={bezig} accessibilityRole="button">
+                <Text style={s.naam}>{item.naam}</Text>
+                <View style={s.meta}>
+                  <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[item.soort] }]}>{t(`soort.${item.soort}`)}</Text>
+                  <Text style={s.min}>{t('algemeen.minuten', { n: item.minuten })}</Text>
+                </View>
+              </Pressable>
+              {/* WEEK-315: hartje aan of uit; leeg = geen favoriet, gevuld = favoriet. */}
+              <Pressable
+                style={s.hart}
+                onPress={() => void wisselHart(item.id)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: fav }}
+                accessibilityLabel={t(fav ? 'kies.favorietUit' : 'kies.favorietAan', { naam: item.naam })}
+                hitSlop={6}
+              >
+                <Ionicons name={fav ? 'heart' : 'heart-outline'} size={26} color={HART} />
+              </Pressable>
             </View>
-          </Pressable>
-        )}
+          );
+        }}
       />
     </View>
   );
@@ -269,7 +316,11 @@ const s = StyleSheet.create({
   beheerTekst: { color: ACCENT, fontWeight: '700', fontSize: 14 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },
-  rij: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },
+  rij: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#e5e5e5' },
+  rijKies: { flex: 1, padding: 14 },
+  hart: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center', marginRight: 4 },
+  hartFilter: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, borderColor: HART, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
+  hartFilterAan: { backgroundColor: HART },
   naam: { fontSize: 16, fontWeight: '600' },
   meta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   badge: { color: '#fff', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, overflow: 'hidden' },
