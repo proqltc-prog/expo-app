@@ -8,6 +8,8 @@ export const SLEUTEL = {
   favorieten: 'favorieten:v2',
   /** Eigen gerechten (WEEK-45): gedeeld met de gezinsruimte (WEEK-192, WEEK-275); enkel de beheerder wijzigt ze (WEEK-276). */
   eigenRecepten: 'eigenrecepten:v1',
+  /** Sterren na Gekookt (WEEK-316): per gebruiker, naar de tabel recept_beoordelingen; niet in de gezinssynchronisatie. */
+  beoordelingen: 'beoordelingen:v1',
   plan: 'weekplan:v1',
   keuzes: 'planningkeuzes:v1',
   profiel: 'gezinsprofiel:v1',

@@ -2,7 +2,7 @@
 // Pure logica: de vertaalfunctie komt van het scherm, zodat dit zonder React getest kan worden.
 
 /** De onderdelen van de uitleg, in de volgorde van de app-tabbladen. */
-export const HOWTO_ONDERDELEN = ['menu', 'lijst', 'frigo', 'scan', 'gezin'] as const;
+export const HOWTO_ONDERDELEN = ['menu', 'lijst', 'frigo', 'scan', 'gezin', 'sterren'] as const; // WEEK-316: sterren
 
 /**
  * De uitleg als tekst: eerst de kop, dan een alinea per onderdeel. Alinea's scheiden met een lege regel.
