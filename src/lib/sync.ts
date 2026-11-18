@@ -8,8 +8,7 @@
 // - de laatst gekende versie van de lijst (om te zien wat dit toestel zelf veranderde)
 // - per item het tijdstip van de laatst gekende wijziging ("meta")
 
-/** WEEK-315: 'favoriet' = de favoriete recepten (hartje in Zelf kiezen). */
-export type ItemSoort = 'lijst' | 'frigo' | 'eigenRecept' | 'favoriet';
+export type ItemSoort = 'lijst' | 'frigo' | 'eigenRecept';
 export type DocumentSleutel = 'plan' | 'profiel';
 
 /** Een rij zoals ze in de tabel gezin_items staat. */
