@@ -9,6 +9,8 @@ import { additievenMetRegel, telEuRegels, type EuStatus } from '@/data/euAdditie
 import { Sleutel, voedingGetal } from '@/i18n';
 import { isDrank, type Product } from '@/lib/openfoodfacts';
 import { additievenGekend } from '@/lib/score';
+import { allergeenNaam, allergenenStatus } from '@/lib/allergenen';
+import { beoordeelIngredienten, novaRedenTekst } from '@/lib/ingredienten';
 import { voedingstabel, type Beoordeling, type Grens, type RijSleutel, type TabelRij } from '@/lib/voedingstabel';
 import { useTaal } from '@/ui/taal';
 
@@ -16,6 +18,7 @@ const INKT = '#17201A';
 const MUTED = '#5E6B63';
 const LIJN = '#E3E3DC';
 const ACCENT = '#A9472A';
+const KLEUR = '#0F6B66';
 
 // Kleuren van de officiële Nutri-Score; tekst donker op de lichte vakken voor het contrast.
 const NUTRI: { letter: string; bg: string; tekst: string }[] = [
@@ -90,7 +93,10 @@ function Kaart({ titel, kant, nadruk, children }: { titel: string; kant?: string
 
 export function ScanBlokken({ product: p }: { product: Product }) {
   const { t, tn, taal } = useTaal();
-  const [additievenOpen, setAdditievenOpen] = useState(false); // standaard ingeklapt
+  // WEEK-310: de balken blijven zichtbaar; uitleg en tabellen zitten ingeklapt onder Nutri-Score en NOVA.
+  // Elk nieuw product (en elke keer dat de scanner opent) begint ingeklapt: de component wordt dan opnieuw opgebouwd.
+  const [nutriOpen, setNutriOpen] = useState(false);
+  const [novaOpen, setNovaOpen] = useState(false);
   const telling = telEuRegels(p.additieven);
   const ernst: EuStatus | null = telling.verboden ? 'verboden' : telling.waarschuwing ? 'waarschuwing' : null;
   const drank = isDrank(p);
@@ -145,6 +151,26 @@ export function ScanBlokken({ product: p }: { product: Product }) {
     </View>
   );
 
+  // Ingeklapte regel met een korte samenvatting en een pijltje; tikken toont de uitleg en de tabellen.
+  const Uitklap = ({ open, onPress, tekst }: { open: boolean; onPress: () => void; tekst: string }) => (
+    <Pressable style={s.uitklap} onPress={onPress} accessibilityRole="button" accessibilityState={{ expanded: open }} hitSlop={4}>
+      <Text style={s.uitklapTekst}>{tekst}</Text>
+      <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={18} color={KLEUR} />
+    </Pressable>
+  );
+
+  // WEEK-307: wat de NOVA-groep veroorzaakt, volgens Open Food Facts.
+  const novaRedenLijst = (p.novaRedenen ?? [])
+    .map((r) =>
+      r.soort === 'additief'
+        ? [additiefWeergave(r.id, taal).code, additiefWeergave(r.id, taal).omschrijving?.split(' · ')[0]].filter(Boolean).join(' ')
+        : r.soort === 'categorie'
+          ? `${t('scan.novaRedenCategorie')} (${novaRedenTekst(r)})`
+          : novaRedenTekst(r, p.ingredienten)
+    )
+    .join(', ');
+  const ingr = p.ingredienten?.length ? beoordeelIngredienten(p.ingredienten, p.nova, p.novaRedenen) : null;
+
   return (
     <View style={s.root}>
       {/* WEEK-299: geen eigen score meer; enkel de officiële gegevens van Open Food Facts. */}
@@ -157,7 +183,25 @@ export function ScanBlokken({ product: p }: { product: Product }) {
         ) : (
           <Text style={s.uitleg}>{t('scan.nutriscoreOnbekend')}</Text>
         )}
-        <Text style={s.uitleg}>{t('scan.nutriscoreUitleg')}</Text>
+        <Uitklap
+          open={nutriOpen}
+          onPress={() => setNutriOpen((o) => !o)}
+          tekst={t('scan.nutriSamenvatting', { plus: tabel.plus.length, min: tabel.min.length })}
+        />
+        {nutriOpen && (
+          <>
+            <Text style={s.uitleg}>{t('scan.nutriscoreUitleg')}</Text>
+            <Text style={s.kop}>{t(drank ? 'scan.per100ml' : 'scan.per100')}</Text>
+            <View style={s.tabel}>
+              {zichtbaar.map((gr, i) => (
+                <View key={gr.sleutel} style={i > 0 && s.groepScheiding}>
+                  <Text style={[s.groepTitel, { color: gr.kleur }]} accessibilityRole="header">{t(gr.titel)}</Text>
+                  {tabel[gr.sleutel].map((r) => <Rij key={r.sleutel} r={r} />)}
+                </View>
+              ))}
+            </View>
+          </>
+        )}
       </Kaart>
 
       <Kaart titel={t('scan.novaTitel')} kant={t('scan.bronOff')}>
@@ -169,37 +213,7 @@ export function ScanBlokken({ product: p }: { product: Product }) {
         ) : (
           <Text style={s.uitleg}>{t('scan.novaOnbekend')}</Text>
         )}
-        <Text style={s.uitleg}>{t('scan.novaUitleg')}</Text>
-      </Kaart>
-
-      <Text style={s.kop}>{t(drank ? 'scan.per100ml' : 'scan.per100')}</Text>
-      <View style={s.tabel}>
-        {zichtbaar.map((gr, i) => (
-          <View key={gr.sleutel} style={i > 0 && s.groepScheiding}>
-            <Text style={[s.groepTitel, { color: gr.kleur }]} accessibilityRole="header">{t(gr.titel)}</Text>
-            {tabel[gr.sleutel].map((r) => <Rij key={r.sleutel} r={r} />)}
-          </View>
-        ))}
-      </View>
-
-      {/* WEEK-296: zonder ingrediëntenlijst geen "Additieven (0)": we weten het dan gewoon niet. */}
-      {!additievenGekend(p) && p.additieven.length === 0 ? (
-        <View style={s.kaart}>
-          <Text style={s.kaartTitel}>{t('scan.additieven')}</Text>
-          <Text style={s.uitleg}>{t('scan.additievenOnbekend')}</Text>
-        </View>
-      ) : (
-      /* WEEK-224: ook ingeklapt zie je of er een additief tussen zit waar de EU-wet iets over zegt. */
-      <View style={[s.kaart, ernst && { borderColor: EU_STIJL[ernst].rand, borderWidth: 1.5 }]}>
-        <Pressable
-          style={s.additievenKop}
-          onPress={() => setAdditievenOpen((o) => !o)}
-          accessibilityRole="button"
-          accessibilityState={{ expanded: additievenOpen }}
-        >
-          <Text style={s.kaartTitel}>{t('scan.additievenAantal', { n: p.additieven.length })}</Text>
-          <Ionicons name={additievenOpen ? 'chevron-up' : 'chevron-down'} size={18} color={MUTED} />
-        </Pressable>
+        {/* WEEK-224: een additief waar de EU-wet iets over zegt, blijft ook ingeklapt zichtbaar. */}
         {(['verboden', 'waarschuwing'] as const).map((status) =>
           telling[status] ? (
             <View key={status} style={[s.euBalk, { backgroundColor: EU_STIJL[status].bg }]}>
@@ -210,44 +224,131 @@ export function ScanBlokken({ product: p }: { product: Product }) {
             </View>
           ) : null,
         )}
-        {additievenOpen &&
-          (p.additieven.length ? (
-            additievenMetRegel(p.additieven).map(({ tag, regel }) => {
-              const { code, omschrijving, efsa } = additiefWeergave(tag, taal);
-              if (!regel) {
-                return (
-                  <View key={tag} style={s.additief}>
-                    <Text style={s.additiefCode}>{code}</Text>
-                    <View style={{ flex: 1 }}>
-                      <Text style={s.additiefTekst}>{omschrijving ?? ''}</Text>
-                      {efsa && <Efsa efsa={efsa} />}
+        <Uitklap
+          open={novaOpen}
+          onPress={() => setNovaOpen((o) => !o)}
+          tekst={p.nova && novaRedenLijst ? t('scan.novaReden', { groep: p.nova, lijst: novaRedenLijst }) : t('scan.novaMeer')}
+        />
+        {novaOpen && (
+          <>
+            <Text style={s.uitleg}>{t('scan.novaUitleg')}</Text>
+
+            {/* WEEK-308: de ingrediënten met een teller positief en negatief (eigen inschatting). */}
+            <View style={s.sectie}>
+              <View style={s.additievenKop}>
+                <Text style={[s.kaartTitel, { flex: 1 }]}>{ingr ? t('scan.ingredienten', { n: ingr.lijst.length }) : t('scan.ingredientenTitel')}</Text>
+                {ingr && (
+                  <>
+                    <View style={[s.teller, { backgroundColor: STIJL.goed.bg }]} accessibilityLabel={t('scan.ingredientenTeller', { plus: ingr.positief, min: ingr.negatief })}>
+                      <Ionicons name="checkmark" size={14} color={STIJL.goed.tekst} />
+                      <Text style={[s.tellerTekst, { color: STIJL.goed.tekst }]}>{ingr.positief}</Text>
                     </View>
-                  </View>
-                );
-              }
-              const stijl = EU_STIJL[regel.status];
-              return (
-                <View key={tag} style={[s.euAdditief, { backgroundColor: stijl.bg }]}>
-                  <View style={[s.euIcoon, { backgroundColor: stijl.rand }]}>
-                    <Ionicons name="warning-outline" size={15} color="#fff" />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={s.additiefTekst}>
-                      <Text style={{ fontWeight: '800', color: ACCENT }}>{code} </Text>
-                      {omschrijving ?? ''}
-                    </Text>
-                    <Text style={[s.euTekst, { color: stijl.tekst }]}>{t(`eu.${regel.status}`)}</Text>
-                    <Text style={s.klein}>{t(`eu.bron.${regel.bron}` as Sleutel)}</Text>
-                    {efsa && <Efsa efsa={efsa} />}
-                  </View>
-                </View>
-              );
-            })
-          ) : (
-            <Text style={s.uitleg}>{t('scan.geenAdditieven')}</Text>
-          ))}
-      </View>
-      )}
+                    <View style={[s.teller, { backgroundColor: STIJL.teVeel.bg, marginRight: 0 }]}>
+                      <Ionicons name="close" size={14} color={STIJL.teVeel.tekst} />
+                      <Text style={[s.tellerTekst, { color: STIJL.teVeel.tekst }]}>{ingr.negatief}</Text>
+                    </View>
+                  </>
+                )}
+              </View>
+              {!ingr ? (
+                <Text style={s.uitleg}>{t('scan.additievenOnbekend')}</Text>
+              ) : (
+                <>
+                  {ingr.lijst.map((i, n) => {
+                    const kleur = i.oordeel.soort === 'positief' ? STIJL.goed : i.oordeel.soort === 'negatief' ? STIJL.teVeel : null;
+                    return (
+                      <View key={`${i.id}-${n}`} style={s.ingredient}>
+                        <View style={[s.ingredientIcoon, { backgroundColor: kleur?.bg ?? '#EEEEE8' }]}>
+                          <Ionicons name={i.oordeel.soort === 'positief' ? 'checkmark' : i.oordeel.soort === 'negatief' ? 'close' : 'remove'} size={14} color={kleur?.tekst ?? MUTED} />
+                        </View>
+                        <Text style={s.additiefTekst}>
+                          {i.tekst}
+                          {i.procent !== undefined ? ` ${voedingGetal(taal, i.procent)} %` : ''}
+                          {i.oordeel.reden ? <Text style={[s.klein, { color: kleur?.tekst ?? MUTED }]}>{`  ${t(`ingredient.reden.${i.oordeel.reden}` as Sleutel)}`}</Text> : null}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                  <Text style={s.uitleg}>{t('scan.ingredientenUitleg')}</Text>
+                </>
+              )}
+            </View>
+
+            {/* WEEK-296: zonder ingrediëntenlijst geen "Additieven (0)": we weten het dan gewoon niet. */}
+            <View style={s.sectie}>
+              {!additievenGekend(p) && p.additieven.length === 0 ? (
+                <>
+                  <Text style={s.kaartTitel}>{t('scan.additieven')}</Text>
+                  <Text style={s.uitleg}>{t('scan.additievenOnbekend')}</Text>
+                </>
+              ) : (
+                <>
+                  <Text style={s.kaartTitel}>{t('scan.additievenAantal', { n: p.additieven.length })}</Text>
+                  {p.additieven.length ? (
+                    additievenMetRegel(p.additieven).map(({ tag, regel }) => {
+                      const { code, omschrijving, efsa } = additiefWeergave(tag, taal);
+                      if (!regel) {
+                        return (
+                          <View key={tag} style={s.additief}>
+                            <Text style={s.additiefCode}>{code}</Text>
+                            <View style={{ flex: 1 }}>
+                              <Text style={s.additiefTekst}>{omschrijving ?? ''}</Text>
+                              {efsa && <Efsa efsa={efsa} />}
+                            </View>
+                          </View>
+                        );
+                      }
+                      const stijl = EU_STIJL[regel.status];
+                      return (
+                        <View key={tag} style={[s.euAdditief, { backgroundColor: stijl.bg }]}>
+                          <View style={[s.euIcoon, { backgroundColor: stijl.rand }]}>
+                            <Ionicons name="warning-outline" size={15} color="#fff" />
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <Text style={s.additiefTekst}>
+                              <Text style={{ fontWeight: '800', color: ACCENT }}>{code} </Text>
+                              {omschrijving ?? ''}
+                            </Text>
+                            <Text style={[s.euTekst, { color: stijl.tekst }]}>{t(`eu.${regel.status}`)}</Text>
+                            <Text style={s.klein}>{t(`eu.bron.${regel.bron}` as Sleutel)}</Text>
+                            {efsa && <Efsa efsa={efsa} />}
+                          </View>
+                        </View>
+                      );
+                    })
+                  ) : (
+                    <Text style={s.uitleg}>{t('scan.geenAdditieven')}</Text>
+                  )}
+                </>
+              )}
+            </View>
+          </>
+        )}
+      </Kaart>
+
+      {/* WEEK-305/310: de 14 EU-allergenen, altijd open, meteen onder NOVA. */}
+      {(() => {
+        const a = allergenenStatus(p);
+        const lijst = (codes: Parameters<typeof allergeenNaam>[0][]) => codes.map((c) => allergeenNaam(c, taal)).join(', ');
+        return (
+          <View style={[s.kaart, a.soort === 'bevat' && { borderColor: EU_STIJL.waarschuwing.rand, borderWidth: 1.5 }]}>
+            <View style={s.kaartKop}>
+              <Text style={s.kaartTitel}>{t('scan.allergenen')}</Text>
+              <Text style={s.kant}>{t('scan.bronOff')}</Text>
+            </View>
+            {a.soort === 'bevat' && (
+              <View style={[s.euBalk, { backgroundColor: EU_STIJL.waarschuwing.bg }]}>
+                <Ionicons name="warning-outline" size={17} color={EU_STIJL.waarschuwing.tekst} />
+                <Text style={[s.euBalkTekst, { color: EU_STIJL.waarschuwing.tekst }]}>{t('scan.allergenenBevat', { lijst: lijst(a.bevat) })}</Text>
+              </View>
+            )}
+            {a.soort === 'geen' && <Text style={s.additiefTekst}>{t('scan.allergenenGeen')}</Text>}
+            {a.soort === 'onbekend' && <Text style={s.uitleg}>{t('scan.allergenenOnbekend')}</Text>}
+            {a.soort !== 'onbekend' && a.sporen.length > 0 && <Text style={s.additiefTekst}>{t('scan.allergenenSporen', { lijst: lijst(a.sporen) })}</Text>}
+            <Text style={s.uitleg}>{t('scan.allergenenUitleg')}</Text>
+          </View>
+        );
+      })()}
     </View>
   );
 }
@@ -298,4 +399,11 @@ const s = StyleSheet.create({
   euAdditief: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 8, padding: 10 },
   euIcoon: { width: 24, height: 24, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
   euTekst: { fontSize: 13, marginTop: 2 },
+  uitklap: { flexDirection: 'row', alignItems: 'center', gap: 8, borderTopWidth: StyleSheet.hairlineWidth, borderColor: LIJN, paddingTop: 10 },
+  uitklapTekst: { flex: 1, fontSize: 14, lineHeight: 19, color: KLEUR, fontWeight: '600' },
+  sectie: { gap: 8, borderTopWidth: StyleSheet.hairlineWidth, borderColor: LIJN, paddingTop: 10 },
+  teller: { flexDirection: 'row', alignItems: 'center', gap: 2, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8, marginRight: 6 },
+  tellerTekst: { fontSize: 13, fontWeight: '800' },
+  ingredient: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 3 },
+  ingredientIcoon: { width: 22, height: 22, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
 });

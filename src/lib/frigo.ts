@@ -1,6 +1,7 @@
 // Virtuele frigo (WEEK-4): wat het gezin in huis heeft. Pure logica, zonder opslag.
 // Opslag op het toestel staat in src/opslag/frigo.ts.
-import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk, naarDbCode } from '@/data/ingredienten';
+import { AFDELINGEN, Afdeling, dbCodeVan, dbCodeVanNaam, gewichtPerStuk, ingredientNaam, naarDbCode } from '@/data/ingredienten';
+import type { Taal } from '@/i18n';
 import { afdelingVan, LijstItem } from '@/lib/lijst';
 import type { Product } from '@/lib/openfoodfacts';
 import { isoDatum, leesDatum } from '@/lib/houdbaarheid';
@@ -493,5 +494,26 @@ export function trekFrigoAf(items: readonly LijstItem[], frigo: readonly FrigoIt
     if (d.gedekt === 'geheel') return [];
     if (d.gedekt === 'deels' && d.rest !== undefined) return [{ ...i, hoeveelheid: d.rest }];
     return [i];
+  });
+}
+
+/**
+ * WEEK-301: de naam van een product in huis in de taal van dit toestel, enkel voor de weergave. Een weekmenu-ingrediënt
+ * volgt zijn vaste code (of, bij oude items zonder code, zijn naam in een van de talen). De bewaarde naam verandert niet
+ * (zoals de boodschappenlijst, WEEK-207). Zelf ingegeven losse producten blijven zoals ze getypt zijn.
+ */
+export function frigoNaamInTaal(f: FrigoItem, taal: Taal): string {
+  if (frigoBron(f) !== 'planner') return f.naam;
+  const code = (f.code ? dbCodeVan(f.code) : undefined) ?? dbCodeVanNaam(f.naam);
+  return code ? ingredientNaam(code, taal) : f.naam;
+}
+
+/** WEEK-301: de regels met de naam in de taal van het toestel (via het eerste exemplaar van elke regel). */
+export function regelsInTaal(regels: readonly FrigoRegel[], frigo: readonly FrigoItem[], taal: Taal): FrigoRegel[] {
+  const perId = new Map(frigo.map((f) => [f.id, f]));
+  return regels.map((r) => {
+    const eerste = perId.get(r.ids[0]);
+    const naam = eerste ? frigoNaamInTaal(eerste, taal) : r.naam;
+    return naam === r.naam ? r : { ...r, naam };
   });
 }

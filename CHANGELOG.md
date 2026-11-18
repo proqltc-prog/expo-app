@@ -8,6 +8,49 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.154.0] – 2026-11-18
+
+### Toegevoegd
+- **WEEK-314** – Afmelden in de instellingen (blok Account). Afmelden wist de persoonlijke gegevens op het toestel (ze blijven in de gezinsruimte) en toont het startscherm. Google vraagt welk account enkel bij de eerste aanmelding na afmelden.
+  - Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-314
+  - Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26902529
+
+## [0.153.0] – 2026-11-16
+
+- **WEEK-313** – Scanner: scan je een product van dezelfde soort als een vorige scan (bv. yoghurt na yoghurt), dan staat bovenaan "Vergelijk met …"; één tik toont de vergelijking. Onderaan de camera staan de laatste 3 scans: tik om te openen, lang drukken om te vergelijken, "Alle" voor de volledige historiek. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-313
+- Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
+## [0.152.1] – 2026-11-15
+
+- **WEEK-311** – Scanner: een reclamefilmpje geeft opnieuw 5 scans (was 10), evenveel als de gratis scans per dag. Geldt ook voor scannen vanuit In huis. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-311
+- Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
+## [0.152.0] – 2026-11-15
+
+### Nieuw
+- **WEEK-307** – Scanner: bij NOVA staat waarom het product die groep krijgt (bv. "NOVA 4 door: melkpoeder"), volgens Open Food Facts. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-307
+- **WEEK-308** – Scanner: de ingrediëntenlijst, ingeklapt, met een teller positief en negatief en per ingrediënt de reden (eigen inschatting). Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-308
+- **WEEK-310** – Scanner: de balken van Nutri-Score en NOVA blijven; uitleg en tabellen zitten ingeklapt eronder met een korte samenvatting en een pijltje. Onder NOVA staan de ingrediënten en additieven (wat NOVA gebruikt). Allergenen altijd open onder NOVA. Elk nieuw product begint weer ingeklapt. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-310
+- **WEEK-309** – Steekproef van 100 producten (gezond en ongezond) door de scanner gehaald. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-309
+
+Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
+## [0.151.0] – 2026-11-15
+
+### Nieuw
+- **WEEK-302** – Scanner: historiek van gescande producten (op dit toestel, hoogstens 50). Opnieuw bekijken kost geen scan; ook bereikbaar als de scans van vandaag op zijn. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-302
+- **WEEK-303** – Scanner: twee producten vergelijken (Nutri-Score, NOVA, voedingswaarden, additieven, allergenen), met een vinkje bij het beste per regel. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-303
+- **WEEK-304** – Scanner: scanresultaat delen via het deelmenu van het toestel, met de link naar Open Food Facts. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-304
+- **WEEK-305** – Scanner: de 14 EU-allergenen bij elk product, plus "kan sporen bevatten van"; zonder ingrediëntenlijst "niet gekend". Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-305
+- **WEEK-306** – Scanner: gezonder alternatief (indien gekend) bij Nutri-Score C, D of E: tot 3 producten uit dezelfde soort, verkocht in België, met een betere Nutri-Score. Enkel in de app op het toestel (de zoekdienst van Open Food Facts laat geen vragen uit een webbrowser toe). Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-306
+
+Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
+## [0.150.1] – 2026-11-15
+
+### Opgelost
+- **WEEK-301** – In huis toont de ingrediënten van het weekmenu in de taal van het toestel, ook als een gezinslid met een andere taal ze afvinkte (bv. "bloemkool" in plaats van "chou-fleur"). Enkel de weergave: de bewaarde naam verandert niet. Zelf getypte losse producten blijven zoals ze getypt zijn, net als op de boodschappenlijst. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-301 · Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
 ## [0.150.0] – 2026-11-14
 
 **WEEK-289** – Sfeerfoto's op de startpagina en in Aan de slag ([Jira](https://proqltc-1791495894841.atlassian.net/browse/WEEK-289) · [Confluence](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26050561))

@@ -2,7 +2,7 @@ import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react
 import { Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
+import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, regelsInTaal, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
 import { datumToestel, houdbaarStatus, vandaag } from '@/lib/houdbaarheid';
 import { DatumKiezer } from '@/ui/datumKiezer';
 import { markeerOntbrekend } from '@/lib/planner/status';
@@ -193,11 +193,12 @@ export default function Frigo() {
         ? frigoPerGerecht(zichtbaar, plan ? openBevestigdeDagen(plan) : []).map((g) => ({
             key: g.sleutel,
             sleutel: g.sleutel,
-            regels: g.regels,
+            // WEEK-301: de namen in de taal van dit toestel, ook als een gezinslid in een andere taal afvinkte.
+            regels: regelsInTaal(g.regels, zichtbaar, taal),
             title: g.dag && g.recept ? t('lijst.receptTitel', { dag: t(dagSleutel(g.dag)), recept: inTaal(g.recept, taal).naam }) : t('frigo.nietVoorWeekmenu'),
-            data: zichtbareRegels(g.regels, g.sleutel, uitgeklapt),
+            data: zichtbareRegels(regelsInTaal(g.regels, zichtbaar, taal), g.sleutel, uitgeklapt),
           }))
-        : frigoSecties(zichtbaar).map((s) => ({ key: s.afdeling, sleutel: s.afdeling as string, regels: s.regels, title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(s.regels, s.afdeling, uitgeklapt) })),
+        : frigoSecties(zichtbaar).map((s) => ({ key: s.afdeling, sleutel: s.afdeling as string, regels: regelsInTaal(s.regels, zichtbaar, taal), title: t(`afdeling.${s.afdeling}` as Sleutel), data: zichtbareRegels(regelsInTaal(s.regels, zichtbaar, taal), s.afdeling, uitgeklapt) })),
     [frigo, sheet, taal, uitgeklapt, groep, plan]
   );
   const aantal = aantalProducten(zichtbaar);
