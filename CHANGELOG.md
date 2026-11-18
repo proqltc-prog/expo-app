@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.157.0] – 2026-11-18
+
+**Jira:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/browse/WEEK-317) (verbetering) · **Confluence:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27164673)
+
+- Het hartje (favorieten) is volledig verwijderd: niet meer in Zelf kiezen en niet op de kaarten van het weekmenu. De beoordeling met sterren na Gekookt blijft.
+- Regressietest: de teksten van het hartje bestaan in geen enkele taal meer.
+
 ## [0.156.0] – 2026-11-18
 
 **Jira:** [WEEK-316](https://proqltc-1791495894841.atlassian.net/browse/WEEK-316) (nieuwe functionaliteit) · **Confluence:** [WEEK-316](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27066369)

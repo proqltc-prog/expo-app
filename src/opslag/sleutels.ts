@@ -4,8 +4,7 @@ export const SLEUTEL = {
   lijst: 'boodschappenlijst:v1',
   lijstWeergave: 'lijstweergave:v1',
   frigo: 'frigo:v1',
-  /** Favoriete recepten (WEEK-315): gedeeld met de gezinsruimte. v2: de oude favorieten van voor WEEK-72 worden niet gelezen. */
-  favorieten: 'favorieten:v2',
+  favorieten: 'favorieten:v1',
   /** Eigen gerechten (WEEK-45): gedeeld met de gezinsruimte (WEEK-192, WEEK-275); enkel de beheerder wijzigt ze (WEEK-276). */
   eigenRecepten: 'eigenrecepten:v1',
   /** Sterren na Gekookt (WEEK-316): per gebruiker, naar de tabel recept_beoordelingen; niet in de gezinssynchronisatie. */

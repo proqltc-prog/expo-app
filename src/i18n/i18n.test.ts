@@ -367,3 +367,13 @@ describe('aanmeldscherm zonder zin over een account (WEEK-267)', () => {
     for (const taal of TALEN) assert.equal((VERTALINGEN[taal] as Record<string, string>)['aanmelden.tekst'], undefined, taal);
   });
 });
+
+describe('geen hartje (favorieten) meer in Zelf kiezen (WEEK-317)', () => {
+  test('de teksten van het hartje bestaan in geen enkele taal meer', () => {
+    for (const taal of TALEN) {
+      for (const k of ['kies.filterFavorieten', 'kies.favorietAan', 'kies.favorietUit', 'kies.geenFavorieten']) {
+        assert.equal((VERTALINGEN[taal] as Record<string, string>)[k], undefined, `${taal}: ${k}`);
+      }
+    }
+  });
+});
