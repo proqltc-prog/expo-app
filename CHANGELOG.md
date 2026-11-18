@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.155.0] – 2026-11-18
+
+**Jira:** [WEEK-315](https://proqltc-1791495894841.atlassian.net/browse/WEEK-315) (nieuwe functionaliteit) · **Confluence:** [WEEK-315](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27000833)
+
+- Zelf kiezen: elk gerecht heeft een hartje. Eén tik maakt het een favoriet, nog een tik haalt het weg.
+- Nieuwe filter zonder tekst: een rond knopje met een hartje naast vis, vegetarisch en vlees toont enkel de favoriete gerechten.
+- De favorieten zijn dezelfde voor het hele gezin (gedeeld via de gezinsruimte). De automatische planner gebruikt ze niet.
+- Unit tests voor aan/uit en de filter; regressietest: met de filter uit blijft de lijst zoals voordien.
+
 ## [0.154.0] – 2026-11-18
 
 ### Toegevoegd
