@@ -33,4 +33,6 @@ export const SLEUTEL = {
   losVoorstellen: 'losvoorstellen:v1',
   /** Gescande producten (WEEK-302): enkel lokaal, niet in de gezinssynchronisatie. */
   scanHistoriek: 'scanhistoriek:v1',
+  /** Afgemeld op dit toestel (WEEK-314): bij de volgende aanmelding laat Google het account kiezen. Blijft bij afmelden. */
+  afgemeld: 'afgemeld:v1',
 } as const;

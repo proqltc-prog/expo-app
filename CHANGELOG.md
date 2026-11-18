@@ -8,6 +8,23 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.154.0] – 2026-11-18
+
+### Toegevoegd
+- **WEEK-314** – Afmelden in de instellingen (blok Account). Afmelden wist de persoonlijke gegevens op het toestel (ze blijven in de gezinsruimte) en toont het startscherm. Google vraagt welk account enkel bij de eerste aanmelding na afmelden.
+  - Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-314
+  - Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26902529
+
+## [0.153.0] – 2026-11-16
+
+- **WEEK-313** – Scanner: scan je een product van dezelfde soort als een vorige scan (bv. yoghurt na yoghurt), dan staat bovenaan "Vergelijk met …"; één tik toont de vergelijking. Onderaan de camera staan de laatste 3 scans: tik om te openen, lang drukken om te vergelijken, "Alle" voor de volledige historiek. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-313
+- Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
+## [0.152.1] – 2026-11-15
+
+- **WEEK-311** – Scanner: een reclamefilmpje geeft opnieuw 5 scans (was 10), evenveel als de gratis scans per dag. Geldt ook voor scannen vanuit In huis. Jira: https://proqltc-1791495894841.atlassian.net/browse/WEEK-311
+- Confluence: https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/26017793
+
 ## [0.152.0] – 2026-11-15
 
 ### Nieuw

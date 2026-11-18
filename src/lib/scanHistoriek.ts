@@ -32,3 +32,21 @@ export function wisselKeuze(gekozen: readonly string[], barcode: string): string
   if (gekozen.includes(barcode)) return gekozen.filter((b) => b !== barcode);
   return [...gekozen, barcode].slice(-2);
 }
+
+/**
+ * WEEK-313: twee producten van dezelfde soort (bv. yoghurt en yoghurt). Ze delen een categorie van Open Food Facts
+ * die niet bij de 2 algemeenste van het eerste product hoort, zodat enkel "dranken" of "zuivel" niet volstaat.
+ */
+export function zelfdeSoort(a: Pick<Product, 'categorieen'>, b: Pick<Product, 'categorieen'>): boolean {
+  const vanA = (a.categorieen ?? []).filter((c) => c.startsWith('en:')).slice(2);
+  const vanB = new Set(b.categorieen ?? []);
+  return vanA.some((c) => vanB.has(c));
+}
+
+/** WEEK-313: het meest recent gescande andere product van dezelfde soort (uit de laatste 5), om mee te vergelijken. */
+export function vorigeVanZelfdeSoort(lijst: readonly HistoriekItem[], product: Product): Product | undefined {
+  return lijst
+    .filter((h) => h.product.barcode !== product.barcode)
+    .slice(0, 5)
+    .find((h) => zelfdeSoort(product, h.product))?.product;
+}
