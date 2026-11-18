@@ -8,6 +8,25 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.157.0] – 2026-11-18
+
+**Jira:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/browse/WEEK-317) (verbetering) · **Confluence:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27164673)
+
+- Het hartje (favorieten) is volledig verwijderd: niet meer in Zelf kiezen en niet op de kaarten van het weekmenu. De beoordeling met sterren na Gekookt blijft.
+- Regressietest: de teksten van het hartje bestaan in geen enkele taal meer.
+
+## [0.156.0] – 2026-11-18
+
+**Jira:** [WEEK-316](https://proqltc-1791495894841.atlassian.net/browse/WEEK-316) (nieuwe functionaliteit) · **Confluence:** [WEEK-316](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27066369)
+
+- Na "Gekookt" vraagt een klein venster "Hoe was het?" met 1 tot 5 sterren en enkel de knop "Later". Na een ster verschijnt "Bedankt!" en sluit het venster na 2 seconden.
+- Weekmenu: een hartje rechtsboven op de kaart (naast het boekje) maakt het gerecht een favoriet, dezelfde favorieten als in Zelf kiezen.
+- Op de foto van een gerecht zonder keuken staat een huisje in plaats van een hartje, zodat het niet op een favoriet lijkt.
+- De vraag komt terug zolang er voor dat gerecht geen score is ("Later" vraagt het de volgende keer opnieuw); na een score niet meer.
+- Enkel voor de gerechten van de app. De scores worden zonder naam of e-mail bewaard in de databank (tabel `recept_beoordelingen`, overzicht `recept_scores`). De automatische planner gebruikt ze niet.
+- Info-pagina in de instellingen: uitleg over de sterren; bij Scan is "en een oordeel" weggelaten.
+- Unit tests voor de beoordelingslogica; regressie: Gekookt aan/uit werkt zoals voordien.
+
 ## [0.155.0] – 2026-11-18
 
 **Jira:** [WEEK-315](https://proqltc-1791495894841.atlassian.net/browse/WEEK-315) (nieuwe functionaliteit) · **Confluence:** [WEEK-315](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27000833)

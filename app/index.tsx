@@ -30,8 +30,11 @@ import { zetLijstBijPlan as zetLijstBijPlanOpslag } from '@/opslag/lijstBijPlan'
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
+import { bewaarSterren, laadBeoordelingen, verstuurBeoordelingen, moetSterrenVragen } from '@/opslag/beoordelingen';
+import { Beoordeling, dbReceptId } from '@/lib/beoordeling';
+import { SterrenVraag } from '@/ui/sterrenVraag';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
-import { dagSleutel } from '@/i18n';
+import { dagSleutel, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
@@ -128,6 +131,9 @@ export default function Weekplanning() {
   // WEEK-284: de kaart waarop de vraag "Deze dag van het weekmenu halen?" open staat (op de pagina, ook op het web).
   const [verwijderVraag, setVerwijderVraag] = useState<number | null>(null);
   const [bezigGedaan, setBezigGedaan] = useState<number | null>(null);
+  // WEEK-316: sterren na Gekookt. `sterrenVoor` = het gerecht waarvoor het venster open staat.
+  const [sterrenVoor, setSterrenVoor] = useState<{ receptId: number; naam: string } | null>(null);
+  const [beoordelingen, setBeoordelingen] = useState<Beoordeling[]>([]);
   const [keuzes, setKeuzes] = useState<Keuzes>(STANDAARD_KEUZES);
   const [kalenderOpen, setKalenderOpen] = useState(false);
   // De stap waarin het weekmenu staat; met een bestaand plan opent het direct op het plan (WEEK-68 deel 4b).
@@ -206,6 +212,9 @@ export default function Weekplanning() {
       });
       ikId().then(setMijnId);
       laadLeden().then(setLeden).catch(() => setLeden([]));
+      // WEEK-316: sterren die nog niet in de databank staan (bv. offline gegeven), gaan nu mee.
+      laadBeoordelingen().then(setBeoordelingen);
+      void verstuurBeoordelingen();
     }, [])
   );
 
@@ -345,6 +354,13 @@ export default function Weekplanning() {
       const nieuw = await wijzigPlanEnFrigo((huidig, frigo) => wisselGedaan(huidig, frigo, index, verwacht));
       if (nieuw) {
         setPlan(nieuw);
+        // WEEK-316: net gekookt (niet bij terugzetten): vraag hoe het was, enkel voor gerechten van de app.
+        const dag = nieuw.dagen[index];
+        const receptId = dbReceptId(dag?.recept.id);
+        // Vragen tot er een score is: na "Later" opnieuw bij een volgende keer koken, na een score niet meer.
+        if (dag?.gedaan && receptId !== undefined && (await moetSterrenVragen(receptId))) {
+          setSterrenVoor({ receptId, naam: inTaal(dag.recept, taal).naam });
+        }
         // WEEK-134: een gekookt recept verdwijnt van de lijst.
         await zetLijstBijPlan(nieuw);
       }
@@ -711,6 +727,14 @@ export default function Weekplanning() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <SterrenVraag
+        naam={sterrenVoor?.naam}
+        beoordeling={beoordelingen.find((b) => b.receptId === sterrenVoor?.receptId)}
+        t={(k, w) => t(k as Sleutel, w)}
+        onSterren={(n) => sterrenVoor && void bewaarSterren(sterrenVoor.receptId, n).then(setBeoordelingen)}
+        onSluit={() => setSterrenVoor(null)}
+      />
 
       {meldVoorkeur && <Text style={s.melding}>{t(meldVoorkeur)}</Text>}
 
