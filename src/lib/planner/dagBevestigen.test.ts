@@ -219,16 +219,17 @@ describe('WEEK-272/284: zelf kiezen of geen gerecht deze dag', () => {
 });
 
 describe('WEEK-284: vuilbakje op de weekmenukaart', () => {
-  test('enkel bij een gerecht dat nog niet bevestigd en niet gekookt is', () => {
+  test('WEEK-319: bij elk gerecht dat nog niet gekookt is, ook bevestigd', () => {
     assert.equal(magDagVerwijderen(dag({ dag: 'maandag' })), true);
-    assert.equal(magDagVerwijderen(dag({ dag: 'maandag', bevestigd: true })), false);
+    assert.equal(magDagVerwijderen(dag({ dag: 'maandag', bevestigd: true })), true);
+    assert.equal(magDagVerwijderen(dag({ dag: 'maandag', gedaan: true })), false);
     assert.equal(magDagVerwijderen(dag({ dag: 'maandag', bevestigd: true, gedaan: true })), false);
     assert.equal(magDagVerwijderen(undefined), false);
   });
-  test('regressie: verwijderen volgt dezelfde regel als vervangen', () => {
+  test('regressie: zelf kiezen en vervangen blijven enkel vóór bevestigen (WEEK-284)', () => {
     for (const d of [dag({ dag: 'maandag' }), dag({ dag: 'maandag', bevestigd: true }), dag({ dag: 'maandag', gedaan: true })]) {
-      assert.equal(magDagVerwijderen(d), magDagWijzigen(d));
       assert.equal(magZelfKiezen(d), magDagWijzigen(d));
     }
+    assert.equal(magDagWijzigen(dag({ dag: 'maandag', bevestigd: true })), false);
   });
 });

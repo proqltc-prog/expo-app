@@ -371,14 +371,19 @@ export default function Weekplanning() {
     }
   };
 
-  // WEEK-284: de dag van het weekmenu halen. Enkel een niet-bevestigd gerecht, dus niets op de boodschappenlijst.
+  // WEEK-284: de dag van het weekmenu halen.
+  // WEEK-319: ook een bevestigd gerecht; dan wordt de boodschappenlijst opnieuw uitgerekend (wat al gekocht is, blijft bij In huis).
   const verwijderDagKnop = async (index: number) => {
     setVerwijderVraag(null);
     const dag = plan?.dagen[index];
     if (!plan || !dag || !mag || !magDagVerwijderen(dag)) return;
     const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: dag.recept.naam };
     const bewaard = await wijzigPlan((huidig) => (magDagVerwijderen(huidig.dagen[index]) ? verwijderDag(huidig, index, verwacht) : huidig));
-    if (bewaard) setPlan(bewaard);
+    if (!bewaard) return;
+    setPlan(bewaard);
+    if (dag.bevestigd) await zetLijstBijPlan(bewaard);
+    // Is alles wat overblijft gekookt (of niets meer), dan kan meteen een nieuw weekmenu gepland worden.
+    if (bewaard.dagen.every((d) => d.gedaan)) setFase('periode');
   };
 
   // Zelf kiezen (WEEK-44): een ander gerecht uit de databank of de eigen recepten voor deze dag.
@@ -652,6 +657,16 @@ export default function Weekplanning() {
                       )}
                     </View>
                     {/* WEEK-284: het boekje (ingrediënten en bereiding) rechtsboven op de kaart, bij elk gerecht. */}
+                    <View style={s.kopIcoontjes}>
+                    {/* WEEK-319: een bevestigd, nog niet gekookt gerecht verwijderen: het vuilbakje naast het boekje. */}
+                    {bevestigd && magDagVerwijderen(kaarten.dagen[index]) && (
+                      <ActieIcoon
+                        klein
+                        naam="trash-outline"
+                        label={t('planning.verwijderLabel', { dag: t(dagSleutel(dag)) })}
+                        onPress={() => (mag ? setVerwijderVraag(index) : toonBeheer(index))}
+                      />
+                    )}
                     {heeftBereiding && (
                       <ActieIcoon
                         klein
@@ -660,6 +675,7 @@ export default function Weekplanning() {
                         onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
                       />
                     )}
+                    </View>
                     </View>
                     {/* WEEK-151: de titel krijgt de volle breedte; het boekje staat op de rij met het label. */}
                     <Text style={s.naam}>{inTaal(recept, taal).naam}</Text>
@@ -715,6 +731,10 @@ export default function Weekplanning() {
               <Text style={s.vensterTekst}>
                 {t('lijst.receptTitel', { dag: t(dagSleutel(plan.dagen[verwijderVraag].dag)), recept: inTaal(plan.dagen[verwijderVraag].recept, taal).naam })}
               </Text>
+            )}
+            {/* WEEK-319: bij een bevestigd gerecht staan de ingrediënten op de boodschappenlijst. */}
+            {verwijderVraag !== null && plan?.dagen[verwijderVraag]?.bevestigd && (
+              <Text style={s.vensterTekst}>{t('planning.verwijderLijst')}</Text>
             )}
             <View style={s.vensterKnoppen}>
               <Pressable style={[s.vensterKnop, s.verwijderNee]} onPress={() => setVerwijderVraag(null)} accessibilityRole="button">
@@ -830,6 +850,7 @@ const s = StyleSheet.create({
   // WEEK-284
   actieIcoonKlein: { width: 32, height: 32, borderRadius: 16 },
   kaartKopRij: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 },
+  kopIcoontjes: { flexDirection: 'row', gap: 8 },
   gedaanOnderFoto: { alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 8, maxWidth: 96 },
   vensterAchtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
   venster: { width: '100%', maxWidth: 400, backgroundColor: '#fff', borderRadius: 16, padding: 18, gap: 10 },

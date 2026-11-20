@@ -22,9 +22,12 @@ export function magZelfKiezen(dag: PlanDag | undefined): boolean {
   return !!dag && magDagWijzigen(dag);
 }
 
-/** WEEK-284: het vuilbakje haalt de hele dag van het weekmenu, enkel bij een gerecht dat nog niet bevestigd is. */
+/**
+ * WEEK-284: het vuilbakje haalt de hele dag van het weekmenu.
+ * WEEK-319: ook bij een bevestigd gerecht, zolang het niet gekookt is; de boodschappenlijst wordt daarna opnieuw uitgerekend.
+ */
 export function magDagVerwijderen(dag: PlanDag | undefined): boolean {
-  return !!dag && magDagWijzigen(dag);
+  return !!dag && !dag.gedaan;
 }
 
 /** De dagen die bevestigd zijn: enkel die horen op de boodschappenlijst. */

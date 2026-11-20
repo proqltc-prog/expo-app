@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { PlanDag, Weekplan } from '@/lib/planner/types';
 import { heeftVermijdNaam } from '@/lib/planner/vermijden';
 import { testPool } from '@/lib/planner/testrecepten';
-import type { LijstItem } from '@/lib/lijst';
+import { voegPlanToe, type LijstItem } from '@/lib/lijst';
+import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import {
   kiesbarePoolRecepten,
   soortToegelaten,
@@ -178,6 +179,19 @@ describe('verwijderDag', () => {
 
   test('doet niets bij een onbekende index', () => {
     assert.equal(verwijderDag(p, 9, verwacht), p);
+  });
+
+  test('WEEK-319: een bevestigd gerecht verwijderen haalt zijn ingrediënten van de lijst', () => {
+    const bevestigd = plan([{ ...dag('zondag', avond), bevestigd: true }, { ...dag('maandag', avond2), bevestigd: true }]);
+    const lijst = voegPlanToe([], openBevestigdeDagen(bevestigd), 'nl');
+    const los: LijstItem = { id: 'los-1', naam: 'koffie', hoeveelheid: 1, eenheid: 'stuk', categorie: 'overig', afgevinkt: false };
+    const v = { gemaaktOp: bevestigd.gemaaktOp, receptNaam: avond2.recept.naam };
+    const na = verwijderDag(bevestigd, 1, v);
+    assert.equal(na.dagen.length, 1);
+    const nieuweLijst = voegPlanToe([...lijst, los], openBevestigdeDagen(na), 'nl');
+    assert.equal(nieuweLijst.some((i) => i.recept?.naam === avond2.recept.naam), false);
+    assert.equal(nieuweLijst.some((i) => i.recept?.naam === avond.recept.naam), true);
+    assert.ok(nieuweLijst.some((i) => i.id === 'los-1'), 'een los product blijft op de lijst');
   });
 });
 
