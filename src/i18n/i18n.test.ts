@@ -377,3 +377,20 @@ describe('geen hartje (favorieten) meer in Zelf kiezen (WEEK-317)', () => {
     }
   });
 });
+
+describe('info-teksten na WEEK-319', () => {
+  test('het vuilbakje: geen "enkel zolang niet bevestigd" meer, wel de boodschappenlijst', () => {
+    const lijst: Record<string, RegExp> = { nl: /boodschappenlijst/, fr: /liste de courses/, de: /Einkaufsliste/, en: /shopping list/ };
+    for (const taal of TALEN) {
+      const t = (VERTALINGEN[taal] as Record<string, string>)['planning.iconen.verwijderen.uitleg'];
+      assert.doesNotMatch(t, /niet bevestigd|pas confirmé|nicht bestätigt|not confirmed/, taal);
+      assert.match(t, lijst[taal], taal);
+    }
+  });
+  test('Scan: geen oordeel meer in de info', () => {
+    for (const taal of TALEN) {
+      const t = (VERTALINGEN[taal] as Record<string, string>)['pagina.scanInfo'];
+      assert.doesNotMatch(t, /oordeel|un avis|Bewertung|rating/, taal);
+    }
+  });
+});

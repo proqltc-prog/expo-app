@@ -17,6 +17,7 @@ import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
 import { laadBeheerderId, laadGezin, ikId } from '@/opslag/sync';
 import { magGezinsprofielWijzigen } from '@/lib/gezinbeheer';
 import { zoekPlaats } from '@/opslag/winkels';
+import { landInTaal } from '@/lib/land';
 import { KEUZE_TALEN, Sleutel, vertaal } from '@/i18n';
 import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
@@ -62,7 +63,7 @@ function Teller({ waarde, min, max, onChange, uit = false }: { waarde: number; m
 }
 
 export default function ProfielScherm() {
-  const { t, tn, voorkeur, zetVoorkeur } = useTaal();
+  const { t, tn, taal, voorkeur, zetVoorkeur } = useTaal();
   const { height: schermHoogte } = useWindowDimensions();
   // Welke secties open staan (WEEK-126); standaard zijn ze allemaal ingeklapt.
   const [uitgeklapt, setUitgeklapt] = useState<Set<string>>(new Set());
@@ -246,7 +247,7 @@ export default function ProfielScherm() {
         </View>
         <View style={{ gap: 4 }}>
           <Text style={s.label}>{t('profiel.land')}</Text>
-          <TextInput style={s.veld} value={profiel.adres.land} onChangeText={(t) => wijzigAdres({ land: t })} editable={mag} />
+          <TextInput style={s.veld} value={landInTaal(profiel.adres.land, taal)} onChangeText={(t) => wijzigAdres({ land: t })} editable={mag} />
         </View>
       </View>
       </Inklapbaar>

@@ -8,6 +8,20 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.158.0] – 2026-11-20
+
+**Jira:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/browse/WEEK-319) (verbetering) · **Confluence:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27623425)
+
+- Een bevestigd gerecht dat nog niet gekookt is, kan nu van het weekmenu: met het vuilbakje rechtsboven op de kaart, naast het boekje. Eerst komt een vraag; daarna gaan de ingrediënten van de boodschappenlijst. Wat al gekocht is, blijft bij In huis.
+- Info-teksten in alle talen: de uitleg bij het vuilbakje klopt weer (ook voor bevestigde gerechten); bij Scan staat geen "oordeel" meer.
+
+## [0.157.1] – 2026-11-20
+
+**Jira:** [WEEK-318](https://proqltc-1791495894841.atlassian.net/browse/WEEK-318) (bugfix) · **Confluence:** [WEEK-318](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27557889)
+
+- Instellingen, Adres: het land België staat altijd in de taal van de app (België, Belgique, Belgien, Belgium), ook na een taalwissel. Een ander land blijft zoals ingevuld.
+- De postcodedienst bewaart België voortaan als "België".
+
 ## [0.157.0] – 2026-11-18
 
 **Jira:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/browse/WEEK-317) (verbetering) · **Confluence:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27164673)
