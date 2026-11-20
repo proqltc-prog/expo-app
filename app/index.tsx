@@ -104,16 +104,19 @@ function Chips<T extends string | number>({ opties, gekozen, label, onWissel }: 
 }
 
 /** Icoonknop voor een actie op één dag (WEEK-92). Het label blijft voor schermlezers en in de tooltip. */
-function ActieIcoon({ naam, label, onPress, aan, bezig, klein }: { naam: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; aan?: boolean; bezig?: boolean; klein?: boolean }) {
+function ActieIcoon({ naam, label, onPress, aan, bezig, klein, vink }: { naam: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; aan?: boolean; bezig?: boolean; klein?: boolean; vink?: boolean }) {
+  // WEEK-319: `vink` = een aan/uit-knop (Gekookt); schermlezers horen dan of hij aan staat.
   return (
     <Pressable
       onPress={onPress}
-      accessibilityRole="button"
+      disabled={bezig}
+      accessibilityRole={vink ? 'checkbox' : 'button'}
+      accessibilityState={vink ? { checked: !!aan } : undefined}
       accessibilityLabel={label}
       hitSlop={8}
       style={[s.actieIcoon, klein && s.actieIcoonKlein, aan && s.actieIcoonAan]}
     >
-      {bezig ? <ActivityIndicator size="small" color={PETROL} /> : <Ionicons name={naam} size={klein ? 18 : 22} color={aan ? '#fff' : PETROL} />}
+      {bezig ? <ActivityIndicator size="small" color={aan ? '#fff' : PETROL} /> : <Ionicons name={naam} size={klein ? 18 : 22} color={aan ? '#fff' : PETROL} />}
     </Pressable>
   );
 }
@@ -371,14 +374,19 @@ export default function Weekplanning() {
     }
   };
 
-  // WEEK-284: de dag van het weekmenu halen. Enkel een niet-bevestigd gerecht, dus niets op de boodschappenlijst.
+  // WEEK-284: de dag van het weekmenu halen.
+  // WEEK-319: ook een bevestigd gerecht; dan wordt de boodschappenlijst opnieuw uitgerekend (wat al in de frigo ligt, blijft).
   const verwijderDagKnop = async (index: number) => {
     setVerwijderVraag(null);
     const dag = plan?.dagen[index];
     if (!plan || !dag || !mag || !magDagVerwijderen(dag)) return;
     const verwacht = { gemaaktOp: plan.gemaaktOp, receptNaam: dag.recept.naam };
     const bewaard = await wijzigPlan((huidig) => (magDagVerwijderen(huidig.dagen[index]) ? verwijderDag(huidig, index, verwacht) : huidig));
-    if (bewaard) setPlan(bewaard);
+    if (!bewaard) return;
+    setPlan(bewaard);
+    if (dag.bevestigd) await zetLijstBijPlan(bewaard);
+    // Is alles wat overblijft gekookt (of niets meer), dan kan meteen een nieuw weekmenu gepland worden.
+    if (bewaard.dagen.every((d) => d.gedaan)) setFase('periode');
   };
 
   // Zelf kiezen (WEEK-44): een ander gerecht uit de databank of de eigen recepten voor deze dag.
@@ -625,20 +633,26 @@ export default function Weekplanning() {
                         )}
                       </View>
                       )}
-                      {/* WEEK-284: Gekookt onder de foto, in de ruimte die na bevestigen vrij komt. */}
+                      {/* WEEK-284: Gekookt onder de foto, in de ruimte die na bevestigen vrij komt.
+                          WEEK-319: Gekookt als rond icoontje (bestek), met ernaast het vuilbakje zolang het gerecht niet gekookt is. */}
                       {bevestigd && (
-                        <Pressable
-                          style={[s.gedaanKnop, s.gedaanOnderFoto, gedaan && s.gedaanKnopAan]}
-                          onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer(index))}
-                          disabled={bezigGedaan !== null}
-                          accessibilityRole="checkbox"
-                          accessibilityState={{ checked: !!gedaan }}
-                          accessibilityLabel={t('planning.gedaanLabel', { recept: inTaal(recept, taal).naam })}
-                          hitSlop={6}
-                        >
-                          <Ionicons name={gedaan ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={gedaan ? '#fff' : PETROL} />
-                          <Text style={[s.gedaanTekst, gedaan && s.gedaanTekstAan]} numberOfLines={1}>{t('planning.gekookt')}</Text>
-                        </Pressable>
+                        <View style={s.actieRij}>
+                          <ActieIcoon
+                            naam={gedaan ? 'restaurant' : 'restaurant-outline'}
+                            label={t('planning.gedaanLabel', { recept: inTaal(recept, taal).naam })}
+                            aan={!!gedaan}
+                            vink
+                            bezig={bezigGedaan === index}
+                            onPress={() => (mag ? wisselGedaanKnop(index) : toonBeheer(index))}
+                          />
+                          {magDagVerwijderen(kaarten.dagen[index]) && (
+                            <ActieIcoon
+                              naam="trash-outline"
+                              label={t('planning.verwijderLabel', { dag: t(dagSleutel(dag)) })}
+                              onPress={() => (mag ? setVerwijderVraag(index) : toonBeheer(index))}
+                            />
+                          )}
+                        </View>
                       )}
                     </View>
                     <View style={s.kaartInhoud}>
@@ -715,6 +729,10 @@ export default function Weekplanning() {
               <Text style={s.vensterTekst}>
                 {t('lijst.receptTitel', { dag: t(dagSleutel(plan.dagen[verwijderVraag].dag)), recept: inTaal(plan.dagen[verwijderVraag].recept, taal).naam })}
               </Text>
+            )}
+            {/* WEEK-319: bij een bevestigd gerecht staan de ingrediënten op de boodschappenlijst. */}
+            {verwijderVraag !== null && plan?.dagen[verwijderVraag]?.bevestigd && (
+              <Text style={s.vensterTekst}>{t('planning.verwijderLijst')}</Text>
             )}
             <View style={s.vensterKnoppen}>
               <Pressable style={[s.vensterKnop, s.verwijderNee]} onPress={() => setVerwijderVraag(null)} accessibilityRole="button">
@@ -819,10 +837,6 @@ const s = StyleSheet.create({
   ontbreektKnoppen: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   kleineKnop: { borderWidth: 1.5, borderColor: ORANJE, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
   kleineKnopTekst: { color: '#7a3a06', fontSize: 12, fontWeight: '700' },
-  gedaanKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1.5, borderColor: PETROL, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 },
-  gedaanKnopAan: { backgroundColor: PETROL },
-  gedaanTekst: { color: PETROL, fontSize: 12, fontWeight: '700' },
-  gedaanTekstAan: { color: '#fff' },
   // WEEK-106: links uitgelijnd en binnen de kaart; bij weinig breedte schuiven ze naar de volgende regel.
   actieRij: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8 },
   actieIcoon: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, borderColor: PETROL, alignItems: 'center', justifyContent: 'center' },
@@ -830,7 +844,6 @@ const s = StyleSheet.create({
   // WEEK-284
   actieIcoonKlein: { width: 32, height: 32, borderRadius: 16 },
   kaartKopRij: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 },
-  gedaanOnderFoto: { alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 8, maxWidth: 96 },
   vensterAchtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
   venster: { width: '100%', maxWidth: 400, backgroundColor: '#fff', borderRadius: 16, padding: 18, gap: 10 },
   vensterTitel: { fontSize: 17, fontWeight: '800', color: INKT },
