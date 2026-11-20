@@ -102,6 +102,7 @@ export const fr: Vertalingen = {
   'planning.bronLokaal': 'Proposition issue des plats de l’application',
   'planning.porties': 'Quantités pour {personen}',
   'planning.reset': 'Autre plat pour {dag}',
+  'planning.gekookt': 'Cuisiné',
   'planning.gedaan': '✓ Cuisiné',
   'planning.gedaanLabel': 'Marquer {recept} comme cuisiné ; les ingrédients sont retirés de « À la maison »',
   'planning.iconen.knop': "Explication des icônes",

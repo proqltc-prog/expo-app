@@ -12,8 +12,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 **Jira:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/browse/WEEK-319) (verbetering) · **Confluence:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27623425)
 
-- Een bevestigd gerecht dat nog niet gekookt is, kan nu van het weekmenu: met het vuilbakje naast Gekookt. Eerst komt een vraag; daarna gaan de ingrediënten van de boodschappenlijst. Wat al gekocht is, blijft bij In huis.
-- Gekookt is een rond icoontje (bestek) in dezelfde stijl als de andere acties; gevuld zodra het gerecht gekookt is.
+- Een bevestigd gerecht dat nog niet gekookt is, kan nu van het weekmenu: met het vuilbakje rechtsboven op de kaart, naast het boekje. Eerst komt een vraag; daarna gaan de ingrediënten van de boodschappenlijst. Wat al gekocht is, blijft bij In huis.
 
 ## [0.157.1] – 2026-11-20
 

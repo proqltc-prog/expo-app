@@ -102,6 +102,7 @@ export const de: Vertalingen = {
   'planning.bronLokaal': 'Vorschlag aus den Gerichten der App',
   'planning.porties': 'Mengen für {personen}',
   'planning.reset': 'Anderes Gericht für {dag}',
+  'planning.gekookt': 'Gekocht',
   'planning.gedaan': '✓ Gekocht',
   'planning.gedaanLabel': '{recept} als gekocht markieren; die Zutaten werden aus „Zuhause“ entfernt',
   'planning.iconen.knop': "Erklärung der Symbole",

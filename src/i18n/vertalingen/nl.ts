@@ -103,6 +103,7 @@ export const nl = {
   'planning.bronLokaal': 'Voorstel uit de gerechten van de app',
   'planning.porties': 'Hoeveelheden voor {personen}',
   'planning.reset': 'Ander gerecht voor {dag}',
+  'planning.gekookt': 'Gekookt',
   'planning.gedaan': '✓ Gekookt',
   'planning.gedaanLabel': '{recept} op gekookt zetten; de ingrediënten gaan uit In huis',
   'planning.iconen.knop': "Uitleg over de icoontjes",
