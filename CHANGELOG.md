@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.157.1] – 2026-11-20
+
+**Jira:** [WEEK-318](https://proqltc-1791495894841.atlassian.net/browse/WEEK-318) (bugfix) · **Confluence:** [WEEK-318](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27557889)
+
+- Instellingen, Adres: het land België staat altijd in de taal van de app (België, Belgique, Belgien, Belgium), ook na een taalwissel. Een ander land blijft zoals ingevuld.
+- De postcodedienst bewaart België voortaan als "België".
+
 ## [0.157.0] – 2026-11-18
 
 **Jira:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/browse/WEEK-317) (verbetering) · **Confluence:** [WEEK-317](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27164673)

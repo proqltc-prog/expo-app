@@ -1,6 +1,7 @@
 // Zet een Belgische postcode om naar een punt, zodat de afstand naar winkels berekend kan worden (WEEK-60).
 // Pure logica: de URL bouwen en het antwoord lezen. Het netwerk zit in src/opslag/postcodepunt.ts.
 import type { Positie } from '@/lib/winkelvoorstel';
+import { bewaarLand } from '@/lib/land';
 
 const BELGISCHE_POSTCODE = /^\d{4}$/;
 export const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
@@ -41,5 +42,5 @@ export function leesPlaats(ruw: unknown): { gemeente: string; land: string } | u
   const kandidaat = ['city', 'town', 'municipality', 'village', 'hamlet'].map((k) => adres[k]).find((v) => typeof v === 'string' && v.trim());
   if (typeof kandidaat !== 'string') return undefined;
   const land = typeof adres.country === 'string' && adres.country.trim() ? adres.country.trim() : 'België';
-  return { gemeente: kandidaat.trim(), land };
+  return { gemeente: kandidaat.trim(), land: bewaarLand(land) }; // WEEK-318: België altijd als "België"
 }
