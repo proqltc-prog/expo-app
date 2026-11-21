@@ -10,13 +10,12 @@ import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { useTaal } from '@/ui/taal';
 import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { usePaginaInfo } from '@/ui/paginaInfo';
-import { IcoonKnop } from '@/ui/icoonKnop';
 import { Soort } from '@/data/recept';
 
 // Mijn recepten (WEEK-192): het overzicht van de recepten van het gezin, met zoeken en een filter op soort.
-// Een recept openen we om te bewerken; met "+ Nieuw recept" maak je er één bij.
+// Een recept openen we om te bewerken; met het boekje-met-plusje maak je er één bij.
 // WEEK-321: dit is de tab "Onze gerechten" (in de plaats van Scan). Zelfde opbouw als In huis en Boodschappen:
-// lichte achtergrond, één rij met uitleg en zoekicoon, witte kaartjes. Terracotta + huisje = de gerechten van het gezin.
+// lichte achtergrond, één rij met uitleg en icoon, de zoekbalk, witte kaartjes. Terracotta + huisje = de gerechten van het gezin.
 
 const PAPIER = '#F8F8F4';
 const INKT = '#17201A';
@@ -33,12 +32,14 @@ export default function MijnRecepten() {
   const { terug } = useLocalSearchParams<{ terug?: string }>();
   const hier = padMet('/mijn-recepten', { terug });
   const [zoek, setZoek] = useState('');
-  const [zoekOpen, setZoekOpen] = useState(false);
+  // WEEK-321: de filters verschijnen zodra de gebruiker in de zoekbalk tikt, en blijven tot hij de pagina verlaat.
+  const [zoekGestart, setZoekGestart] = useState(false);
   const [soort, setSoort] = useState<Soort | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       laadEigenRecepten().then(setLijst);
+      return () => setZoekGestart(false);
     }, [])
   );
 
@@ -51,53 +52,41 @@ export default function MijnRecepten() {
   // WEEK-276: enkel de beheerder maakt nieuwe gerechten; de andere leden kunnen ze openen om te bekijken.
   const magBeheren = useMagGerechtenBeheren();
   const nieuw = () => router.push({ pathname: '/eigen-recept', params: { terug: hier } });
+  const toonFilters = lijst.length > 0 && (zoekGestart || zoek !== '' || soort !== null);
 
   const kop = (
     <View style={s.kop}>
-      {/* WEEK-321: één compacte regel zoals op In huis: korte uitleg (of het aantal), het vergrootglas en het plusicoon. */}
+      {/* WEEK-321: één regel zoals op In huis: korte uitleg (of het aantal) en het icoon om een gerecht toe te voegen. */}
       <View style={s.gereedschap}>
         <Text style={s.uitleg} numberOfLines={3}>
           {lijst.length ? tn('mijn.teller', lijst.length) : t('mijn.uitleg')}
         </Text>
-        {/* Zoeken heeft pas zin als er gerechten zijn. */}
-        {lijst.length > 0 && (
-          <IcoonKnop
-            naam={zoekOpen ? 'close' : 'search'}
-            label={t(zoekOpen ? 'lijst.zoekSluit' : 'mijn.zoek')}
-            kleur={ACCENT}
-            aan={zoekOpen}
-            onPress={() => {
-              // Bij sluiten: zoekterm en filter leeg, zodat weer alle gerechten zichtbaar zijn.
-              if (zoekOpen) {
-                setZoek('');
-                setSoort(null);
-              }
-              setZoekOpen((o) => !o);
-            }}
-          />
-        )}
-        {/* WEEK-321: toevoegen als rond icoon naast het vergrootglas (gevuld: de hoofdactie van deze pagina). */}
+        {/* WEEK-321: een receptenboekje met een plusje (hetzelfde boekje als de tab): een gerecht toevoegen. */}
         {magBeheren && (
-          <Pressable style={s.plus} onPress={nieuw} accessibilityRole="button" accessibilityLabel={t('mijn.nieuwKnop')} hitSlop={6}>
-            <Ionicons name="add" size={24} color="#fff" />
+          <Pressable style={s.nieuw} onPress={nieuw} accessibilityRole="button" accessibilityLabel={t('mijn.nieuwKnop')} hitSlop={6}>
+            <Ionicons name="book-outline" size={22} color={ACCENT} />
+            <View style={s.plusje}>
+              <Ionicons name="add" size={13} color="#fff" />
+            </View>
           </Pressable>
         )}
       </View>
-      {zoekOpen && (
+      {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
+      {/* WEEK-321: de zoekbalk staat altijd zichtbaar (zodra er gerechten zijn). */}
+      {lijst.length > 0 && (
         <TextInput
           style={s.zoek}
           value={zoek}
           onChangeText={setZoek}
+          onFocus={() => setZoekGestart(true)}
           placeholder={t('mijn.zoek')}
           accessibilityLabel={t('mijn.zoek')}
           autoCorrect={false}
-          autoFocus
           clearButtonMode="while-editing"
         />
       )}
-      {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
-      {/* WEEK-321: de filters op soort horen bij het zoeken en verschijnen pas als het zoeken open staat. */}
-      {zoekOpen && lijst.length > 0 && (
+      {/* WEEK-321: de filters op soort horen bij het zoeken en verschijnen pas als de gebruiker begint te zoeken. */}
+      {toonFilters && (
         <View style={s.filters} accessibilityRole="toolbar">
           {SOORTEN.map((s0) => {
             const actief = soort === s0;
@@ -163,8 +152,9 @@ const s = StyleSheet.create({
   kop: { gap: 10, marginBottom: 2 },
   gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
   uitleg: { flex: 1, minWidth: 0, color: MUTED, fontWeight: '600' },
+  nieuw: { width: 44, height: 44, borderRadius: 22, borderWidth: 1.5, borderColor: ACCENT, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  plusje: { position: 'absolute', right: -2, top: -2, width: 18, height: 18, borderRadius: 9, backgroundColor: ACCENT, borderWidth: 1.5, borderColor: '#fff', alignItems: 'center', justifyContent: 'center' },
   zoek: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', fontSize: 16 },
-  plus: { width: 40, height: 40, borderRadius: 20, backgroundColor: ACCENT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   alleenLezen: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   filters: { flexDirection: 'row', gap: 8 },
   filter: { flex: 1, minHeight: 36, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
