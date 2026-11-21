@@ -1,5 +1,5 @@
 import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { aantalProducten, FrigoItem, FrigoRegel, frigoSecties, LosWijziging, regelsInTaal, verwijderUitFrigo, wijzigLos, wijzigReceptHoeveelheid, zetHoudbaarheid } from '@/lib/frigo';
@@ -31,11 +31,9 @@ import { inTaal } from '@/lib/planner/vertaal';
 import type { Weekplan } from '@/lib/planner/types';
 import { laadPlan } from '@/opslag/plan';
 import { frigoBron } from '@/lib/frigo';
-import { terugTekst, totaleHoeveelheid, verlaagReceptHoeveelheid, type TerugOpLijst } from '@/lib/lijstNaFrigo';
+import { totaleHoeveelheid, verlaagReceptHoeveelheid, type TerugOpLijst } from '@/lib/lijstNaFrigo';
 import { zetLijstNaFrigo } from '@/opslag/lijstBijPlan';
 
-/** WEEK-322: hoe lang de melding "terug op je boodschappenlijst" zichtbaar blijft. */
-const MELDING_MS = 6000;
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -70,13 +68,8 @@ export default function Frigo() {
   const [bewaardeVoorstellen, setBewaardeVoorstellen] = useState<LosVoorstel[]>([]);
   const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [kalenderVoor, setKalenderVoor] = useState<{ id: string; waarde?: string } | null>(null);
-  // WEEK-322: wat na een wijziging hier terug op de boodschappenlijst kwam (korte melding bovenaan).
+  // WEEK-322: wat na een wijziging hier terug op de boodschappenlijst kwam (popup, tot de gebruiker ze sluit).
   const [terugOpLijst, setTerugOpLijst] = useState<TerugOpLijst[]>([]);
-  useEffect(() => {
-    if (!terugOpLijst.length) return;
-    const klok = setTimeout(() => setTerugOpLijst([]), MELDING_MS);
-    return () => clearTimeout(klok);
-  }, [terugOpLijst]);
   // WEEK-322: na verwijderen of verlagen: wat een bevestigd gerecht mist, komt terug op de lijst.
   const werkLijstBij = async () => {
     const terug = await zetLijstNaFrigo(taal);
@@ -286,16 +279,41 @@ export default function Frigo() {
   return (
     <View style={s.scherm}>
       {popup}
-      {/* WEEK-322: korte melding: wat terug op de boodschappenlijst kwam, en voor welk gerecht. Tik om naar de lijst te gaan. */}
-      {terugOpLijst.length > 0 && (
-        <Pressable style={s.terugMelding} onPress={() => router.navigate('/lijst')} accessibilityRole="alert" accessibilityLabel={t('frigo.terugOpLijst', { lijst: terugTekst(terugOpLijst) })}>
-          <Ionicons name="cart-outline" size={18} color="#fff" />
-          <Text style={s.terugMeldingTekst}>{t('frigo.terugOpLijst', { lijst: terugTekst(terugOpLijst) })}</Text>
-          <Pressable onPress={() => setTerugOpLijst([])} accessibilityRole="button" accessibilityLabel={t('pagina.sluiten')} hitSlop={10}>
-            <Ionicons name="close" size={18} color="#fff" />
+      {/* WEEK-322: popup meteen na het weghalen (kruisje) of verlagen: wat terug op de boodschappenlijst kwam en voor welk gerecht. */}
+      <Modal visible={terugOpLijst.length > 0} transparent animationType="fade" onRequestClose={() => setTerugOpLijst([])}>
+        <Pressable style={s.vensterAchtergrond} onPress={() => setTerugOpLijst([])}>
+          <Pressable style={s.venster} onPress={() => undefined} accessibilityRole="alert">
+            <View style={s.vensterKop}>
+              <View style={s.vensterIcoon}>
+                <Ionicons name="cart-outline" size={20} color={ORANJE} />
+              </View>
+              <Text style={s.vensterTitel}>{t('frigo.terugTitel')}</Text>
+            </View>
+            <Text style={s.vensterTekst}>{t('frigo.terugUitleg')}</Text>
+            {terugOpLijst.map((r) => (
+              <Text key={`${r.naam}|${r.recept}`} style={s.vensterRegel}>
+                {`• ${r.naam}`}
+                <Text style={s.vensterGerecht}>{`  ·  ${r.recept}`}</Text>
+              </Text>
+            ))}
+            <View style={s.vensterKnoppen}>
+              <Pressable style={[s.vensterKnop, s.vensterOk]} onPress={() => setTerugOpLijst([])} accessibilityRole="button">
+                <Text style={s.vensterOkTekst}>{t('frigo.terugOk')}</Text>
+              </Pressable>
+              <Pressable
+                style={[s.vensterKnop, s.vensterLijst]}
+                onPress={() => {
+                  setTerugOpLijst([]);
+                  router.navigate('/lijst');
+                }}
+                accessibilityRole="button"
+              >
+                <Text style={s.vensterLijstTekst}>{t('frigo.naarLijst')}</Text>
+              </Pressable>
+            </View>
           </Pressable>
         </Pressable>
-      )}
+      </Modal>
       <LosPopup opties={losPopup} onSluit={() => setLosPopup(null)} onBewaar={bewaarLos} />
       {kalenderVoor && (
         <DatumKiezer
@@ -407,8 +425,20 @@ export default function Frigo() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
-  terugMelding: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: ORANJE, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 12, marginTop: 10 },
-  terugMeldingTekst: { flex: 1, color: '#fff', fontWeight: '600', fontSize: 14 },
+  vensterAchtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  venster: { width: '100%', maxWidth: 400, backgroundColor: '#fff', borderRadius: 16, padding: 18, gap: 10 },
+  vensterKop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  vensterIcoon: { width: 36, height: 36, borderRadius: 18, backgroundColor: ORANJE_ZACHT, alignItems: 'center', justifyContent: 'center' },
+  vensterTitel: { flex: 1, fontSize: 17, fontWeight: '800', color: INKT },
+  vensterTekst: { fontSize: 14, color: MUTED },
+  vensterRegel: { fontSize: 15, fontWeight: '700', color: INKT },
+  vensterGerecht: { fontSize: 14, fontWeight: '400', color: MUTED },
+  vensterKnoppen: { flexDirection: 'row', gap: 10, marginTop: 6 },
+  vensterKnop: { flex: 1, minHeight: 46, paddingHorizontal: 8, borderRadius: 12, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  vensterOk: { borderColor: '#C9CFC7', backgroundColor: '#fff' },
+  vensterOkTekst: { color: '#444', fontSize: 15, fontWeight: '700' },
+  vensterLijst: { borderColor: ORANJE, backgroundColor: ORANJE },
+  vensterLijstTekst: { color: '#fff', fontSize: 15, fontWeight: '700', textAlign: 'center' },
   uitleg: { color: MUTED },
   gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
   groepKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 10, flexShrink: 0 },

@@ -2,7 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { pasFrigoAan, type FrigoItem } from '@/lib/frigo';
 import { voegPlanToe, type LijstItem } from '@/lib/lijst';
-import { lijstNaFrigo, terugTekst, totaleHoeveelheid, verlaagReceptHoeveelheid } from '@/lib/lijstNaFrigo';
+import { lijstNaFrigo, totaleHoeveelheid, verlaagReceptHoeveelheid } from '@/lib/lijstNaFrigo';
 import { testPool } from '@/lib/planner/testrecepten';
 import type { PlanDag } from '@/lib/planner/types';
 
@@ -83,9 +83,6 @@ describe('WEEK-322: In huis gewijzigd → wat een bevestigd gerecht mist, komt t
     assert.equal(r.lijst.some((i) => i.recept?.naam === pasta.naam), false);
   });
 
-  test('de melding noemt ingrediënt en gerecht', () => {
-    assert.equal(terugTekst([{ naam: 'rijst', recept: 'Linzencurry' }, { naam: 'boter', recept: 'Cacio e pepe' }]), 'rijst (Linzencurry), boter (Cacio e pepe)');
-  });
 
   test('totale hoeveelheid van een regel; onbekend als één exemplaar geen hoeveelheid heeft', () => {
     const a: FrigoItem = { id: 'a', naam: 'rijst', hoeveelheid: 100, eenheid: 'g', afdeling: 'droge-voeding', toegevoegdOp: NU.toISOString() };

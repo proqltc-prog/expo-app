@@ -64,7 +64,3 @@ export function lijstNaFrigo(
   return { lijst, terug };
 }
 
-/** De tekst van de melding: "rijst (Linzencurry), ui (Stoofvlees)". */
-export function terugTekst(terug: readonly TerugOpLijst[]): string {
-  return terug.map((t) => `${t.naam} (${t.recept})`).join(', ');
-}
