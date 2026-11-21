@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.160.0] – 2026-11-21
+
+**Jira:** [WEEK-322](https://proqltc-1791495894841.atlassian.net/browse/WEEK-322) (verbetering) · **Confluence:** [WEEK-322](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27918337)
+
+- In huis: haal je een ingrediënt weg of verlaag je de hoeveelheid terwijl een bevestigd gerecht het nodig heeft, dan komt wat ontbreekt vanzelf terug op de boodschappenlijst (bij een lagere hoeveelheid enkel het tekort).
+- Meteen na het kruisje (of het verlagen) toont een popup wat er terug op de lijst kwam en voor welk gerecht, met OK en Naar de lijst.
+- Een gerecht gaat niet meer vanzelf op Gekookt als al zijn ingrediënten weg zijn.
+
 ## [0.159.0] – 2026-11-21
 
 **Jira:** [WEEK-321](https://proqltc-1791495894841.atlassian.net/browse/WEEK-321) (verbetering) · **Confluence:** [WEEK-321](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27885569)
