@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.158.1] – 2026-11-21
+
+**Jira:** [WEEK-320](https://proqltc-1791495894841.atlassian.net/browse/WEEK-320) (bugfix) · **Confluence:** [WEEK-320](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27820034)
+
+- Nieuw gerecht start altijd leeg: bij een 2e ingelezen recept (link of foto) komen de ingrediënten van het vorige recept niet meer mee.
+- Het scherm kon crashen bij wisselen tussen een nieuw en een bestaand gerecht; opgelost.
+
 ## [0.158.0] – 2026-11-20
 
 **Jira:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/browse/WEEK-319) (verbetering) · **Confluence:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27623425)

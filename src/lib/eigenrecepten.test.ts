@@ -1,10 +1,12 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { voegSamen } from './receptLink';
 import {
   afdelingVanEigen,
   bewaarEigen,
   EigenIngredient,
   EigenRecept,
+  formulierVoor,
   GEZIN_STIJL,
   isExactBekend,
   nieuweId,
@@ -210,5 +212,39 @@ describe('WEEK-246: foutmeldingen verdwijnen zodra het probleem opgelost is', ()
   test('er komen geen nieuwe meldingen bij voor je opnieuw bewaart', () => {
     assert.deepEqual(nogGeldigeFouten([], { ...invoer([]), naam: '' }), []);
     assert.deepEqual(nogGeldigeFouten(['naam'], { ...invoer([]), naam: '' }), ['naam']);
+  });
+});
+
+describe('WEEK-320: formulier bij elke opening van het scherm', () => {
+  const vorig: EigenRecept = {
+    id: 'eigen-1', naam: 'Stoofvlees', soort: 'vlees', minuten: 90, stijlen: ['klassiek'], gezinStijl: true, seizoenen: ['winter'],
+    ingredienten: [{ code: 'ui', naam: 'ui', hoeveelheid: 1, eenheid: 'stuk' }], stappen: ['Stoven.'], bijgewerkt: '2026-11-21T10:00:00.000Z',
+  };
+
+  test('een nieuw recept start leeg', () => {
+    assert.deepEqual(formulierVoor(undefined, 20), {
+      naam: '', soort: 'vegetarisch', minuten: '20', stijlen: [GEZIN_STIJL], seizoenen: [], ingredienten: [], stappen: [''],
+    });
+  });
+
+  test('een tweede ingelezen recept krijgt enkel zijn eigen ingrediënten (bug: die van het vorige kwamen mee)', () => {
+    const nieuw: EigenIngredient[] = [{ code: 'rijst', naam: 'rijst', hoeveelheid: 75, eenheid: 'g' }];
+    const start = formulierVoor(undefined, 20).ingredienten;
+    assert.deepEqual(nieuw.reduce(voegSamen, start).map((i) => i.naam), ['rijst']);
+  });
+
+  test('regressie: bewerken vult het bestaande recept in, als kopie', () => {
+    const f = formulierVoor(vorig, 20);
+    assert.equal(f.naam, 'Stoofvlees');
+    assert.equal(f.minuten, '90');
+    assert.deepEqual(f.stijlen, [GEZIN_STIJL, 'klassiek']);
+    assert.deepEqual(f.seizoenen, ['winter']);
+    assert.deepEqual(f.stappen, ['Stoven.']);
+    f.ingredienten[0].hoeveelheid = 5;
+    assert.equal(vorig.ingredienten[0].hoeveelheid, 1, 'het bewaarde recept verandert niet mee');
+  });
+
+  test('een recept zonder stappen krijgt één lege stap', () => {
+    assert.deepEqual(formulierVoor({ ...vorig, stappen: [] }, 20).stappen, ['']);
   });
 });
