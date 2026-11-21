@@ -8,7 +8,7 @@ export const WELKOM_FOTO: Record<Exclude<FotoSleutel, 'weekplan'>, ImageSourcePr
   huishouden: require('../../assets/welkom/huishouden.jpg'),
   frigo: require('../../assets/welkom/frigo.jpg'),
   lijst: require('../../assets/welkom/lijst.jpg'),
-  scan: require('../../assets/welkom/scan.jpg'),
+  gerechten: require('../../assets/welkom/gerechten.jpg'), // WEEK-321
   seizoen: require('../../assets/welkom/seizoen.jpg'),
   winkels: require('../../assets/welkom/winkels.jpg'),
 };

@@ -8,6 +8,22 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.159.0] – 2026-11-21
+
+**Jira:** [WEEK-321](https://proqltc-1791495894841.atlassian.net/browse/WEEK-321) (verbetering) · **Confluence:** [WEEK-321](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27885569)
+
+- Nieuwe tab **Onze gerechten** in de plaats van Scan (titel "Gerechten van ons gezin"): de eigen gerechten van het gezin toevoegen (zelf typen, link of foto), bewerken en verwijderen. Zelfde opbouw en stijl als In huis en Boodschappen: zoekbalk altijd zichtbaar, een boekje met plusje om een gerecht toe te voegen, met de filters vegetarisch, vis en vlees eronder.
+- **Zelf kiezen** dient enkel nog om te zoeken en te kiezen: één lijst met de filter Alle · Van de app · Ons gezin; eigen gerechten hebben een huisje.
+- **Scannen** vanuit Boodschappen (nieuw camera-icoon bovenaan) en In huis; de scanner heeft een terugpijl in de kop en gaat terug naar waar je scande.
+- Introductie, "Hoe werkt het?" en de info-icoontjes aangepast in nl, fr, de en en; nieuwe introductieslide "Je eigen gerechten".
+
+## [0.158.1] – 2026-11-21
+
+**Jira:** [WEEK-320](https://proqltc-1791495894841.atlassian.net/browse/WEEK-320) (bugfix) · **Confluence:** [WEEK-320](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27820034)
+
+- Nieuw gerecht start altijd leeg: bij een 2e ingelezen recept (link of foto) komen de ingrediënten van het vorige recept niet meer mee.
+- Het scherm kon crashen bij wisselen tussen een nieuw en een bestaand gerecht; opgelost.
+
 ## [0.158.0] – 2026-11-20
 
 **Jira:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/browse/WEEK-319) (verbetering) · **Confluence:** [WEEK-319](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27623425)

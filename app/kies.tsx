@@ -1,6 +1,7 @@
 import { ACCENT } from '@/ui/kleuren';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Moment, MOMENTEN, Soort, SOORTEN, StijlCode } from '@/data/recept';
 import { VERMIJDBAAR, Vermijd } from '@/data/vermijden';
@@ -9,6 +10,9 @@ import { DbPoolRecept, maakDbPool } from '@/lib/planner/dbplan';
 import { KooktijdCode, PlanRecept } from '@/lib/planner/types';
 import {
   eigenNaarPlanRecept,
+  KIES_BRONNEN,
+  KiesBron,
+  keuzesVoorBron,
   kiesbareEigenRecepten,
   kiesbarePoolRecepten,
   startSoorten,
@@ -22,28 +26,26 @@ import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadProfiel } from '@/opslag/profiel';
 import { laadKeuzes, laadPlan, wijzigPlan } from '@/opslag/plan';
 import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
-import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { ikId, laadLeden, GezinsLid } from '@/opslag/sync';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
-import { padMet } from '@/lib/terug';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 
 // Zelf kiezen (WEEK-44): een recept kiezen, met de voorkeuren als filter en een zoekbalk.
-// WEEK-191: twee tabs. "Ontdek" toont de recepten van de app (uit de databank); "Ons gezin" toont de eigen recepten.
-// Twee gevallen: een bestaande dag vervangen (index, gemaaktOp, naam meegegeven) of een nieuwe maaltijd toevoegen.
+// WEEK-321: enkel zoeken en kiezen. Eén lijst met de gerechten van de app en die van het gezin (met een huisje),
+// en een filter Alle · Van de app · Ons gezin. Toevoegen en beheren gebeurt in de tab Gerechten.
 
 const KLEUR = '#2e7d4f';
+const HUIS = '#B4472B';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
+const BRON_TEKST = { alle: 'kies.bronAlle', app: 'kies.bronApp', gezin: 'kies.tabGezin' } as const;
 
 const isMoment = (x: unknown): x is Moment => MOMENTEN.includes(x as Moment);
 
-type Tab = 'ontdek' | 'gezin';
-
 /** Een keuze in de lijst: de gegevens om te tonen en het planrecept dat op het weekmenu komt. */
-type Keuze = { id: string; naam: string; soort: Soort; minuten: number; recept: PlanRecept };
+type Keuze = { id: string; naam: string; soort: Soort; minuten: number; recept: PlanRecept; eigen: boolean };
 
 export default function Kies() {
   const { t, taal } = useTaal();
@@ -52,7 +54,7 @@ export default function Kies() {
   const moment: Moment = isMoment(params.moment) ? params.moment : 'avond';
   const index = params.index !== undefined ? Number(params.index) : undefined;
 
-  const [tab, setTab] = useState<Tab>('ontdek');
+  const [bron, setBron] = useState<KiesBron>('alle');
   const [kooktijden, setKooktijden] = useState<KooktijdCode[]>([]);
   const [stijlen, setStijlen] = useState<StijlCode[]>([]);
   const [vermijd, setVermijd] = useState<Vermijd[]>([]);
@@ -102,24 +104,25 @@ export default function Kies() {
   const filter = { moment, kooktijden, stijlen, vermijd, soorten, zoek, taal };
 
   const keuzes = useMemo<Keuze[]>(() => {
-    if (tab === 'ontdek') {
-      return kiesbarePoolRecepten(dbPool, filter).map((k) => ({
-        id: k.recept.id,
-        naam: k.recept.naam,
-        soort: k.soort,
-        minuten: k.recept.minuten,
-        recept: k.recept,
-      }));
-    }
+    const app: Keuze[] = kiesbarePoolRecepten(dbPool, filter).map((k) => ({
+      id: k.recept.id,
+      naam: k.recept.naam,
+      soort: k.soort,
+      minuten: k.recept.minuten,
+      recept: k.recept,
+      eigen: false,
+    }));
     const gezin = profiel ?? standaardProfiel();
-    return kiesbareEigenRecepten(eigen, filter).map((r) => ({
+    const eigenKeuzes: Keuze[] = kiesbareEigenRecepten(eigen, filter).map((r) => ({
       id: r.id,
       naam: r.naam,
       soort: r.soort,
       minuten: r.minuten,
       recept: eigenNaarPlanRecept(r, gezin),
+      eigen: true,
     }));
-  }, [tab, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, soorten, zoek, taal]);
+    return keuzesVoorBron(bron, app, eigenKeuzes);
+  }, [bron, dbPool, eigen, profiel, moment, kooktijden, stijlen, vermijd, soorten, zoek, taal]);
 
   // WEEK-272: geen gerecht op deze dag. Ingrediënten op de boodschappenlijst gaan weg; wat al in huis is, blijft.
   const geenGerecht = async () => {
@@ -136,8 +139,6 @@ export default function Kies() {
   };
 
   // Zelf kiezen vervangt altijd het gerecht van één dag (WEEK-273: "gerecht toevoegen" bestaat niet meer).
-  const magBeheren = useMagGerechtenBeheren();
-
   const kies = async (keuze: Keuze) => {
     if (bezig || geenRecht || index === undefined) return;
     setBezig(true);
@@ -171,33 +172,24 @@ export default function Kies() {
           <Text style={s.geenGerechtTekst}>{t('kies.geenGerecht')}</Text>
         </Pressable>
       )}
+      {/* WEEK-321: welke gerechten: alle, enkel die van de app of enkel die van het gezin. */}
       <View style={s.tabs} accessibilityRole="tablist">
-        {(['ontdek', 'gezin'] as const).map((k) => {
-          const actief = tab === k;
+        {KIES_BRONNEN.map((k) => {
+          const actief = bron === k;
           return (
             <Pressable
               key={k}
               style={[s.tab, actief && s.tabActief]}
-              onPress={() => setTab(k)}
+              onPress={() => setBron(k)}
               accessibilityRole="tab"
               accessibilityState={{ selected: actief }}
             >
-              <Text style={[s.tabTekst, actief && s.tabTekstActief]}>{t(k === 'ontdek' ? 'kies.tabOntdek' : 'kies.tabGezin')}</Text>
+              {k === 'gezin' && <Ionicons name="home" size={13} color={actief ? '#fff' : HUIS} />}
+              <Text style={[s.tabTekst, actief && s.tabTekstActief]} numberOfLines={2}>{t(BRON_TEKST[k])}</Text>
             </Pressable>
           );
         })}
       </View>
-      {tab === 'gezin' && (
-        // WEEK-202: meteen een recept toevoegen; beheren (bewerken, verwijderen) blijft via Mijn recepten.
-        <View style={s.gezinActies}>
-          {magBeheren && <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
-            <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>
-          </Pressable>}
-          <Pressable style={s.beheer} onPress={() => router.push({ pathname: '/mijn-recepten', params: { terug: padMet('/kies', { moment: params.moment, index: params.index, gemaaktOp: params.gemaaktOp, naam: params.naam }) } })} accessibilityRole="button">
-            <Text style={s.beheerTekst}>{t('kies.beheer')}</Text>
-          </Pressable>
-        </View>
-      )}
       <TextInput
         style={s.zoek}
         value={zoek}
@@ -230,11 +222,20 @@ export default function Kies() {
         keyExtractor={(k) => k.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={s.lijst}
-        ListEmptyComponent={<Text style={s.leeg}>{tab === 'ontdek' ? t('kies.leeg') : t('kies.gezinLeeg')}</Text>}
+        ListEmptyComponent={<Text style={s.leeg}>{bron === 'gezin' ? t('kies.gezinLeeg') : t('kies.leeg')}</Text>}
         renderItem={({ item }) => (
-          <Pressable style={s.rij} onPress={() => kies(item)} disabled={bezig} accessibilityRole="button">
+          <Pressable
+            style={s.rij}
+            onPress={() => kies(item)}
+            disabled={bezig}
+            accessibilityRole="button"
+            accessibilityLabel={item.eigen ? `${item.naam}, ${t('kies.eigenLabel')}` : item.naam}
+          >
             <View style={{ flex: 1 }}>
-              <Text style={s.naam}>{item.naam}</Text>
+              <View style={s.naamRij}>
+                {item.eigen && <Ionicons name="home" size={15} color={HUIS} />}
+                <Text style={[s.naam, { flexShrink: 1 }]}>{item.naam}</Text>
+              </View>
               <View style={s.meta}>
                 <Text style={[s.badge, { backgroundColor: SOORT_KLEUR[item.soort] }]}>{t(`soort.${item.soort}`)}</Text>
                 <Text style={s.min}>{t('algemeen.minuten', { n: item.minuten })}</Text>
@@ -254,19 +255,16 @@ const s = StyleSheet.create({
   geenGerecht: { borderWidth: 1.5, borderColor: '#B4472B', borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
   geenGerechtTekst: { color: '#B4472B', fontWeight: '700', fontSize: 15 },
   tabs: { flexDirection: 'row', gap: 8 },
-  tab: { flex: 1, paddingVertical: 10, minHeight: 44, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
+  // WEEK-321: elke knop zo breed als zijn tekst (in het Frans is "De l’application" veel langer dan "Tous").
+  tab: { flexGrow: 1, flexShrink: 1, flexBasis: 'auto', flexDirection: 'row', gap: 4, paddingVertical: 8, paddingHorizontal: 10, minHeight: 44, borderRadius: 12, borderWidth: 1.5, borderColor: KLEUR, alignItems: 'center', justifyContent: 'center' },
   tabActief: { backgroundColor: KLEUR },
-  tabTekst: { fontSize: 15, fontWeight: '600', color: KLEUR },
+  tabTekst: { fontSize: 14, fontWeight: '600', color: KLEUR, flexShrink: 1, textAlign: 'center' },
   tabTekstActief: { color: '#fff' },
   zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
   soorten: { flexDirection: 'row', gap: 8 },
   soortKnop: { flex: 1, minHeight: 40, borderRadius: 20, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
   soortTekst: { fontSize: 14, fontWeight: '600' },
-  gezinActies: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  nieuw: { backgroundColor: ACCENT, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
-  nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  beheer: { paddingVertical: 4, flexShrink: 1 },
-  beheerTekst: { color: ACCENT, fontWeight: '700', fontSize: 14 },
+  naamRij: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   lijst: { gap: 8, paddingBottom: 40 },
   leeg: { color: '#777', textAlign: 'center', marginTop: 16 },
   rij: { backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e5e5' },

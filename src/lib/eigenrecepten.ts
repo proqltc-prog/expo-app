@@ -188,3 +188,32 @@ export function isExactBekend(zoek: string, keuzes: readonly IngredientKeuze[]):
 }
 
 export type Bron = 'alle' | 'mijn' | 'favoriet';
+/** WEEK-320: de velden van het formulier "Nieuw recept" / "Recept bewerken". */
+export type Formulier = {
+  naam: string;
+  soort: Soort;
+  minuten: string;
+  stijlen: StijlKeuze[];
+  seizoenen: Seizoen[];
+  ingredienten: EigenIngredient[];
+  stappen: string[];
+};
+
+/**
+ * WEEK-320: het formulier bij elke opening van het scherm: leeg voor een nieuw recept, ingevuld voor een bestaand.
+ * Het scherm blijft geladen (verborgen tabblad); zonder dit bleven de ingrediënten van het vorige recept staan.
+ */
+export function formulierVoor(recept: EigenRecept | undefined, snelMinuten: number): Formulier {
+  if (!recept) {
+    return { naam: '', soort: 'vegetarisch', minuten: String(snelMinuten), stijlen: [GEZIN_STIJL], seizoenen: [], ingredienten: [], stappen: [''] };
+  }
+  return {
+    naam: recept.naam,
+    soort: recept.soort,
+    minuten: String(recept.minuten),
+    stijlen: [...(recept.gezinStijl ? [GEZIN_STIJL] : []), ...recept.stijlen],
+    seizoenen: [...(recept.seizoenen ?? [])],
+    ingredienten: recept.ingredienten.map((i) => ({ ...i })),
+    stappen: recept.stappen.length ? [...recept.stappen] : [''],
+  };
+}

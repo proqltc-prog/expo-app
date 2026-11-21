@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
-import { TerugKnop } from '@/ui/terugKnop';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { afdelingUitCategorieen, Alternatief, Product, scanNaam, zoekProduct, zoektAlternatief } from '@/lib/openfoodfacts';
 import { vorigeVanZelfdeSoort, type HistoriekItem } from '@/lib/scanHistoriek';
@@ -300,11 +299,7 @@ function ScanInhoud() {
           <Text style={s.hint}>{t('scan.richt')}</Text>
           <Text style={s.hint}>{t('scan.resterend', { n: rest })}</Text>
         </View>
-        {/* WEEK-102: de scan sluiten. WEEK-120: enkel bij scannen vanuit de lijst of de frigo.
-            WEEK-177: staat ná de overlay, zodat de overlay de knop niet meer afdekt. */}
-        {scanTerug(van) !== undefined && (
-          <TerugKnop onPress={annuleer} kleur="#fff" style={s.annuleer} />
-        )}
+        {/* WEEK-321: de scan sluiten gebeurt met de terugpijl in de kop (ScanKopTerug); geen tweede pijl op de camera. */}
         {/* WEEK-302/313: onderaan op de camera de laatste 3 scans (tik: openen, lang drukken: vergelijken) en "Alle". */}
         <View style={s.historiekPlaats}>
           {historiek.length > 0 ? (
@@ -466,7 +461,6 @@ const s = StyleSheet.create({
   knopZachtTekst: { color: KLEUR },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  annuleer: { position: 'absolute', top: 16, left: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
   kader: { width: 260, height: 150, borderWidth: 3, borderColor: '#fff', borderRadius: 16 },
   hint: { color: '#fff', marginTop: 16, fontWeight: '600', textShadowColor: '#000', textShadowRadius: 4 },
   resultaat: { padding: 16, gap: 8, backgroundColor: PAPIER },

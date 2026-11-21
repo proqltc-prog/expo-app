@@ -332,7 +332,8 @@ describe('infovenster Kies een gerecht (WEEK-263)', () => {
       assert.ok(!tekst.includes('+'), `${taal}: geen plusteken`);
       assert.match(laatste, /gerecht|plat|Gericht|dish/i, `${taal}: de laatste regel gaat over een nieuw gerecht`);
     }
-    assert.equal(nl['pagina.kiesInfo'].split('\n').at(-1), 'Met nieuw gerecht voeg je er een toe.');
+    // WEEK-321: toevoegen gebeurt niet meer in Zelf kiezen; de laatste regel verwijst naar de tab Gerechten.
+    assert.equal(nl['pagina.kiesInfo'].split('\n').at(-1), 'Dat doe je bij Onze gerechten, onderaan.');
   });
 });
 
@@ -391,6 +392,55 @@ describe('info-teksten na WEEK-319', () => {
     for (const taal of TALEN) {
       const t = (VERTALINGEN[taal] as Record<string, string>)['pagina.scanInfo'];
       assert.doesNotMatch(t, /oordeel|un avis|Bewertung|rating/, taal);
+    }
+  });
+});
+
+describe('WEEK-321: tab Gerechten in plaats van Scan', () => {
+  const tekst = (taal: (typeof TALEN)[number], k: string) => (VERTALINGEN[taal] as Record<string, string>)[k];
+  test('de oude teksten van de Scan-tab, Ontdek en beheren bestaan niet meer', () => {
+    for (const taal of TALEN) {
+      for (const k of ['tab.scan', 'kies.tabOntdek', 'kies.beheer', 'uitleg.scan.titel', 'uitleg.scan.tekst', 'howto.scan']) {
+        assert.equal(tekst(taal, k), undefined, `${taal}: ${k}`);
+      }
+    }
+  });
+  test('de nieuwe teksten staan in elke taal', () => {
+    for (const taal of TALEN) {
+      for (const k of ['tab.gerechten', 'kies.bronAlle', 'kies.bronApp', 'kies.eigenLabel', 'lijst.scanLos', 'pagina.gerechtenInfo', 'howto.gerechten', 'uitleg.gerechten.titel', 'uitleg.gerechten.tekst']) {
+        assert.ok(tekst(taal, k), `${taal}: ${k}`);
+      }
+    }
+  });
+  test('Zelf kiezen verwijst naar de tab Gerechten om een gerecht toe te voegen, met dezelfde naam als de tab', () => {
+    for (const taal of TALEN) {
+      const tab = tekst(taal, 'tab.gerechten');
+      assert.ok(tekst(taal, 'pagina.kiesInfo').includes(tab), taal);
+      assert.ok(tekst(taal, 'kies.gezinLeeg').includes(tab), taal);
+    }
+  });
+  test('Boodschappen vermeldt het scan-icoon in de info', () => {
+    const woord = { nl: /camera/, fr: /appareil photo/, de: /Kamera/, en: /camera/ } as const;
+    for (const taal of TALEN) assert.match(tekst(taal, 'pagina.lijstInfo'), woord[taal], taal);
+  });
+});
+
+describe('WEEK-321: de tab gaat duidelijk over de gerechten van het gezin', () => {
+  const tekst = (taal: (typeof TALEN)[number], k: string) => (VERTALINGEN[taal] as Record<string, string>)[k];
+  test('tabnaam en titel zeggen dat het de gerechten van het gezin zijn', () => {
+    const ons = { nl: /^Onze /, fr: /^Nos /, de: /^Unsere /, en: /^Our / } as const;
+    const gezin = { nl: /gezin/, fr: /famille/, de: /Familie/, en: /family/ } as const;
+    for (const taal of TALEN) {
+      assert.match(tekst(taal, 'tab.gerechten'), ons[taal], taal);
+      assert.match(tekst(taal, 'mijn.titel'), gezin[taal], taal);
+    }
+  });
+  test('de teller heeft enkelvoud en meervoud, en de oude knoptekst met plusteken is weg', () => {
+    for (const taal of TALEN) {
+      assert.ok(tekst(taal, 'mijn.teller_1').includes('{n}'), taal);
+      assert.ok(tekst(taal, 'mijn.teller_n').includes('{n}'), taal);
+      assert.ok(tekst(taal, 'mijn.nieuwKnop') && !tekst(taal, 'mijn.nieuwKnop').includes('+'), taal);
+      assert.equal(tekst(taal, 'mijn.nieuw'), undefined, taal);
     }
   });
 });
