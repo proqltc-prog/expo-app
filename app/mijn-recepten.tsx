@@ -8,16 +8,20 @@ import { kiesbareEigenRecepten, KiesFilter } from '@/lib/planner/kies';
 import { laadEigenRecepten } from '@/opslag/eigenRecepten';
 import { useTaal } from '@/ui/taal';
 import { useMagGerechtenBeheren } from '@/ui/magGerechten';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 import { Soort } from '@/data/recept';
 
 // Mijn recepten (WEEK-192): het overzicht van de recepten van het gezin, met zoeken en een filter op soort.
 // Een recept openen we om te bewerken; met "+ Nieuw recept" maak je er één bij.
+// WEEK-321: dit is nu de tab "Gerechten" (in de plaats van Scan); hier voeg je gerechten toe en beheer je ze.
 
 const KLEUR = '#2e7d4f';
 const SOORT_KLEUR: Record<Soort, string> = { vegetarisch: '#4caf50', vis: '#1e88e5', vlees: '#e53935' };
 
 export default function MijnRecepten() {
   const { t, taal } = useTaal();
+  // WEEK-321: zoals elke tab een info-icoon rechtsboven.
+  const { popup } = usePaginaInfo({ tekst: t('pagina.gerechtenInfo'), kleur: ACCENT, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const [lijst, setLijst] = useState<EigenRecept[]>([]);
   // WEEK-259: vanuit een recept terug naar dit scherm, met hetzelfde terugpad (bv. naar Kies een gerecht).
   const { terug } = useLocalSearchParams<{ terug?: string }>();
@@ -42,6 +46,7 @@ export default function MijnRecepten() {
 
   return (
     <View style={s.scherm}>
+      {popup}
       {magBeheren ? (
         <Pressable style={s.nieuw} onPress={() => router.push({ pathname: '/eigen-recept', params: { terug: hier } })} accessibilityRole="button">
           <Text style={s.nieuwTekst}>{t('mijn.nieuw')}</Text>

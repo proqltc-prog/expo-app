@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.159.0] – 2026-11-21
+
+**Jira:** [WEEK-321](https://proqltc-1791495894841.atlassian.net/browse/WEEK-321) (verbetering) · **Confluence:** [WEEK-321](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27885569)
+
+- Nieuwe tab **Gerechten** in de plaats van Scan: eigen gerechten toevoegen (zelf typen, link of foto), bewerken en verwijderen.
+- **Zelf kiezen** dient enkel nog om te zoeken en te kiezen: één lijst met de filter Alle · Van de app · Ons gezin; eigen gerechten hebben een huisje.
+- **Scannen** vanuit Boodschappen (nieuw camera-icoon bovenaan) en In huis; de scanner heeft een terugpijl in de kop en gaat terug naar waar je scande.
+- Introductie, "Hoe werkt het?" en de info-icoontjes aangepast in nl, fr, de en en; nieuwe introductieslide "Je eigen gerechten".
+
 ## [0.158.1] – 2026-11-21
 
 **Jira:** [WEEK-320](https://proqltc-1791495894841.atlassian.net/browse/WEEK-320) (bugfix) · **Confluence:** [WEEK-320](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27820034)

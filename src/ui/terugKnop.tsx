@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { type SchermMetTerug, terugVoor } from '@/lib/terug';
+import { terugBestemming } from '@/lib/terugknop';
 import { useTaal } from '@/ui/taal';
 
 export const TERUG_ICOON = 'arrow-back' as const;
@@ -43,6 +44,15 @@ export function TerugKnop({
 export function KopTerug({ scherm }: { scherm: SchermMetTerug }) {
   const { terug } = useGlobalSearchParams<{ terug?: string }>();
   return <TerugKnop pad={terugVoor(scherm, terug)} />;
+}
+
+/**
+ * WEEK-321: de terugpijl in de kop van de scanner, nu die geen eigen tab meer heeft: terug naar waar je scande
+ * (Boodschappen of In huis), anders naar het weekmenu. Ook zichtbaar als de camera nog geen toestemming heeft.
+ */
+export function ScanKopTerug() {
+  const { van } = useGlobalSearchParams<{ van?: string }>();
+  return <TerugKnop pad={terugBestemming('/scan', typeof van === 'string' ? van : undefined)} />;
 }
 
 /** WEEK-289: dezelfde terugpijl, in een wit rondje, voor een kop die over een sfeerfoto ligt (gezinsprofiel). */

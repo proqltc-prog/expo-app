@@ -36,7 +36,8 @@ export const UITLEG_SCHERMEN: readonly UitlegScherm[] = [
   // WEEK-239: "In huis" krijgt dezelfde doos als de tab onderaan.
   { icoon: 'archive-outline', kleur: '#2E7D9A', titel: 'uitleg.frigo.titel', tekst: 'uitleg.frigo.tekst' },
   { icoon: 'cart-outline', kleur: '#E8680F', titel: 'uitleg.lijst.titel', tekst: 'uitleg.lijst.tekst' },
-  { icoon: 'scan-outline', kleur: '#2E7D4F', titel: 'uitleg.scan.titel', tekst: 'uitleg.scan.tekst' },
+  // WEEK-321: de tab Gerechten in de plaats van Scan; scannen staat nu in de uitleg van de boodschappenlijst.
+  { icoon: 'book-outline', kleur: '#2E7D4F', titel: 'uitleg.gerechten.titel', tekst: 'uitleg.gerechten.tekst' },
   { icoon: 'leaf-outline', kleur: '#6B8F2A', titel: 'uitleg.seizoen.titel', tekst: 'uitleg.seizoen.tekst' },
   { icoon: 'storefront-outline', kleur: '#B5562A', titel: 'uitleg.winkels.titel', tekst: 'uitleg.winkels.tekst' },
 ];

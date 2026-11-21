@@ -4,7 +4,7 @@
 import type { DagCode } from '@/lib/planner/types';
 import type { UitlegScherm } from '@/lib/welkom';
 
-export const FOTO_SLEUTELS = ['start', 'weekplan', 'huishouden', 'frigo', 'lijst', 'scan', 'seizoen', 'winkels'] as const;
+export const FOTO_SLEUTELS = ['start', 'weekplan', 'huishouden', 'frigo', 'lijst', 'gerechten', 'seizoen', 'winkels'] as const;
 export type FotoSleutel = (typeof FOTO_SLEUTELS)[number];
 
 /** Breedte gedeeld door hoogte van elk bestand in assets/welkom/ (zoals het in de app staat). */
@@ -14,7 +14,7 @@ export const FOTO_VERHOUDING: Record<FotoSleutel, number> = {
   huishouden: 640 / 800,
   frigo: 800 / 534,
   lijst: 1,
-  scan: 800 / 370,
+  gerechten: 800 / 533, // WEEK-321
   seizoen: 800 / 534,
   winkels: 800 / 600,
 };
@@ -26,7 +26,7 @@ export const FOTO_BRON: Record<FotoSleutel, readonly number[]> = {
   huishouden: [8279641],
   frigo: [6508357],
   lijst: [9070110],
-  scan: [8476600],
+  gerechten: [8715616], // WEEK-321
   seizoen: [109277],
   winkels: [7447278, 35993723, 30488545, 15685763, 29412671],
 };

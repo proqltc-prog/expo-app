@@ -288,6 +288,13 @@ export default function Lijst() {
           aan={zoekOpen}
           onPress={() => setZoekOpen((o) => !o)}
         />
+        {/* WEEK-321: een los product scannen (bv. in de winkel), nu de Scan-tab weg is. Staat het op de lijst, dan kan je het afvinken. */}
+        <IcoonKnop
+          naam={'camera-outline' as IoniconNaam}
+          label={t('lijst.scanLos')}
+          kleur={accent}
+          onPress={() => router.navigate('/scan?van=lijst')}
+        />
       </View>
       {zoekOpen && (
         <ProductInvoer
