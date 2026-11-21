@@ -134,3 +134,14 @@ export function zonderReceptVanLijst(
   const over: LijstItem[] = items.filter((i) => !(i.recept && i.recept.dag === dag && i.recept.naam === naam));
   return { over, verwijderd: items.length - over.length };
 }
+
+/** WEEK-321: Zelf kiezen toont alle gerechten samen, of enkel die van de app of van het gezin. */
+export type KiesBron = 'alle' | 'app' | 'gezin';
+export const KIES_BRONNEN: readonly KiesBron[] = ['alle', 'app', 'gezin'];
+
+/** WEEK-321: de keuzes voor de gekozen bron. Bij "alle" eerst de eigen gerechten van het gezin, dan die van de app. */
+export function keuzesVoorBron<T>(bron: KiesBron, app: readonly T[], gezin: readonly T[]): T[] {
+  if (bron === 'app') return [...app];
+  if (bron === 'gezin') return [...gezin];
+  return [...gezin, ...app];
+}

@@ -61,7 +61,7 @@ describe('isProfielIngesteld (WEEK-231)', () => {
 });
 
 describe('uitlegschermen (WEEK-185)', () => {
-  test('er zijn zeven schermen: weekplanner, huishouden, frigo, lijst, scanner, seizoen en winkels', () => {
+  test('er zijn zeven schermen: weekplanner, huishouden, frigo, lijst, gerechten (WEEK-321), seizoen en winkels', () => {
     assert.equal(UITLEG_SCHERMEN.length, 7);
   });
 

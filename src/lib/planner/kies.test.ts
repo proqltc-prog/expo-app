@@ -6,6 +6,8 @@ import { testPool } from '@/lib/planner/testrecepten';
 import { voegPlanToe, type LijstItem } from '@/lib/lijst';
 import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import {
+  keuzesVoorBron,
+  KIES_BRONNEN,
   kiesbarePoolRecepten,
   soortToegelaten,
   startSoorten,
@@ -240,5 +242,26 @@ describe('WEEK-272: geen gerecht deze dag (verwijderDag)', () => {
     const p = plan([dag('maandag', avond)]);
     assert.equal(verwijderDag(p, 0, { gemaaktOp: 'ander', receptNaam: p.dagen[0].recept.naam }), p);
     assert.equal(verwijderDag(p, 0, { gemaaktOp: p.gemaaktOp, receptNaam: 'ander' }), p);
+  });
+});
+
+describe('WEEK-321: Zelf kiezen toont app- en eigen gerechten samen', () => {
+  const app = ['curry', 'pasta'];
+  const gezin = ['oma stoofvlees'];
+  test('de filter heeft drie keuzes: alle, van de app, ons gezin', () => {
+    assert.deepEqual(KIES_BRONNEN, ['alle', 'app', 'gezin']);
+  });
+  test('alle: eerst de gerechten van het gezin, dan die van de app', () => {
+    assert.deepEqual(keuzesVoorBron('alle', app, gezin), ['oma stoofvlees', 'curry', 'pasta']);
+  });
+  test('enkel van de app of enkel van het gezin', () => {
+    assert.deepEqual(keuzesVoorBron('app', app, gezin), ['curry', 'pasta']);
+    assert.deepEqual(keuzesVoorBron('gezin', app, gezin), ['oma stoofvlees']);
+  });
+  test('regressie: de invoer blijft ongewijzigd', () => {
+    const r = keuzesVoorBron('alle', app, gezin);
+    r.push('x');
+    assert.deepEqual(app, ['curry', 'pasta']);
+    assert.deepEqual(gezin, ['oma stoofvlees']);
   });
 });

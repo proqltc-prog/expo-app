@@ -1,17 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { AppState, BackHandler, Pressable, Text } from 'react-native';
-import { router, Tabs, usePathname } from 'expo-router';
+import { router, Tabs, useGlobalSearchParams, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
 import { startSync } from '@/opslag/sync';
 import { startIngredienten } from '@/opslag/gegevens';
-import { KopTerug, KopTerugRond } from '@/ui/terugKnop';
+import { KopTerug, KopTerugRond, ScanKopTerug } from '@/ui/terugKnop';
 import { GezinKnop } from '@/ui/gezinKnop';
 import { luisterNaarTerugkeer } from '@/opslag/aanmelden';
 import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
-import { gaatNaarMenu, sluitAppOp } from '@/lib/terugknop';
+import { gaatNaarMenu, sluitAppOp, terugBestemming } from '@/lib/terugknop';
 import { IN_HUIS_ICOON } from '@/lib/frigoSheets';
 
 const KLEUR = '#2e7d4f';
@@ -26,6 +26,7 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
   const { t } = useTaal();
   // WEEK-128: de fysieke terugknop gaat op elk scherm van de app naar het weekmenu, nooit naar de taalkeuze.
   const pad = usePathname();
+  const { van } = useGlobalSearchParams<{ van?: string }>();
   useEffect(() => {
     const abonnement = BackHandler.addEventListener('hardwareBackPress', () => {
       // WEEK-142: op het weekmenu sluit de knop de app; anders stapelt Android terug naar de taalkeuze.
@@ -34,11 +35,12 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
         return true;
       }
       if (!gaatNaarMenu(pad)) return false;
-      router.navigate('/');
+      // WEEK-321: vanuit de scanner terug naar Boodschappen of In huis; anders naar het weekmenu.
+      router.navigate(terugBestemming(pad, typeof van === 'string' ? van : undefined) as never);
       return true;
     });
     return () => abonnement.remove();
-  }, [pad]);
+  }, [pad, van]);
   // WEEK-91: het menu is altijd de eerste route; het welkomstscherm komt er bovenop en vervangt zichzelf.
   // Zo keert terugnavigeren (bv. vanuit de scanner) nooit naar de taalkeuze terug.
   useEffect(() => {
@@ -59,13 +61,14 @@ function TabBladen({ startNaam }: { startNaam: 'index' | 'welkom' }) {
       <Tabs.Screen name="index" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} />, title: t('tab.menu.titel'), tabBarLabel: t('tab.menu'), headerRight: () => <InstellingenKnop /> }} />
       <Tabs.Screen name="lijst" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart-outline" size={size} color={color} />, title: t('tab.lijst.titel'), tabBarLabel: t('tab.lijst') }} />
       <Tabs.Screen name="frigo" options={{ tabBarIcon: ({ color, size }) => <Ionicons name={IN_HUIS_ICOON} size={size} color={color} />, title: t('tab.frigo.titel'), tabBarLabel: t('tab.frigo') }} />
-      <Tabs.Screen name="scan" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="scan-outline" size={size} color={color} />, title: t('tab.scan.titel'), tabBarLabel: t('tab.scan') }} />
+      {/* WEEK-321: de eigen gerechten hebben een eigen tab, in de plaats van Scan. */}
+      <Tabs.Screen name="mijn-recepten" options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book-outline" size={size} color={color} />, title: t('mijn.titel'), tabBarLabel: t('tab.gerechten') }} />
+      {/* WEEK-321: scannen gebeurt vanuit Boodschappen en In huis; het scanscherm heeft geen eigen tab meer. */}
+      <Tabs.Screen name="scan" options={{ title: t('tab.scan.titel'), href: null, headerLeft: () => <ScanKopTerug /> }} />
       {/* Gezinsprofiel (WEEK-39): geen eigen tabblad meer, bereikbaar via het instellingen-icoon. */}
       <Tabs.Screen name="profiel" options={{ title: t('tab.gezin.titel'), href: null, headerTransparent: true, headerTitle: () => null, headerLeft: () => <KopTerugRond scherm="profiel" /> }} />
       {/* Zelf kiezen (WEEK-44): een gerecht uit de databank, vanuit het weekmenu. */}
       <Tabs.Screen name="kies" options={{ title: t('kies.titel'), href: null, headerLeft: () => <KopTerug scherm="kies" /> }} />
-      {/* Mijn recepten (WEEK-192): het overzicht van de eigen recepten, vanuit "Ons gezin" in "Zelf kiezen". */}
-      <Tabs.Screen name="mijn-recepten" options={{ title: t('mijn.titel'), href: null, headerLeft: () => <KopTerug scherm="mijn-recepten" /> }} />
       {/* Eigen recept bewerken (WEEK-192): een nieuw of bestaand eigen recept. */}
       <Tabs.Screen name="eigen-recept" options={{ title: t('recept.titelNieuw'), href: null, headerLeft: () => <KopTerug scherm="eigen-recept" /> }} />
       {/* Bereiding (WEEK-81): de stappen van een bevestigd gerecht, vanuit het weekmenu. */}
