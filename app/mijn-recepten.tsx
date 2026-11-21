@@ -54,7 +54,7 @@ export default function MijnRecepten() {
 
   const kop = (
     <View style={s.kop}>
-      {/* WEEK-321: één compacte regel zoals op In huis: korte uitleg (of het aantal) en het zoekicoon. */}
+      {/* WEEK-321: één compacte regel zoals op In huis: korte uitleg (of het aantal), het vergrootglas en het plusicoon. */}
       <View style={s.gereedschap}>
         <Text style={s.uitleg} numberOfLines={3}>
           {lijst.length ? tn('mijn.teller', lijst.length) : t('mijn.uitleg')}
@@ -67,10 +67,20 @@ export default function MijnRecepten() {
             kleur={ACCENT}
             aan={zoekOpen}
             onPress={() => {
-              if (zoekOpen) setZoek('');
+              // Bij sluiten: zoekterm en filter leeg, zodat weer alle gerechten zichtbaar zijn.
+              if (zoekOpen) {
+                setZoek('');
+                setSoort(null);
+              }
               setZoekOpen((o) => !o);
             }}
           />
+        )}
+        {/* WEEK-321: toevoegen als rond icoon naast het vergrootglas (gevuld: de hoofdactie van deze pagina). */}
+        {magBeheren && (
+          <Pressable style={s.plus} onPress={nieuw} accessibilityRole="button" accessibilityLabel={t('mijn.nieuwKnop')} hitSlop={6}>
+            <Ionicons name="add" size={24} color="#fff" />
+          </Pressable>
         )}
       </View>
       {zoekOpen && (
@@ -85,15 +95,9 @@ export default function MijnRecepten() {
           clearButtonMode="while-editing"
         />
       )}
-      {magBeheren ? (
-        <Pressable style={s.nieuw} onPress={nieuw} accessibilityRole="button">
-          <Ionicons name="add" size={20} color="#fff" />
-          <Text style={s.nieuwTekst}>{t('mijn.nieuwKnop')}</Text>
-        </Pressable>
-      ) : (
-        <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>
-      )}
-      {lijst.length > 0 && (
+      {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
+      {/* WEEK-321: de filters op soort horen bij het zoeken en verschijnen pas als het zoeken open staat. */}
+      {zoekOpen && lijst.length > 0 && (
         <View style={s.filters} accessibilityRole="toolbar">
           {SOORTEN.map((s0) => {
             const actief = soort === s0;
@@ -160,8 +164,7 @@ const s = StyleSheet.create({
   gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
   uitleg: { flex: 1, minWidth: 0, color: MUTED, fontWeight: '600' },
   zoek: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', fontSize: 16 },
-  nieuw: { flexDirection: 'row', gap: 6, backgroundColor: ACCENT, borderRadius: 14, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
-  nieuwTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  plus: { width: 40, height: 40, borderRadius: 20, backgroundColor: ACCENT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   alleenLezen: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   filters: { flexDirection: 'row', gap: 8 },
   filter: { flex: 1, minHeight: 36, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
