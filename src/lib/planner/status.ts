@@ -26,7 +26,7 @@ function vervangDagen(plan: Weekplan, dagen: PlanDag[]): Weekplan {
 /**
  * Na het handmatig verwijderen van producten uit de frigo: elk gepland recept dat een product nodig heeft
  * waarvan niets meer in de frigo zit, krijgt dat ingrediënt als ontbrekend.
- * Ontbreken álle ingrediënten van een bevestigd recept, dan is het recept "gedaan"; een niet-bevestigd voorstel blijft "ontbreekt".
+ * WEEK-322: ook als álle ingrediënten ontbreken, blijft het recept "ontbreekt" (vroeger sprong een bevestigd recept op "gedaan").
  * Geeft hetzelfde plan-object terug als er niets verandert.
  */
 export function markeerOntbrekend(plan: Weekplan, verwijderd: readonly FrigoItem[], frigoNa: readonly FrigoItem[]): Weekplan {
@@ -40,14 +40,9 @@ export function markeerOntbrekend(plan: Weekplan, verwijderd: readonly FrigoItem
       .map((i) => i.naam);
     if (!nieuw.length) return d;
     veranderd = true;
-    const ontbreekt = [...(d.ontbreekt ?? []), ...nieuw];
-    const alles = d.recept.ingredienten.every((i) => ontbreekt.some((o) => klein(o) === klein(i.naam)));
-    // WEEK-204: enkel een bevestigd recept kan zo "gedaan" worden; een voorstel dat nog niet bevestigd is, blijft wijzigbaar.
-    if (alles && d.bevestigd) {
-      const { ontbreekt: _o, ...rest } = d;
-      return { ...rest, gedaan: true };
-    }
-    return { ...d, ontbreekt };
+    // WEEK-322: ook als álle ingrediënten weg zijn, gaat een gerecht niet meer vanzelf op Gekookt; wat ontbreekt,
+    // komt terug op de boodschappenlijst. Enkel de gebruiker zet een gerecht op Gekookt (of haalt het weg).
+    return { ...d, ontbreekt: [...(d.ontbreekt ?? []), ...nieuw] };
   });
   return veranderd ? vervangDagen(plan, dagen) : plan;
 }

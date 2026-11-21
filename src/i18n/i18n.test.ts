@@ -444,3 +444,15 @@ describe('WEEK-321: de tab gaat duidelijk over de gerechten van het gezin', () =
     }
   });
 });
+
+describe('WEEK-322: In huis legt uit dat wat een bevestigd gerecht mist, terug op de lijst komt', () => {
+  test('de info van In huis en de melding bestaan in elke taal', () => {
+    const lijst = { nl: /boodschappenlijst/, fr: /liste de courses/, de: /Einkaufsliste/, en: /shopping list/ } as const;
+    for (const taal of TALEN) {
+      const tekst = VERTALINGEN[taal] as Record<string, string>;
+      assert.match(tekst['pagina.frigoInfo'], lijst[taal], taal);
+      assert.match(tekst['frigo.terugOpLijst'], lijst[taal], taal);
+      assert.ok(tekst['frigo.terugOpLijst'].includes('{lijst}'), taal);
+    }
+  });
+});

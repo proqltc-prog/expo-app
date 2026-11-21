@@ -54,15 +54,17 @@ describe('markeerOntbrekend', () => {
     assert.deepEqual(nieuw.dagen[1].ontbreekt, ['Pasta']);
   });
 
-  test('alle ingrediënten weg: een bevestigd recept springt naar gedaan', () => {
+  test('WEEK-322: alle ingrediënten weg: een bevestigd recept gaat niet meer vanzelf op gedaan', () => {
     const bevestigd = { ...plan, dagen: plan.dagen.map((d) => ({ ...d, bevestigd: true })) };
     const een = markeerOntbrekend(bevestigd, [f('a', 'pasta')], []);
     assert.equal(receptStatus(een.dagen[0]), 'ontbreekt');
     const twee = markeerOntbrekend(een, [f('b', 'pesto')], []);
-    assert.equal(receptStatus(twee.dagen[0]), 'gedaan');
-    assert.equal(twee.dagen[0].ontbreekt, undefined);
+    assert.equal(receptStatus(twee.dagen[0]), 'ontbreekt');
+    assert.equal(twee.dagen[0].gedaan, undefined);
+    assert.deepEqual(twee.dagen[0].ontbreekt, ['pasta', 'pesto']);
     const omelet = markeerOntbrekend(bevestigd, [f('e', 'eieren')], []);
-    assert.equal(receptStatus(omelet.dagen[2]), 'gedaan');
+    assert.equal(receptStatus(omelet.dagen[2]), 'ontbreekt');
+    assert.equal(omelet.dagen[2].gedaan, undefined);
   });
 
   // WEEK-204: een voorstel dat nog niet bevestigd is, mag niet op "gedaan" springen: dan was de kaart niet meer te wijzigen.

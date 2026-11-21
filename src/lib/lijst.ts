@@ -65,7 +65,7 @@ export function planSleutel(plan: { gemaaktOp: string }): string {
 }
 
 /** Het id zonder het recept erachter (zie itemsUitPlan): de basis van een gedeeld ingrediënt. */
-function basisId(i: LijstItem): string {
+export function basisId(i: LijstItem): string {
   const suffix = i.recept?.id ? `-${i.recept.id}` : '';
   return suffix && i.id.endsWith(suffix) ? i.id.slice(0, -suffix.length) : i.id;
 }

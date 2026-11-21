@@ -30,6 +30,12 @@ import { openBevestigdeDagen } from '@/lib/planner/dagBevestigen';
 import { inTaal } from '@/lib/planner/vertaal';
 import type { Weekplan } from '@/lib/planner/types';
 import { laadPlan } from '@/opslag/plan';
+import { frigoBron } from '@/lib/frigo';
+import { terugTekst, totaleHoeveelheid, verlaagReceptHoeveelheid, type TerugOpLijst } from '@/lib/lijstNaFrigo';
+import { zetLijstNaFrigo } from '@/opslag/lijstBijPlan';
+
+/** WEEK-322: hoe lang de melding "terug op je boodschappenlijst" zichtbaar blijft. */
+const MELDING_MS = 6000;
 
 // Het goedgekeurde thema van het weekmenu: petrol voor acties, oranje voor aandacht, papier als achtergrond.
 const KLEUR = '#0F6B66';
@@ -64,6 +70,19 @@ export default function Frigo() {
   const [bewaardeVoorstellen, setBewaardeVoorstellen] = useState<LosVoorstel[]>([]);
   const [lijstItems, setLijstItems] = useState<LijstItem[]>([]);
   const [kalenderVoor, setKalenderVoor] = useState<{ id: string; waarde?: string } | null>(null);
+  // WEEK-322: wat na een wijziging hier terug op de boodschappenlijst kwam (korte melding bovenaan).
+  const [terugOpLijst, setTerugOpLijst] = useState<TerugOpLijst[]>([]);
+  useEffect(() => {
+    if (!terugOpLijst.length) return;
+    const klok = setTimeout(() => setTerugOpLijst([]), MELDING_MS);
+    return () => clearTimeout(klok);
+  }, [terugOpLijst]);
+  // WEEK-322: na verwijderen of verlagen: wat een bevestigd gerecht mist, komt terug op de lijst.
+  const werkLijstBij = async () => {
+    const terug = await zetLijstNaFrigo(taal);
+    setTerugOpLijst(terug);
+    laadLijst().then(setLijstItems);
+  };
 
   // Opnieuw laden bij elk bezoek: de lijst kan intussen producten toegevoegd hebben.
   useFocusEffect(
@@ -142,7 +161,18 @@ export default function Frigo() {
     setBewerkRecept(false);
     if (!opties) return;
     if (ids && recept) {
-      if (w.hoeveelheid !== undefined) setFrigo(await wijzigFrigo((f) => wijzigReceptHoeveelheid(f, ids, w.hoeveelheid as number)));
+      if (w.hoeveelheid === undefined) return;
+      const nieuw = w.hoeveelheid;
+      // WEEK-322: lager dan wat er was → het product telt als gewone voorraad en het tekort komt op de lijst.
+      let verlaagd = false;
+      setFrigo(
+        await wijzigFrigo((f) => {
+          const voor = totaleHoeveelheid(f, ids);
+          verlaagd = voor !== undefined && nieuw < voor;
+          return verlaagd ? verlaagReceptHoeveelheid(f, ids, nieuw) : wijzigReceptHoeveelheid(f, ids, nieuw);
+        })
+      );
+      if (verlaagd) await werkLijstBij();
       return;
     }
     if (ids) {
@@ -172,6 +202,8 @@ export default function Frigo() {
     });
     setFrigo(na);
     await wijzigPlan((plan) => markeerOntbrekend(plan, verwijderd, na));
+    // WEEK-322: enkel een product van de weekplanner kan een gerecht iets doen missen; losse producten niet.
+    if (verwijderd.some((f) => frigoBron(f) === 'planner')) await werkLijstBij();
   };
 
   // Houdbaarheid (WEEK-20): geldt voor het oudste exemplaar, dat eerst in de frigo stond (ids[0]).
@@ -254,6 +286,16 @@ export default function Frigo() {
   return (
     <View style={s.scherm}>
       {popup}
+      {/* WEEK-322: korte melding: wat terug op de boodschappenlijst kwam, en voor welk gerecht. Tik om naar de lijst te gaan. */}
+      {terugOpLijst.length > 0 && (
+        <Pressable style={s.terugMelding} onPress={() => router.navigate('/lijst')} accessibilityRole="alert" accessibilityLabel={t('frigo.terugOpLijst', { lijst: terugTekst(terugOpLijst) })}>
+          <Ionicons name="cart-outline" size={18} color="#fff" />
+          <Text style={s.terugMeldingTekst}>{t('frigo.terugOpLijst', { lijst: terugTekst(terugOpLijst) })}</Text>
+          <Pressable onPress={() => setTerugOpLijst([])} accessibilityRole="button" accessibilityLabel={t('pagina.sluiten')} hitSlop={10}>
+            <Ionicons name="close" size={18} color="#fff" />
+          </Pressable>
+        </Pressable>
+      )}
       <LosPopup opties={losPopup} onSluit={() => setLosPopup(null)} onBewaar={bewaarLos} />
       {kalenderVoor && (
         <DatumKiezer
@@ -365,6 +407,8 @@ export default function Frigo() {
 
 const s = StyleSheet.create({
   scherm: { flex: 1, paddingHorizontal: 16, backgroundColor: PAPIER },
+  terugMelding: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: ORANJE, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 12, marginTop: 10 },
+  terugMeldingTekst: { flex: 1, color: '#fff', fontWeight: '600', fontSize: 14 },
   uitleg: { color: MUTED },
   gereedschap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingRight: 2 },
   groepKnop: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 10, flexShrink: 0 },
