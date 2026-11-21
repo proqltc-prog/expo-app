@@ -32,14 +32,11 @@ export default function MijnRecepten() {
   const { terug } = useLocalSearchParams<{ terug?: string }>();
   const hier = padMet('/mijn-recepten', { terug });
   const [zoek, setZoek] = useState('');
-  // WEEK-321: de filters verschijnen zodra de gebruiker in de zoekbalk tikt, en blijven tot hij de pagina verlaat.
-  const [zoekGestart, setZoekGestart] = useState(false);
   const [soort, setSoort] = useState<Soort | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       laadEigenRecepten().then(setLijst);
-      return () => setZoekGestart(false);
     }, [])
   );
 
@@ -52,7 +49,8 @@ export default function MijnRecepten() {
   // WEEK-276: enkel de beheerder maakt nieuwe gerechten; de andere leden kunnen ze openen om te bekijken.
   const magBeheren = useMagGerechtenBeheren();
   const nieuw = () => router.push({ pathname: '/eigen-recept', params: { terug: hier } });
-  const toonFilters = lijst.length > 0 && (zoekGestart || zoek !== '' || soort !== null);
+  // WEEK-321: zoekbalk en filters staan altijd zichtbaar, zodra er gerechten zijn.
+  const toonFilters = lijst.length > 0;
 
   const kop = (
     <View style={s.kop}>
@@ -78,14 +76,13 @@ export default function MijnRecepten() {
           style={s.zoek}
           value={zoek}
           onChangeText={setZoek}
-          onFocus={() => setZoekGestart(true)}
           placeholder={t('mijn.zoek')}
           accessibilityLabel={t('mijn.zoek')}
           autoCorrect={false}
           clearButtonMode="while-editing"
         />
       )}
-      {/* WEEK-321: de filters op soort horen bij het zoeken en verschijnen pas als de gebruiker begint te zoeken. */}
+      {/* WEEK-321: de filters op soort staan altijd onder de zoekbalk. */}
       {toonFilters && (
         <View style={s.filters} accessibilityRole="toolbar">
           {SOORTEN.map((s0) => {
