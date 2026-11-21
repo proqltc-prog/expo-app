@@ -1,7 +1,7 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Afdeling, gewichtPerStuk, ingredientNaam } from '@/data/ingredienten';
 import { Eenheid, Soort, STIJLEN, StijlCode } from '@/data/recept';
 import { SEIZOENEN, Seizoen } from '@/data/seizoenen';
@@ -12,6 +12,7 @@ import {
   EENHEDEN,
   EigenIngredient,
   EigenRecept,
+  formulierVoor,
   Fout,
   GEZIN_STIJL,
   isExactBekend,
@@ -139,23 +140,48 @@ export default function EigenReceptScherm() {
       .catch(() => undefined);
   }, []);
 
-  useEffect(() => {
-    laadGezin().then((g) => setGezinNaam(g?.naam || undefined)).catch(() => setGezinNaam(undefined));
-    laadEigenRecepten().then((lijst) => {
-      const r = id ? lijst.find((x) => x.id === id) : undefined;
-      setBestaand(r);
-      if (r) {
-        setNaam(r.naam);
-        setSoort(r.soort);
-        setMinuten(String(r.minuten));
-        setStijlen([...(r.gezinStijl ? [GEZIN_STIJL] : []), ...r.stijlen]);
-        setSeizoenen([...(r.seizoenen ?? [])]);
-        setRijen(r.ingredienten.map((i) => ({ ...i })));
-        setStappen(r.stappen.length ? [...r.stappen] : ['']);
-      }
-      setGeladen(true);
-    });
-  }, [id]);
+  // WEEK-320: dit scherm is een verborgen tabblad en blijft geladen. Daarom bij elke opening het formulier opnieuw
+  // opbouwen: leeg voor een nieuw recept, ingevuld voor een bestaand. Anders bleven de ingrediënten van het vorige recept staan.
+  useFocusEffect(
+    useCallback(() => {
+      let actief = true;
+      const vul = (r: EigenRecept | undefined) => {
+        const f = formulierVoor(r, KOOKTIJD_SCHATTING_STANDAARD.snel);
+        setBestaand(r);
+        setNaam(f.naam);
+        setSoort(f.soort);
+        setMinuten(f.minuten);
+        setStijlen(f.stijlen);
+        setSeizoenen(f.seizoenen);
+        setRijen(f.ingredienten);
+        setStappen(f.stappen);
+        setZoek('');
+        setFouten([]);
+        setNakijken([]);
+        setLinkOpen(false);
+        setLink('');
+        setLinkFout(undefined);
+        setLinkMelding(undefined);
+        setFotoOpen(false);
+        setFotoFout(undefined);
+        setNieuwFout(undefined);
+        setBevestigVerwijder(false);
+        setPopup(null);
+        setPopupDoel(null);
+      };
+      setGeladen(!id);
+      vul(undefined);
+      laadGezin().then((g) => actief && setGezinNaam(g?.naam || undefined)).catch(() => actief && setGezinNaam(undefined));
+      laadEigenRecepten().then((lijst) => {
+        if (!actief) return;
+        if (id) vul(lijst.find((x) => x.id === id));
+        setGeladen(true);
+      });
+      return () => {
+        actief = false;
+      };
+    }, [id])
+  );
 
   // WEEK-203: de titel staat één keer, in de kop van het scherm: "Nieuw recept" of "Recept bewerken".
   useLayoutEffect(() => {
@@ -456,12 +482,14 @@ export default function EigenReceptScherm() {
     terug();
   };
 
+  // WEEK-276: enkel de beheerder beheert de gerechten; de andere leden kunnen ze enkel lezen.
+  // WEEK-320: deze hook staat vóór de vroege return; een hook erna liet het scherm crashen als `geladen` wisselde.
+  const magBeheren = useMagGerechtenBeheren();
+
   if (!geladen) return null;
 
   // WEEK-246: een getoonde melding verdwijnt zodra het probleem opgelost is.
   const getoond = nogGeldigeFouten(fouten, { naam, soort, minuten, stijlen, seizoenen, ingredienten: rijen, stappen });
-  // WEEK-276: enkel de beheerder beheert de gerechten; de andere leden kunnen ze enkel lezen.
-  const magBeheren = useMagGerechtenBeheren();
 
   const fout = (f: Fout) => (getoond.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
 
