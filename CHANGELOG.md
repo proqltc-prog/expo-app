@@ -8,7 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
-## [0.161.0] – 2026-11-22
+## [0.161.1] – 2026-11-22
+
+**Jira:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/browse/WEEK-324) (Google Play, gesloten test) · **Confluence:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28049416)
+
+- Google Play: het scherm rechtop is niet langer een vereiste hardwarefunctie (`android.hardware.screen.portrait` optioneel), zodat tablets, Chromebooks en XR-toestellen de app ook kunnen installeren. versionCode 161001.
+- Storevermelding herschreven met zoekwoorden per taal (meal planner, grocery list, weekmenu, boodschappenlijst, liste de courses, Einkaufsliste …) voor een betere vindbaarheid in Google Play.
+
+## [0.161.0] – 2026-11-22 (niet apart uitgebracht, zit in 0.161.1)
 
 **Jira:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/browse/WEEK-324) (Google Play, gesloten test) · **Confluence:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28049416)
 
