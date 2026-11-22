@@ -1,113 +1,172 @@
-# Famenu – teksten voor de Google Play Store
+# Famenu – storevermelding Google Play (WEEK-324)
 
 Limieten van Google Play: titel ≤ 30 tekens, korte beschrijving ≤ 80 tekens, volledige beschrijving ≤ 4000 tekens.
-Afbeeldingen: `store/icon-512.png` (icoon 512×512), `store/feature-graphic.png` (1024×500). Schermafbeeldingen (min. 2) volgen na de eerste testbuild.
-Categorie: Eten en drinken · Contactgegevens: proqltc@gmail.com · Privacybeleid: https://proqltc-prog.github.io/famenu-privacy/
+Hoofdtaal van de vermelding: **Engels (en-GB)**; vertalingen: nl-BE, fr-BE, de-DE. De afbeeldingen zijn overal de Engelse.
+
+- Icoon 512×512: `store/icon-512.png`
+- Feature graphic 1024×500: `store/feature-graphic-en.jpg`
+- Schermafbeeldingen (gsm, 540×960, 9:16): `store/screenshots/en/1..6-*.jpg` (verzonnen voorbeeldgegevens)
+- Categorie: **Food & Drink** · Tags: Meal planning, Shopping list, Recipes
+- E-mail: proqltc@gmail.com · Website: https://proqltc-prog.github.io/expo-app/
+- Privacybeleid: https://proqltc-prog.github.io/famenu-privacy/
+
+## Vindbaarheid (zoekwoorden)
+
+Google Play heeft geen veld voor zoekwoorden: het zoekt in de titel (weegt het zwaarst), de korte beschrijving en de volledige beschrijving.
+Daarom staan de belangrijkste zoekwoorden per taal in de titel en de korte beschrijving, en komen ze 3 à 5 keer natuurlijk terug in de volledige beschrijving
+(niet vaker: Google straft het opstapelen van zoekwoorden af). Geen namen van andere apps of merken.
+
+| Taal | Hoofdzoekwoorden | Bijkomende zoekwoorden |
+| --- | --- | --- |
+| EN | meal planner, meal plan, grocery list, shopping list | weekly menu, dinner ideas, family recipes, recipe keeper, pantry, food waste, barcode scanner, Nutri-Score |
+| NL | weekmenu, boodschappenlijst, maaltijdplanner, recepten | avondeten, wat eten we vandaag, gezinsrecepten, voorraad, voedselverspilling, barcode scannen, Nutri-Score |
+| FR | menu de la semaine, liste de courses, planificateur de repas, recettes | idées repas, repas en famille, garde-manger, anti-gaspillage, scanner code-barres, Nutri-Score |
+| DE | Essensplaner, Wochenplan, Einkaufsliste, Rezepte | Wochenmenü, Was koche ich heute, Familienrezepte, Vorrat, Lebensmittelverschwendung, Barcode-Scanner, Nutri-Score |
+
+## English (en-GB) – hoofdtaal
+
+**Title:** Famenu: Meal Plan & Groceries
+**Short description:** Family meal planner: weekly menu, grocery list, recipes and pantry in one app.
+
+**Full description:**
+Famenu is the meal planner for busy families. Plan your weekly menu in a few taps and get the grocery list straight away – no more "what's for dinner?".
+
+WEEKLY MEAL PLAN
+• Choose the days, how long you want to cook, the cuisines you like and what to avoid.
+• Famenu suggests dinner ideas for every day, with portions for your family (adults and children).
+• Not in the mood? Swap a day, pick a recipe yourself or remove it.
+• Confirm what you will cook: the ingredients go straight to your shopping list.
+
+GROCERY LIST
+• All ingredients of your meal plan, by recipe or by aisle.
+• Add other products to the grocery list yourself and find supermarkets near you.
+• Tick off what you buy: it moves to your pantry ("At home").
+
+PANTRY – LESS FOOD WASTE
+• Famenu knows what you already have at home and suggests recipes that use it first.
+• Keep track of best-before dates.
+• Cooked a dish? Its ingredients are taken out automatically. Removed something a planned dish still needs? It goes back on your list.
+
+FAMILY RECIPES
+• Keep your family's favourite recipes: type them in, or import a recipe from a website or a photo.
+• Plan them on the weekly menu, next to the recipes of the app.
+• Rate recipes with stars after cooking.
+
+BARCODE SCANNER
+• Scan a product and see the Nutri-Score, NOVA group, additives and allergens, compare products and find a healthier alternative.
+
+SHARE WITH YOUR FAMILY
+• Share the meal plan, the shopping list and the pantry with your partner and family, live on every phone.
+
+A meal planner, grocery list app and recipe keeper in one – available in English, Dutch, French and German. Free, with ads: 5 free scans per day, and a short video for extra scans.
 
 ## Nederlands (nl-BE)
 
-**Titel:** Famenu – gezinsweekmenu
-**Kort:** Weekmenu, boodschappenlijst en frigo voor het hele gezin. Zonder verspilling.
+**Titel:** Famenu weekmenu & boodschappen
+**Korte beschrijving:** Weekmenu plannen voor je gezin, met boodschappenlijst, recepten en voorraad.
 
-**Volledig:**
-Famenu plant in een paar tikken het avondeten voor de hele week, op maat van jouw gezin.
+**Volledige beschrijving:**
+Famenu is de maaltijdplanner voor drukke gezinnen. Plan in een paar tikken je weekmenu en krijg meteen je boodschappenlijst – nooit meer "wat eten we vandaag?".
 
-• Weekmenu: kies kooktijd en stijl, schrijf wat je wil ("geen vlees, snel op woensdag") en krijg een voorstel. Niet goed? Vernieuw één dag.
-• Boodschappenlijst: alle ingrediënten van de week in één lijst, per recept of per winkelafdeling.
-• Virtuele frigo: wat je afvinkt, komt in je frigo. Famenu gebruikt eerst wat je al in huis hebt: geen verspilling.
-• Gezinsruimte: deel lijst, frigo en menu live met je partner of huisgenoten.
-• Kookboek: bewaar geslaagde recepten als favoriet en laat een week uit je favorieten samenstellen.
-• Scanner: scan een barcode en zie meteen of een product gezond is.
-• In 6 talen: Nederlands, Frans, Duits, Engels, Spaans en Portugees.
+WEEKMENU
+• Kies de dagen, hoe lang je wil koken, welke keukens je lust en wat je wil vermijden.
+• Famenu stelt elke dag een gerecht voor het avondeten voor, met porties op maat van je gezin (volwassenen en kinderen).
+• Geen zin in? Vervang een dag, kies zelf een recept of haal het weg.
+• Bevestig wat je kookt: de ingrediënten komen meteen op je boodschappenlijst.
 
-Gratis: 1 AI-weekmenu per dag en 10 scans per dag.
+BOODSCHAPPENLIJST
+• Alle ingrediënten van je weekmenu, per recept of per afdeling in de winkel.
+• Zet er zelf andere producten bij en vind supermarkten in je buurt.
+• Vink af wat je koopt: het komt bij je voorraad (In huis).
+
+IN HUIS – MINDER VERSPILLING
+• Famenu weet wat je al in huis hebt en stelt eerst recepten voor die het gebruiken.
+• Hou de houdbaarheidsdatum bij.
+• Gekookt? De ingrediënten gaan er vanzelf uit. Haal je iets weg dat een gepland gerecht nog nodig heeft? Dan komt het terug op je boodschappenlijst.
+
+ONZE GERECHTEN
+• Bewaar de lievelingsrecepten van je gezin: typ ze zelf, of lees een recept in van een receptensite of een foto.
+• Zet ze op je weekmenu, naast de recepten van de app.
+• Geef recepten sterren na het koken.
+
+BARCODE SCANNEN
+• Scan een product en zie de Nutri-Score, de NOVA-groep, additieven en allergenen, vergelijk producten en vind een gezonder alternatief.
+
+SAMEN MET JE GEZIN
+• Deel het weekmenu, de boodschappenlijst en je voorraad met je partner en gezin, live op elke gsm.
+
+Weekmenu, boodschappenlijst en receptenboek in één app – in het Nederlands, Frans, Duits en Engels. Gratis, met reclame: 5 gratis scans per dag, en een kort filmpje voor extra scans.
 
 ## Français (fr-BE)
 
-**Titre :** Famenu – menu de la semaine
-**Court :** Menu, liste de courses et frigo pour toute la famille, sans gaspillage.
+**Titre :** Famenu: menu semaine & courses
+**Description courte :** Menu de la semaine en famille, liste de courses, recettes et provisions.
 
-**Complet :**
-Famenu planifie en quelques gestes les repas du soir de toute la semaine, sur mesure pour votre famille.
+**Description complète :**
+Famenu est le planificateur de repas des familles pressées. Planifiez votre menu de la semaine en quelques gestes et obtenez aussitôt votre liste de courses – fini le « qu'est-ce qu'on mange ce soir ? ».
 
-• Menu de la semaine : choisissez le temps de cuisson et le style, écrivez vos envies (« sans viande, rapide le mercredi ») et recevez une proposition. Un jour ne plaît pas ? Renouvelez-le.
-• Liste de courses : tous les ingrédients de la semaine, par recette ou par rayon.
-• Frigo virtuel : ce que vous cochez arrive dans votre frigo. Famenu utilise d’abord ce que vous avez déjà : zéro gaspillage.
-• Espace familial : partagez liste, frigo et menu en direct.
-• Livre de recettes : gardez vos réussites en favoris et composez une semaine à partir d’elles.
-• Scanner : scannez un code-barres et voyez si un produit est sain.
-• En 6 langues.
+MENU DE LA SEMAINE
+• Choisissez les jours, le temps de cuisine, les cuisines que vous aimez et ce que vous voulez éviter.
+• Famenu propose des idées repas pour chaque jour, avec des portions adaptées à votre famille (adultes et enfants).
+• Pas envie ? Remplacez un jour, choisissez vous-même une recette ou retirez-la.
+• Confirmez ce que vous cuisinez : les ingrédients vont directement sur votre liste de courses.
 
-Gratuit : 1 menu IA par jour et 10 scans par jour.
+LISTE DE COURSES
+• Tous les ingrédients de votre menu, par recette ou par rayon.
+• Ajoutez d'autres produits vous-même et trouvez des supermarchés près de chez vous.
+• Cochez ce que vous achetez : cela arrive dans vos provisions (« À la maison »).
+
+À LA MAISON – ANTI-GASPILLAGE
+• Famenu sait ce que vous avez déjà à la maison et propose d'abord des recettes qui l'utilisent.
+• Suivez les dates de conservation.
+• Plat cuisiné ? Ses ingrédients sont retirés automatiquement. Vous retirez un ingrédient dont un plat prévu a encore besoin ? Il revient sur votre liste de courses.
+
+NOS PLATS
+• Gardez les recettes préférées de votre famille : saisissez-les, ou importez une recette depuis un site de cuisine ou une photo.
+• Ajoutez-les à votre menu de la semaine, à côté des recettes de l'application.
+• Notez les recettes avec des étoiles après les avoir cuisinées.
+
+SCANNER CODE-BARRES
+• Scannez un produit et voyez le Nutri-Score, le groupe NOVA, les additifs et les allergènes, comparez les produits et trouvez une alternative plus saine.
+
+EN FAMILLE
+• Partagez le menu, la liste de courses et vos provisions avec votre partenaire et votre famille, en direct sur chaque téléphone.
+
+Planificateur de repas, liste de courses et carnet de recettes en une seule application – en français, néerlandais, allemand et anglais. Gratuit, avec publicité : 5 scans gratuits par jour, et une courte vidéo pour des scans supplémentaires.
 
 ## Deutsch (de-DE)
 
-**Titel:** Famenu – Familien-Wochenmenü
-**Kurz:** Wochenmenü, Einkaufsliste und Kühlschrank für die Familie – ohne Verschwendung.
+**Titel:** Famenu: Essensplaner & Einkauf
+**Kurzbeschreibung:** Essensplaner für die Familie: Wochenplan, Einkaufsliste, Rezepte und Vorrat.
 
-**Vollständig:**
-Famenu plant mit wenigen Tipps das Abendessen für die ganze Woche – passend für deine Familie.
+**Vollständige Beschreibung:**
+Famenu ist der Essensplaner für Familien mit wenig Zeit. Plane deinen Wochenplan mit wenigen Tipps und bekomme sofort die Einkaufsliste – nie mehr „Was koche ich heute?“.
 
-• Wochenmenü: Kochzeit und Stil wählen, Wünsche eintippen („kein Fleisch, mittwochs schnell“) und Vorschlag erhalten. Ein Tag gefällt nicht? Einfach neu würfeln.
-• Einkaufsliste: alle Zutaten der Woche, nach Rezept oder nach Abteilung.
-• Virtueller Kühlschrank: Abgehaktes landet im Kühlschrank. Famenu verwendet zuerst, was schon da ist.
-• Familienbereich: Liste, Kühlschrank und Menü live teilen.
-• Kochbuch: gelungene Rezepte als Favorit speichern und daraus eine Woche zusammenstellen.
-• Scanner: Barcode scannen und sehen, wie gesund ein Produkt ist.
-• In 6 Sprachen.
+WOCHENPLAN
+• Wähle die Tage, wie lange du kochen willst, welche Küchen ihr mögt und was du vermeiden willst.
+• Famenu schlägt für jeden Tag ein Abendessen vor, mit Portionen passend für deine Familie (Erwachsene und Kinder).
+• Keine Lust? Tausche einen Tag, wähle selbst ein Rezept oder nimm es heraus.
+• Bestätige, was du kochst: Die Zutaten kommen direkt auf deine Einkaufsliste.
 
-Kostenlos: 1 KI-Wochenmenü und 10 Scans pro Tag.
+EINKAUFSLISTE
+• Alle Zutaten deines Wochenplans, nach Rezept oder nach Abteilung im Supermarkt.
+• Füge selbst andere Produkte hinzu und finde Supermärkte in deiner Nähe.
+• Hake ab, was du kaufst: Es landet in deinem Vorrat („Zuhause“).
 
-## English (en-GB)
+VORRAT – WENIGER VERSCHWENDUNG
+• Famenu weiß, was du schon zu Hause hast, und schlägt zuerst Rezepte vor, die es verwenden.
+• Behalte das Mindesthaltbarkeitsdatum im Blick.
+• Gekocht? Die Zutaten werden automatisch abgezogen. Nimmst du etwas weg, das ein geplantes Gericht noch braucht? Dann kommt es wieder auf deine Einkaufsliste.
 
-**Title:** Famenu – family meal planner
-**Short:** Weekly menu, shopping list and fridge for the whole family – healthy, no waste.
+UNSERE GERICHTE
+• Sammle die Lieblingsrezepte deiner Familie: selbst eintippen oder ein Rezept von einer Kochseite oder einem Foto einlesen.
+• Plane sie im Wochenplan, neben den Rezepten der App.
+• Bewerte Rezepte nach dem Kochen mit Sternen.
 
-**Full:**
-Famenu plans the whole week’s dinners in a few taps, tailored to your family.
+BARCODE-SCANNER
+• Scanne ein Produkt und sieh Nutri-Score, NOVA-Gruppe, Zusatzstoffe und Allergene, vergleiche Produkte und finde eine gesündere Alternative.
 
-• Weekly menu: pick cooking time and style, type what you want (“no meat, quick on Wednesday”) and get a plan. Don’t like one day? Refresh just that day.
-• Shopping list: all the week’s ingredients, by recipe or by aisle.
-• Virtual fridge: what you tick off goes into your fridge. Famenu uses what you already have first – no waste.
-• Family space: share list, fridge and menu live with your partner or housemates.
-• Cookbook: save the hits as favourites and build a week from them.
-• Scanner: scan a barcode and see how healthy a product is.
-• In 6 languages.
+GEMEINSAM ALS FAMILIE
+• Teile Wochenplan, Einkaufsliste und Vorrat mit Partner und Familie, live auf jedem Handy.
 
-Free: 1 AI weekly menu and 10 scans per day.
-
-## Español (es-ES)
-
-**Título:** Famenu – menú semanal familiar
-**Corto:** Menú semanal, lista de la compra y nevera para toda la familia, sin desperdicio.
-
-**Completo:**
-Famenu planifica en pocos toques las cenas de toda la semana, a la medida de tu familia.
-
-• Menú semanal: elige tiempo de cocina y estilo, escribe lo que quieres («sin carne, rápido el miércoles») y recibe una propuesta. ¿Un día no te convence? Renuévalo.
-• Lista de la compra: todos los ingredientes de la semana, por receta o por sección.
-• Nevera virtual: lo que marcas va a tu nevera. Famenu usa primero lo que ya tienes: cero desperdicio.
-• Espacio familiar: comparte lista, nevera y menú en directo.
-• Recetario: guarda tus éxitos como favoritos y crea una semana con ellos.
-• Escáner: escanea un código de barras y mira si un producto es sano.
-• En 6 idiomas.
-
-Gratis: 1 menú con IA y 10 escaneos al día.
-
-## Português (pt-PT)
-
-**Título:** Famenu – menu semanal familiar
-**Curto:** Menu semanal, compras e frigorífico para toda a família, sem desperdício.
-
-**Completo:**
-O Famenu planeia em poucos toques os jantares da semana inteira, à medida da tua família.
-
-• Menu semanal: escolhe o tempo de preparação e o estilo, escreve o que queres («sem carne, rápido à quarta») e recebe uma proposta. Um dia não agrada? Renova só esse dia.
-• Lista de compras: todos os ingredientes da semana, por receita ou por secção.
-• Frigorífico virtual: o que marcas vai para o frigorífico. O Famenu usa primeiro o que já tens: zero desperdício.
-• Espaço familiar: partilha lista, frigorífico e menu em tempo real.
-• Livro de receitas: guarda os sucessos como favoritos e cria uma semana com eles.
-• Leitor: lê um código de barras e vê se um produto é saudável.
-• Em 6 línguas.
-
-Grátis: 1 menu com IA e 10 leituras por dia.
+Essensplaner, Einkaufsliste und Rezeptbuch in einer App – auf Deutsch, Niederländisch, Französisch und Englisch. Kostenlos, mit Werbung: 5 kostenlose Scans pro Tag und ein kurzes Video für zusätzliche Scans.

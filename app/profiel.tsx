@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
@@ -25,6 +25,7 @@ import { Inklapbaar } from '@/ui/inklapbaar';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import { aangemeldAls, meldAanMetGoogle, meldAf } from '@/opslag/aanmelden';
 import { ROUTE_AANGEMELD, ROUTE_WELKOM } from '@/lib/welkom';
+import { verwijderUrl } from '@/lib/privacy';
 import { wisselGroep } from '@/lib/groepen';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
@@ -306,6 +307,10 @@ export default function ProfielScherm() {
             {afmeldFout && <Text style={s.fout}>{t('account.fout')}</Text>}
             </>
             )}
+            {/* WEEK-324: Google Play eist een weg in de app om je account en gegevens te laten verwijderen. */}
+            <Pressable onPress={() => void Linking.openURL(verwijderUrl(taal))} accessibilityRole="link" hitSlop={8}>
+              <Text style={s.verwijderLink}>{t('account.verwijderen')}</Text>
+            </Pressable>
           </View>
         </Inklapbaar>
 
@@ -361,6 +366,7 @@ const s = StyleSheet.create({
   chipTekst: { color: KLEUR, fontWeight: '600' },
   chipTekstActief: { color: '#fff' },
   afmeldKnop: { flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'flex-start', borderWidth: 1.5, borderColor: KLEUR, borderRadius: 18, paddingHorizontal: 14, minHeight: 40 },
+  verwijderLink: { color: '#5E6B63', fontSize: 13, textDecorationLine: 'underline', marginTop: 4 },
   knop: { backgroundColor: KLEUR, borderRadius: 16, paddingVertical: 17, alignItems: 'center', marginTop: 12 },
   knopTekst: { color: '#fff', fontWeight: '700', fontSize: 17 },
 });
