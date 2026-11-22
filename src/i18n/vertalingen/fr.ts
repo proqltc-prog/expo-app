@@ -572,6 +572,7 @@ export const fr: Vertalingen = {
   'account.afmeldVraag': 'Voulez-vous vous déconnecter sur cet appareil ? Votre espace famille est conservé : reconnectez-vous avec le même compte pour le retrouver. Les données sur cet appareil seront effacées.',
   'account.jaAfmelden': 'Oui, se déconnecter',
   'account.fout': 'La déconnexion a échoué. Vérifiez votre connexion et réessayez.',
+  'account.verwijderen': 'Faire supprimer le compte et les données',
   'account.zonder': 'Vous utilisez Famenu sans compte sur cet appareil. Connectez-vous avec Google pour garder les données de votre famille si vous changez d’appareil ou réinstallez l’application.',
   'account.aanmeldFout': 'La connexion a échoué. Vérifiez votre connexion et réessayez.',
   'gezin.verwijderLid': 'Retirer',
