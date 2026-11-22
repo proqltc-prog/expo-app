@@ -16,3 +16,11 @@ export const ECHTE_BELONING_EENHEDEN: Record<Platform, string | null> = {
 export function kiesEenheid(echt: string | null, test: string): string {
   return echt && echt.trim() ? echt.trim() : test;
 }
+
+/**
+ * WEEK-325: de knop "Toestemming voor reclame wijzigen" verschijnt enkel als Google (UMP) zegt dat de gebruiker
+ * zijn keuze moet kunnen wijzigen (EER, VK, Zwitserland). Status komt uit AdsConsentInfo.privacyOptionsRequirementStatus.
+ */
+export function toonToestemmingKnop(status: string | null | undefined): boolean {
+  return status === 'REQUIRED';
+}

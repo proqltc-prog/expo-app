@@ -26,6 +26,7 @@ import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
 import { aangemeldAls, meldAanMetGoogle, meldAf } from '@/opslag/aanmelden';
 import { ROUTE_AANGEMELD, ROUTE_WELKOM } from '@/lib/welkom';
 import { verwijderUrl } from '@/lib/privacy';
+import { toestemmingKnopNodig, wijzigToestemming } from '@/opslag/advertentie';
 import { wisselGroep } from '@/lib/groepen';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
@@ -82,6 +83,8 @@ export default function ProfielScherm() {
   // WEEK-323: zonder account (anoniem of geen sessie) kan dit toestel zich hier met Google aanmelden.
   const [aanmeldBezig, setAanmeldBezig] = useState(false);
   const [aanmeldFout, setAanmeldFout] = useState(false);
+  // WEEK-325: knop om de toestemming voor reclame te wijzigen, enkel waar Google dat vereist (EER, VK, CH).
+  const [toestemmingKnop, setToestemmingKnop] = useState(false);
   // Enkel het antwoord op de laatst ingevoerde postcode telt.
   const laatstePostcode = useRef('');
   // WEEK-193: "Hoe werkt het?" zit achter het info-icoon rechtsboven, niet meer bovenaan de pagina.
@@ -104,6 +107,7 @@ export default function ProfielScherm() {
         .catch(() => false)
         .then(setMag);
       aangemeldAls().then(setAccount).catch(() => setAccount(undefined));
+      toestemmingKnopNodig().then(setToestemmingKnop).catch(() => setToestemmingKnop(false));
       setAanmeldFout(false);
       setAanmeldBezig(false);
       setAfmeldVraag(false);
@@ -311,6 +315,12 @@ export default function ProfielScherm() {
             <Pressable onPress={() => void Linking.openURL(verwijderUrl(taal))} accessibilityRole="link" hitSlop={8}>
               <Text style={s.verwijderLink}>{t('account.verwijderen')}</Text>
             </Pressable>
+            {/* WEEK-325: AdMob/GDPR – de gebruiker kan zijn keuze voor reclame altijd wijzigen of intrekken. */}
+            {toestemmingKnop && (
+              <Pressable onPress={() => void wijzigToestemming()} accessibilityRole="button" hitSlop={8}>
+                <Text style={s.verwijderLink}>{t('account.toestemmingReclame')}</Text>
+              </Pressable>
+            )}
           </View>
         </Inklapbaar>
 

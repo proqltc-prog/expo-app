@@ -12,3 +12,13 @@ export async function bekijkBeloondFilmpje(): Promise<boolean> {
 export async function toonFilmpjeVoorInlezen(): Promise<FilmpjeUitkomst> {
   return 'niet_beschikbaar';
 }
+
+/** WEEK-325: op de website is er geen reclame, dus ook geen knop om de toestemming te wijzigen. */
+export async function toestemmingKnopNodig(): Promise<boolean> {
+  return false;
+}
+
+/** WEEK-325: op de website gebeurt er niets (er is geen toestemmingsscherm). */
+export async function wijzigToestemming(): Promise<boolean> {
+  return false;
+}

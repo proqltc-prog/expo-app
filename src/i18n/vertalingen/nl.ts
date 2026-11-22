@@ -574,6 +574,7 @@ export const nl = {
   'account.jaAfmelden': 'Ja, afmelden',
   'account.fout': 'Afmelden is niet gelukt. Controleer je verbinding en probeer opnieuw.',
   'account.verwijderen': 'Account en gegevens laten verwijderen',
+  'account.toestemmingReclame': 'Toestemming voor reclame wijzigen',
   'account.zonder': 'Je gebruikt Famenu zonder account op dit toestel. Meld je aan met Google, dan blijven je gezinsgegevens bewaard als je van toestel wisselt of de app opnieuw installeert.',
   'account.aanmeldFout': 'Aanmelden is niet gelukt. Controleer je verbinding en probeer opnieuw.',
   'gezin.verwijderLid': 'Verwijderen',

@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.162.0] – 2026-11-22
+
+**Jira:** [WEEK-325](https://proqltc-1791495894841.atlassian.net/browse/WEEK-325) (toestemming voor reclame wijzigen) · **Confluence:** [WEEK-325](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28213249)
+
+- Gezinsprofiel → Account: nieuwe knop "Toestemming voor reclame wijzigen". Die opent het privacyscherm van Google, waar je je keuze voor (gepersonaliseerde) reclame wijzigt of intrekt. De knop verschijnt enkel waar Google dat vereist (EER, Verenigd Koninkrijk, Zwitserland); niet op de website.
+- Privacybeleid: vermeldt waar je die keuze in de app wijzigt.
+
 ## [0.161.1] – 2026-11-22
 
 **Jira:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/browse/WEEK-324) (Google Play, gesloten test) · **Confluence:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28049416)

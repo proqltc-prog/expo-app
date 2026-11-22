@@ -7,7 +7,7 @@ import mobileAds, {
   RewardedAdEventType,
   TestIds,
 } from 'react-native-google-mobile-ads';
-import { ECHTE_BELONING_EENHEDEN, kiesEenheid } from '@/lib/advertentie';
+import { ECHTE_BELONING_EENHEDEN, kiesEenheid, toonToestemmingKnop } from '@/lib/advertentie';
 import type { FilmpjeUitkomst } from '@/lib/inlezenFilmpje';
 
 const WACHTTIJD_MS = 15000;
@@ -29,6 +29,29 @@ function startAdvertenties(): Promise<boolean> {
     })();
   }
   return klaar;
+}
+
+/**
+ * WEEK-325: moet de app een knop tonen om de toestemming voor reclame te wijzigen?
+ * Vraagt Google de actuele status (zonder een toestemmingsscherm te tonen). Bij een fout: geen knop.
+ */
+export async function toestemmingKnopNodig(): Promise<boolean> {
+  try {
+    const info = await AdsConsent.requestInfoUpdate();
+    return toonToestemmingKnop(info.privacyOptionsRequirementStatus);
+  } catch {
+    return false;
+  }
+}
+
+/** WEEK-325: opent het privacyopties-scherm van Google, waar de gebruiker zijn keuze wijzigt of intrekt. */
+export async function wijzigToestemming(): Promise<boolean> {
+  try {
+    await AdsConsent.showPrivacyOptionsForm();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
