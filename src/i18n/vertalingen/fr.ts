@@ -573,6 +573,7 @@ export const fr: Vertalingen = {
   'account.jaAfmelden': 'Oui, se déconnecter',
   'account.fout': 'La déconnexion a échoué. Vérifiez votre connexion et réessayez.',
   'account.verwijderen': 'Faire supprimer le compte et les données',
+  'account.toestemmingReclame': 'Modifier le consentement publicitaire',
   'account.zonder': 'Vous utilisez Famenu sans compte sur cet appareil. Connectez-vous avec Google pour garder les données de votre famille si vous changez d’appareil ou réinstallez l’application.',
   'account.aanmeldFout': 'La connexion a échoué. Vérifiez votre connexion et réessayez.',
   'gezin.verwijderLid': 'Retirer',

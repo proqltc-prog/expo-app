@@ -573,6 +573,7 @@ export const de: Vertalingen = {
   'account.jaAfmelden': 'Ja, abmelden',
   'account.fout': 'Abmelden ist fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.',
   'account.verwijderen': 'Konto und Daten löschen lassen',
+  'account.toestemmingReclame': 'Einwilligung für Werbung ändern',
   'account.zonder': 'Du nutzt Famenu auf diesem Gerät ohne Konto. Melde dich mit Google an, dann bleiben deine Familiendaten erhalten, wenn du das Gerät wechselst oder die App neu installierst.',
   'account.aanmeldFout': 'Die Anmeldung hat nicht geklappt. Prüfe deine Verbindung und versuche es erneut.',
   'gezin.verwijderLid': 'Entfernen',

@@ -573,6 +573,7 @@ export const en: Vertalingen = {
   'account.jaAfmelden': 'Yes, sign out',
   'account.fout': 'Signing out failed. Check your connection and try again.',
   'account.verwijderen': 'Delete account and data',
+  'account.toestemmingReclame': 'Change ad consent',
   'account.zonder': 'You are using Famenu without an account on this device. Sign in with Google to keep your family data when you change devices or reinstall the app.',
   'account.aanmeldFout': 'Signing in did not work. Check your connection and try again.',
   'gezin.verwijderLid': 'Remove',

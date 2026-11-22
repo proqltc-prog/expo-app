@@ -28,7 +28,7 @@ De camera wordt gebruikt om barcodes te lezen en, als je dat kiest, om een recep
 
 ## Advertenties
 
-De gratis versie toont advertenties van Google AdMob. Je kan een filmpje bekijken om extra scans te krijgen of om een recept in te lezen. Google kan daarvoor een advertentie-id van je toestel gebruiken. In de EU toont de app eerst het toestemmingsscherm van Google: daar kies je of je gepersonaliseerde advertenties toestaat of weigert. Je keuze kan je later wijzigen via de advertentie-instellingen van je toestel. Je kan het advertentie-id daar ook resetten of uitschakelen.
+De gratis versie toont advertenties van Google AdMob. Je kan een filmpje bekijken om extra scans te krijgen of om een recept in te lezen. Google kan daarvoor een advertentie-id van je toestel gebruiken. In de EU toont de app eerst het toestemmingsscherm van Google: daar kies je of je gepersonaliseerde advertenties toestaat of weigert. Je keuze kan je later wijzigen in de app via Gezinsprofiel → Account → "Toestemming voor reclame wijzigen". Via de advertentie-instellingen van je toestel kan je het advertentie-id ook resetten of uitschakelen.
 
 ## Wat we niet doen
 
@@ -76,7 +76,7 @@ Responsible: Proqltc, Roosdaal, Belgium – contact: proqltc@gmail.com.
 - **Reading in a recipe:** a recipe website link is fetched by our server at Supabase (EU). A recipe photo, and the names of ingredients the app does not know, are sent to Google Gemini via our server to read the recipe; the photo is not stored.
 - **Postcode:** if you enter it in your profile, it is sent to OpenStreetMap (Nominatim) to suggest your municipality. Servers may be outside the EU. "Shops" opens Google Maps with your postcode.
 - **Camera and microphone:** the camera reads barcodes and, if you choose, takes a photo of a recipe. The microphone is not used. We do not use your device's GPS location.
-- **Advertising:** the free version shows Google AdMob ads. You can watch a video to get extra scans or to read in a recipe. Google may use an advertising ID from your device. In the EU you first see Google's consent screen, where you accept or refuse personalised advertising. You can change your choice later in your device's ad settings, where you can also reset or turn off the advertising ID.
+- **Advertising:** the free version shows Google AdMob ads. You can watch a video to get extra scans or to read in a recipe. Google may use an advertising ID from your device. In the EU you first see Google's consent screen, where you accept or refuse personalised advertising. You can change your choice later in the app via Family profile → Account → "Change ad consent". In your device's ad settings you can also reset or turn off the advertising ID.
 - No selling of data, no account required.
 
 ## Delete your account and data {#delete}
