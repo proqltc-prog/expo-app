@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
@@ -23,8 +23,8 @@ import { useTaal } from '@/ui/taal';
 import { GezinsRuimte } from '@/ui/gezinsruimte';
 import { Inklapbaar } from '@/ui/inklapbaar';
 import { gezinsruimteBeschikbaar } from '@/opslag/supabase';
-import { aangemeldAls, meldAf } from '@/opslag/aanmelden';
-import { ROUTE_WELKOM } from '@/lib/welkom';
+import { aangemeldAls, meldAanMetGoogle, meldAf } from '@/opslag/aanmelden';
+import { ROUTE_AANGEMELD, ROUTE_WELKOM } from '@/lib/welkom';
 import { wisselGroep } from '@/lib/groepen';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
@@ -73,11 +73,14 @@ export default function ProfielScherm() {
   const [mag, setMag] = useState(false);
   const [fouten, setFouten] = useState<ProfielFout[]>([]);
   const [plaatsFout, setPlaatsFout] = useState(false);
-  // WEEK-314: met welk account dit toestel aangemeld is (undefined: anoniem of niet aangemeld, dan geen afmeldknop).
+  // WEEK-314: met welk account dit toestel aangemeld is (undefined: anoniem of niet aangemeld; WEEK-323: dan Aanmelden met Google).
   const [account, setAccount] = useState<string | undefined>(undefined);
   const [afmeldVraag, setAfmeldVraag] = useState(false);
   const [afmeldBezig, setAfmeldBezig] = useState(false);
   const [afmeldFout, setAfmeldFout] = useState(false);
+  // WEEK-323: zonder account (anoniem of geen sessie) kan dit toestel zich hier met Google aanmelden.
+  const [aanmeldBezig, setAanmeldBezig] = useState(false);
+  const [aanmeldFout, setAanmeldFout] = useState(false);
   // Enkel het antwoord op de laatst ingevoerde postcode telt.
   const laatstePostcode = useRef('');
   // WEEK-193: "Hoe werkt het?" zit achter het info-icoon rechtsboven, niet meer bovenaan de pagina.
@@ -100,6 +103,8 @@ export default function ProfielScherm() {
         .catch(() => false)
         .then(setMag);
       aangemeldAls().then(setAccount).catch(() => setAccount(undefined));
+      setAanmeldFout(false);
+      setAanmeldBezig(false);
       setAfmeldVraag(false);
       setAfmeldFout(false);
       // WEEK-100: bij elk vertrek (knop, menu of bewaren) onthouden zodat de weekplanner opnieuw start.
@@ -133,6 +138,19 @@ export default function ProfielScherm() {
       .catch(() => {
         if (laatstePostcode.current === pc) setPlaatsFout(true);
       });
+  };
+
+  // WEEK-323: aanmelden met Google vanuit het profiel. Google opent; de terugkeer gaat langs /aangemeld (zoals bij de start).
+  const aanmelden = async () => {
+    setAanmeldFout(false);
+    setAanmeldBezig(true);
+    try {
+      await meldAanMetGoogle();
+      if (Platform.OS !== 'web') router.replace(ROUTE_AANGEMELD);
+    } catch {
+      setAanmeldFout(true);
+      setAanmeldBezig(false);
+    }
   };
 
   // WEEK-314: afmelden op dit toestel; daarna het startscherm om (eventueel met een ander account) aan te melden.
@@ -252,9 +270,20 @@ export default function ProfielScherm() {
       </View>
       </Inklapbaar>
 
-      {account !== undefined && (
+      {/* WEEK-323: Account staat er altijd. Zonder account: aanmelden met Google (dit toestel koppelen). */}
         <Inklapbaar titel={t('profiel.account')} icoon="person-circle-outline" open={uitgeklapt.has('account')} onWissel={() => wissel('account')}>
           <View style={s.kaart}>
+            {account === undefined ? (
+              <>
+                <Text style={s.hint}>{t('account.zonder')}</Text>
+                <Pressable style={s.afmeldKnop} onPress={aanmelden} disabled={aanmeldBezig} accessibilityRole="button">
+                  <Ionicons name="logo-google" size={18} color={KLEUR} />
+                  <Text style={s.chipTekst}>{t('welkom.accountGoogle')}</Text>
+                </Pressable>
+                {aanmeldFout && <Text style={s.fout}>{t('account.aanmeldFout')}</Text>}
+              </>
+            ) : (
+            <>
             {!!account && <Text style={s.label}>{t('account.aangemeldAls', { email: account })}</Text>}
             {afmeldVraag ? (
               <View style={s.info}>
@@ -275,9 +304,10 @@ export default function ProfielScherm() {
               </Pressable>
             )}
             {afmeldFout && <Text style={s.fout}>{t('account.fout')}</Text>}
+            </>
+            )}
           </View>
         </Inklapbaar>
-      )}
 
       {fouten.map((f) => (
         <Text key={f} style={s.fout}>• {t(`fout.${f}` as Sleutel, { max: FOUT_MAX[f] ?? '' })}</Text>

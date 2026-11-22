@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.160.1] – 2026-11-22
+
+**Jira:** [WEEK-323](https://proqltc-1791495894841.atlassian.net/browse/WEEK-323) (bugfix) · **Confluence:** [WEEK-323](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28082177)
+
+- Gezinsprofiel → Account staat er altijd: zonder account kan je je hier met Google aanmelden (dit toestel koppelen); met account kan je afmelden.
+- De beheerder van de gezinsruimte kan andere leden verwijderen (bv. een oud toestel of een dubbel lid), na bevestiging.
+
 ## [0.160.0] – 2026-11-21
 
 **Jira:** [WEEK-322](https://proqltc-1791495894841.atlassian.net/browse/WEEK-322) (verbetering) · **Confluence:** [WEEK-322](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/27918337)

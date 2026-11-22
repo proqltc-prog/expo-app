@@ -2,7 +2,7 @@
 import { Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
-import { leesTokensUitUrl, Aanbieder, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
+import { isAlGekoppeld, leesTokensUitUrl, Aanbieder, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
 import { googleVragen, teWissenBijAfmelden } from '@/lib/afmelden';
 import { SLEUTEL } from './sleutels';
 import { supabase } from './supabase';
@@ -108,12 +108,38 @@ export async function verwerkTerugkeer(url: string): Promise<boolean> {
 export function luisterNaarTerugkeer(): () => void {
   if (Platform.OS === 'web') return () => {};
   const sub = Linking.addEventListener('url', ({ url }) => {
-    void verwerkTerugkeer(url);
+    void verwerkOfMeldAan(url);
   });
   void Linking.getInitialURL().then((url) => {
-    if (url) void verwerkTerugkeer(url);
+    if (url) void verwerkOfMeldAan(url);
   });
   return () => sub.remove();
+}
+
+/** WEEK-323: was het Google-account al gekoppeld aan een andere gebruiker, dan aanmelden met dat account; anders verwerken. */
+async function verwerkOfMeldAan(url: string): Promise<void> {
+  if (isAlGekoppeld(url)) {
+    await inlogMet('google').catch(() => undefined);
+    return;
+  }
+  await verwerkTerugkeer(url);
+}
+
+/**
+ * WEEK-323: aanmelden met Google vanuit het gezinsprofiel. Een toestel zonder account koppelt zijn gegevens aan het
+ * Google-account; hoort dat account al bij een andere gebruiker, dan meldt de terugkeer gewoon daarmee aan
+ * (zie verwerkOfMeldAan en de pagina /aangemeld).
+ */
+export async function meldAanMetGoogle(): Promise<void> {
+  if (await isAnoniem()) await koppel('google');
+  else await inlogMet('google');
+}
+
+/** WEEK-323: op het web komt de fout "al gekoppeld" terug op /aangemeld; dan aanmelden met dat account. */
+export async function meldAanAlsAlGekoppeld(url: string): Promise<boolean> {
+  if (!isAlGekoppeld(url)) return false;
+  await inlogMet('google');
+  return true;
 }
 
 /** Het e-mailadres van het account waarmee dit toestel aangemeld is; undefined als het anoniem of niet aangemeld is (WEEK-314). */

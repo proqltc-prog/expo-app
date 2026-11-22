@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { vergeetAfmelding, wachtOpAanmelding } from '@/opslag/aanmelden';
+import { meldAanAlsAlGekoppeld, vergeetAfmelding, wachtOpAanmelding } from '@/opslag/aanmelden';
 import { haalGezinNaAanmelden } from '@/opslag/sync';
 import { laadProfiel } from '@/opslag/profiel';
 import { isProfielIngesteld } from '@/lib/profiel';
@@ -26,6 +26,8 @@ export default function Aangemeld() {
   useEffect(() => {
     let gestopt = false;
     (async () => {
+      // WEEK-323 (web): het Google-account hoorde al bij een andere gebruiker; aanmelden met dat account.
+      if (Platform.OS === 'web' && typeof window !== 'undefined' && (await meldAanAlsAlGekoppeld(window.location.href).catch(() => false))) return;
       const aangemeld = await wachtOpAanmelding(MAX_WACHTEN_MS, () => gestopt);
       if (gestopt) return;
       if (aangemeld) {

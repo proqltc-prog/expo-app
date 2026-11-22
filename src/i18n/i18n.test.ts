@@ -457,3 +457,14 @@ describe('WEEK-322: In huis legt uit dat wat een bevestigd gerecht mist, terug o
     }
   });
 });
+
+describe('WEEK-323: aanmelden zonder account en leden verwijderen', () => {
+  test('de nieuwe teksten staan in elke taal, met de naam van het lid', () => {
+    for (const taal of TALEN) {
+      const tekst = VERTALINGEN[taal] as Record<string, string>;
+      for (const k of ['account.zonder', 'account.aanmeldFout', 'gezin.verwijderLid']) assert.ok(tekst[k], `${taal}: ${k}`);
+      assert.ok(tekst['gezin.verwijderLidVraag'].includes('{naam}'), taal);
+      assert.ok(tekst['gezin.verwijderLidLabel'].includes('{naam}'), taal);
+    }
+  });
+});
