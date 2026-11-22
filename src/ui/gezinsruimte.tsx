@@ -23,6 +23,7 @@ import {
   laadGezin,
   laadLeden,
   maakBeheerder,
+  verwijderLid,
   maakGezin,
   syncStatus,
   SyncStatus,
@@ -40,7 +41,13 @@ const GEVAAR = '#c62828';
 // WEEK-104: het gezin krijgt een standaardnaam (GEZINSNAAM_STANDAARD); getoond wordt hij vertaald (WEEK-243).
 
 /** Een actie die eerst bevestigd moet worden, in de pagina zelf (WEEK-176). */
-type Bevestiging = { actie: 'verlaat' } | { actie: 'heffOp' } | { actie: 'opvolger'; lid: GezinsLid } | { actie: 'beheerder'; lid: GezinsLid };
+type Bevestiging =
+  | { actie: 'verlaat' }
+  | { actie: 'heffOp' }
+  | { actie: 'opvolger'; lid: GezinsLid }
+  | { actie: 'beheerder'; lid: GezinsLid }
+  // WEEK-323: de beheerder haalt een ander lid uit de gezinsruimte (bv. een oud toestel of een dubbel lid).
+  | { actie: 'verwijder'; lid: GezinsLid };
 
 export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const { t } = useTaal();
@@ -189,6 +196,8 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
             return { tekst: t('gezin.verlaatOpvolgerVraag', { naam: naamVan(bevestig.lid) }), knop: t('gezin.verlaat') };
           case 'beheerder':
             return { tekst: t('gezin.maakBeheerderVraag', { naam: naamVan(bevestig.lid) }), knop: t('gezin.maakBeheerder') };
+          case 'verwijder':
+            return { tekst: t('gezin.verwijderLidVraag', { naam: naamVan(bevestig.lid) }), knop: t('gezin.verwijderLid') };
         }
       })()
     : null;
@@ -201,6 +210,11 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
       void voerUit(verlaatGezin);
     } else if (b.actie === 'heffOp') {
       void voerUit(heffGezinOp);
+    } else if (b.actie === 'verwijder') {
+      void voerUit(async () => {
+        await verwijderLid(b.lid.id);
+        setLeden(await laadLeden().catch(() => []));
+      });
     } else if (b.actie === 'beheerder') {
       void voerUit(async () => {
         await maakBeheerder(b.lid.id);
@@ -396,6 +410,17 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                         accessibilityLabel={t('gezin.maakBeheerder')}
                       >
                         <Ionicons name="shield-checkmark-outline" size={22} color={KLEUR} />
+                      </Pressable>
+                    )}
+                    {beheerder && !l.ikZelf && (
+                      <Pressable
+                        style={s.icoonKnop}
+                        onPress={() => setBevestig({ actie: 'verwijder', lid: l })}
+                        disabled={bezig}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('gezin.verwijderLidLabel', { naam: naamVan(l) })}
+                      >
+                        <Ionicons name="person-remove-outline" size={22} color={GEVAAR} />
                       </Pressable>
                     )}
                   </View>

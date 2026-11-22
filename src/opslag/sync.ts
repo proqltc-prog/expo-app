@@ -673,6 +673,15 @@ export async function maakBeheerder(gebruikerId: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+/** WEEK-323: de beheerder haalt een ander lid uit de gezinsruimte (bv. een oud toestel of een dubbel lid). */
+export async function verwijderLid(gebruikerId: string): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('geen_backend');
+  await zorgVoorSessie();
+  const { error } = await sb.rpc('verwijder_lid', { p_lid: gebruikerId });
+  if (error) throw new Error(error.message);
+}
+
 /** De beheerder verlaat het gezin en maakt een ander lid tot beheerder (WEEK-65). */
 export async function verlaatMetOpvolger(opvolgerId: string): Promise<void> {
   const sb = supabase();

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AANBIEDERS, AANMELDEN_MET_MAIL, aanmeldWijze, isGeldigEmail, leesTokensUitUrl, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
+import { AANBIEDERS, AANMELDEN_MET_MAIL, aanmeldWijze, isAlGekoppeld, isGeldigEmail, leesTokensUitUrl, terugkeerAdres, terugkeerMetFout } from '@/lib/aanmelden';
 
 describe('aanmelden (WEEK-166, WEEK-185, WEEK-225)', () => {
   test('het aanmeldscherm biedt enkel Google aan (Apple: WEEK-227, Facebook bewust niet)', () => {
@@ -61,5 +61,17 @@ describe('aanmelden (WEEK-166, WEEK-185, WEEK-225)', () => {
   test('zonder fragment, of zonder beide tokens, geen tokens', () => {
     assert.equal(leesTokensUitUrl('famenu://'), null);
     assert.equal(leesTokensUitUrl('famenu://#access_token=a'), null);
+  });
+});
+
+describe('WEEK-323: Google-account al gekoppeld aan een andere gebruiker', () => {
+  test('herkent de fout in het fragment of in de query', () => {
+    assert.equal(isAlGekoppeld('famenu://aangemeld#error=server_error&error_code=identity_already_exists&error_description=x'), true);
+    assert.equal(isAlGekoppeld('https://proqltc-prog.github.io/expo-app/aangemeld?error=x&error_code=identity_already_exists'), true);
+  });
+  test('regressie: een gewone terugkeer of een andere fout is geen al-gekoppeld', () => {
+    assert.equal(isAlGekoppeld('famenu://aangemeld#access_token=a&refresh_token=b'), false);
+    assert.equal(isAlGekoppeld('famenu://aangemeld#error=access_denied&error_code=otp_expired'), false);
+    assert.equal(isAlGekoppeld('famenu://aangemeld'), false);
   });
 });

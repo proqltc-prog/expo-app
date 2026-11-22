@@ -56,3 +56,13 @@ export function leesTokensUitUrl(url: string): { accessToken: string; refreshTok
   if (!accessToken || !refreshToken) return null;
   return { accessToken, refreshToken };
 }
+
+/**
+ * WEEK-323: koppelen mislukte omdat dit Google-account al bij een andere gebruiker hoort (bv. het account waarmee je
+ * vroeger aanmeldde, vóór een herinstallatie). Dan meldt de app gewoon aan met dat account. Supabase zet de fout in
+ * de query of het fragment van het terugkeeradres: error_code=identity_already_exists.
+ */
+export function isAlGekoppeld(url: string): boolean {
+  const delen = url.split(/[?#]/).slice(1);
+  return delen.some((d) => new URLSearchParams(d).get('error_code') === 'identity_already_exists');
+}
