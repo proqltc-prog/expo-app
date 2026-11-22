@@ -10,7 +10,7 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.161.0] – 2026-11-22
 
-**Jira:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/browse/WEEK-324) (Google Play, gesloten test) · **Confluence:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28311553)
+**Jira:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/browse/WEEK-324) (Google Play, gesloten test) · **Confluence:** [WEEK-324](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28049416)
 
 - Klaar voor Google Play: de release-build wordt ondertekend met een eigen uploadsleutel (buiten het project bewaard) en heeft een oplopende versionCode (161000). Eerste AAB gebouwd.
 - Gezinsprofiel → Account: nieuwe link "Account en gegevens laten verwijderen" (vereist door Google Play).
