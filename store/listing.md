@@ -10,150 +10,163 @@ Hoofdtaal van de vermelding: **Engels (en-GB)**; vertalingen: nl-BE, fr-BE, de-D
 - E-mail: proqltc@gmail.com · Website: https://proqltc-prog.github.io/expo-app/
 - Privacybeleid: https://proqltc-prog.github.io/famenu-privacy/
 
+## Vindbaarheid (zoekwoorden)
+
+Google Play heeft geen veld voor zoekwoorden: het zoekt in de titel (weegt het zwaarst), de korte beschrijving en de volledige beschrijving.
+Daarom staan de belangrijkste zoekwoorden per taal in de titel en de korte beschrijving, en komen ze 3 à 5 keer natuurlijk terug in de volledige beschrijving
+(niet vaker: Google straft het opstapelen van zoekwoorden af). Geen namen van andere apps of merken.
+
+| Taal | Hoofdzoekwoorden | Bijkomende zoekwoorden |
+| --- | --- | --- |
+| EN | meal planner, meal plan, grocery list, shopping list | weekly menu, dinner ideas, family recipes, recipe keeper, pantry, food waste, barcode scanner, Nutri-Score |
+| NL | weekmenu, boodschappenlijst, maaltijdplanner, recepten | avondeten, wat eten we vandaag, gezinsrecepten, voorraad, voedselverspilling, barcode scannen, Nutri-Score |
+| FR | menu de la semaine, liste de courses, planificateur de repas, recettes | idées repas, repas en famille, garde-manger, anti-gaspillage, scanner code-barres, Nutri-Score |
+| DE | Essensplaner, Wochenplan, Einkaufsliste, Rezepte | Wochenmenü, Was koche ich heute, Familienrezepte, Vorrat, Lebensmittelverschwendung, Barcode-Scanner, Nutri-Score |
+
 ## English (en-GB) – hoofdtaal
 
-**Title:** Famenu: Family Meal Planner
-**Short description:** Weekly dinner menu, shopping list and pantry for the whole family.
+**Title:** Famenu: Meal Plan & Groceries
+**Short description:** Family meal planner: weekly menu, grocery list, recipes and pantry in one app.
 
 **Full description:**
-Famenu plans your family's dinners for the week in a few taps – and turns them into a shopping list.
+Famenu is the meal planner for busy families. Plan your weekly menu in a few taps and get the grocery list straight away – no more "what's for dinner?".
 
-WEEKLY MENU
+WEEKLY MEAL PLAN
 • Choose the days, how long you want to cook, the cuisines you like and what to avoid.
-• Famenu suggests a dish for every day, sized for your family (adults and children).
-• Not in the mood? Swap a day, pick a dish yourself or remove it.
+• Famenu suggests dinner ideas for every day, with portions for your family (adults and children).
+• Not in the mood? Swap a day, pick a recipe yourself or remove it.
 • Confirm what you will cook: the ingredients go straight to your shopping list.
 
-SHOPPING LIST
-• All ingredients of your confirmed dishes, by dish or by aisle.
-• Add other products yourself and find shops near you.
-• Tick off what you buy: it moves to At home.
+GROCERY LIST
+• All ingredients of your meal plan, by recipe or by aisle.
+• Add other products to the grocery list yourself and find supermarkets near you.
+• Tick off what you buy: it moves to your pantry ("At home").
 
-AT HOME
-• Famenu knows what you already have and picks dishes that use it first – less food waste.
+PANTRY – LESS FOOD WASTE
+• Famenu knows what you already have at home and suggests recipes that use it first.
 • Keep track of best-before dates.
 • Cooked a dish? Its ingredients are taken out automatically. Removed something a planned dish still needs? It goes back on your list.
 
-OUR DISHES
-• Add your family's favourite dishes: type them in, or read them in from a recipe website or a photo.
-• Pick them on the weekly menu, next to the dishes of the app.
-• Rate dishes with stars after cooking.
+FAMILY RECIPES
+• Keep your family's favourite recipes: type them in, or import a recipe from a website or a photo.
+• Plan them on the weekly menu, next to the recipes of the app.
+• Rate recipes with stars after cooking.
 
-SCAN
-• Scan a barcode and see the Nutri-Score, NOVA group, additives and allergens, compare products and find a healthier alternative.
+BARCODE SCANNER
+• Scan a product and see the Nutri-Score, NOVA group, additives and allergens, compare products and find a healthier alternative.
 
-TOGETHER
-• Share the weekly menu, the shopping list and what's at home with your family, live on every phone.
+SHARE WITH YOUR FAMILY
+• Share the meal plan, the shopping list and the pantry with your partner and family, live on every phone.
 
-Available in English, Dutch, French and German. Free, with ads: 5 free scans per day, and a short video for extra scans.
+A meal planner, grocery list app and recipe keeper in one – available in English, Dutch, French and German. Free, with ads: 5 free scans per day, and a short video for extra scans.
 
 ## Nederlands (nl-BE)
 
-**Titel:** Famenu: gezinsweekmenu
-**Korte beschrijving:** Weekmenu, boodschappenlijst en wat je in huis hebt, voor het hele gezin.
+**Titel:** Famenu weekmenu & boodschappen
+**Korte beschrijving:** Weekmenu plannen voor je gezin, met boodschappenlijst, recepten en voorraad.
 
 **Volledige beschrijving:**
-Famenu plant in een paar tikken het avondeten van je gezin voor de hele week – en maakt er meteen een boodschappenlijst van.
+Famenu is de maaltijdplanner voor drukke gezinnen. Plan in een paar tikken je weekmenu en krijg meteen je boodschappenlijst – nooit meer "wat eten we vandaag?".
 
 WEEKMENU
 • Kies de dagen, hoe lang je wil koken, welke keukens je lust en wat je wil vermijden.
-• Famenu stelt elke dag een gerecht voor, op maat van je gezin (volwassenen en kinderen).
-• Geen zin in? Vervang een dag, kies zelf een gerecht of haal het weg.
+• Famenu stelt elke dag een gerecht voor het avondeten voor, met porties op maat van je gezin (volwassenen en kinderen).
+• Geen zin in? Vervang een dag, kies zelf een recept of haal het weg.
 • Bevestig wat je kookt: de ingrediënten komen meteen op je boodschappenlijst.
 
-BOODSCHAPPEN
-• Alle ingrediënten van je bevestigde gerechten, per gerecht of per afdeling.
-• Zet er zelf andere producten bij en vind winkels in je buurt.
-• Vink af wat je koopt: het komt bij In huis.
+BOODSCHAPPENLIJST
+• Alle ingrediënten van je weekmenu, per recept of per afdeling in de winkel.
+• Zet er zelf andere producten bij en vind supermarkten in je buurt.
+• Vink af wat je koopt: het komt bij je voorraad (In huis).
 
-IN HUIS
-• Famenu weet wat je al hebt en kiest eerst gerechten die het gebruiken – minder verspilling.
-• Hou de houdbaarheid bij.
-• Gekookt? De ingrediënten gaan er vanzelf uit. Haal je iets weg dat een gepland gerecht nog nodig heeft? Dan komt het terug op je lijst.
+IN HUIS – MINDER VERSPILLING
+• Famenu weet wat je al in huis hebt en stelt eerst recepten voor die het gebruiken.
+• Hou de houdbaarheidsdatum bij.
+• Gekookt? De ingrediënten gaan er vanzelf uit. Haal je iets weg dat een gepland gerecht nog nodig heeft? Dan komt het terug op je boodschappenlijst.
 
 ONZE GERECHTEN
-• Voeg de lievelingsgerechten van je gezin toe: typ ze zelf, of lees ze in via een receptensite of een foto.
-• Kies ze op het weekmenu, naast de gerechten van de app.
-• Geef gerechten sterren na het koken.
+• Bewaar de lievelingsrecepten van je gezin: typ ze zelf, of lees een recept in van een receptensite of een foto.
+• Zet ze op je weekmenu, naast de recepten van de app.
+• Geef recepten sterren na het koken.
 
-SCAN
-• Scan een barcode en zie de Nutri-Score, de NOVA-groep, additieven en allergenen, vergelijk producten en vind een gezonder alternatief.
+BARCODE SCANNEN
+• Scan een product en zie de Nutri-Score, de NOVA-groep, additieven en allergenen, vergelijk producten en vind een gezonder alternatief.
 
-SAMEN
-• Deel het weekmenu, de boodschappenlijst en wat je in huis hebt met je gezin, live op elke gsm.
+SAMEN MET JE GEZIN
+• Deel het weekmenu, de boodschappenlijst en je voorraad met je partner en gezin, live op elke gsm.
 
-In het Nederlands, Frans, Duits en Engels. Gratis, met reclame: 5 gratis scans per dag, en een kort filmpje voor extra scans.
+Weekmenu, boodschappenlijst en receptenboek in één app – in het Nederlands, Frans, Duits en Engels. Gratis, met reclame: 5 gratis scans per dag, en een kort filmpje voor extra scans.
 
 ## Français (fr-BE)
 
-**Titre :** Famenu : menu de la famille
-**Description courte :** Menu de la semaine, liste de courses et provisions pour toute la famille.
+**Titre :** Famenu: menu semaine & courses
+**Description courte :** Menu de la semaine en famille, liste de courses, recettes et provisions.
 
 **Description complète :**
-Famenu planifie en quelques gestes les dîners de votre famille pour toute la semaine – et en fait aussitôt une liste de courses.
+Famenu est le planificateur de repas des familles pressées. Planifiez votre menu de la semaine en quelques gestes et obtenez aussitôt votre liste de courses – fini le « qu'est-ce qu'on mange ce soir ? ».
 
 MENU DE LA SEMAINE
 • Choisissez les jours, le temps de cuisine, les cuisines que vous aimez et ce que vous voulez éviter.
-• Famenu propose un plat par jour, adapté à votre famille (adultes et enfants).
-• Pas envie ? Remplacez un jour, choisissez vous-même un plat ou retirez-le.
+• Famenu propose des idées repas pour chaque jour, avec des portions adaptées à votre famille (adultes et enfants).
+• Pas envie ? Remplacez un jour, choisissez vous-même une recette ou retirez-la.
 • Confirmez ce que vous cuisinez : les ingrédients vont directement sur votre liste de courses.
 
-COURSES
-• Tous les ingrédients de vos plats confirmés, par plat ou par rayon.
-• Ajoutez d'autres produits vous-même et trouvez des magasins près de chez vous.
-• Cochez ce que vous achetez : cela arrive dans « À la maison ».
+LISTE DE COURSES
+• Tous les ingrédients de votre menu, par recette ou par rayon.
+• Ajoutez d'autres produits vous-même et trouvez des supermarchés près de chez vous.
+• Cochez ce que vous achetez : cela arrive dans vos provisions (« À la maison »).
 
-À LA MAISON
-• Famenu sait ce que vous avez déjà et choisit d'abord des plats qui l'utilisent – moins de gaspillage.
+À LA MAISON – ANTI-GASPILLAGE
+• Famenu sait ce que vous avez déjà à la maison et propose d'abord des recettes qui l'utilisent.
 • Suivez les dates de conservation.
-• Plat cuisiné ? Ses ingrédients sont retirés automatiquement. Vous retirez un ingrédient dont un plat prévu a encore besoin ? Il revient sur votre liste.
+• Plat cuisiné ? Ses ingrédients sont retirés automatiquement. Vous retirez un ingrédient dont un plat prévu a encore besoin ? Il revient sur votre liste de courses.
 
 NOS PLATS
-• Ajoutez les plats préférés de votre famille : saisissez-les, ou importez-les depuis un site de cuisine ou une photo.
-• Choisissez-les au menu de la semaine, à côté des plats de l'application.
-• Notez les plats avec des étoiles après les avoir cuisinés.
+• Gardez les recettes préférées de votre famille : saisissez-les, ou importez une recette depuis un site de cuisine ou une photo.
+• Ajoutez-les à votre menu de la semaine, à côté des recettes de l'application.
+• Notez les recettes avec des étoiles après les avoir cuisinées.
 
-SCAN
-• Scannez un code-barres et voyez le Nutri-Score, le groupe NOVA, les additifs et les allergènes, comparez les produits et trouvez une alternative plus saine.
+SCANNER CODE-BARRES
+• Scannez un produit et voyez le Nutri-Score, le groupe NOVA, les additifs et les allergènes, comparez les produits et trouvez une alternative plus saine.
 
-ENSEMBLE
-• Partagez le menu, la liste de courses et ce que vous avez à la maison avec votre famille, en direct sur chaque téléphone.
+EN FAMILLE
+• Partagez le menu, la liste de courses et vos provisions avec votre partenaire et votre famille, en direct sur chaque téléphone.
 
-En français, néerlandais, allemand et anglais. Gratuit, avec publicité : 5 scans gratuits par jour, et une courte vidéo pour des scans supplémentaires.
+Planificateur de repas, liste de courses et carnet de recettes en une seule application – en français, néerlandais, allemand et anglais. Gratuit, avec publicité : 5 scans gratuits par jour, et une courte vidéo pour des scans supplémentaires.
 
 ## Deutsch (de-DE)
 
-**Titel:** Famenu: Familien-Wochenmenü
-**Kurzbeschreibung:** Wochenmenü, Einkaufsliste und Vorrat für die ganze Familie.
+**Titel:** Famenu: Essensplaner & Einkauf
+**Kurzbeschreibung:** Essensplaner für die Familie: Wochenplan, Einkaufsliste, Rezepte und Vorrat.
 
 **Vollständige Beschreibung:**
-Famenu plant mit wenigen Tipps das Abendessen deiner Familie für die ganze Woche – und macht daraus gleich eine Einkaufsliste.
+Famenu ist der Essensplaner für Familien mit wenig Zeit. Plane deinen Wochenplan mit wenigen Tipps und bekomme sofort die Einkaufsliste – nie mehr „Was koche ich heute?“.
 
-WOCHENMENÜ
+WOCHENPLAN
 • Wähle die Tage, wie lange du kochen willst, welche Küchen ihr mögt und was du vermeiden willst.
-• Famenu schlägt für jeden Tag ein Gericht vor, passend für deine Familie (Erwachsene und Kinder).
-• Keine Lust? Tausche einen Tag, wähle selbst ein Gericht oder nimm es heraus.
+• Famenu schlägt für jeden Tag ein Abendessen vor, mit Portionen passend für deine Familie (Erwachsene und Kinder).
+• Keine Lust? Tausche einen Tag, wähle selbst ein Rezept oder nimm es heraus.
 • Bestätige, was du kochst: Die Zutaten kommen direkt auf deine Einkaufsliste.
 
-EINKAUF
-• Alle Zutaten deiner bestätigten Gerichte, nach Gericht oder nach Abteilung.
-• Füge selbst andere Produkte hinzu und finde Geschäfte in deiner Nähe.
-• Hake ab, was du kaufst: Es landet unter „Zuhause“.
+EINKAUFSLISTE
+• Alle Zutaten deines Wochenplans, nach Rezept oder nach Abteilung im Supermarkt.
+• Füge selbst andere Produkte hinzu und finde Supermärkte in deiner Nähe.
+• Hake ab, was du kaufst: Es landet in deinem Vorrat („Zuhause“).
 
-ZUHAUSE
-• Famenu weiß, was du schon hast, und wählt zuerst Gerichte, die es verwenden – weniger Verschwendung.
+VORRAT – WENIGER VERSCHWENDUNG
+• Famenu weiß, was du schon zu Hause hast, und schlägt zuerst Rezepte vor, die es verwenden.
 • Behalte das Mindesthaltbarkeitsdatum im Blick.
-• Gekocht? Die Zutaten werden automatisch abgezogen. Nimmst du etwas weg, das ein geplantes Gericht noch braucht? Dann kommt es wieder auf deine Liste.
+• Gekocht? Die Zutaten werden automatisch abgezogen. Nimmst du etwas weg, das ein geplantes Gericht noch braucht? Dann kommt es wieder auf deine Einkaufsliste.
 
 UNSERE GERICHTE
-• Füge die Lieblingsgerichte deiner Familie hinzu: selbst eintippen oder über eine Kochseite oder ein Foto einlesen.
-• Wähle sie im Wochenmenü, neben den Gerichten der App.
-• Bewerte Gerichte nach dem Kochen mit Sternen.
+• Sammle die Lieblingsrezepte deiner Familie: selbst eintippen oder ein Rezept von einer Kochseite oder einem Foto einlesen.
+• Plane sie im Wochenplan, neben den Rezepten der App.
+• Bewerte Rezepte nach dem Kochen mit Sternen.
 
-SCAN
-• Scanne einen Barcode und sieh Nutri-Score, NOVA-Gruppe, Zusatzstoffe und Allergene, vergleiche Produkte und finde eine gesündere Alternative.
+BARCODE-SCANNER
+• Scanne ein Produkt und sieh Nutri-Score, NOVA-Gruppe, Zusatzstoffe und Allergene, vergleiche Produkte und finde eine gesündere Alternative.
 
-GEMEINSAM
-• Teile Wochenmenü, Einkaufsliste und Vorrat mit deiner Familie, live auf jedem Handy.
+GEMEINSAM ALS FAMILIE
+• Teile Wochenplan, Einkaufsliste und Vorrat mit Partner und Familie, live auf jedem Handy.
 
-Auf Deutsch, Niederländisch, Französisch und Englisch. Kostenlos, mit Werbung: 5 kostenlose Scans pro Tag und ein kurzes Video für zusätzliche Scans.
+Essensplaner, Einkaufsliste und Rezeptbuch in einer App – auf Deutsch, Niederländisch, Französisch und Englisch. Kostenlos, mit Werbung: 5 kostenlose Scans pro Tag und ein kurzes Video für zusätzliche Scans.
