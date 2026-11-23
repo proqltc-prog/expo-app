@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <!-- WEEK-328: Missie volbracht – een volle boodschappentas in de Famenu-kleuren. Eigen tekening. -->
+  <circle cx="120" cy="124" r="104" fill="#E6F3F1"/>
+  <ellipse cx="120" cy="216" rx="72" ry="8" fill="#0F6B66" opacity="0.12"/>
+
+  <!-- stokbrood -->
+  <g transform="rotate(-18 92 74)">
+    <rect x="78" y="22" width="28" height="112" rx="14" fill="#E9B56B"/>
+    <path d="M85 44 l15 -6 M85 64 l15 -6 M85 84 l15 -6" stroke="#C98B3E" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- bladgroente -->
+  <path d="M140 108 C126 86 126 62 138 42 C152 64 154 88 150 110 Z" fill="#6CC28A"/>
+  <path d="M150 110 C142 74 152 46 172 30 C178 58 174 86 162 110 Z" fill="#4CAF6E"/>
+  <path d="M160 110 C166 80 184 60 206 54 C200 80 186 100 168 112 Z" fill="#2E7D4F"/>
+  <path d="M157 106 C158 84 162 66 168 50" stroke="#2E7D4F" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- wortel -->
+  <g transform="rotate(24 120 70)">
+    <path d="M113 44 L127 44 L120 112 Z" fill="#F08A24"/>
+    <path d="M116 60 h8 M117 74 h6 M118 88 h4" stroke="#D96F0E" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M120 44 C114 32 112 24 116 14 M120 44 C120 30 124 22 130 18" stroke="#2E7D4F" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- tomaat en appel bovenaan de tas -->
+  <circle cx="98" cy="104" r="20" fill="#E5483B"/>
+  <circle cx="91" cy="97" r="5" fill="#FFFFFF" opacity="0.35"/>
+  <path d="M98 86 l-6 -4 M98 86 l6 -4 M98 86 v-6" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="141" cy="108" r="17" fill="#9CCB4A"/>
+  <circle cx="135" cy="102" r="4" fill="#FFFFFF" opacity="0.35"/>
+  <path d="M141 92 v-7" stroke="#7A4E2A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M142 88 C148 82 156 82 158 86 C152 90 146 90 142 88 Z" fill="#2E7D4F"/>
+
+  <!-- de tas -->
+  <path d="M58 112 L182 112 L172 204 Q170 212 162 212 L78 212 Q70 212 68 204 Z" fill="#D9A066"/>
+  <path d="M150 112 L182 112 L172 204 Q170 212 162 212 L150 212 Z" fill="#C68A4E" opacity="0.55"/>
+  <rect x="54" y="104" width="132" height="18" rx="7" fill="#C68A4E"/>
+  <rect x="80" y="140" width="80" height="44" rx="12" fill="#0F6B66"/>
+  <path d="M104 162 l10 10 l22 -22" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- glinsters -->
+  <path transform="translate(40 66)" d="M0 -11 C2 -2 2 -2 11 0 C2 2 2 2 0 11 C-2 2 -2 2 -11 0 C-2 -2 -2 -2 0 -11 Z" fill="#F2B705"/>
+  <path transform="translate(208 112) scale(0.8)" d="M0 -11 C2 -2 2 -2 11 0 C2 2 2 2 0 11 C-2 2 -2 2 -11 0 C-2 -2 -2 -2 0 -11 Z" fill="#E8680F"/>
+  <path transform="translate(198 182) scale(0.6)" d="M0 -11 C2 -2 2 -2 11 0 C2 2 2 2 0 11 C-2 2 -2 2 -11 0 C-2 -2 -2 -2 0 -11 Z" fill="#F2B705"/>
+  <path transform="translate(34 160) scale(0.7)" d="M0 -11 C2 -2 2 -2 11 0 C2 2 2 2 0 11 C-2 2 -2 2 -11 0 C-2 -2 -2 -2 0 -11 Z" fill="#E8680F"/>
+</svg>

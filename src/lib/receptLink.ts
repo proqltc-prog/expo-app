@@ -381,6 +381,8 @@ export function stam(woord: string): string {
     if (w.length > 4) w = w.replace(/(eren|en|es|s|n|e|x)$/, '');
     else if (w.length === 4 && i === 0) w = w.replace(/(en|s|x)$/, '');
   }
+  // WEEK-328: een meervoud met dubbele medeklinker ("sjalotten" → "sjalott", "kippen" → "kipp") hoort bij het enkelvoud ("sjalot", "kip").
+  if (w.length > 3) w = w.replace(/([bdfgklmnprst])\1$/, '$1');
   return w.replace(/aa/g, 'a').replace(/ee/g, 'e').replace(/oo/g, 'o').replace(/uu/g, 'u');
 }
 
@@ -681,15 +683,55 @@ export function schikStappen(stappen: readonly string[]): string[] {
  * vindt niets), maar het langste stuk van de kern dat wel treffers geeft ("new potatoes" of "potatoes"). Zonder treffer: de kern.
  */
 export function zoekTermVoor(naam: string, heeftTreffers: (zoek: string) => boolean): string {
-  const kern = kernNaam(naam);
-  const w = kern.split(' ').filter((x) => x && !/\d/.test(x));
-  for (let lengte = w.length; lengte > 0; lengte--) {
-    for (let start = 0; start + lengte <= w.length; start++) {
-      const deel = w.slice(start, start + lengte).join(' ');
-      if (deel.length >= 2 && heeftTreffers(deel)) return deel;
+  const woordenVan = (t: string) => kernNaam(t).split(' ').filter((x) => x && !/\d/.test(x));
+  const hoofd = woordenVan(naam);
+  // WEEK-328: het alternatief tussen haakjes ("sjalotten (of rode ui)"), als het hoofdwoord niets oplevert.
+  const alternatieven = [...naam.matchAll(/\(([^)]*)\)/g)].map((m) => woordenVan(m[1])).filter((w) => w.length);
+
+  /** Het langste aaneengesloten stuk woorden met treffers. */
+  const stuk = (w: string[]): string | undefined => {
+    for (let lengte = w.length; lengte > 0; lengte--) {
+      for (let start = 0; start + lengte <= w.length; start++) {
+        const deel = w.slice(start, start + lengte).join(' ');
+        if (deel.length >= 2 && heeftTreffers(deel)) return deel;
+      }
     }
-  }
-  return w.join(' ') || kern || naam.trim();
+    return undefined;
+  };
+  /**
+   * WEEK-328: een deel van een lang woord: een samengesteld woord ("runderbouillon" → "bouillon", "laurierblaadjes" → "laurier")
+   * of een meervoud ("sjalotten" → "sjalot"). Het langste deel met treffers wint; bij gelijke lengte het einde (het hoofdwoord).
+   */
+  const deelVanWoord = (w: string[]): string | undefined => {
+    let beste: string | undefined;
+    for (const woord of w) {
+      if (woord.length < 7) continue;
+      for (let lengte = woord.length - 1; lengte >= 4; lengte--) {
+        if (beste && lengte <= beste.length) break;
+        const einde = woord.slice(woord.length - lengte);
+        const begin = woord.slice(0, lengte);
+        if (heeftTreffers(einde)) beste = einde;
+        else if (heeftTreffers(begin)) beste = begin;
+      }
+    }
+    return beste;
+  };
+
+  return (
+    stuk(hoofd) ??
+    deelVanWoord(hoofd) ??
+    alternatieven.map(stuk).find(Boolean) ??
+    alternatieven.map(deelVanWoord).find(Boolean) ??
+    (hoofd.join(' ') || kernNaam(naam) || naam.trim())
+  );
+}
+
+/**
+ * WEEK-328: het soort (vegetarisch, vis, vlees) volgt de ingrediënten zolang de gebruiker het niet zelf koos.
+ * Zo wordt een stoofpot niet "vegetarisch" als het vlees pas na het inlezen herkend wordt.
+ */
+export function soortNaWijziging(huidig: Soort, codes: readonly IngredientCode[], doorGebruiker: boolean): Soort {
+  return doorGebruiker ? huidig : soortVanIngredienten(codes);
 }
 
 /** WEEK-326: bewaren met regels in "Nog na te kijken" vraagt eerst een bevestiging; anders zouden ze stil verdwijnen. */
