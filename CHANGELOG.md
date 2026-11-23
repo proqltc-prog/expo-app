@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.162.1] – 2026-11-23
+
+**Jira:** [WEEK-326](https://proqltc-1791495894841.atlassian.net/browse/WEEK-326) (ingelezen recept: geen ingrediënten meer kwijt) · **Confluence:** [WEEK-326](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28475393)
+
+- Gerecht bewaren met regels in "Nog na te kijken" vraagt nu eerst: "Er zijn nog X ingrediënten niet nagekeken", met Nakijken of Toch bewaren. Vroeger verdwenen die regels zonder melding.
+- Receptkaarten met de hoeveelheid achteraan ("Riz basmati 75 g", "Gousse d'ail 1 pièce") worden juist gelezen.
+- Thaise basilicum, (gehakte) cashewnoten en een bouillonblokje worden meteen herkend; groene of rode curry wordt currypasta in plaats van currybladeren.
+- Weetjes ("Le saviez-vous ?", "Wist je dat") worden geen bereidingsstap meer; een tip ("Conseil :", "Tip:") komt bij de vorige stap.
+
 ## [0.162.0] – 2026-11-22
 
 **Jira:** [WEEK-325](https://proqltc-1791495894841.atlassian.net/browse/WEEK-325) (toestemming voor reclame wijzigen) · **Confluence:** [WEEK-325](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28213249)
