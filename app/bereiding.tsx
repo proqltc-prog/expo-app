@@ -30,6 +30,7 @@ import { laadDbRecepten } from '@/opslag/receptenbank';
 import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
+import { Feestbeeld } from '@/ui/feestbeeld';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -265,7 +266,8 @@ export default function Bereiding() {
       <Modal visible={klaarVraag} transparent animationType="fade" onRequestClose={() => setKlaarVraag(false)}>
         <Pressable style={s.achtergrond} onPress={() => setKlaarVraag(false)} accessibilityLabel={t('bereiding.annuleer')}>
           <Pressable style={s.vraag} onPress={() => undefined}>
-            <Text style={s.vraagEmoji}>🎉🍽️</Text>
+            {/* WEEK-328: eigen tekening van een dampende pan in plaats van emoji. */}
+            <Feestbeeld soort="pan" grootte={150} zichtbaar={klaarVraag} />
             <Text style={s.vraagTitel}>{t('bereiding.proficiat')}</Text>
             <Text style={s.vraagTekst}>{kookDag !== undefined ? t('bereiding.gekooktVraag') : t('bereiding.alGekookt')}</Text>
             {kookDag !== undefined && <Text style={s.vraagUitleg}>{t('bereiding.gekooktUitleg')}</Text>}
@@ -328,16 +330,16 @@ const s = StyleSheet.create({
   uit: { opacity: 0.35 },
   achtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 24 },
   vraag: { width: '100%', maxWidth: 380, backgroundColor: '#fff', borderRadius: 24, padding: 24, alignItems: 'center', gap: 10 },
-  vraagEmoji: { fontSize: 44 },
   vraagTitel: { fontSize: 22, fontWeight: '800', color: INKT, textAlign: 'center' },
   vraagTekst: { fontSize: 16, color: INKT, textAlign: 'center', lineHeight: 22 },
   vraagUitleg: { fontSize: 13, color: MUTED, textAlign: 'center' },
   vraagKnoppen: { flexDirection: 'row', gap: 10, marginTop: 8, alignSelf: 'stretch' },
-  vraagKnop: { flex: 1, borderRadius: 16, paddingVertical: 14, alignItems: 'center' },
+  // WEEK-328: beide knoppen even hoog, tekst in het midden (ook als ze over twee regels loopt).
+  vraagKnop: { flex: 1, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center', minHeight: 52 },
   vraagKnopLijn: { borderWidth: 1.5, borderColor: PETROL },
-  vraagKnopLijnTekst: { color: PETROL, fontWeight: '700', fontSize: 16 },
+  vraagKnopLijnTekst: { color: PETROL, fontWeight: '700', fontSize: 16, textAlign: 'center' },
   vraagKnopVol: { backgroundColor: GROEN },
-  vraagKnopVolTekst: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  vraagKnopVolTekst: { color: '#fff', fontWeight: '700', fontSize: 16, textAlign: 'center' },
   leegWrap: { flex: 1, backgroundColor: PAPIER, alignItems: 'center', justifyContent: 'center', padding: 24 },
   leeg: { fontSize: 16, color: MUTED, textAlign: 'center' },
 });

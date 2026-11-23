@@ -56,3 +56,11 @@ export function minutenVoorKooktijd(code: KooktijdCode, schattingen: Record<Kook
   const m = schattingen[code];
   return binnenKooktijd(m) && kooktijdVan(m) === code ? m : KOOKTIJD_SCHATTING_STANDAARD[code];
 }
+
+/**
+ * WEEK-328: de kooktijd van een ingelezen recept dat langer dan een uur duurt: "uitgebreid" (de langste keuze in de app).
+ * Korter of onbekend: undefined (dan geldt de kooktijd van het recept zelf, of kiest de gebruiker).
+ */
+export function kooktijdVoorTeLang(minuten: number | undefined): KooktijdCode | undefined {
+  return minuten !== undefined && minuten > MAX_KOOKTIJD_MIN ? 'uitgebreid' : undefined;
+}

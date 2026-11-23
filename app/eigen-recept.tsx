@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -28,13 +28,13 @@ import {
 import { toonGezinsnaam } from '@/lib/gezinbeheer';
 import type { LosWijziging } from '@/lib/frigo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
-import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, MAX_KOOKTIJD_MIN, minutenVoorKooktijd } from '@/lib/kooktijd';
+import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, kooktijdVoorTeLang, MAX_KOOKTIJD_MIN, minutenVoorKooktijd } from '@/lib/kooktijd';
 import { terugPad } from '@/lib/terug';
 import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
-import { moetNakijkenMelden, NakijkRegel, omrekenen, ontleedRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink, zoekTermVoor } from '@/lib/receptLink';
+import { moetNakijkenMelden, NakijkRegel, omrekenen, ontleedRegel, RuwRecept, soortNaWijziging, verwerkRecept, voegSamen, zoekLink, zoekTermVoor } from '@/lib/receptLink';
 import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
 import { fotoTijdelijkOnbereikbaar, type FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
@@ -56,6 +56,8 @@ import { koppelingenUit, type KoppelResultaat, opzoekenTijdelijkOnbereikbaar } f
 // Voor een ingrediënt uit de app liggen de eenheid en de categorie vast, zoals op de lijst en in de frigo.
 
 const KLEUR = '#2e7d4f';
+/** WEEK-328: kleur voor een regel die aandacht vraagt in de melding na het inlezen. */
+const ORANJE_MELDING = '#C9500A';
 
 /** Een ingrediënt in het formulier; de hoeveelheid komt uit de popup en is altijd ingevuld. */
 import { isKeukenEenheid, KeukenEenheid, keuzeEenheden, naarBasis, pastBij } from '@/lib/eenheden';
@@ -102,6 +104,8 @@ export default function EigenReceptScherm() {
   const [bestaand, setBestaand] = useState<EigenRecept | undefined>(undefined);
   const [naam, setNaam] = useState('');
   const [soort, setSoort] = useState<Soort>('vegetarisch');
+  // WEEK-328: heeft de gebruiker het soort zelf gekozen (of is het een bestaand gerecht)? Anders volgt het de ingrediënten.
+  const [soortGekozen, setSoortGekozen] = useState(false);
   // WEEK-218: de minuten volgen uit de gekozen kooktijd (snel als start); er is geen minutenvak meer.
   const [minuten, setMinuten] = useState(String(KOOKTIJD_SCHATTING_STANDAARD.snel));
   const [stijlen, setStijlen] = useState<StijlKeuze[]>([GEZIN_STIJL]);
@@ -163,6 +167,7 @@ export default function EigenReceptScherm() {
         setBestaand(r);
         setNaam(f.naam);
         setSoort(f.soort);
+        setSoortGekozen(!!r);
         setMinuten(f.minuten);
         setStijlen(f.stijlen);
         setSeizoenen(f.seizoenen);
@@ -338,7 +343,10 @@ export default function EigenReceptScherm() {
     if (ingelezen.naam) setNaam(ingelezen.naam);
     setSoort(ingelezen.soort);
     const teLang = ingelezen.minuten !== undefined && ingelezen.minuten > MAX_KOOKTIJD_MIN ? ingelezen.minuten : undefined;
-    if (ingelezen.minuten !== undefined && !teLang) setMinuten(String(ingelezen.minuten));
+    // WEEK-328: langer dan een uur: meteen "Uitgebreid" (de gebruiker kan het nog aanpassen); vroeger bleef de kooktijd leeg.
+    const langeKooktijd = kooktijdVoorTeLang(ingelezen.minuten);
+    if (langeKooktijd) setMinuten(String(minutenVoorKooktijd(langeKooktijd, schattingen)));
+    else if (ingelezen.minuten !== undefined) setMinuten(String(ingelezen.minuten));
     if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
     setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
     setNakijken(ingelezen.nakijken);
@@ -419,8 +427,19 @@ export default function EigenReceptScherm() {
   };
   // Verdwijnt de regel op een andere manier (Gebruik, Overslaan), dan wordt er ook niet meer voor gezocht.
   useEffect(() => {
-    if (zoektVoor && !nakijken.includes(zoektVoor)) setZoektVoor(undefined);
+    if (zoektVoor && !nakijken.includes(zoektVoor)) {
+      setZoektVoor(undefined);
+      // WEEK-328: ook de zoekterm van die regel weg (bv. na Overslaan bleef "laurierblaadjes" staan).
+      setZoek('');
+      setPlusHint(false);
+    }
   }, [nakijken, zoektVoor]);
+
+  // WEEK-328: het soort volgt de ingrediënten (ook die nog na te kijken zijn) zolang de gebruiker het niet zelf koos.
+  useEffect(() => {
+    const codes = [...rijen.flatMap((r) => (r.code ? [r.code] : [])), ...nakijken.flatMap((n) => (n.code ? [n.code] : []))];
+    setSoort((huidig) => soortNaWijziging(huidig, codes, soortGekozen));
+  }, [rijen, nakijken, soortGekozen]);
 
   /** De reden waarom een opzoeking niets bruikbaars gaf, voor de melding. */
   const redenVan = (r: { ok: true; resultaten: KoppelResultaat[] } | { ok: false; fout: string }): NieuwFout => {
@@ -442,6 +461,8 @@ export default function EigenReceptScherm() {
         setNieuwFout(redenVan(r));
         return;
       }
+      // WEEK-328: opzoeken werkt weer: de melding 'tijdelijk niet beschikbaar' klopt niet meer.
+      setLinkMelding((m) => (m?.opzoekenTijdelijk ? { ...m, opzoekenTijdelijk: false } : m));
       const hoeveelheid = omrekenen(ontleedRegel(n.tekst), code, linkMelding?.personen ?? 1);
       if (hoeveelheid !== undefined) {
         setRijen((rij) => voegSamen(rij, { code, naam: ingredientNaam(code, taal), hoeveelheid, eenheid: standaardEenheid(code) }));
@@ -467,6 +488,7 @@ export default function EigenReceptScherm() {
         setNieuwFout(redenVan(r));
         return;
       }
+      setLinkMelding((m) => (m?.opzoekenTijdelijk ? { ...m, opzoekenTijdelijk: false } : m));
       setZoek('');
       kiesTreffer({ code, naam: ingredientNaam(code, taal) });
     } finally {
@@ -702,11 +724,16 @@ export default function EigenReceptScherm() {
         </View>
       )}
       {linkMelding && (
-        <View style={s.uitleg}>
-          <Text style={s.uitlegTekst}>{t('recept.link.klaar', { aantal: linkMelding.aantal })}</Text>
-          <Text style={s.uitlegTekst}>{t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}</Text>
-          {linkMelding.teLang !== undefined && <Text style={s.uitlegTekst}>{t('recept.link.teLang', { minuten: linkMelding.teLang })}</Text>}
-          {linkMelding.opzoekenTijdelijk && <Text style={s.uitlegTekst}>{t('recept.link.opzoekenTijdelijk')}</Text>}
+        // WEEK-328: elke boodschap op een eigen regel met een icoon; wat aandacht vraagt in oranje.
+        <View style={s.melding}>
+          <MeldingRegel icoon="checkmark-circle" kleur={KLEUR} vet tekst={t('recept.link.klaar', { aantal: linkMelding.aantal })} />
+          <MeldingRegel
+            icoon="people-outline"
+            kleur={KLEUR}
+            tekst={t(linkMelding.vanSite ? 'recept.link.personen' : linkMelding.bron === 'foto' ? 'recept.foto.personenGeschat' : 'recept.link.personenGeschat', { n: linkMelding.personen })}
+          />
+          {linkMelding.teLang !== undefined && <MeldingRegel icoon="time-outline" kleur={ORANJE_MELDING} tekst={t('recept.link.teLang', { minuten: linkMelding.teLang })} />}
+          {linkMelding.opzoekenTijdelijk && <MeldingRegel icoon="cloud-offline-outline" kleur={ORANJE_MELDING} tekst={t('recept.link.opzoekenTijdelijk')} />}
         </View>
       )}
       <Text style={s.label}>{t('recept.naam')}</Text>
@@ -716,7 +743,7 @@ export default function EigenReceptScherm() {
       <Text style={s.label}>{t('recept.soort')}</Text>
       <View style={s.rijChips}>
         {SOORTEN.map((k) => (
-          <Chip key={k} tekst={t(`soort.${k}`)} actief={soort === k} onPress={() => setSoort(k)} />
+          <Chip key={k} tekst={t(`soort.${k}`)} actief={soort === k} onPress={() => { setSoort(k); setSoortGekozen(true); }} />
         ))}
       </View>
 
@@ -929,6 +956,16 @@ export default function EigenReceptScherm() {
   );
 }
 
+/** WEEK-328: één regel in de melding na het inlezen: icoon en tekst. */
+function MeldingRegel({ icoon, kleur, tekst, vet }: { icoon: ComponentProps<typeof Ionicons>['name']; kleur: string; tekst: string; vet?: boolean }) {
+  return (
+    <View style={s.meldingRegel}>
+      <Ionicons name={icoon} size={18} color={kleur} style={s.meldingIcoon} />
+      <Text style={[s.meldingTekst, vet && s.meldingVet]}>{tekst}</Text>
+    </View>
+  );
+}
+
 function Chip({ tekst, actief, onPress }: { tekst: string; actief: boolean; onPress: () => void }) {
   return (
     <Pressable
@@ -982,6 +1019,11 @@ const s = StyleSheet.create({
   bevestigTekst: { color: '#7a1c1c', fontWeight: '700', textAlign: 'center' },
   verwijderJa: { backgroundColor: '#c62828' },
   uitleg: { backgroundColor: '#E8F3EC', borderRadius: 12, padding: 12, marginBottom: 4 },
+  melding: { backgroundColor: '#F2F8F4', borderRadius: 14, borderWidth: 1, borderColor: '#D6E9DD', paddingVertical: 10, paddingHorizontal: 12, gap: 8, marginBottom: 4 },
+  meldingRegel: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  meldingIcoon: { marginTop: 1 },
+  meldingTekst: { flex: 1, color: '#1f3d2b', fontSize: 14, lineHeight: 20 },
+  meldingVet: { fontWeight: '700' },
   uitlegTekst: { color: '#1f5c38', fontSize: 14, lineHeight: 20 },
   geenTreffer: { color: '#666', marginTop: 6 },
   verwijderTekst: { color: '#c62828', fontWeight: '600' },

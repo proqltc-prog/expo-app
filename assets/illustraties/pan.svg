@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <!-- WEEK-328: Proficiat na de bereiding – een dampende pan op tafel in de Famenu-kleuren. Eigen tekening; de stoom is een aparte laag (stoom.svg). -->
+  <circle cx="120" cy="124" r="104" fill="#FFF1E6"/>
+
+  <!-- tafel en onderzetter -->
+  <ellipse cx="120" cy="200" rx="94" ry="14" fill="#E4E8E1"/>
+  <rect x="66" y="188" width="108" height="9" rx="4.5" fill="#C98B3E"/>
+
+  <!-- pollepel in de pan -->
+  <g transform="rotate(26 166 84)">
+    <rect x="162" y="38" width="9" height="86" rx="4.5" fill="#C98B3E"/>
+    <ellipse cx="166.5" cy="34" rx="12" ry="16" fill="#D9A066"/>
+  </g>
+
+  <!-- gerecht -->
+  <ellipse cx="120" cy="118" rx="62" ry="10" fill="#E8680F"/>
+  <circle cx="98" cy="115" r="5" fill="#C9500A"/>
+  <circle cx="134" cy="119" r="6" fill="#C9500A"/>
+  <circle cx="116" cy="121" r="3.5" fill="#2E7D4F"/>
+  <circle cx="146" cy="114" r="3" fill="#2E7D4F"/>
+  <circle cx="104" cy="122" r="2.5" fill="#6CC28A"/>
+
+  <!-- pan -->
+  <rect x="38" y="126" width="24" height="11" rx="5.5" fill="#0B504C"/>
+  <rect x="178" y="126" width="24" height="11" rx="5.5" fill="#0B504C"/>
+  <path d="M56 124 H184 V168 Q184 192 160 192 H80 Q56 192 56 168 Z" fill="#0F6B66"/>
+  <rect x="50" y="116" width="140" height="14" rx="7" fill="#138079"/>
+  <rect x="68" y="136" width="9" height="40" rx="4.5" fill="#FFFFFF" opacity="0.18"/>
+  <path d="M100 158 C100 150 112 148 120 156 C128 148 140 150 140 158 C140 168 126 174 120 180 C114 174 100 168 100 158 Z" fill="#FFFFFF" opacity="0.9"/>
+
+  <!-- blaadje op tafel -->
+  <path d="M190 196 C196 184 208 180 216 182 C212 192 202 198 190 196 Z" fill="#4CAF6E"/>
+  <path d="M30 194 C34 184 44 180 52 182 C48 190 40 196 30 194 Z" fill="#6CC28A"/>
+
+  <!-- glinsters -->
+  <path transform="translate(38 70)" d="M0 -11 C2 -2 2 -2 11 0 C2 2 2 2 0 11 C-2 2 -2 2 -11 0 C-2 -2 -2 -2 0 -11 Z" fill="#F2B705"/>
+  <path transform="translate(206 96) scale(0.75)" d="M0 -11 C2 -2 2 -2 11 0 C2 2 2 2 0 11 C-2 2 -2 2 -11 0 C-2 -2 -2 -2 0 -11 Z" fill="#E8680F"/>
+</svg>

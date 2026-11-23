@@ -8,6 +8,18 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.164.0] – 2026-11-23
+
+**Jira:** [WEEK-328](https://proqltc-1791495894841.atlassian.net/browse/WEEK-328) (UAT-bevindingen en eigen illustraties) · **Confluence:** [WEEK-328](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28639233)
+
+- "Missie volbracht" en "Proficiat" met eigen tekeningen in de Famenu-kleuren: een volle boodschappentas en een dampende pan, die zacht in beeld springen. Geen confetti of emoji meer.
+- Het Proficiat-venster heeft nette, even hoge knoppen.
+- De melding na het inlezen van een recept staat op aparte regels met een icoon, met kortere teksten.
+- Inlezen herkent meervouden zoals "sjalotten" en "kippen".
+- Zelf kiezen zoekt slimmer: "runderbouillon" wordt "bouillon", "laurierblaadjes" wordt "laurier", en anders het alternatief tussen haakjes. Na Overslaan is het zoekveld weer leeg.
+- Opgelost: een gerecht met vlees of vis werd soms als "vegetarisch" bewaard als het vlees pas na het inlezen herkend werd. Het soort volgt nu de ingrediënten, tot je het zelf kiest.
+- Een ingelezen recept van meer dan een uur krijgt meteen de kooktijd "Uitgebreid".
+
 ## [0.163.0] – 2026-11-23
 
 **Jira:** [WEEK-327](https://proqltc-1791495894841.atlassian.net/browse/WEEK-327) (moderne bereiding en Missie volbracht) · **Confluence:** [WEEK-327](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28573697)
