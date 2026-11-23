@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { DatumKiezer } from '@/ui/datumKiezer';
 import { useTaal } from '@/ui/taal';
 import { popupHoogte } from '@/lib/popupHoogte';
+import { VELD, VELD_FOUT } from '@/ui/invoerStijl';
 
 const ORANJE = '#E8680F';
 const INKT = '#17201A';
@@ -209,8 +210,9 @@ const s = StyleSheet.create({
   naam: { fontSize: 15, color: MUTED, marginBottom: 6 },
   label: { fontSize: 13, fontWeight: '700', color: MUTED, marginTop: 8 },
   vast: { fontSize: 14, color: INKT, marginTop: 8, fontWeight: '600' },
-  veld: { width: '100%', borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', color: INKT },
-  veldFout: { borderColor: '#B23A05' },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  veld: { ...VELD, width: '100%' },
+  veldFout: { ...VELD_FOUT },
   fout: { color: '#B23A05', fontSize: 13 },
   rij: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1, borderColor: '#ccc', borderRadius: 16, paddingHorizontal: 11, paddingVertical: 5, backgroundColor: '#fff' },

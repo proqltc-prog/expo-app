@@ -200,9 +200,10 @@ describe('WEEK-247: koppelen aan de ingrediëntenlijst, zonder dubbels', () => {
 
   test('een gedeeltelijke naam is een voorstel, geen zekerheid', () => {
     assert.deepEqual(code('grote rode ui'), { code: 'rode_ui', zeker: true });
-    const tros = code('trostomaten');
-    assert.equal(tros?.code, 'tomaat');
-    assert.equal(tros?.zeker, false);
+    // WEEK-329: een soort groente (trostomaten) is wel zeker het ingrediënt; bij zuivel blijft het een voorstel.
+    assert.deepEqual(code('trostomaten'), { code: 'tomaat', zeker: true });
+    assert.deepEqual(code('havermelk'), { code: 'melk', zeker: false });
+    assert.deepEqual(code('notenboter'), { code: 'boter', zeker: false });
   });
 
   test('iets dat niet lijkt op een ingrediënt uit de lijst, wordt niet gekoppeld', () => {

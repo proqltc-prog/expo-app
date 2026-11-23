@@ -32,6 +32,7 @@ import type { EigenRecept } from '@/lib/eigenrecepten';
 import { Profiel, standaardProfiel } from '@/lib/profiel';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
+import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD } from '@/ui/invoerStijl';
 
 // Zelf kiezen (WEEK-44): een recept kiezen, met de voorkeuren als filter en een zoekbalk.
 // WEEK-321: enkel zoeken en kiezen. Eén lijst met de gerechten van de app en die van het gezin (met een huisje),
@@ -191,9 +192,10 @@ export default function Kies() {
         })}
       </View>
       <TextInput
-        style={s.zoek}
+        style={[s.zoek, !zoek && LEEG_VELD]}
         value={zoek}
         onChangeText={setZoek}
+        placeholderTextColor={PLACEHOLDER_KLEUR}
         placeholder={t('kies.zoek')}
         accessibilityLabel={t('kies.zoek')}
         autoCorrect={false}
@@ -260,7 +262,8 @@ const s = StyleSheet.create({
   tabActief: { backgroundColor: KLEUR },
   tabTekst: { fontSize: 14, fontWeight: '600', color: KLEUR, flexShrink: 1, textAlign: 'center' },
   tabTekstActief: { color: '#fff' },
-  zoek: { borderWidth: 1.5, borderColor: KLEUR, borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  zoek: { ...VELD },
   soorten: { flexDirection: 'row', gap: 8 },
   soortKnop: { flex: 1, minHeight: 40, borderRadius: 20, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
   soortTekst: { fontSize: 14, fontWeight: '600' },

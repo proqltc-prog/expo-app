@@ -6,6 +6,7 @@ import { leesHoeveelheid } from '@/lib/frigo';
 import { heeftExact, LosVoorstel, zoekLos } from '@/lib/losVoorstellen';
 import { eenheidNaam } from '@/i18n';
 import { useTaal } from '@/ui/taal';
+import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD } from '@/ui/invoerStijl';
 
 const INKT = '#17201A';
 
@@ -58,7 +59,8 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
       <View style={s.blok}>
         <View style={s.invoer}>
           <TextInput
-            style={[s.veld, s.veldFlex]}
+            style={[s.veld, s.veldFlex, !nieuw && LEEG_VELD]}
+            placeholderTextColor={PLACEHOLDER_KLEUR}
             placeholder={t('frigo.zoekIngredient')}
             value={nieuw}
             onChangeText={setNieuw}
@@ -109,7 +111,7 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
 
   return (
     <View style={s.blok}>
-      <TextInput style={s.veld} placeholder={t('frigo.zoekIngredient')} value={zoek} onChangeText={setZoek} autoFocus={autoFocus} accessibilityLabel={t('frigo.zoekIngredient')} />
+      <TextInput style={[s.veld, !zoek && LEEG_VELD]} placeholderTextColor={PLACEHOLDER_KLEUR} placeholder={t('frigo.zoekIngredient')} value={zoek} onChangeText={setZoek} autoFocus={autoFocus} accessibilityLabel={t('frigo.zoekIngredient')} />
       {zoek.trim() ? (
         resultaten.length === 0 ? (
           <Text style={s.leeg}>{t('frigo.geenIngredient')}</Text>
@@ -133,7 +135,8 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
                   {open && (
                     <View style={s.hoeveelheidRij}>
                       <TextInput
-                        style={[s.veld, s.getal]}
+                        style={[s.veld, s.getal, !hoeveelheid && LEEG_VELD]}
+                        placeholderTextColor={PLACEHOLDER_KLEUR}
                         placeholder={t('frigo.hoeveelheid')}
                         value={hoeveelheid}
                         onChangeText={setHoeveelheid}
@@ -159,7 +162,8 @@ export function ProductInvoer({ sheet, accent, accentZacht, staatOp, onReceptKie
 const s = StyleSheet.create({
   blok: { gap: 8, marginTop: 6 },
   invoer: { flexDirection: 'row', gap: 8, marginTop: 6, alignItems: 'center' },
-  veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', color: INKT, minWidth: 0 },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  veld: { ...VELD, minWidth: 0 },
   veldFlex: { flex: 1 },
   getal: { width: 110 },
   plus: { width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
