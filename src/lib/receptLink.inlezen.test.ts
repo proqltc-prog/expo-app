@@ -1,7 +1,7 @@
 // WEEK-326: een ingelezen recept (receptkaart, foto) verliest geen ingrediënten meer; tips en weetjes zijn geen stappen.
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { koppelIngredient, moetNakijkenMelden, ontleedRegel, schikStappen, verwerkRecept, type RuwRecept } from './receptLink';
+import { koppelIngredient, moetNakijkenMelden, ontleedRegel, schikStappen, verwerkRecept, zoekTermVoor, type RuwRecept } from './receptLink';
 
 const recept = (ingredienten: string[], stappen: string[] = []): RuwRecept => ({ naam: 'Test', personen: 1, taal: 'fr', ingredienten, stappen });
 
@@ -119,4 +119,18 @@ describe('WEEK-326: regressie – bestaande regels blijven zoals voorheen', () =
   test('geroosterde paprika blijft een eigen ingrediënt', () =>
     assert.equal(koppelIngredient('geroosterde paprika', ['nl'])?.code, 'geroosterde_paprika'));
   test('curry in poeder blijft currypoeder',() => assert.equal(koppelIngredient('curry en poudre', ['fr'])?.code, 'currypoeder'));
+});
+
+describe('WEEK-326: zoekterm voor "Zelf kiezen"', () => {
+  const kent = (namen: string[]) => (q: string) => namen.some((n) => n.includes(q));
+  test('het langste stuk met treffers ("new potatoes cut into chunks" → "potatoes")', () =>
+    assert.equal(zoekTermVoor('new potatoes cut into chunks', kent(['potatoes'])), 'potatoes'));
+  test('twee woorden als die samen treffers geven', () =>
+    assert.equal(zoekTermVoor('green curry paste, to taste', kent(['green curry paste'])), 'green curry paste'));
+  test('haakjes en bijwoorden vallen weg', () =>
+    assert.equal(zoekTermVoor('boneless skinless chicken (breasts or thighs)', kent(['chicken'])), 'chicken'));
+  test('zonder treffer: de kern van de naam', () =>
+    assert.equal(zoekTermVoor('verse dragon', () => false), 'dragon'));
+  test('getallen vallen weg; korte namen zoals "ui" werken', () =>
+    assert.equal(zoekTermVoor('2 ui', (q) => q === 'ui'), 'ui'));
 });

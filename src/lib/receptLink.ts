@@ -676,6 +676,22 @@ export function schikStappen(stappen: readonly string[]): string[] {
   return uit;
 }
 
+/**
+ * WEEK-326: de zoekterm voor "Zelf kiezen" bij een regel om na te kijken. Niet de hele regel ("new potatoes cut into chunks"
+ * vindt niets), maar het langste stuk van de kern dat wel treffers geeft ("new potatoes" of "potatoes"). Zonder treffer: de kern.
+ */
+export function zoekTermVoor(naam: string, heeftTreffers: (zoek: string) => boolean): string {
+  const kern = kernNaam(naam);
+  const w = kern.split(' ').filter((x) => x && !/\d/.test(x));
+  for (let lengte = w.length; lengte > 0; lengte--) {
+    for (let start = 0; start + lengte <= w.length; start++) {
+      const deel = w.slice(start, start + lengte).join(' ');
+      if (deel.length >= 2 && heeftTreffers(deel)) return deel;
+    }
+  }
+  return w.join(' ') || kern || naam.trim();
+}
+
 /** WEEK-326: bewaren met regels in "Nog na te kijken" vraagt eerst een bevestiging; anders zouden ze stil verdwijnen. */
 export function moetNakijkenMelden(aantalNakijken: number, bevestigd: boolean): boolean {
   return aantalNakijken > 0 && !bevestigd;

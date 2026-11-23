@@ -16,6 +16,9 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 - Receptkaarten met de hoeveelheid achteraan ("Riz basmati 75 g", "Gousse d'ail 1 pièce") worden juist gelezen.
 - Thaise basilicum, (gehakte) cashewnoten en een bouillonblokje worden meteen herkend; groene of rode curry wordt currypasta in plaats van currybladeren.
 - Weetjes ("Le saviez-vous ?", "Wist je dat") worden geen bereidingsstap meer; een tip ("Conseil :", "Tip:") komt bij de vorige stap.
+- "Zelf zoeken" heet nu "Zelf kiezen" en is duidelijker: de regel blijft gemarkeerd staan ("↓ Kies hieronder het juiste ingrediënt") tot je echt een ingrediënt kiest, boven het zoekveld staat voor welke regel je zoekt, en het zoekveld krijgt een korte zoekterm met treffers (met het voorstel erbij). De hoeveelheid uit het recept staat al ingevuld. Annuleren laat de regel gewoon staan.
+- De + naast het zoekveld doet nu altijd iets: bij meerdere treffers zegt de app "Tik hieronder op het juiste ingrediënt", zonder treffer zoekt ze het ingrediënt op.
+- De uitleg bij "Nog na te kijken" zegt wat Gebruik, Zelf kiezen en Overslaan doen.
 
 ## [0.162.0] – 2026-11-22
 
