@@ -187,6 +187,23 @@ export function isExactBekend(zoek: string, keuzes: readonly IngredientKeuze[]):
   return keuzes.some((k) => normaliseer(k.naam) === q);
 }
 
+/**
+ * WEEK-326: wat de + naast het zoekveld doet. Vroeger gebeurde er niets bij meerdere of geen treffers.
+ * - kies: een treffer die exact zo heet, of de enige treffer → de popup opent;
+ * - meerdere: de gebruiker tikt op een van de treffers (de app zegt dat);
+ * - nieuw: geen treffer → het ingrediënt laten opzoeken of als nieuw toevoegen;
+ * - niets: leeg zoekveld.
+ */
+export type PlusActie = { actie: 'kies'; keuze: IngredientKeuze } | { actie: 'meerdere' } | { actie: 'nieuw' } | { actie: 'niets' };
+
+export function plusActie(zoek: string, keuzes: readonly IngredientKeuze[]): PlusActie {
+  if (!normaliseer(zoek)) return { actie: 'niets' };
+  const q = normaliseer(zoek);
+  const keuze = keuzes.find((k) => normaliseer(k.naam) === q) ?? (keuzes.length === 1 ? keuzes[0] : undefined);
+  if (keuze) return { actie: 'kies', keuze };
+  return keuzes.length ? { actie: 'meerdere' } : { actie: 'nieuw' };
+}
+
 export type Bron = 'alle' | 'mijn' | 'favoriet';
 /** WEEK-320: de velden van het formulier "Nieuw recept" / "Recept bewerken". */
 export type Formulier = {

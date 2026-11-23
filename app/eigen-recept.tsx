@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -15,7 +15,7 @@ import {
   formulierVoor,
   Fout,
   GEZIN_STIJL,
-  isExactBekend,
+  plusActie,
   nieuweId,
   nogGeldigeFouten,
   standaardEenheid,
@@ -26,7 +26,6 @@ import {
   zoekIngredienten,
 } from '@/lib/eigenrecepten';
 import { toonGezinsnaam } from '@/lib/gezinbeheer';
-import { normaliseer } from '@/lib/frigoSheets';
 import type { LosWijziging } from '@/lib/frigo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
 import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, MAX_KOOKTIJD_MIN, minutenVoorKooktijd } from '@/lib/kooktijd';
@@ -35,7 +34,7 @@ import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
 import { laadDbRecepten } from '@/opslag/receptenbank';
 import { laadGezin } from '@/opslag/sync';
 import { useTaal } from '@/ui/taal';
-import { NakijkRegel, omrekenen, ontleedRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink } from '@/lib/receptLink';
+import { moetNakijkenMelden, NakijkRegel, omrekenen, ontleedRegel, RuwRecept, verwerkRecept, voegSamen, zoekLink, zoekTermVoor } from '@/lib/receptLink';
 import { haalReceptOp, LinkFout } from '@/opslag/receptLink';
 import { fotoTijdelijkOnbereikbaar, type FotoFout } from '@/lib/receptFoto';
 import { FotoBron, kiesFoto, leesReceptUitFoto } from '@/opslag/receptFoto';
@@ -92,7 +91,7 @@ const FOUT_TEKST: Record<Fout, string> = {
 };
 
 export default function EigenReceptScherm() {
-  const { t, taal } = useTaal();
+  const { t, tn, taal } = useTaal();
   const params = useLocalSearchParams<{ id?: string; terug?: string }>();
   const id = params.id;
   // WEEK-218: terug naar het scherm vanwaar dit geopend werd (verborgen tab: router.back() ging naar het beginscherm).
@@ -125,6 +124,20 @@ export default function EigenReceptScherm() {
   const [linkFout, setLinkFout] = useState<LinkFout | 'filmpje' | undefined>(undefined);
   const [linkMelding, setLinkMelding] = useState<LinkMelding | undefined>(undefined);
   const [nakijken, setNakijken] = useState<NakijkRegel[]>([]);
+  // WEEK-326: bewaren met regels in "Nog na te kijken" vraagt eerst een bevestiging; "Nakijken" scrolt naar die regels.
+  const [vraagNakijken, setVraagNakijken] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const [nakijkY, setNakijkY] = useState(0);
+  const [formulierY, setFormulierY] = useState(0);
+  // WEEK-326: "Zelf kiezen": de regel blijft staan (gemarkeerd) tot er echt een ingrediënt voor gekozen is.
+  const [zoektVoor, setZoektVoor] = useState<NakijkRegel | undefined>(undefined);
+  const [plusHint, setPlusHint] = useState(false);
+  const zoekVeldRef = useRef<TextInput>(null);
+  const [zoekVeldY, setZoekVeldY] = useState(0);
+  // De vraag staat onder de knoppen: schuif ze in beeld zodra ze verschijnt.
+  useEffect(() => {
+    if (vraagNakijken) requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+  }, [vraagNakijken]);
   // WEEK-251: een recept inlezen via een foto (Google Gemini via de Supabase-functie recept-foto).
   const [fotoOpen, setFotoOpen] = useState(false);
   const [fotoBezig, setFotoBezig] = useState(false);
@@ -227,13 +240,22 @@ export default function EigenReceptScherm() {
     setPopupDoel(null);
   };
 
-  /** De plus: een treffer die exact zo heet, of de enige treffer. Een onbekende naam kan niet (WEEK-245). */
+  /**
+   * Een gekozen ingrediënt uit het zoekveld. WEEK-326: zoekt de gebruiker voor een regel om na te kijken, dan staat de
+   * hoeveelheid uit het recept al ingevuld (als die om te rekenen is).
+   */
+  const kiesTreffer = (k: { code?: EigenIngredient['code']; naam: string }) => {
+    const h = zoektVoor && k.code ? omrekenen(ontleedRegel(zoektVoor.tekst), k.code, linkMelding?.personen ?? 1) : undefined;
+    const voorstel: Rij | undefined = k.code && h !== undefined ? { code: k.code, naam: k.naam, hoeveelheid: h, eenheid: standaardEenheid(k.code) } : undefined;
+    openPopup({ code: k.code, naam: k.naam }, voorstel);
+  };
+
+  /** De plus (WEEK-326): de juiste treffer kiezen, bij meerdere treffers zeggen dat je er een kiest, zonder treffer opzoeken. */
   const plus = () => {
-    const naam = zoek.trim();
-    if (!naam) return;
-    const exact = isExactBekend(naam, zoekTreffers) ? zoekTreffers.find((k) => normaliseer(k.naam) === normaliseer(naam)) : undefined;
-    const keuze = exact ?? (zoekTreffers.length === 1 ? zoekTreffers[0] : undefined);
-    if (keuze) openPopup({ code: keuze.code, naam: keuze.naam });
+    const r = plusActie(zoek, zoekTreffers);
+    if (r.actie === 'kies') kiesTreffer(r.keuze);
+    else if (r.actie === 'meerdere') setPlusHint(true);
+    else if (r.actie === 'nieuw') void voegNieuwToe();
   };
 
   const bewaarPopup = (w: LosWijziging) => {
@@ -257,7 +279,13 @@ export default function EigenReceptScherm() {
     if (popupDoel.nakijk !== undefined) {
       const weg = popupDoel.nakijk;
       setNakijken((n) => n.filter((_, i) => i !== weg));
+    } else if (popupDoel.index === undefined && zoektVoor) {
+      // WEEK-326: er is een ingrediënt gekozen voor de regel waarvoor gezocht werd; pas nu verdwijnt die regel.
+      const regel = zoektVoor;
+      setNakijken((n) => n.filter((x) => x !== regel));
+      setZoektVoor(undefined);
     }
+    setPlusHint(false);
     setZoek('');
     sluitPopup();
   };
@@ -366,11 +394,33 @@ export default function EigenReceptScherm() {
     if (n) void meldOvergeslagen(n);
     haalNakijkWeg(index);
   };
-  /** Zelf zoeken: de naam komt in het zoekveld en de regel verdwijnt uit de lijst om na te kijken (zonder melding). */
+  /**
+   * Zelf kiezen (WEEK-326): een korte zoekterm die treffers geeft komt in het zoekveld, het veld schuift in beeld en de regel
+   * blijft gemarkeerd staan tot er een ingrediënt gekozen is (anders zou ze stil verdwijnen).
+   */
   const zoekNakijk = (index: number) => {
-    setZoek(nakijken[index]?.naam ?? '');
-    haalNakijkWeg(index);
+    const n = nakijken[index];
+    if (!n) return;
+    const heeftTreffers = (q: string) => zoekIngredienten(q, taal).length > 0;
+    let term = zoekTermVoor(n.naam, heeftTreffers);
+    // Heeft de regel een voorstel, dan moet dat bij de treffers staan ("potatoes" vond enkel "baby potatoes", niet "potato").
+    if (n.code && !zoekIngredienten(term, taal).some((k) => k.code === n.code)) term = ingredientNaam(n.code, taal);
+    setZoektVoor(n);
+    setPlusHint(false);
+    setNieuwFout(undefined);
+    setZoek(term);
+    scrollRef.current?.scrollTo({ y: Math.max(0, formulierY + zoekVeldY - 120), animated: true });
+    setTimeout(() => zoekVeldRef.current?.focus(), 300);
   };
+  const stopZoeken = () => {
+    setZoektVoor(undefined);
+    setPlusHint(false);
+    setZoek('');
+  };
+  // Verdwijnt de regel op een andere manier (Gebruik, Overslaan), dan wordt er ook niet meer voor gezocht.
+  useEffect(() => {
+    if (zoektVoor && !nakijken.includes(zoektVoor)) setZoektVoor(undefined);
+  }, [nakijken, zoektVoor]);
 
   /** De reden waarom een opzoeking niets bruikbaars gaf, voor de melding. */
   const redenVan = (r: { ok: true; resultaten: KoppelResultaat[] } | { ok: false; fout: string }): NieuwFout => {
@@ -418,7 +468,7 @@ export default function EigenReceptScherm() {
         return;
       }
       setZoek('');
-      openPopup({ code, naam: ingredientNaam(code, taal) });
+      kiesTreffer({ code, naam: ingredientNaam(code, taal) });
     } finally {
       setNieuwBezig(false);
     }
@@ -452,7 +502,7 @@ export default function EigenReceptScherm() {
   const toggleSeizoen = (k: Seizoen) =>
     setSeizoenen((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
 
-  const bewaar = async () => {
+  const bewaar = async (nakijkenBevestigd = false) => {
     if (bezig) return;
     const resultaat = valideer({ naam, soort, minuten, stijlen, seizoenen, ingredienten: rijen, stappen });
     if (!resultaat.ok) {
@@ -460,6 +510,11 @@ export default function EigenReceptScherm() {
       return;
     }
     setFouten([]);
+    if (moetNakijkenMelden(nakijken.length, nakijkenBevestigd)) {
+      setVraagNakijken(true);
+      return;
+    }
+    setVraagNakijken(false);
     setBezig(true);
     try {
       const nu = new Date();
@@ -494,9 +549,9 @@ export default function EigenReceptScherm() {
   const fout = (f: Fout) => (getoond.includes(f) ? <Text style={s.fout}>{t(FOUT_TEKST[f] as never, { max: MAX_KOOKTIJD_MIN })}</Text> : null);
 
   return (
-    <ScrollView contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
+    <ScrollView ref={scrollRef} contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
       {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
-      <View style={s.formulier} pointerEvents={magBeheren ? 'auto' : 'none'}>
+      <View style={s.formulier} pointerEvents={magBeheren ? 'auto' : 'none'} onLayout={(e) => setFormulierY(e.nativeEvent.layout.y)}>
       {/* WEEK-245: de hoeveelheden zijn voor één volwassene; de app rekent om voor het gezin. */}
       <View style={s.uitleg}>
         <Text style={s.uitlegTekst}>{t('recept.uitlegVolwassene')}</Text>
@@ -691,10 +746,24 @@ export default function EigenReceptScherm() {
       <Text style={s.label}>{t('recept.ingredienten')}</Text>
       {/* WEEK-247: wat bij het inlezen niet zeker gekoppeld is: voorstel gebruiken, zelf zoeken of overslaan. */}
       {nakijken.length > 0 && (
-        <View style={s.nakijkVak}>
+        <View style={s.nakijkVak} onLayout={(e) => setNakijkY(e.nativeEvent.layout.y)}>
           <Text style={s.nakijkKop}>{t('recept.link.nakijken')}</Text>
           <Text style={s.nakijkUitleg}>{t('recept.link.nakijkUitleg')}</Text>
-          {nakijken.map((n, i) => (
+          {nakijken.map((n, i) => n === zoektVoor ? (
+            // WEEK-326: de regel waarvoor de gebruiker nu zelf een ingrediënt kiest: duidelijk gemarkeerd, met de weg naar beneden.
+            <View key={`${n.tekst}-${i}`} style={[s.nakijkRij, s.nakijkRijActief]}>
+              <Text style={s.nakijkTekst}>{n.tekst}</Text>
+              <Text style={s.nakijkZoekt}>{t('recept.link.zoektHieronder')}</Text>
+              <View style={s.rijChips}>
+                <Pressable style={s.chip} onPress={stopZoeken} accessibilityRole="button">
+                  <Text style={s.chipTekst}>{t('recept.link.stopZoeken')}</Text>
+                </Pressable>
+                <Pressable style={s.chip} onPress={() => slaNakijkOver(i)} accessibilityRole="button">
+                  <Text style={s.chipTekst}>{t('recept.link.sla')}</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
             <View key={`${n.tekst}-${i}`} style={s.nakijkRij}>
               <Text style={s.nakijkTekst}>{n.tekst}</Text>
               <Text style={s.nakijkDetail}>
@@ -739,12 +808,20 @@ export default function EigenReceptScherm() {
       ))}
       {fout('ingredienten')}
 
-      <View style={s.invoerRij}>
+      {zoektVoor && (
+        <View style={s.zoektVoor}>
+          <Ionicons name="search" size={16} color={KLEUR} />
+          <Text style={s.zoektVoorTekst}>{t('recept.link.zoektVoor', { tekst: zoektVoor.tekst })}</Text>
+        </View>
+      )}
+      <View style={s.invoerRij} onLayout={(e) => setZoekVeldY(e.nativeEvent.layout.y)}>
         <TextInput
-          style={[s.veld, s.invoerVeld]}
+          ref={zoekVeldRef}
+          style={[s.veld, s.invoerVeld, zoektVoor && s.invoerVeldActief]}
           value={zoek}
           onChangeText={(x) => {
             setZoek(x);
+            setPlusHint(false);
             // Een oude melding over opzoeken (WEEK-254) hoort niet bij een nieuwe zoekterm.
             setNieuwFout(undefined);
           }}
@@ -758,8 +835,9 @@ export default function EigenReceptScherm() {
           <Text style={s.plusTekst}>+</Text>
         </Pressable>
       </View>
+      {plusHint && zoekTreffers.length > 1 && <Text style={s.plusHint}>{t('recept.kiesTreffer')}</Text>}
       {zoekTreffers.map((k) => (
-        <Pressable key={`${k.code ?? k.naam}`} style={s.treffer} onPress={() => openPopup({ code: k.code, naam: k.naam })} accessibilityRole="button">
+        <Pressable key={`${k.code ?? k.naam}`} style={s.treffer} onPress={() => kiesTreffer(k)} accessibilityRole="button">
           <Text style={s.trefferTekst}>{k.naam}</Text>
         </Pressable>
       ))}
@@ -800,10 +878,33 @@ export default function EigenReceptScherm() {
         <Pressable style={s.annuleer} onPress={terug} disabled={bezig} accessibilityRole="button">
           <Text style={s.annuleerTekst}>{t('recept.annuleer')}</Text>
         </Pressable>
-        <Pressable style={[s.bewaar, bezig && { opacity: 0.6 }]} onPress={bewaar} disabled={bezig} accessibilityRole="button">
+        <Pressable style={[s.bewaar, bezig && { opacity: 0.6 }]} onPress={() => void bewaar()} disabled={bezig} accessibilityRole="button">
           <Text style={s.bewaarTekst}>{t('recept.bewaar')}</Text>
         </Pressable>
       </View>
+      )}
+      {magBeheren && vraagNakijken && nakijken.length > 0 && (
+        <View style={s.bevestig}>
+          <Text style={s.bevestigTekst}>
+            {tn('recept.nakijkenVraag', nakijken.length)}
+          </Text>
+          <View style={s.knoppen}>
+            <Pressable
+              style={s.annuleer}
+              onPress={() => {
+                setVraagNakijken(false);
+                // Het vak staat in het formulier: zijn plaats is relatief tegenover het formulier.
+                scrollRef.current?.scrollTo({ y: Math.max(0, formulierY + nakijkY - 16), animated: true });
+              }}
+              accessibilityRole="button"
+            >
+              <Text style={s.annuleerTekst}>{t('recept.nakijkenTerug')}</Text>
+            </Pressable>
+            <Pressable style={s.bewaar} onPress={() => void bewaar(true)} disabled={bezig} accessibilityRole="button">
+              <Text style={s.bewaarTekst}>{t('recept.nakijkenToch')}</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
       {magBeheren && bestaand && !bevestigVerwijder && (
         <Pressable style={s.verwijderKnop} onPress={() => setBevestigVerwijder(true)} accessibilityRole="button">
@@ -917,4 +1018,11 @@ const s = StyleSheet.create({
   nakijkRij: { backgroundColor: '#fff', borderRadius: 12, padding: 10, gap: 6, borderWidth: 1, borderColor: '#f3e3bf' },
   nakijkTekst: { fontSize: 15, fontWeight: '600', color: '#17201A' },
   nakijkDetail: { fontSize: 13, color: '#5E6B63' },
+  // WEEK-326: de regel waarvoor nu gezocht wordt, en de verwijzing ernaar bij het zoekveld.
+  nakijkRijActief: { borderColor: KLEUR, borderWidth: 2, backgroundColor: '#f1f8f4' },
+  nakijkZoekt: { fontSize: 14, fontWeight: '700', color: KLEUR },
+  zoektVoor: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#f1f8f4', borderRadius: 12, paddingVertical: 8, paddingHorizontal: 12 },
+  zoektVoorTekst: { flex: 1, fontSize: 14, color: '#17201A' },
+  invoerVeldActief: { borderColor: KLEUR, borderWidth: 2 },
+  plusHint: { fontSize: 14, fontWeight: '600', color: KLEUR, marginTop: 4 },
 });

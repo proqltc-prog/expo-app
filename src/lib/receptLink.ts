@@ -271,16 +271,36 @@ function getal(t: string): number {
 const NORM = (t: string) => t.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
 /**
+ * WEEK-326: op receptkaarten staat de hoeveelheid achteraan ("Riz basmati 75 g", "Gousse d'ail 1 pièce", "Cube de bouillon 0.25 pièce").
+ * Die wordt vooraan gezet, zodat de regel gelezen wordt zoals "75 g Riz basmati". Enkel met een gekende eenheid (of zonder eenheid).
+ * Begint de naam zelf met een eenheid ("Gousse d'ail") en is de eenheid achteraan "stuk", dan telt de eenheid van de naam.
+ */
+function zetHoeveelheidVooraan(t: string, GETAL: string): string {
+  if (/^\d/.test(t)) return t;
+  const m = t.match(new RegExp(`^(.*?[a-zA-ZÀ-ÿß)])\\s+(${GETAL})\\s*([a-zA-ZÀ-ÿß.]+)?$`));
+  if (!m) return t;
+  const [, naam, aantal, eenheid] = m;
+  if (!eenheid) return `${aantal} ${naam}`;
+  const bron = EENHEDEN_INDEX.get(NORM(eenheid).replace(/\.$/, ''));
+  if (!bron) return t;
+  const eersteWoord = NORM(naam.split(/[\s'’]/)[0] ?? '');
+  if (bron.soort === 'stuk' && EENHEDEN_INDEX.has(eersteWoord)) return `${aantal} ${naam}`;
+  return `${aantal} ${eenheid} ${naam}`;
+}
+
+/**
  * Ontleedt een ingrediëntregel: "200 g bloem", "2 el olijfolie", "1½ dl melk", "2 teentjes look", "3 rijpe tomaten",
  * "1 x 400 g tomatenblokjes", "1 blik (400 g) tomaten", "200 g de farine", "zout naar smaak".
  */
 export function ontleedRegel(regel: string): Ontleed {
   let t = schoneTekst(regel);
-  for (const [teken, waarde] of Object.entries(BREUKEN)) t = t.replace(new RegExp(`(\\d*)\\s*${teken}`, 'g'), (_, d: string) => `${d || '0'}${waarde}`);
+  // "1 ½" → "1.5"; "bouillon ¼" → "bouillon 0.25" (WEEK-326: zonder cijfer ervoor blijft de spatie staan).
+  for (const [teken, waarde] of Object.entries(BREUKEN)) t = t.replace(new RegExp(`(\\d*)(\\s*)${teken}`, 'g'), (_, d: string, sp: string) => `${d || `${sp}0`}${waarde}`);
   for (const [re, token] of MEERWOORD_EENHEDEN) t = t.replace(re, ` ${token} `);
   t = t.replace(/\s+/g, ' ').trim();
 
   const GETAL = String.raw`\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?`;
+  t = zetHoeveelheidVooraan(t, GETAL);
   let hoeveelheid: number | undefined;
   let rest = t;
   // "2 x 400 g": een aantal keer een hoeveelheid
@@ -347,7 +367,9 @@ const BIJWOORDEN = new Set(
     'crushed melted softened cold warm organic trimmed picked deseeded halved quartered roughly thinly thickly cut into ' +
     'half halves whole rest left serve serving garnish leaves leaf stick sticks rasher rashers smoked streaky dried ' +
     'gedroogd gedroogde gerookt gerookte blaadjes blad bladeren stengel stengels seche sechee seches feuilles feuille ' +
-    'getrocknet getrocknete geraucht blatter blatt stange stangen ontpit ontpitte zaadjes verwijderd'
+    'getrocknet getrocknete geraucht blatter blatt stange stangen ontpit ontpitte zaadjes verwijderd ' +
+    // WEEK-326: "noix de cajou concassées". Niet "geroosterd": "geroosterde paprika" is een eigen ingrediënt.
+    'concasse concassee concasses concassees'
   ).split(' ')
 );
 
@@ -421,6 +443,46 @@ const SYNONIEMEN: Readonly<Record<string, IngredientCode>> = {
   'stoofvlees van het rund': 'rundvlees',
   bacon: 'spek',
   lardons: 'spek',
+  // WEEK-326: receptkaarten (bv. Thaise gerechten)
+  'basilic thai': 'basilicum',
+  'thaise basilicum': 'basilicum',
+  'thai basilicum': 'basilicum',
+  'thai basil': 'basilicum',
+  'thai basilikum': 'basilicum',
+  'cube bouillon': 'bouillonblokje',
+  'cubes bouillon': 'bouillonblokje',
+  'cube bouillon legumes': 'bouillonblokje',
+  'cubes bouillon legumes': 'bouillonblokje',
+  'cube bouillon volaille': 'bouillonblokje',
+  bouillonblokjes: 'bouillonblokje',
+  bouillontablet: 'bouillonblokje',
+  'stock cubes': 'bouillonblokje',
+  bruhwurfel: 'bouillonblokje',
+  // Groene of rode curry is een currypasta of -kruidenmengsel, geen currybladeren.
+  'curry vert': 'currypasta',
+  'curry rouge': 'currypasta',
+  'curry jaune': 'currypasta',
+  'epices curry vert': 'currypasta',
+  'epices curry rouge': 'currypasta',
+  'epices curry jaune': 'currypasta',
+  'pate curry vert': 'currypasta',
+  'pate curry rouge': 'currypasta',
+  'pate curry jaune': 'currypasta',
+  'groene curry': 'currypasta',
+  'rode curry': 'currypasta',
+  'gele curry': 'currypasta',
+  'groene currypasta': 'currypasta',
+  'rode currypasta': 'currypasta',
+  'gele currypasta': 'currypasta',
+  'green curry': 'currypasta',
+  'red curry': 'currypasta',
+  'yellow curry': 'currypasta',
+  'green curry paste': 'currypasta',
+  'red curry paste': 'currypasta',
+  'yellow curry paste': 'currypasta',
+  'grune currypaste': 'currypasta',
+  'rote currypaste': 'currypasta',
+  'gelbe currypaste': 'currypasta',
 };
 
 type Index = { code: IngredientCode; taal: Taal; stammen: string[] }[];
@@ -594,6 +656,47 @@ export function splitsRegel(regel: string, talen: readonly Taal[]): string[] {
   return delen.every((d) => koppelIngredient(d, talen)?.zeker) ? delen : [regel];
 }
 
+/** WEEK-326: weetjes ("Le saviez-vous ? Ce plat contient…") horen niet bij de bereiding. */
+const WEETJE = /^(?:le saviez-vous|saviez-vous|bon a savoir|wist je dat|wist je|goed om te weten|did you know|good to know|fun fact|wusstest du|gut zu wissen)\b/;
+/** WEEK-326: een tip ("Conseil : coupez-le finement") hoort bij de stap ervoor. */
+const TIP = /^(?:conseil|astuce|tip|tips|tipp|hint|truc)\s*[:!.\-–]/;
+
+/** Weetjes vallen weg; een tip wordt achter de vorige stap gezet (staat hij eerst, dan blijft hij een stap). */
+export function schikStappen(stappen: readonly string[]): string[] {
+  const uit: string[] = [];
+  for (const stap of stappen) {
+    const begin = NORM(stap.trim());
+    if (WEETJE.test(begin)) continue;
+    if (TIP.test(begin) && uit.length) {
+      uit[uit.length - 1] = `${uit[uit.length - 1]} ${stap.trim()}`;
+      continue;
+    }
+    uit.push(stap);
+  }
+  return uit;
+}
+
+/**
+ * WEEK-326: de zoekterm voor "Zelf kiezen" bij een regel om na te kijken. Niet de hele regel ("new potatoes cut into chunks"
+ * vindt niets), maar het langste stuk van de kern dat wel treffers geeft ("new potatoes" of "potatoes"). Zonder treffer: de kern.
+ */
+export function zoekTermVoor(naam: string, heeftTreffers: (zoek: string) => boolean): string {
+  const kern = kernNaam(naam);
+  const w = kern.split(' ').filter((x) => x && !/\d/.test(x));
+  for (let lengte = w.length; lengte > 0; lengte--) {
+    for (let start = 0; start + lengte <= w.length; start++) {
+      const deel = w.slice(start, start + lengte).join(' ');
+      if (deel.length >= 2 && heeftTreffers(deel)) return deel;
+    }
+  }
+  return w.join(' ') || kern || naam.trim();
+}
+
+/** WEEK-326: bewaren met regels in "Nog na te kijken" vraagt eerst een bevestiging; anders zouden ze stil verdwijnen. */
+export function moetNakijkenMelden(aantalNakijken: number, bevestigd: boolean): boolean {
+  return aantalNakijken > 0 && !bevestigd;
+}
+
 /** Verwerkt een ingelezen recept tot het formulier: gekoppelde ingrediënten, regels om na te kijken, stappen en kooktijd. */
 /**
  * @param koppelingen WEEK-254: namen die de functie ingredient-koppel al aan een code koppelde (kern van de naam → code);
@@ -630,7 +733,7 @@ export function verwerkRecept(ruw: RuwRecept, appTaal: Taal, koppelingen: Readon
     naam: ruw.naam,
     soort: soortVanIngredienten(codes),
     ...(ruw.minuten ? { minuten: ruw.minuten } : {}),
-    stappen: ruw.stappen,
+    stappen: schikStappen(ruw.stappen),
     ingredienten,
     nakijken,
     personen,
