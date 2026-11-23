@@ -1,4 +1,4 @@
-import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { alleenHuidigPlan, bewerkLijstItem, eigenItem, lijstInTaal, LijstItem, LijstRegel, LijstSectie, magBewerken, opSheet, planSleutel, receptItem, secties as maakSecties, sectieKeuze, staatOpLijst, telRegels, vinkAf, voornaam, Weergave } from '@/lib/lijst';
@@ -29,7 +29,8 @@ import { usePaginaInfo } from '@/ui/paginaInfo';
 import { IcoonKnop } from '@/ui/icoonKnop';
 import { LosVoorstel, staatErAl, uitFrigo, uitLijst, voegSamen } from '@/lib/losVoorstellen';
 import { laadLosVoorstellen, onthoudLosVoorstel } from '@/opslag/losVoorstellen';
-import { andereWeergave, teKopen, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import { andereWeergave, kiesMissieZin, lijstVoortgang, missieVolbracht, teKopen, toonGroepering, weergaveVoorSheet, ZOEKEN_STANDAARD_OPEN } from '@/lib/lijstKop';
+import { MissieVolbracht } from '@/ui/missieVolbracht';
 
 const KLEUR = '#2e7d4f';
 // Het thema van de frigo en het weekmenu: petrol voor de winkels, oranje voor de boodschappen (WEEK-76).
@@ -64,10 +65,15 @@ function GerechtRegel({ lijst, frigo, dag, recept }: { lijst: LijstItem[]; frigo
 }
 
 export default function Lijst() {
-  const { t, taal } = useTaal();
+  const { t, tn, taal } = useTaal();
   // WEEK-177: uitleg via een infoknop rechtsboven in de koptekst; de tekst geldt voor beide tabbladen.
   const { popup } = usePaginaInfo({ tekst: t('pagina.lijstInfo'), kleur: ORANJE, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const [items, setItems] = useState<LijstItem[]>([]);
+  // WEEK-327: Missie volbracht. doorGebruiker: enkel na een eigen vinkje (niet bij openen of een wijziging van het gezin).
+  const [missie, setMissie] = useState<{ aantal: number; zin: number } | null>(null);
+  const doorGebruiker = useRef(false);
+  const vorigOpen = useRef<number | null>(null);
+  const vorigeZin = useRef<number | undefined>(undefined);
   // WEEK-138: enkel recepten van het huidige weekplan horen op de lijst.
   const [plan, setPlan] = useState<Weekplan | null>(null);
   const [frigo, setFrigo] = useState<FrigoItem[]>([]);
@@ -195,6 +201,7 @@ export default function Lijst() {
   // Afvinken = gekocht: het product gaat in de frigo; het vinkje weghalen haalt het er weer uit (WEEK-18).
   const toggle = async (regel: LijstRegel) => {
     const afgevinkt = !regel.afgevinkt;
+    doorGebruiker.current = afgevinkt;
     setItems((huidig) => vinkAf(huidig, regel.ids, afgevinkt, ikNaam));
     let onderliggend: LijstItem[] = [];
     const nieuw = await wijzigLijst((huidig) => {
@@ -211,6 +218,7 @@ export default function Lijst() {
   // Enkel de items die echt van stand veranderen gaan naar of uit de frigo.
   const toggleSectie = async (regels: LijstRegel[]) => {
     const { afgevinkt, ids } = sectieKeuze(regels);
+    doorGebruiker.current = afgevinkt;
     setItems((huidig) => vinkAf(huidig, ids, afgevinkt, ikNaam));
     let onderliggend: LijstItem[] = [];
     const nieuw = await wijzigLijst((huidig) => {
@@ -253,6 +261,19 @@ export default function Lijst() {
   const { open, totaal } = useMemo(() => telRegels(maakSecties(sheetItems, groep, dagVolgorde)), [sheetItems, groep, dagVolgorde]);
   // WEEK-292: de tellers op de tabbladen en bij Te kopen: enkel wat nog te kopen is, over beide tabbladen.
   const nogTeKopen = useMemo(() => teKopen(zichtbaar, weergave, dagVolgorde), [zichtbaar, weergave, dagVolgorde]);
+
+  // WEEK-327: net het laatste product afgevinkt? Dan Missie volbracht. De eerste meting (openen) telt niet.
+  const voortgang = useMemo(() => lijstVoortgang(zichtbaar, weergave, dagVolgorde), [zichtbaar, weergave, dagVolgorde]);
+  useEffect(() => {
+    const vorig = vorigOpen.current;
+    vorigOpen.current = voortgang.open;
+    if (vorig !== null && missieVolbracht(vorig, voortgang.open, voortgang.totaal, doorGebruiker.current)) {
+      const zin = kiesMissieZin(Math.random(), vorigeZin.current);
+      vorigeZin.current = zin;
+      setMissie({ aantal: voortgang.totaal, zin });
+    }
+    if (vorig !== null && vorig !== voortgang.open) doorGebruiker.current = false;
+  }, [voortgang.open, voortgang.totaal]);
 
   // WEEK-286: één compacte regel (teller, groepering, zoekicoon) die mee scrolt; het zoekveld klapt open onder de regel.
   const accent = sheetThema(sheet).accent;
@@ -356,6 +377,14 @@ export default function Lijst() {
         </ScrollView>
       ) : (
         <>
+          <MissieVolbracht
+            zichtbaar={missie !== null}
+            titel={t('missie.titel')}
+            aantal={missie ? tn('missie.aantal', missie.aantal) : ''}
+            zin={missie ? t(`missie.zin${missie.zin}` as Sleutel) : ''}
+            sluitTekst={t('missie.sluit')}
+            onSluit={() => setMissie(null)}
+          />
           {/* WEEK-182: dezelfde werkwijze als de frigo: schakelaar, zoeken of invoer, en de popup voor losse producten. */}
           <LosPopup
             opties={losPopup}

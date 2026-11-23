@@ -672,7 +672,8 @@ export default function Weekplanning() {
                         klein
                         naam="book-outline"
                         label={t('bereiding.icoon')}
-                        onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten) } })}
+                        // WEEK-327: de dag gaat mee, zodat de bereiding net dit gerecht op "gekookt" kan zetten.
+                        onPress={() => router.push({ pathname: '/bereiding', params: { id: recept.id, naam: inTaal(recept, taal).naam, minuten: String(recept.minuten), dag: String(index) } })}
                       />
                     )}
                     </View>
