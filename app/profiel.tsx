@@ -32,6 +32,7 @@ import { usePaginaInfo } from '@/ui/paginaInfo';
 import { howtoTekst } from '@/lib/howto';
 import { heroHoogte } from '@/lib/welkomFotos';
 import { WELKOM_FOTO } from '@/ui/welkomFotos';
+import { VELD } from '@/ui/invoerStijl';
 
 // WEEK-289: zelfde huisstijl als de startpagina en Aan de slag (petrol, oranje accent, warme crème).
 const KLEUR = '#0F6B66';
@@ -365,7 +366,8 @@ const s = StyleSheet.create({
   uit: { opacity: 0.3 },
   tellerTekst: { color: KLEUR, fontSize: 20, fontWeight: '700' },
   tellerWaarde: { fontSize: 17, fontWeight: '600', minWidth: 24, textAlign: 'center' },
-  veld: { borderWidth: 1, borderColor: ZACHTE_RAND, borderRadius: 12, paddingHorizontal: 12, minHeight: 46, backgroundColor: '#FDFBF7', color: INKT },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  veld: { ...VELD },
   rijVelden: { flexDirection: 'row', gap: 8 },
   hint: { color: '#777', fontSize: 13 },
   info: { backgroundColor: '#F4EFE6', borderRadius: 12, padding: 12, gap: 4 },

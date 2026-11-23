@@ -11,6 +11,7 @@ import { useTaal } from '@/ui/taal';
 import { useMagGerechtenBeheren } from '@/ui/magGerechten';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { Soort } from '@/data/recept';
+import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD } from '@/ui/invoerStijl';
 
 // Mijn recepten (WEEK-192): het overzicht van de recepten van het gezin, met zoeken en een filter op soort.
 // Een recept openen we om te bewerken; met het boekje-met-plusje maak je er één bij.
@@ -73,9 +74,10 @@ export default function MijnRecepten() {
       {/* WEEK-321: de zoekbalk staat altijd zichtbaar (zodra er gerechten zijn). */}
       {lijst.length > 0 && (
         <TextInput
-          style={s.zoek}
+          style={[s.zoek, !zoek && LEEG_VELD]}
           value={zoek}
           onChangeText={setZoek}
+          placeholderTextColor={PLACEHOLDER_KLEUR}
           placeholder={t('mijn.zoek')}
           accessibilityLabel={t('mijn.zoek')}
           autoCorrect={false}
@@ -151,7 +153,8 @@ const s = StyleSheet.create({
   uitleg: { flex: 1, minWidth: 0, color: MUTED, fontWeight: '600' },
   nieuw: { width: 44, height: 44, borderRadius: 22, borderWidth: 1.5, borderColor: ACCENT, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   plusje: { position: 'absolute', right: -2, top: -2, width: 18, height: 18, borderRadius: 9, backgroundColor: ACCENT, borderWidth: 1.5, borderColor: '#fff', alignItems: 'center', justifyContent: 'center' },
-  zoek: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, height: 44, backgroundColor: '#fff', fontSize: 16 },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  zoek: { ...VELD },
   alleenLezen: { backgroundColor: '#FFF4E5', color: '#7a3a06', borderRadius: 10, padding: 10, fontSize: 13 },
   filters: { flexDirection: 'row', gap: 8 },
   filter: { flex: 1, minHeight: 36, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },

@@ -236,11 +236,15 @@ const EENHEID_WOORDEN: ReadonlyArray<[readonly string[], Bron]> = [
   [['oz', 'ounce', 'ounces'], { soort: 'g', factor: 28 }],
   [['lb', 'lbs', 'pound', 'pounds'], { soort: 'g', factor: 454 }],
   [['teentje', 'teentjes', 'teen', 'tenen', 'gousse', 'gousses', 'zehe', 'zehen', 'clove', 'cloves'], { soort: 'teentje', factor: 1 }],
-  [['stuk', 'stuks', 'st', 'piece', 'pieces', 'stuck', 'snee', 'sneetje', 'sneetjes', 'tranche', 'tranches', 'scheibe', 'scheiben', 'slice', 'slices'], { soort: 'stuk', factor: 1 }],
+  [['stuk', 'stuks', 'st', 'piece', 'pieces', 'stuck'], { soort: 'stuk', factor: 1 }],
+  // WEEK-329: richtwaarden, zodat zulke regels meteen een hoeveelheid krijgen (in plaats van "Hoeveelheid invullen").
+  [['snee', 'sneden', 'sneetje', 'sneetjes', 'tranche', 'tranches', 'scheibe', 'scheiben', 'slice', 'slices'], { soort: 'g', factor: 30 }],
+  [['klont', 'klontje', 'klontjes', 'klonten', 'knob', 'knobs'], { soort: 'g', factor: 10 }],
+  [['takje', 'takjes', 'brin', 'brins', 'sprig', 'sprigs', 'zweig', 'zweige'], { soort: 'g', factor: 1 }],
   [['snuifje', 'snufje', 'mespuntje', 'pincee', 'pincees', 'prise', 'prisen', 'pinch', 'pinches', 'scheutje', 'trait', 'schuss', 'dash'], { soort: 'snuf', factor: 1 }],
   [['blik', 'blikken', 'boite', 'boites', 'dose', 'dosen', 'can', 'cans', 'tin', 'tins'], { soort: 'g', factor: 400 }],
   [['blikje', 'blikjes'], { soort: 'g', factor: 150 }],
-  [['bosje', 'bosjes', 'bos', 'takje', 'takjes', 'zakje', 'zakjes', 'pak', 'pakje', 'pakjes', 'bouquet', 'botte', 'brin', 'brins', 'branche', 'sachet', 'bund', 'bundel', 'zweig', 'zweige', 'packung', 'paket', 'bunch', 'sprig', 'sprigs', 'handvol', 'poignee', 'handvoll', 'handful'], { soort: 'onbekend', factor: 1 }],
+  [['bosje', 'bosjes', 'bos', 'zakje', 'zakjes', 'pak', 'pakje', 'pakjes', 'bouquet', 'botte', 'branche', 'sachet', 'bund', 'bundel', 'packung', 'paket', 'bunch', 'handvol', 'poignee', 'handvoll', 'handful'], { soort: 'onbekend', factor: 1 }],
 ];
 
 const EENHEDEN_INDEX: ReadonlyMap<string, Bron> = new Map(EENHEID_WOORDEN.flatMap(([woorden, bron]) => woorden.map((w) => [w, bron] as const)));
@@ -511,6 +515,20 @@ export type Koppeling = { code: IngredientCode; zeker: boolean };
  * - undefined: niets dat lijkt.
  * Bij gelijke kansen wint de taal van het recept, dan de taal van de app.
  */
+/** WEEK-329: soorten ingrediënten waarvan een samengesteld woord nog altijd dat ingrediënt is (kastanjechampignons, Dijonmosterd, basterdsuiker). */
+const KOP_ZEKER: ReadonlySet<string> = new Set(['groente', 'kruid', 'specerij', 'condiment', 'fruit', 'graan', 'peulvrucht', 'zoet']);
+
+/**
+ * WEEK-329: een samengesteld woord dat eindigt op een gekend ingrediënt is zeker dat ingrediënt, als elk woord op zijn plaats
+ * past (gelijk, of een langer woord dat erop eindigt met minstens 3 letters ervoor) en het ingrediënt bij KOP_ZEKER hoort.
+ * Niet voor zuivel, vlees of vis: amandelmelk is geen melk.
+ */
+function kopIsZeker(naam: readonly string[], regel: readonly string[], code: IngredientCode): boolean {
+  if (naam.length !== regel.length) return false;
+  if (!KOP_ZEKER.has(ingredientInfo(code)?.[0] ?? '')) return false;
+  return naam.every((s, i) => regel[i] === s || (s.length >= 4 && regel[i].length - s.length >= 3 && regel[i].endsWith(s)));
+}
+
 export function koppelIngredient(naam: string, talen: readonly Taal[] = []): Koppeling | undefined {
   const w = woorden(naam);
   if (!w.length) return undefined;
@@ -537,7 +555,7 @@ export function koppelIngredient(naam: string, talen: readonly Taal[] = []): Kop
     const allesGevonden = n.every((s) => q.some((x) => x === s || (s.length >= 4 && x.length > s.length && x.endsWith(s))));
     if (allesGevonden) {
       const score = n.join('').length * 10 - (q.length - n.length);
-      kandidaat(item.code, score, false, t);
+      kandidaat(item.code, score, kopIsZeker(n, q, item.code), t);
       continue;
     }
     // De regel is een deel van de naam ("peper" in "zwarte peper"); zwakker.

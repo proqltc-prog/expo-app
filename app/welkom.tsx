@@ -12,6 +12,7 @@ import { ROUTE_AANGEMELD, ROUTE_NA_WELKOM, uitlegNaar, UITLEG_SCHERMEN, veegRich
 import { BORDEN_BOVEN, heroHoogte, merkDelen, START_KENMERKEN, uitlegFoto, WEEKPLAN_BORDEN } from '@/lib/welkomFotos';
 import { WEEK_BORD, WELKOM_FOTO } from '@/ui/welkomFotos';
 import { useTaal } from '@/ui/taal';
+import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD, VELD_FOUT } from '@/ui/invoerStijl';
 
 const KLEUR = '#0F6B66';
 const KLEUR_ZACHT = '#D5EDEA';
@@ -261,12 +262,13 @@ export default function Welkom() {
         ) : (
           <View style={s.veldBlok}>
             <TextInput
-              style={[s.veld, mailFout && s.veldFout]}
+              style={[s.veld, mailFout && s.veldFout, !email && LEEG_VELD]}
               value={email}
               onChangeText={(tekst) => {
                 setEmail(tekst);
                 setMailFout(false);
               }}
+              placeholderTextColor={PLACEHOLDER_KLEUR}
               placeholder={t('aanmelden.mailVeld')}
               accessibilityLabel={t('aanmelden.mailVeld')}
               keyboardType="email-address"
@@ -420,7 +422,8 @@ const s = StyleSheet.create({
   waarschuwing: { fontSize: 13, color: MUTED, lineHeight: 18, textAlign: 'center' },
   uit: { opacity: 0.6 },
   veldBlok: { gap: 8 },
-  veld: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: LIJN, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16, fontSize: 17, color: INKT },
-  veldFout: { borderColor: FOUT },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  veld: { ...VELD },
+  veldFout: { ...VELD_FOUT },
   fout: { fontSize: 13, color: FOUT, lineHeight: 18, textAlign: 'center' },
 });

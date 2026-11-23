@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.165.0] – 2026-11-23
+
+**Jira:** [WEEK-329](https://proqltc-1791495894841.atlassian.net/browse/WEEK-329) (icoonknoppen, herkenning, invoervelden) · **Confluence:** [WEEK-329](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28704769)
+
+- Nog na te kijken: ronde knoppen met een kort woord (Gebruik, Hoeveelheid, Kiezen, Overslaan), met dezelfde iconen als in het weekmenu. "Opzoeken" verschijnt enkel als het automatisch opzoeken eerder niet lukte.
+- Inlezen herkent meer: een klont boter, takjes tijm en sneetjes brood krijgen meteen een hoeveelheid, en woorden zoals kastanjechampignons, Dijonmosterd en trostomaten worden meteen het juiste ingrediënt.
+- Alle invoervelden in de app hebben hetzelfde uitzicht; de voorbeeldtekst is lichtgrijs en schuin.
+- Nieuw gerecht heeft een info-icoon; de uitleg bij Bereiding en de Boodschappenlijst past bij de nieuwe werking.
+
 ## [0.164.0] – 2026-11-23
 
 **Jira:** [WEEK-328](https://proqltc-1791495894841.atlassian.net/browse/WEEK-328) (UAT-bevindingen en eigen illustraties) · **Confluence:** [WEEK-328](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28639233)

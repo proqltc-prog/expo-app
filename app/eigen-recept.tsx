@@ -28,6 +28,8 @@ import {
 import { toonGezinsnaam } from '@/lib/gezinbeheer';
 import type { LosWijziging } from '@/lib/frigo';
 import { LosPopup, PopupOpties } from '@/ui/losPopup';
+import { ActieKnop } from '@/ui/actieKnop';
+import { usePaginaInfo } from '@/ui/paginaInfo';
 import { binnenKooktijd, KOOKTIJD_BEREIK, KOOKTIJD_SCHATTING_STANDAARD, KOOKTIJDEN, KooktijdCode, kooktijdSchattingen, kooktijdVan, kooktijdVoorTeLang, MAX_KOOKTIJD_MIN, minutenVoorKooktijd } from '@/lib/kooktijd';
 import { terugPad } from '@/lib/terug';
 import { laadEigenRecepten, wijzigEigenRecepten } from '@/opslag/eigenRecepten';
@@ -61,6 +63,7 @@ const ORANJE_MELDING = '#C9500A';
 
 /** Een ingrediënt in het formulier; de hoeveelheid komt uit de popup en is altijd ingevuld. */
 import { isKeukenEenheid, KeukenEenheid, keuzeEenheden, naarBasis, pastBij } from '@/lib/eenheden';
+import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD } from '@/ui/invoerStijl';
 
 type Rij = EigenIngredient;
 
@@ -80,6 +83,8 @@ type LinkMelding = {
   teLang?: number;
   /** WEEK-258: onbekende ingrediënten konden niet opgezocht worden (AI tijdelijk onbereikbaar). */
   opzoekenTijdelijk?: boolean;
+  /** WEEK-329: het automatisch opzoeken mislukte bij het inlezen; enkel dan heeft "Opzoeken" per regel zin. Blijft staan na een gelukte poging. */
+  opzoekenMislukt?: boolean;
 };
 
 /** WEEK-254: waarom opzoeken of toevoegen van een ingrediënt niet lukte. */
@@ -94,6 +99,8 @@ const FOUT_TEKST: Record<Fout, string> = {
 
 export default function EigenReceptScherm() {
   const { t, tn, taal } = useTaal();
+  // WEEK-329: info-icoon rechtsboven, zoals op de andere pagina's: uitleg over inlezen en Nog na te kijken.
+  const { popup: infoPopup } = usePaginaInfo({ tekst: t('pagina.eigenReceptInfo'), kleur: KLEUR, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const params = useLocalSearchParams<{ id?: string; terug?: string }>();
   const id = params.id;
   // WEEK-218: terug naar het scherm vanwaar dit geopend werd (verborgen tab: router.back() ging naar het beginscherm).
@@ -350,7 +357,7 @@ export default function EigenReceptScherm() {
     if (ingelezen.stappen.length) setStappen(ingelezen.stappen);
     setRijen((bestaande) => ingelezen.ingredienten.reduce(voegSamen, bestaande));
     setNakijken(ingelezen.nakijken);
-    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk } : {}) });
+    setLinkMelding({ bron, aantal: ingelezen.ingredienten.length, personen: ingelezen.personen, vanSite: ingelezen.personenVanSite, ...(teLang ? { teLang } : {}), ...(opzoekenTijdelijk ? { opzoekenTijdelijk, opzoekenMislukt: true } : {}) });
   };
 
   /** WEEK-251: een foto nemen of kiezen en laten lezen; één vraag per foto. */
@@ -572,6 +579,7 @@ export default function EigenReceptScherm() {
 
   return (
     <ScrollView ref={scrollRef} contentContainerStyle={s.scherm} keyboardShouldPersistTaps="handled">
+      {infoPopup}
       {!magBeheren && <Text style={s.alleenLezen}>{t('recept.alleenBeheerder')}</Text>}
       <View style={s.formulier} pointerEvents={magBeheren ? 'auto' : 'none'} onLayout={(e) => setFormulierY(e.nativeEvent.layout.y)}>
       {/* WEEK-245: de hoeveelheden zijn voor één volwassene; de app rekent om voor het gezin. */}
@@ -689,13 +697,14 @@ export default function EigenReceptScherm() {
           </View>
           <Text style={s.paneelUitleg}>{t('recept.link.uitleg')}</Text>
           <TextInput
-            style={s.veld}
+            style={[s.veld, !link && LEEG_VELD]}
             value={link}
             onChangeText={(x) => {
               setLink(x);
               setLinkFout(undefined);
             }}
             onSubmitEditing={leesLink}
+            placeholderTextColor={PLACEHOLDER_KLEUR}
             placeholder="https://"
             accessibilityLabel={t('recept.link.veld')}
             autoCapitalize="none"
@@ -775,19 +784,15 @@ export default function EigenReceptScherm() {
       {nakijken.length > 0 && (
         <View style={s.nakijkVak} onLayout={(e) => setNakijkY(e.nativeEvent.layout.y)}>
           <Text style={s.nakijkKop}>{t('recept.link.nakijken')}</Text>
-          <Text style={s.nakijkUitleg}>{t('recept.link.nakijkUitleg')}</Text>
           {nakijken.map((n, i) => n === zoektVoor ? (
             // WEEK-326: de regel waarvoor de gebruiker nu zelf een ingrediënt kiest: duidelijk gemarkeerd, met de weg naar beneden.
             <View key={`${n.tekst}-${i}`} style={[s.nakijkRij, s.nakijkRijActief]}>
               <Text style={s.nakijkTekst}>{n.tekst}</Text>
               <Text style={s.nakijkZoekt}>{t('recept.link.zoektHieronder')}</Text>
-              <View style={s.rijChips}>
-                <Pressable style={s.chip} onPress={stopZoeken} accessibilityRole="button">
-                  <Text style={s.chipTekst}>{t('recept.link.stopZoeken')}</Text>
-                </Pressable>
-                <Pressable style={s.chip} onPress={() => slaNakijkOver(i)} accessibilityRole="button">
-                  <Text style={s.chipTekst}>{t('recept.link.sla')}</Text>
-                </Pressable>
+              {/* WEEK-329: dezelfde ronde knoppen met een kort woord als in het weekmenu. */}
+              <View style={s.actieRij}>
+                <ActieKnop naam="arrow-undo-outline" woord={t('recept.link.stopZoeken')} kleur={KLEUR} onPress={stopZoeken} />
+                <ActieKnop naam="trash-outline" woord={t('recept.link.sla')} kleur={KLEUR} onPress={() => slaNakijkOver(i)} />
               </View>
             </View>
           ) : (
@@ -800,23 +805,20 @@ export default function EigenReceptScherm() {
                     : t('recept.link.voorstel', { naam: ingredientNaam(n.code, taal) })
                   : t('recept.link.onbekend')}
               </Text>
-              <View style={s.rijChips}>
-                {n.code && (
-                  <Pressable style={[s.chip, s.chipActief]} onPress={() => gebruikNakijk(i)} accessibilityRole="button">
-                    <Text style={[s.chipTekst, s.chipTekstActief]}>{n.hoeveelheid === undefined ? t('recept.link.hoeveelheid') : t('recept.link.gebruik')}</Text>
-                  </Pressable>
+              {/* WEEK-329: ronde knoppen met een kort woord, met dezelfde iconen als in het weekmenu (✓ gebruiken, ↻ opnieuw, ✎ zelf kiezen, 🗑 weghalen). */}
+              <View style={s.actieRij}>
+                {n.code &&
+                  (n.hoeveelheid === undefined ? (
+                    <ActieKnop naam="scale-outline" woord={t('recept.link.knop.hoeveelheid')} label={t('recept.link.hoeveelheid')} kleur={KLEUR} vol onPress={() => gebruikNakijk(i)} />
+                  ) : (
+                    <ActieKnop naam="checkmark" woord={t('recept.link.gebruik')} kleur={KLEUR} vol onPress={() => gebruikNakijk(i)} />
+                  ))}
+                {/* WEEK-329: opnieuw opzoeken heeft enkel zin als het automatisch opzoeken bij het inlezen mislukte. */}
+                {!n.code && linkMelding?.opzoekenMislukt && (
+                  <ActieKnop naam="cloud-download-outline" woord={t('recept.link.knop.opnieuw')} label={t('recept.link.opnieuw')} kleur={KLEUR} bezig={nieuwBezig} onPress={() => zoekNakijkOpnieuw(i)} />
                 )}
-                {!n.code && (
-                  <Pressable style={s.chip} onPress={() => zoekNakijkOpnieuw(i)} disabled={nieuwBezig} accessibilityRole="button">
-                    <Text style={s.chipTekst}>{t('recept.link.opnieuw')}</Text>
-                  </Pressable>
-                )}
-                <Pressable style={s.chip} onPress={() => zoekNakijk(i)} accessibilityRole="button">
-                  <Text style={s.chipTekst}>{t('recept.link.zoek')}</Text>
-                </Pressable>
-                <Pressable style={s.chip} onPress={() => slaNakijkOver(i)} accessibilityRole="button">
-                  <Text style={s.chipTekst}>{t('recept.link.sla')}</Text>
-                </Pressable>
+                <ActieKnop naam="create-outline" woord={t('recept.link.knop.kiezen')} label={t('recept.link.zoek')} kleur={KLEUR} onPress={() => zoekNakijk(i)} />
+                <ActieKnop naam="trash-outline" woord={t('recept.link.sla')} kleur={KLEUR} onPress={() => slaNakijkOver(i)} />
               </View>
             </View>
           ))}
@@ -844,7 +846,7 @@ export default function EigenReceptScherm() {
       <View style={s.invoerRij} onLayout={(e) => setZoekVeldY(e.nativeEvent.layout.y)}>
         <TextInput
           ref={zoekVeldRef}
-          style={[s.veld, s.invoerVeld, zoektVoor && s.invoerVeldActief]}
+          style={[s.veld, s.invoerVeld, zoektVoor && s.invoerVeldActief, !zoek && LEEG_VELD]}
           value={zoek}
           onChangeText={(x) => {
             setZoek(x);
@@ -854,6 +856,7 @@ export default function EigenReceptScherm() {
           }}
           onSubmitEditing={plus}
           returnKeyType="done"
+          placeholderTextColor={PLACEHOLDER_KLEUR}
           placeholder={t('recept.zoekIngredient')}
           accessibilityLabel={t('recept.zoekIngredient')}
           autoCorrect={false}
@@ -883,10 +886,11 @@ export default function EigenReceptScherm() {
         <View key={i} style={s.stapRij}>
           <Text style={s.stapNummer}>{i + 1}</Text>
           <TextInput
-            style={[s.veld, s.stapVeld]}
+            style={[s.veld, s.stapVeld, !stap && LEEG_VELD]}
             value={stap}
             onChangeText={(tekst) => wijzigStap(i, tekst)}
             multiline
+            placeholderTextColor={PLACEHOLDER_KLEUR}
             placeholder={t('recept.stap', { n: i + 1 })}
             accessibilityLabel={t('recept.stap', { n: i + 1 })}
           />
@@ -986,7 +990,8 @@ const s = StyleSheet.create({
   // WEEK-203: dezelfde maten als Kies en Mijn recepten: zijmarge 16, velden en knoppen met hoekstraal 12, chips zoals in het weekmenu.
   scherm: { padding: 16, gap: 8, paddingBottom: 48 },
   label: { fontSize: 14, fontWeight: '700', color: '#333', marginTop: 10 },
-  veld: { borderWidth: 1.5, borderColor: '#ccc', borderRadius: 12, padding: 12, minHeight: 48, fontSize: 16, backgroundColor: '#fff' },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  veld: { ...VELD },
   fout: { color: '#c62828', fontSize: 13 },
   rijChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 18, borderWidth: 1.5, borderColor: '#ccc', backgroundColor: '#fff', minHeight: 36, justifyContent: 'center' },
@@ -1056,10 +1061,11 @@ const s = StyleSheet.create({
   linkUitleg: { color: '#333', fontSize: 14, lineHeight: 20 },
   nakijkVak: { borderWidth: 1, borderColor: '#f0d9a8', backgroundColor: '#fff9ec', borderRadius: 14, padding: 12, gap: 8 },
   nakijkKop: { fontWeight: '800', color: '#7a5200', fontSize: 15 },
-  nakijkUitleg: { color: '#7a5200', fontSize: 13 },
   nakijkRij: { backgroundColor: '#fff', borderRadius: 12, padding: 10, gap: 6, borderWidth: 1, borderColor: '#f3e3bf' },
   nakijkTekst: { fontSize: 15, fontWeight: '600', color: '#17201A' },
   nakijkDetail: { fontSize: 13, color: '#5E6B63' },
+  // WEEK-329: de ronde actieknoppen op een regel om na te kijken.
+  actieRij: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
   // WEEK-326: de regel waarvoor nu gezocht wordt, en de verwijzing ernaar bij het zoekveld.
   nakijkRijActief: { borderColor: KLEUR, borderWidth: 2, backgroundColor: '#f1f8f4' },
   nakijkZoekt: { fontSize: 14, fontWeight: '700', color: KLEUR },

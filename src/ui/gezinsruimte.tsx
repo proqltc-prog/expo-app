@@ -34,6 +34,7 @@ import {
 } from '@/opslag/sync';
 import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
+import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD, VELD_FOUT } from '@/ui/invoerStijl';
 
 const KLEUR = '#2e7d4f';
 const GEVAAR = '#c62828';
@@ -248,13 +249,14 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
         </Text>
         <View style={s.rij}>
           <TextInput
-            style={[s.veld, s.naamVeld, voornaamFout && s.veldFout]}
+            style={[s.veld, s.naamVeld, voornaamFout && s.veldFout, !voornaamInvoer && LEEG_VELD]}
             value={voornaamInvoer}
             onChangeText={(tekst) => {
               setVoornaamInvoer(tekst);
               setVoornaamFout(null);
               setVoornaamOpgeslagen(false);
             }}
+            placeholderTextColor={PLACEHOLDER_KLEUR}
             placeholder={t('welkom.naamVeld')}
             accessibilityLabel={t('naam.kop')}
             maxLength={25}
@@ -282,11 +284,11 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
             <Text style={s.uitleg}>{t('gezin.hebJeCode')}</Text>
             <View style={s.rij}>
               <TextInput
-                style={[s.veld, s.codeVeld]}
+                style={[s.veld, s.codeVeld, !code && LEEG_VELD]}
                 value={code}
                 onChangeText={setCode}
+                placeholderTextColor={PLACEHOLDER_KLEUR}
                 placeholder={t('gezin.codePlaceholder')}
-                placeholderTextColor="#8a948e"
                 autoCapitalize="characters"
                 autoCorrect={false}
                 maxLength={8}
@@ -453,10 +455,11 @@ const s = StyleSheet.create({
   avatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#e6f2ea', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   avatarTekst: { color: KLEUR, fontWeight: '700' },
   uitleg: { color: '#555' },
-  veld: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 12, minHeight: 44, backgroundColor: '#fafafa' },
-  naamVeld: { flex: 1, minWidth: 0, fontSize: 16, color: '#1d2420' },
-  veldFout: { borderColor: '#B3261E' },
-  codeVeld: { flex: 1, minWidth: 0, letterSpacing: 2, fontWeight: '600', color: '#1d2420' },
+  // WEEK-329: het gewone invoerveld van de app (src/ui/invoerStijl).
+  veld: { ...VELD },
+  naamVeld: { flex: 1, minWidth: 0 },
+  veldFout: { ...VELD_FOUT },
+  codeVeld: { flex: 1, minWidth: 0, letterSpacing: 2, fontWeight: '600' },
   rij: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   kiesRij: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
   knop: { backgroundColor: ACCENT, borderRadius: 12, padding: 14, alignItems: 'center', minHeight: 50, justifyContent: 'center' },
