@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.163.0] – 2026-11-23
+
+**Jira:** [WEEK-327](https://proqltc-1791495894841.atlassian.net/browse/WEEK-327) (moderne bereiding en Missie volbracht) · **Confluence:** [WEEK-327](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28573697)
+
+- Bereiding in een nieuw jasje: één kaart per keer (eerst "Wat heb je nodig", dan elke stap groot in beeld), vegen of tikken op de pijl-iconen, een stappenbalk bovenaan en sluiten met ✕ (of naar beneden vegen over de kop).
+- Op de laatste stap een ✓: "Proficiat! Alweer een lekker gerecht op tafel. Zet je het op gekookt?" Gekookt haalt de gebruikte ingrediënten uit In huis, net als de knop in het weekmenu; Annuleren doet niets.
+- Boodschappenlijst: wie het laatste product afvinkt, krijgt confetti, een trofee en "Missie volbracht! 🎉" met het aantal gekochte producten en een leuke zin.
+
 ## [0.162.1] – 2026-11-23
 
 **Jira:** [WEEK-326](https://proqltc-1791495894841.atlassian.net/browse/WEEK-326) (ingelezen recept: geen ingrediënten meer kwijt) · **Confluence:** [WEEK-326](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28475393)

@@ -57,3 +57,41 @@ export function ingredientenMetFrigo(ingredienten: readonly BereidingIngredient[
   // WEEK-249: zonder hoeveelheid (0, bv. een menu voor 0 personen) is niets "helemaal in huis": geen vinkje.
   return ingredienten.map((ing, i) => ({ ...ing, dekking: ing.hoeveelheid > 0 ? (dekking[i]?.gedekt ?? 'niet') : 'niet' }));
 }
+
+// ---------------------------------------------------------------- WEEK-327: de bereiding als kaarten
+
+/** Een kaart in de bereiding: eerst "Wat heb je nodig" (als er ingrediënten zijn), dan één kaart per stap. */
+export type BereidingKaart = { soort: 'ingredienten' } | { soort: 'stap'; nummer: number; tekst: string };
+
+export function bereidingKaarten(stappen: readonly string[], heeftIngredienten: boolean): BereidingKaart[] {
+  return [
+    ...(heeftIngredienten ? [{ soort: 'ingredienten' } as const] : []),
+    ...stappen.map((tekst, i) => ({ soort: 'stap' as const, nummer: i + 1, tekst })),
+  ];
+}
+
+/** Het stukje van de stappenbalk: al gedaan (gevuld), de huidige (oplichtend) of nog te doen. */
+export function segmentStand(i: number, huidig: number): 'gedaan' | 'huidig' | 'nog' {
+  return i < huidig ? 'gedaan' : i === huidig ? 'huidig' : 'nog';
+}
+
+/** Een geldige kaart: tussen de eerste en de laatste. */
+export function begrensKaart(i: number, aantal: number): number {
+  if (aantal <= 0) return 0;
+  return Math.min(Math.max(0, Math.round(i)), aantal - 1);
+}
+
+/**
+ * De dag van het weekplan die na de bereiding op "gekookt" kan: bevestigd, nog niet gekookt, met dit recept.
+ * De dag die het weekmenu meegaf, gaat voor (hetzelfde recept kan twee keer in de week staan). Geen: undefined.
+ */
+export function kookbareDag(plan: Weekplan | null, receptId: string, voorkeur?: number): number | undefined {
+  if (!plan || !receptId) return undefined;
+  const kan = (i: number) => {
+    const d = plan.dagen[i];
+    return !!d && d.recept.id === receptId && !!d.bevestigd && !d.gedaan;
+  };
+  if (voorkeur !== undefined && Number.isInteger(voorkeur) && kan(voorkeur)) return voorkeur;
+  const i = plan.dagen.findIndex((_, j) => kan(j));
+  return i < 0 ? undefined : i;
+}
