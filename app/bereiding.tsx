@@ -17,7 +17,7 @@ import {
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { hoeveelheidTekst } from '@/i18n';
-import { begrensKaart, bereidingKaarten, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
+import { begrensKaart, bereidingKaarten, kaartOpPositie, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
 import type { FrigoItem } from '@/lib/frigo';
 import { EigenRecept } from '@/lib/eigenrecepten';
 import { wisselGedaan } from '@/lib/planner/bijwerken';
@@ -104,10 +104,12 @@ export default function Bereiding() {
   const vorige = () => gaNaar(index - 1);
   const volgende = () => (index >= laatste ? setKlaarVraag(true) : gaNaar(index + 1));
 
-  // Na het vegen: de kaart die nu in beeld staat.
+  // WEEK-331: tijdens het vegen meteen de kaart die het meest in beeld staat (vanaf halfweg de volgende). Vroeger enkel
+  // bij het loslaten: dan stond de kaart vaak pas een derde ver (afgerond: nog de oude stap), en op Android kwam het
+  // einde van het naschuiven niet altijd door, zodat de stappenbalk op de oude stap bleef staan.
   const naVegen = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const i = begrensKaart(e.nativeEvent.contentOffset.x / Math.max(1, width), kaarten.length);
-    if (i !== index) setIndex(i);
+    const i = kaartOpPositie(e.nativeEvent.contentOffset.x, width, kaarten.length);
+    setIndex((huidig) => (huidig === i ? huidig : i));
   };
 
   // Naar beneden vegen over de kop (stappenbalk en titel) sluit de bereiding.
@@ -190,8 +192,8 @@ export default function Bereiding() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
+        onScroll={naVegen}
         onMomentumScrollEnd={naVegen}
-        onScrollEndDrag={naVegen}
         scrollEventThrottle={16}
         style={s.pager}
         onLayout={(e) => setPagerHoogte(e.nativeEvent.layout.height)}

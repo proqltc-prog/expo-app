@@ -95,3 +95,12 @@ export function kookbareDag(plan: Weekplan | null, receptId: string, voorkeur?: 
   const i = plan.dagen.findIndex((_, j) => kan(j));
   return i < 0 ? undefined : i;
 }
+
+/**
+ * WEEK-331: de kaart die bij deze schuifpositie het meest in beeld staat (afgerond: vanaf halfweg de volgende),
+ * begrensd tot de eerste en de laatste kaart. Breedte 0 (nog niet gemeten): de eerste kaart.
+ */
+export function kaartOpPositie(x: number, breedte: number, aantal: number): number {
+  if (!(breedte > 0)) return 0;
+  return begrensKaart(x / breedte, aantal);
+}

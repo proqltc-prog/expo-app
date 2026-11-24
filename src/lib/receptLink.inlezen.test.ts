@@ -37,14 +37,15 @@ describe('WEEK-326: hoeveelheid achteraan (receptkaarten)', () => {
 
 describe('WEEK-326: duidelijke ingrediënten worden meteen gekoppeld', () => {
   for (const [naam, code] of [
-    ['basilic thaï', 'basilicum'],
+    // WEEK-331: de specifiekere ingrediënten uit de databank.
+    ['basilic thaï', 'thaise_basilicum'],
     ['noix de cajou concassées', 'cashewnoten'],
     ['cube de bouillon', 'bouillonblokje'],
     ['cube de bouillon de légumes', 'bouillonblokje'],
-    ['épices de curry vert', 'currypasta'],
-    ['pâte de curry rouge', 'currypasta'],
-    ['green curry paste', 'currypasta'],
-    ['groene curry', 'currypasta'],
+    ['épices de curry vert', 'groene_currypasta'],
+    ['pâte de curry rouge', 'rode_currypasta'],
+    ['green curry paste', 'groene_currypasta'],
+    ['groene curry', 'groene_currypasta'],
   ] as const) {
     test(`${naam} → ${code}`, () => assert.deepEqual(koppelIngredient(naam, ['fr', 'nl']), { code, zeker: true }));
   }
@@ -67,13 +68,13 @@ describe('WEEK-326: de receptkaart van het voorbeeld', () => {
   test('alle ingrediënten staan in het gerecht, niets om na te kijken', () => {
     assert.deepEqual(
       r.ingredienten.map((i) => i.code),
-      ['bloemkool', 'rijst_basmati', 'knoflook', 'basilicum', 'cashewnoten', 'bouillonblokje', 'kokosmelk']
+      ['bloemkool', 'rijst_basmati', 'knoflook', 'thaise_basilicum', 'cashewnoten', 'bouillonblokje', 'kokosmelk']
     );
     assert.deepEqual(r.nakijken, []);
   });
   test('"1 sachet" (geen maat) blijft na te kijken, met het juiste ingrediënt', () => {
     const s = verwerkRecept(recept(['Épices de curry vert 1 sachet']), 'nl');
-    assert.equal(s.nakijken[0]?.code, 'currypasta');
+    assert.equal(s.nakijken[0]?.code, 'groene_currypasta');
     assert.equal(s.nakijken[0]?.reden, 'hoeveelheid');
   });
 });
