@@ -27,10 +27,11 @@ describe('WEEK-329: richtwaarden voor klont, takje en sneetje', () => {
 
 describe('WEEK-329: samengestelde woorden', () => {
   for (const [naam, code] of [
-    ['kastanjechampignons', 'champignons'],
+    // WEEK-331: kastanjechampignons en trostomaten zijn nu eigen ingrediënten; de regel test met woorden die dat niet zijn.
+    ['reuzenchampignons', 'champignons'],
     ['Dijonmosterd', 'mosterd'],
     ['bruine basterdsuiker', 'bruine_suiker'],
-    ['trostomaten', 'tomaat'],
+    ['datteltomaten', 'tomaat'],
   ] as const) {
     test(`${naam} → ${code} (zeker)`, () => assert.deepEqual(koppelIngredient(naam, ['nl']), { code, zeker: true }));
   }

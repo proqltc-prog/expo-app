@@ -8,6 +8,14 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.165.1] – 2026-11-24
+
+**Jira:** [WEEK-331](https://proqltc-1791495894841.atlassian.net/browse/WEEK-331) (stappenbalk en synoniemen) · **Confluence:** [WEEK-331](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28934145)
+
+- Opgelost: bij het vegen in de bereiding bleef de stappenbalk op de oude stap staan. Ze volgt nu meteen de kaart in beeld.
+- Inlezen: runderlappen wordt rundvlees; Thaise basilicum en groene, rode of gele currypasta gebruiken de nieuwe ingrediënten.
+- De ingebouwde ingrediëntenlijst bevat nu de 646 ingrediënten van de databank.
+
 ## [0.165.0] – 2026-11-23
 
 **Jira:** [WEEK-329](https://proqltc-1791495894841.atlassian.net/browse/WEEK-329) (icoonknoppen, herkenning, invoervelden) · **Confluence:** [WEEK-329](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28704769)

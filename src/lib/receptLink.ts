@@ -446,15 +446,25 @@ const SYNONIEMEN: Readonly<Record<string, IngredientCode>> = {
   rundsvlees: 'rundvlees',
   rundvlees: 'rundvlees',
   stoofvlees: 'rundvlees',
+  // WEEK-331: runderlappen zijn stoofvlees van het rund (een extra naam kan niet via de databank).
+  runderlappen: 'rundvlees',
+  runderlap: 'rundvlees',
+  // WEEK-331: extra vierge olijfolie in een recept telt als gewone olijfolie (die je in huis hebt); de aparte
+  // 'extra vierge olijfolie' blijft te kiezen via zoeken.
+  'extra vierge olijfolie': 'olijfolie',
+  'olijfolie extra vierge': 'olijfolie',
+  'huile olive vierge extra': 'olijfolie',
+  'extra virgin olive oil': 'olijfolie',
+  'natives olivenol extra': 'olijfolie',
   'stoofvlees van het rund': 'rundvlees',
   bacon: 'spek',
   lardons: 'spek',
   // WEEK-326: receptkaarten (bv. Thaise gerechten)
-  'basilic thai': 'basilicum',
-  'thaise basilicum': 'basilicum',
-  'thai basilicum': 'basilicum',
-  'thai basil': 'basilicum',
-  'thai basilikum': 'basilicum',
+  'basilic thai': 'thaise_basilicum',
+  'thaise basilicum': 'thaise_basilicum',
+  'thai basilicum': 'thaise_basilicum',
+  'thai basil': 'thaise_basilicum',
+  'thai basilikum': 'thaise_basilicum',
   'cube bouillon': 'bouillonblokje',
   'cubes bouillon': 'bouillonblokje',
   'cube bouillon legumes': 'bouillonblokje',
@@ -465,33 +475,34 @@ const SYNONIEMEN: Readonly<Record<string, IngredientCode>> = {
   'stock cubes': 'bouillonblokje',
   bruhwurfel: 'bouillonblokje',
   // Groene of rode curry is een currypasta of -kruidenmengsel, geen currybladeren.
-  'curry vert': 'currypasta',
-  'curry rouge': 'currypasta',
-  'curry jaune': 'currypasta',
-  'epices curry vert': 'currypasta',
-  'epices curry rouge': 'currypasta',
-  'epices curry jaune': 'currypasta',
-  'pate curry vert': 'currypasta',
-  'pate curry rouge': 'currypasta',
-  'pate curry jaune': 'currypasta',
-  'groene curry': 'currypasta',
-  'rode curry': 'currypasta',
-  'gele curry': 'currypasta',
-  'groene currypasta': 'currypasta',
-  'rode currypasta': 'currypasta',
-  'gele currypasta': 'currypasta',
-  'green curry': 'currypasta',
-  'red curry': 'currypasta',
-  'yellow curry': 'currypasta',
-  'green curry paste': 'currypasta',
-  'red curry paste': 'currypasta',
-  'yellow curry paste': 'currypasta',
-  'grune currypaste': 'currypasta',
-  'rote currypaste': 'currypasta',
-  'gelbe currypaste': 'currypasta',
+  'curry vert': 'groene_currypasta',
+  'curry rouge': 'rode_currypasta',
+  'curry jaune': 'gele_currypasta',
+  'epices curry vert': 'groene_currypasta',
+  'epices curry rouge': 'rode_currypasta',
+  'epices curry jaune': 'gele_currypasta',
+  'pate curry vert': 'groene_currypasta',
+  'pate curry rouge': 'rode_currypasta',
+  'pate curry jaune': 'gele_currypasta',
+  'groene curry': 'groene_currypasta',
+  'rode curry': 'rode_currypasta',
+  'gele curry': 'gele_currypasta',
+  'groene currypasta': 'groene_currypasta',
+  'rode currypasta': 'rode_currypasta',
+  'gele currypasta': 'gele_currypasta',
+  'green curry': 'groene_currypasta',
+  'red curry': 'rode_currypasta',
+  'yellow curry': 'gele_currypasta',
+  'green curry paste': 'groene_currypasta',
+  'red curry paste': 'rode_currypasta',
+  'yellow curry paste': 'gele_currypasta',
+  'grune currypaste': 'groene_currypasta',
+  'rote currypaste': 'rode_currypasta',
+  'gelbe currypaste': 'gele_currypasta',
 };
 
-type Index = { code: IngredientCode; taal: Taal; stammen: string[] }[];
+/** WEEK-331: `volledig` = de volledige naam (zonder accenten, kleine letters), om bij gelijke stammen de letterlijke naam te verkiezen. */
+type Index = { code: IngredientCode; taal: Taal; stammen: string[]; volledig: string }[];
 let index: Index | undefined;
 let indexVersie = -1;
 
@@ -500,7 +511,7 @@ function bouwIndex(): Index {
   if (!index || indexVersie !== ingredientenLijstVersie()) {
     indexVersie = ingredientenLijstVersie();
     index = INGREDIENT_CODES.flatMap((code) =>
-      TALEN.map((taal) => ({ code, taal, stammen: woorden(ingredientNaam(code, taal)).map(stam) })).filter((x) => x.stammen.length)
+      TALEN.map((taal) => ({ code, taal, stammen: woorden(ingredientNaam(code, taal)).map(stam), volledig: NORM(ingredientNaam(code, taal)).trim() })).filter((x) => x.stammen.length)
     );
   }
   return index;
@@ -533,6 +544,7 @@ export function koppelIngredient(naam: string, talen: readonly Taal[] = []): Kop
   const w = woorden(naam);
   if (!w.length) return undefined;
   const q = w.map(stam);
+  const letterlijk = NORM(naam).trim();
   const synoniem = SYNONIEMEN[w.join(' ')] ?? SYNONIEMEN[NORM(naam).trim()];
   if (synoniem) return { code: synoniem, zeker: true };
   const voorkeur = (t: Taal) => {
@@ -548,7 +560,8 @@ export function koppelIngredient(naam: string, talen: readonly Taal[] = []): Kop
     const t = voorkeur(item.taal);
     const n = item.stammen;
     if (n.length === q.length && n.every((s, i) => s === q[i])) {
-      kandidaat(item.code, 1000 + n.join('').length, true, t);
+      // WEEK-331: dezelfde stammen, maar is de naam ook letterlijk gelijk ("paprika" en niet "smoked paprika")? Dan wint die.
+      kandidaat(item.code, 1000 + n.join('').length + (item.volledig === letterlijk ? 100 : 0), true, t);
       continue;
     }
     // Elk woord van de naam in de lijst komt voor in de regel (of als einde van een samengesteld woord: "trostomaten").
