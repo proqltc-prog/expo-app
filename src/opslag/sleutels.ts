@@ -37,4 +37,6 @@ export const SLEUTEL = {
   scanHistoriek: 'scanhistoriek:v1',
   /** Afgemeld op dit toestel (WEEK-314): bij de volgende aanmelding laat Google het account kiezen. Blijft bij afmelden. */
   afgemeld: 'afgemeld:v1',
+  /** Tekstgrootte in de bereiding (WEEK-336): enkel op dit toestel. */
+  bereidingTekst: 'bereidingtekst:v1',
 } as const;

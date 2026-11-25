@@ -17,7 +17,7 @@ import {
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { hoeveelheidTekst, Sleutel } from '@/i18n';
-import { begrensKaart, bereidingKaarten, kaartOpPositie, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
+import { begrensKaart, bereidingKaarten, doelBereikt, kaartOpPositie, naastDoel, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
 import type { FrigoItem } from '@/lib/frigo';
 import { EigenRecept } from '@/lib/eigenrecepten';
 import { wisselGedaan } from '@/lib/planner/bijwerken';
@@ -33,6 +33,11 @@ import { usePaginaInfo } from '@/ui/paginaInfo';
 import { Feestbeeld } from '@/ui/feestbeeld';
 import { SterrenVraag } from '@/ui/sterrenVraag';
 import { useSchermWakker } from '@/ui/schermWakker';
+import { stappenMetHoeveelheden } from '@/lib/stapHoeveelheden';
+import { aftellen, isGepauzeerd, resterend, tijdLabel, vindTijden, wekkerId } from '@/lib/kookwekker';
+import { geschaald, groter, kanGroter, kanKleiner, kleiner } from '@/lib/tekstgrootte';
+import { bewaarTekstStand, laadTekstStand } from '@/opslag/tekstgrootte';
+import { kookwekkers, useKookwekkers, useMeldingTeksten, useNu } from '@/ui/kookwekker';
 import { bewaarSterren, laadBeoordelingen, sterrenVraagNaKoken } from '@/opslag/beoordelingen';
 import type { Beoordeling } from '@/lib/beoordeling';
 import { inTaal } from '@/lib/planner/vertaal';
@@ -71,6 +76,20 @@ export default function Bereiding() {
   const pager = useRef<ScrollView>(null);
   // De hoogte van het veegvlak: elke kaart krijgt die volle hoogte (anders is een korte stap een klein kaartje).
   const [pagerHoogte, setPagerHoogte] = useState(0);
+  // WEEK-336: A− en A+ om de tekst groter te maken; de keuze blijft op dit toestel.
+  const [tekstStand, setTekstStand] = useState(0);
+  useEffect(() => {
+    void laadTekstStand().then(setTekstStand);
+  }, []);
+  const wijzigTekst = (nieuw: number) => {
+    setTekstStand(nieuw);
+    void bewaarTekstStand(nieuw);
+  };
+  const g = (grootte: number) => geschaald(grootte, tekstStand);
+  // WEEK-334: kookwekkers; ze lopen door buiten dit scherm (src/ui/kookwekker.tsx).
+  const alleWekkers = useKookwekkers();
+  const nu = useNu();
+  const meldingTeksten = useMeldingTeksten();
   // WEEK-210: het scherm wordt hergebruikt voor een volgend recept; dan begint de bereiding weer vooraan.
   useEffect(() => {
     setIndex(0);
@@ -99,6 +118,67 @@ export default function Bereiding() {
   const stappen = useMemo(() => bereidingVoor({ id: id ?? '', naam: naam ?? '' }, eigen, taal, db) ?? [], [id, naam, eigen, taal, db]);
   const ingredienten = useMemo(() => ingredientenMetFrigo(ingredientenVoor(plan, id ?? '', taal), frigo), [plan, id, taal, frigo]);
   const kaarten = useMemo(() => bereidingKaarten(stappen, ingredienten.length > 0), [stappen, ingredienten.length]);
+  // WEEK-335: de hoeveelheid achter de eerste vermelding van een ingrediënt in de stappen ("de kokosmelk (100 ml)").
+  const stapDelen = useMemo(
+    () =>
+      stappenMetHoeveelheden(
+        stappen,
+        ingredienten.map((ing) => ({
+          naam: ing.naam,
+          // "6 ×" wordt "6" in de lopende tekst.
+          hoeveelheid: (ing.keuken ? hoeveelheidTekst(taal, ing.keuken.hoeveelheid, ing.keuken.eenheid) : hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)).replace(/\s*×$/, ''),
+        })),
+      ),
+    [stappen, ingredienten, taal]
+  );
+  const eenheden = { u: t('kookwekker.u'), min: t('kookwekker.min'), s: t('kookwekker.s') };
+  const receptWekkers = alleWekkers.filter((w) => w.receptId === (id ?? ''));
+  const kaartVanStap = (stap: number) => kaarten.findIndex((k) => k.soort === 'stap' && k.nummer === stap);
+
+  /** WEEK-334: de knop van één tijd in een stap: starten, pauzeren/hervatten, wissen, of Stop als de tijd om is. */
+  const wekkerKnop = (stap: number, seconden: number) => {
+    const w = alleWekkers.find((x) => x.id === wekkerId(id ?? '', stap, seconden));
+    const label = tijdLabel(seconden, eenheden);
+    if (!w) {
+      return (
+        <Pressable
+          key={seconden}
+          style={s.wekker}
+          onPress={() => kookwekkers.start(id ?? '', naam ?? '', stap, seconden, meldingTeksten)}
+          accessibilityRole="button"
+          accessibilityLabel={t('kookwekker.start', { tijd: label })}
+        >
+          <Ionicons name="timer-outline" size={g(22)} color={PETROL} />
+          <Text style={[s.wekkerTekst, { fontSize: g(17) }]}>{label}</Text>
+        </Pressable>
+      );
+    }
+    if (w.afgelopen) {
+      return (
+        <Pressable key={seconden} style={[s.wekker, s.wekkerAf]} onPress={kookwekkers.stopAlarm} accessibilityRole="button" accessibilityLabel={t('kookwekker.stop')}>
+          <Ionicons name="alarm-outline" size={g(22)} color="#fff" />
+          <Text style={[s.wekkerTekst, s.wit, { fontSize: g(17) }]}>{t('kookwekker.klaar')}</Text>
+        </Pressable>
+      );
+    }
+    const gepauzeerd = isGepauzeerd(w);
+    return (
+      <View key={seconden} style={[s.wekker, s.wekkerLoopt, gepauzeerd && s.wekkerPauze]}>
+        <Pressable
+          style={s.wekkerHoofd}
+          onPress={() => (gepauzeerd ? kookwekkers.hervat(w.id, meldingTeksten) : kookwekkers.pauzeer(w.id))}
+          accessibilityRole="button"
+          accessibilityLabel={gepauzeerd ? t('kookwekker.hervat') : t('kookwekker.pauzeer')}
+        >
+          <Ionicons name={gepauzeerd ? 'play' : 'pause'} size={g(20)} color="#fff" />
+          <Text style={[s.wekkerTekst, s.wit, s.cijfers, { fontSize: g(19) }]}>{aftellen(resterend(w, nu))}</Text>
+        </Pressable>
+        <Pressable style={s.wekkerWis} onPress={() => kookwekkers.wis(w.id)} hitSlop={8} accessibilityRole="button" accessibilityLabel={t('kookwekker.wis')}>
+          <Ionicons name="close" size={18} color="#fff" />
+        </Pressable>
+      </View>
+    );
+  };
   const laatste = kaarten.length - 1;
   const voorkeurDag = dag !== undefined && dag !== '' ? Number(dag) : undefined;
   const kookDag = kookbareDag(plan, id ?? '', voorkeurDag);
@@ -106,19 +186,36 @@ export default function Bereiding() {
   // WEEK-108: het kruisje keert altijd terug naar het weekmenu, ongeacht de geschiedenis.
   const sluit = () => router.navigate('/');
 
+  // WEEK-334: de kaart waar de app naartoe schuift na een tik; tijdens dat schuiven volgt de stappenbalk niet de
+  // tussenstanden, en een tweede snelle tik telt vanaf dit doel (anders bleef de kaart half verschoven staan).
+  const doelRef = useRef<number | undefined>(undefined);
   const gaNaar = (i: number, animated = true) => {
     const doel = begrensKaart(i, kaarten.length);
+    doelRef.current = animated ? doel : undefined;
     setIndex(doel);
     pager.current?.scrollTo({ x: doel * width, animated });
+    // Komt het schuiven nooit exact aan (afronding), dan na korte tijd toch weer het vegen volgen.
+    if (animated) setTimeout(() => {
+      if (doelRef.current === doel) doelRef.current = undefined;
+    }, 900);
   };
-  const vorige = () => gaNaar(index - 1);
-  const volgende = () => (index >= laatste ? setKlaarVraag(true) : gaNaar(index + 1));
+  const vorige = () => gaNaar(naastDoel(index, doelRef.current, -1, kaarten.length));
+  const volgende = () => {
+    const basis = doelRef.current ?? index;
+    if (basis >= laatste) setKlaarVraag(true);
+    else gaNaar(naastDoel(index, doelRef.current, 1, kaarten.length));
+  };
 
   // WEEK-331: tijdens het vegen meteen de kaart die het meest in beeld staat (vanaf halfweg de volgende). Vroeger enkel
   // bij het loslaten: dan stond de kaart vaak pas een derde ver (afgerond: nog de oude stap), en op Android kwam het
   // einde van het naschuiven niet altijd door, zodat de stappenbalk op de oude stap bleef staan.
   const naVegen = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const i = kaartOpPositie(e.nativeEvent.contentOffset.x, width, kaarten.length);
+    const x = e.nativeEvent.contentOffset.x;
+    if (doelRef.current !== undefined) {
+      if (doelBereikt(x, width, doelRef.current)) doelRef.current = undefined;
+      return;
+    }
+    const i = kaartOpPositie(x, width, kaarten.length);
     setIndex((huidig) => (huidig === i ? huidig : i));
   };
 
@@ -202,6 +299,30 @@ export default function Bereiding() {
         <View style={s.titelRij}>
           <Text style={s.teller}>{huidig?.soort === 'stap' ? `${huidig.nummer} / ${stappen.length}` : t('bereiding.watNodig')}</Text>
           {minuten ? <Text style={s.chip}>{t('algemeen.minuten', { n: Number(minuten) })}</Text> : null}
+          <View style={s.tekstKnoppen}>
+            <Pressable
+              onPress={() => wijzigTekst(kleiner(tekstStand))}
+              disabled={!kanKleiner(tekstStand)}
+              hitSlop={6}
+              style={[s.tekstKnop, !kanKleiner(tekstStand) && s.uit]}
+              accessibilityRole="button"
+              accessibilityLabel={t('bereiding.kleiner')}
+              accessibilityState={{ disabled: !kanKleiner(tekstStand) }}
+            >
+              <Text style={s.tekstKnopKlein}>A−</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => wijzigTekst(groter(tekstStand))}
+              disabled={!kanGroter(tekstStand)}
+              hitSlop={6}
+              style={[s.tekstKnop, !kanGroter(tekstStand) && s.uit]}
+              accessibilityRole="button"
+              accessibilityLabel={t('bereiding.groter')}
+              accessibilityState={{ disabled: !kanGroter(tekstStand) }}
+            >
+              <Text style={s.tekstKnopGroot}>A+</Text>
+            </Pressable>
+          </View>
         </View>
         <Text style={s.titel} numberOfLines={2}>{naam}</Text>
       </View>
@@ -214,6 +335,10 @@ export default function Bereiding() {
         showsHorizontalScrollIndicator={false}
         onScroll={naVegen}
         onMomentumScrollEnd={naVegen}
+        // Zelf vegen neemt het over van een tik op de pijlen.
+        onScrollBeginDrag={() => {
+          doelRef.current = undefined;
+        }}
         scrollEventThrottle={16}
         style={s.pager}
         onLayout={(e) => setPagerHoogte(e.nativeEvent.layout.height)}
@@ -227,7 +352,7 @@ export default function Bereiding() {
                     <Text style={s.kaartKop}>{t('bereiding.watNodig')}</Text>
                     {ingredienten.map((ing, n) => (
                       <View key={n} style={s.ingRij}>
-                        <Text style={s.ingNaam}>{ing.naam}</Text>
+                        <Text style={[s.ingNaam, { fontSize: g(17) }]}>{ing.naam}</Text>
                         {ing.dekking === 'geheel' ? (
                           // WEEK-233: enkel het vinkje; de uitleg staat in het info-icoon rechtsboven.
                           <View style={s.ingFrigo} accessibilityLabel={t('bereiding.inFrigo')}>
@@ -236,7 +361,7 @@ export default function Bereiding() {
                         ) : ing.dekking === 'deels' ? (
                           <Text style={s.ingDeels}>{t('bereiding.deelsInFrigo')}</Text>
                         ) : null}
-                        <Text style={s.ingHoeveelheid}>
+                        <Text style={[s.ingHoeveelheid, { fontSize: g(16) }]}>
                           {ing.keuken ? hoeveelheidTekst(taal, ing.keuken.hoeveelheid, ing.keuken.eenheid) : hoeveelheidTekst(taal, ing.hoeveelheid, ing.eenheid)}
                         </Text>
                       </View>
@@ -250,7 +375,17 @@ export default function Bereiding() {
                       </View>
                       <Text style={s.kaartKop}>{t('bereiding.stapKop', { n: k.nummer })}</Text>
                     </View>
-                    <Text style={s.stapTekst}>{k.tekst}</Text>
+                    <Text style={[s.stapTekst, { fontSize: g(21), lineHeight: g(31) }]}>
+                      {(stapDelen[k.nummer - 1] ?? [{ tekst: k.tekst }]).map((d, n) => (
+                        <Text key={n}>
+                          {d.tekst}
+                          {d.hoeveelheid ? <Text style={s.stapHoeveelheid}> ({d.hoeveelheid})</Text> : null}
+                        </Text>
+                      ))}
+                    </Text>
+                    {vindTijden(k.tekst).length > 0 && (
+                      <View style={s.wekkerRij}>{vindTijden(k.tekst).map((tijd) => wekkerKnop(k.nummer, tijd.seconden))}</View>
+                    )}
                   </>
                 )}
               </ScrollView>
@@ -258,6 +393,22 @@ export default function Bereiding() {
           </View>
         ))}
       </ScrollView>
+
+      {/* WEEK-334: wekkers die lopen bij een andere stap; tik om naar die stap te gaan. */}
+      {receptWekkers.some((w) => !(huidig?.soort === 'stap' && huidig.nummer === w.stap)) && (
+        <View style={s.lopend}>
+          {receptWekkers
+            .filter((w) => !(huidig?.soort === 'stap' && huidig.nummer === w.stap))
+            .map((w) => (
+              <Pressable key={w.id} style={[s.lopendChip, w.afgelopen && s.wekkerAf]} onPress={() => gaNaar(kaartVanStap(w.stap))} accessibilityRole="button">
+                <Ionicons name={w.afgelopen ? 'alarm-outline' : isGepauzeerd(w) ? 'pause' : 'timer-outline'} size={16} color={w.afgelopen ? '#fff' : PETROL} />
+                <Text style={[s.lopendTekst, w.afgelopen && s.wit]}>
+                  {t('kookwekker.lopend', { n: w.stap })} · {w.afgelopen ? t('kookwekker.klaar') : aftellen(resterend(w, nu))}
+                </Text>
+              </Pressable>
+            ))}
+        </View>
+      )}
 
       {/* Onderaan enkel iconen: terug, de stand, verder (op de laatste stap een ✓). */}
       <View style={s.onderaan}>
@@ -375,4 +526,25 @@ const s = StyleSheet.create({
   vraagKnopVolTekst: { color: '#fff', fontWeight: '700', fontSize: 16, textAlign: 'center' },
   leegWrap: { flex: 1, backgroundColor: PAPIER, alignItems: 'center', justifyContent: 'center', padding: 24 },
   leeg: { fontSize: 16, color: MUTED, textAlign: 'center' },
+  // WEEK-336
+  tekstKnoppen: { marginLeft: 'auto', flexDirection: 'row', gap: 8 },
+  tekstKnop: { minWidth: 46, height: 38, borderRadius: 999, borderWidth: 1, borderColor: LIJN, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 },
+  tekstKnopKlein: { fontSize: 14, fontWeight: '800', color: INKT },
+  tekstKnopGroot: { fontSize: 19, fontWeight: '800', color: INKT },
+  // WEEK-335
+  stapHoeveelheid: { color: PETROL, fontWeight: '800' },
+  // WEEK-334
+  wekkerRij: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 },
+  wekker: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 999, borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff', paddingHorizontal: 16, minHeight: 50 },
+  wekkerLoopt: { backgroundColor: PETROL, paddingLeft: 0, paddingRight: 8 },
+  wekkerPauze: { backgroundColor: MUTED, borderColor: MUTED },
+  wekkerAf: { backgroundColor: ORANJE, borderColor: ORANJE },
+  wekkerHoofd: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 16, paddingVertical: 10 },
+  wekkerTekst: { fontWeight: '800', color: PETROL },
+  cijfers: { fontVariant: ['tabular-nums'], minWidth: 52 },
+  wit: { color: '#fff' },
+  wekkerWis: { width: 32, height: 32, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
+  lopend: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, paddingTop: 6 },
+  lopendChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: PETROL_ZACHT, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 },
+  lopendTekst: { color: PETROL, fontWeight: '800', fontSize: 14, fontVariant: ['tabular-nums'] },
 });

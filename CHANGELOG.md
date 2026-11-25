@@ -8,6 +8,15 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.167.0] – 2026-11-25
+
+**Jira:** [WEEK-334](https://proqltc-1791495894841.atlassian.net/browse/WEEK-334) (kookwekker) · [WEEK-335](https://proqltc-1791495894841.atlassian.net/browse/WEEK-335) (hoeveelheden in de stap) · [WEEK-336](https://proqltc-1791495894841.atlassian.net/browse/WEEK-336) (grotere tekst) · **Confluence:** [WEEK-334](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29360129) · [WEEK-335](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29360149) · [WEEK-336](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29392897)
+
+- Kookwekker: staat er een tijd in een stap ("15 minuten"), tik erop en er loopt een wekker. Als de tijd om is, krijg je een melding met geluid, trilt de gsm en verschijnt er een balk met Stop, ook als je intussen een ander scherm open hebt.
+- De hoeveelheid staat nu ook in de stap zelf: "giet de kokosmelk (100 ml) erbij". Niet bij "de helft van" of "de rest van".
+- Met A− en A+ maak je de tekst in de bereiding kleiner of groter; je keuze blijft bewaard.
+- Opgelost: twee keer snel op Volgende tikken liet de kaart half verschoven staan.
+
 ## [0.166.0] – 2026-11-25
 
 **Jira:** [WEEK-333](https://proqltc-1791495894841.atlassian.net/browse/WEEK-333) (scherm blijft aan, sterrenvraag) · **Confluence:** [WEEK-333](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29294593)

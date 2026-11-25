@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { AppState, BackHandler, Pressable, Text } from 'react-native';
+import { AppState, BackHandler, Pressable, Text, View } from 'react-native';
 import { router, Tabs, useGlobalSearchParams, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TaalProvider, useTaal } from '@/ui/taal';
@@ -13,6 +13,7 @@ import { laadWelkomGezien } from '@/opslag/welkom';
 import { ROUTE_WELKOM, welkomNodig } from '@/lib/welkom';
 import { gaatNaarMenu, sluitAppOp, terugBestemming } from '@/lib/terugknop';
 import { IN_HUIS_ICOON } from '@/lib/frigoSheets';
+import { KookwekkerAlarm } from '@/ui/kookwekker';
 
 const KLEUR = '#2e7d4f';
 
@@ -111,7 +112,11 @@ export default function Layout() {
   return (
     <TaalProvider>
       <StatusBar style="auto" />
-      {start ? <TabBladen startNaam={start} /> : null}
+      <View style={{ flex: 1 }}>
+        {start ? <TabBladen startNaam={start} /> : null}
+        {/* WEEK-334: een afgelopen kookwekker geeft op elk scherm een balk bovenaan met Stop. */}
+        <KookwekkerAlarm />
+      </View>
     </TaalProvider>
   );
 }
