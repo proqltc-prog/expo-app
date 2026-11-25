@@ -39,4 +39,6 @@ export const SLEUTEL = {
   afgemeld: 'afgemeld:v1',
   /** Tekstgrootte in de bereiding (WEEK-336): enkel op dit toestel. */
   bereidingTekst: 'bereidingtekst:v1',
+  /** Gekozen webwinkel (WEEK-337, voorbereiding, nog niet zichtbaar): enkel op dit toestel. */
+  webwinkel: 'webwinkel:v1',
 } as const;
