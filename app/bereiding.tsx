@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { hoeveelheidTekst } from '@/i18n';
+import { hoeveelheidTekst, Sleutel } from '@/i18n';
 import { begrensKaart, bereidingKaarten, kaartOpPositie, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
 import type { FrigoItem } from '@/lib/frigo';
 import { EigenRecept } from '@/lib/eigenrecepten';
@@ -31,6 +31,11 @@ import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { Feestbeeld } from '@/ui/feestbeeld';
+import { SterrenVraag } from '@/ui/sterrenVraag';
+import { useSchermWakker } from '@/ui/schermWakker';
+import { bewaarSterren, laadBeoordelingen, sterrenVraagNaKoken } from '@/opslag/beoordelingen';
+import type { Beoordeling } from '@/lib/beoordeling';
+import { inTaal } from '@/lib/planner/vertaal';
 
 const PETROL = '#0F6B66';
 const PETROL_ZACHT = '#D5EDEA';
@@ -47,6 +52,11 @@ export default function Bereiding() {
   const { popup } = usePaginaInfo({ tekst: t('pagina.bereidingInfo'), kleur: PETROL, infoLabel: t('pagina.infoKnop'), sluitLabel: t('pagina.sluiten') });
   const { id, naam, minuten, dag } = useLocalSearchParams<{ id: string; naam: string; minuten?: string; dag?: string }>();
   const { width } = useWindowDimensions();
+  // WEEK-333: tijdens het koken gaat de gsm niet in slaapmodus; na het sluiten weer wel.
+  useSchermWakker('bereiding');
+  // WEEK-333: na Gekookt dezelfde sterrenvraag als in het weekmenu (WEEK-316); daarna terug naar het weekmenu.
+  const [sterrenVoor, setSterrenVoor] = useState<{ receptId: number; naam: string } | null>(null);
+  const [beoordelingen, setBeoordelingen] = useState<Beoordeling[]>([]);
   const [eigen, setEigen] = useState<EigenRecept[]>([]);
   // WEEK-121: databankrecepten hebben hun stappen in de databank; een netwerkfout laat ze gewoon leeg.
   const [db, setDb] = useState<DbRecept[]>([]);
@@ -129,14 +139,24 @@ export default function Bereiding() {
     if (bezig) return;
     setBezig(true);
     try {
+      let gekooktIndex: number | undefined;
       const nieuw = await wijzigPlanEnFrigo((huidig, f) => {
         const i = kookbareDag(huidig, id ?? '', voorkeurDag);
+        gekooktIndex = i;
         if (i === undefined) return { plan: huidig, frigo: f };
         return wisselGedaan(huidig, f, i, { gemaaktOp: huidig.gemaaktOp, receptNaam: huidig.dagen[i].recept.naam });
       });
       // WEEK-134: een gekookt recept verdwijnt van de boodschappenlijst.
       if (nieuw) await zetLijstBijPlan(nieuw, taal);
       setKlaarVraag(false);
+      // WEEK-333: net gekookt: eerst de sterrenvraag (zolang er geen score is), pas daarna terug naar het weekmenu.
+      const gekookt = nieuw && gekooktIndex !== undefined ? nieuw.dagen[gekooktIndex] : undefined;
+      const receptId = await sterrenVraagNaKoken(gekookt).catch(() => undefined);
+      if (gekookt && receptId !== undefined) {
+        setBeoordelingen(await laadBeoordelingen());
+        setSterrenVoor({ receptId, naam: inTaal(gekookt.recept, taal).naam });
+        return;
+      }
       sluit();
     } finally {
       setBezig(false);
@@ -290,6 +310,17 @@ export default function Bereiding() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <SterrenVraag
+        naam={sterrenVoor?.naam}
+        beoordeling={beoordelingen.find((b) => b.receptId === sterrenVoor?.receptId)}
+        t={(k, w) => t(k as Sleutel, w)}
+        onSterren={(n) => sterrenVoor && void bewaarSterren(sterrenVoor.receptId, n).then(setBeoordelingen)}
+        onSluit={() => {
+          setSterrenVoor(null);
+          sluit();
+        }}
+      />
     </View>
   );
 }

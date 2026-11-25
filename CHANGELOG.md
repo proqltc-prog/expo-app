@@ -8,6 +8,13 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.166.0] – 2026-11-25
+
+**Jira:** [WEEK-333](https://proqltc-1791495894841.atlassian.net/browse/WEEK-333) (scherm blijft aan, sterrenvraag) · **Confluence:** [WEEK-333](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29294593)
+
+- Tijdens de bereiding gaat je gsm niet meer in slaapmodus; na het sluiten werkt de slaapmodus weer gewoon.
+- Opgelost: na Gekookt op de laatste stap van de bereiding kwam de vraag "Hoe was het?" niet. Die verschijnt nu ook daar, net als in het weekmenu.
+
 ## [0.165.1] – 2026-11-24
 
 **Jira:** [WEEK-331](https://proqltc-1791495894841.atlassian.net/browse/WEEK-331) (stappenbalk en synoniemen) · **Confluence:** [WEEK-331](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/28934145)

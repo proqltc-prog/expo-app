@@ -6,6 +6,7 @@ import {
   Beoordeling,
   markeerVerstuurd,
   moetVragen,
+  sterrenNaKoken,
   naarRij,
   normaliseerBeoordelingen,
   teVersturen,
@@ -42,6 +43,11 @@ export async function bewaarSterren(receptId: number, sterren: number): Promise<
 /** Moet de sterrenvraag voor dit gerecht open? Zolang er geen score is: ja (ook na "Later"). */
 export async function moetSterrenVragen(receptId: number): Promise<boolean> {
   return moetVragen(await laadBeoordelingen(), receptId);
+}
+
+/** WEEK-333: het gerecht waarvoor de sterrenvraag open moet na Gekookt (weekmenu én bereiding), of undefined. */
+export async function sterrenVraagNaKoken(dag: Parameters<typeof sterrenNaKoken>[0]): Promise<number | undefined> {
+  return sterrenNaKoken(dag, await laadBeoordelingen());
 }
 
 let bezig = false;

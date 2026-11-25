@@ -30,8 +30,8 @@ import { zetLijstBijPlan as zetLijstBijPlanOpslag } from '@/opslag/lijstBijPlan'
 import { bewaarKeuzes, bewaarPlan, laadKeuzes, laadPlan, wijzigPlan, wijzigPlanEnFrigo } from '@/opslag/plan';
 import { laadProfiel } from '@/opslag/profiel';
 import { bijWijziging, GezinsLid, ikId, laadLeden } from '@/opslag/sync';
-import { bewaarSterren, laadBeoordelingen, verstuurBeoordelingen, moetSterrenVragen } from '@/opslag/beoordelingen';
-import { Beoordeling, dbReceptId } from '@/lib/beoordeling';
+import { bewaarSterren, laadBeoordelingen, verstuurBeoordelingen, sterrenVraagNaKoken } from '@/opslag/beoordelingen';
+import { Beoordeling } from '@/lib/beoordeling';
 import { SterrenVraag } from '@/ui/sterrenVraag';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { dagSleutel, Sleutel } from '@/i18n';
@@ -355,12 +355,11 @@ export default function Weekplanning() {
       if (nieuw) {
         setPlan(nieuw);
         // WEEK-316: net gekookt (niet bij terugzetten): vraag hoe het was, enkel voor gerechten van de app.
-        const dag = nieuw.dagen[index];
-        const receptId = dbReceptId(dag?.recept.id);
         // Vragen tot er een score is: na "Later" opnieuw bij een volgende keer koken, na een score niet meer.
-        if (dag?.gedaan && receptId !== undefined && (await moetSterrenVragen(receptId))) {
-          setSterrenVoor({ receptId, naam: inTaal(dag.recept, taal).naam });
-        }
+        // WEEK-333: dezelfde regel als na Gekookt in de bereiding (sterrenNaKoken).
+        const dag = nieuw.dagen[index];
+        const receptId = await sterrenVraagNaKoken(dag);
+        if (dag && receptId !== undefined) setSterrenVoor({ receptId, naam: inTaal(dag.recept, taal).naam });
         // WEEK-134: een gekookt recept verdwijnt van de lijst.
         await zetLijstBijPlan(nieuw);
       }
