@@ -104,3 +104,16 @@ export function kaartOpPositie(x: number, breedte: number, aantal: number): numb
   if (!(breedte > 0)) return 0;
   return begrensKaart(x / breedte, aantal);
 }
+
+/**
+ * WEEK-334 (bij WEEK-331): tikt de gebruiker snel twee keer op Volgende, dan telt de tweede tik vanaf de kaart waar
+ * de app al naartoe schuift, niet vanaf een tussenstand tijdens het schuiven.
+ */
+export function naastDoel(index: number, doel: number | undefined, richting: 1 | -1, aantal: number): number {
+  return begrensKaart((doel ?? index) + richting, aantal);
+}
+
+/** Staat het veegvlak (bijna) op de kaart waar de app naartoe schoof? Een halve pixel afronding mag. */
+export function doelBereikt(x: number, breedte: number, doel: number): boolean {
+  return Math.abs(x - doel * breedte) < 2;
+}
