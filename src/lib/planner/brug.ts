@@ -21,7 +21,8 @@ const STIJL_NAAR_DB: Record<string, StijlCode[]> = {
   japans: ['japans'],
   koreaans: ['koreaans'],
   thais: ['thais'],
-  indiaas: ['indiaas', 'aziatisch'],
+  // De oude, algemene stijl aziatisch (woknoedels, Indonesisch, …) hoort bij Chinees, niet bij Indiaas (UAT WEEK-341).
+  indiaas: ['indiaas'],
   hartig: ['klassiek'],
   zoet: ['klassiek'],
 };

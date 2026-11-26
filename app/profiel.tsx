@@ -11,6 +11,7 @@ import {
   Profiel,
   ProfielFout,
   profielNaSync,
+  sectiesMetFouten,
   standaardProfiel,
   valideerProfiel,
 } from '@/lib/profiel';
@@ -204,7 +205,11 @@ export default function ProfielScherm() {
   const bewaar = async () => {
     const gevonden = valideerProfiel(profiel);
     setFouten(gevonden);
-    if (gevonden.length) return;
+    if (gevonden.length) {
+      // UAT 26/11: de secties met een fout klappen open, zodat de gebruiker ziet wat er nog ontbreekt.
+      setUitgeklapt((open) => new Set([...open, ...sectiesMetFouten(gevonden)]));
+      return;
+    }
     await bewaarProfiel(profiel);
     laatstGeladen.current = profiel;
     // WEEK-100: na bewaren direct naar het menu.
@@ -290,16 +295,16 @@ export default function ProfielScherm() {
         <View style={s.rijVelden}>
           <View style={{ width: 100, gap: 4 }}>
             <Text style={s.label}>{t('profiel.postcode')}</Text>
-            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" editable={mag} />
+            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" editable={mag} accessibilityLabel={t('profiel.postcode')} />
           </View>
           <View style={{ flex: 1, gap: 4 }}>
             <Text style={s.label}>{t('profiel.gemeente')}</Text>
-            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} editable={mag} />
+            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(tekst) => wijzigAdres({ gemeente: tekst })} editable={mag} accessibilityLabel={t('profiel.gemeente')} />
           </View>
         </View>
         <View style={{ gap: 4 }}>
           <Text style={s.label}>{t('profiel.land')}</Text>
-          <TextInput style={s.veld} value={landInTaal(profiel.adres.land, taal)} onChangeText={(t) => wijzigAdres({ land: t })} editable={mag} />
+          <TextInput style={s.veld} value={landInTaal(profiel.adres.land, taal)} onChangeText={(tekst) => wijzigAdres({ land: tekst })} editable={mag} accessibilityLabel={t('profiel.land')} />
         </View>
       </View>
       </Inklapbaar>

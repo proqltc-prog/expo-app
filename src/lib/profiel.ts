@@ -117,3 +117,14 @@ export function gezinIcoonOplichten(p: Profiel | null): boolean {
 export function profielNaSync(opScherm: Profiel, laatstGeladen: Profiel, binnen: Profiel): Profiel {
   return JSON.stringify(opScherm) === JSON.stringify(laatstGeladen) ? binnen : opScherm;
 }
+
+/**
+ * UAT 26/11: welke secties van het gezinsprofiel open moeten bij fouten, zodat de gebruiker ziet wat hij nog moet
+ * invullen (vroeger stonden de fouten onderaan terwijl de secties dicht bleven).
+ */
+export function sectiesMetFouten(fouten: readonly ProfielFout[]): ('gezin' | 'adres')[] {
+  const uit: ('gezin' | 'adres')[] = [];
+  if (fouten.some((f) => f === 'volwassenen' || f === 'kinderen')) uit.push('gezin');
+  if (fouten.some((f) => f === 'postcodeLeeg' || f === 'postcode' || f === 'gemeente' || f === 'land')) uit.push('adres');
+  return uit;
+}

@@ -25,7 +25,7 @@ describe('stijl naar databasestijlen', () => {
   test('mediterraan en italiaans blijven zichzelf', () => {
     assert.deepEqual(stijlNaarDb(['mediterraan', 'italiaans']), ['mediterraan', 'italiaans']);
   });
-  test('WEEK-341: chinees en indiaas hebben een eigen databasestijl, en delen het oudere aziatisch', () => {
+  test('WEEK-341: chinees en indiaas hebben een eigen databasestijl; het oudere aziatisch hoort bij chinees', () => {
     assert.deepEqual(stijlNaarDb(['chinees', 'indiaas']), ['chinees', 'aziatisch', 'indiaas']);
   });
   test('thais, japans en koreaans hebben elk een eigen databasestijl (WEEK-86)', () => {

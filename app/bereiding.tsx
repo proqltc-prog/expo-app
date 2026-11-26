@@ -149,7 +149,7 @@ export default function Bereiding() {
           accessibilityRole="button"
           accessibilityLabel={t('kookwekker.start', { tijd: label })}
         >
-          <Ionicons name="timer-outline" size={20} color={PETROL} />
+          <Ionicons name="timer-outline" size={16} color={PETROL} />
           <Text style={s.wekkerTekst}>{label}</Text>
         </Pressable>
       );
@@ -157,7 +157,7 @@ export default function Bereiding() {
     if (w.afgelopen) {
       return (
         <Pressable key={seconden} style={[s.wekker, s.wekkerAf]} onPress={kookwekkers.stopAlarm} accessibilityRole="button" accessibilityLabel={t('kookwekker.stop')}>
-          <Ionicons name="alarm-outline" size={20} color="#fff" />
+          <Ionicons name="alarm-outline" size={16} color="#fff" />
           <Text style={[s.wekkerTekst, s.wit]}>{t('kookwekker.klaar')}</Text>
         </Pressable>
       );
@@ -171,7 +171,7 @@ export default function Bereiding() {
           accessibilityRole="button"
           accessibilityLabel={gepauzeerd ? t('kookwekker.hervat') : t('kookwekker.pauzeer')}
         >
-          <Ionicons name={gepauzeerd ? 'play' : 'pause'} size={18} color="#fff" />
+          <Ionicons name={gepauzeerd ? 'play' : 'pause'} size={16} color="#fff" />
           <Text style={[s.wekkerTekst, s.wit, s.cijfers]}>{aftellen(resterend(w, nu))}</Text>
         </Pressable>
         <Pressable style={s.wekkerWis} onPress={() => kookwekkers.wis(w.id)} hitSlop={8} accessibilityRole="button" accessibilityLabel={t('kookwekker.wis')}>
@@ -521,8 +521,8 @@ const s = StyleSheet.create({
   ingFrigo: { marginLeft: 8, flexDirection: 'row', alignItems: 'center', gap: 3 },
   ingDeels: { marginLeft: 8, fontSize: 11, fontWeight: '700', color: MUTED },
   ingHoeveelheid: { fontSize: 16, fontWeight: '700', color: MUTED, marginLeft: 12 },
-  onderaan: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 8, paddingBottom: 18 },
-  rond: { width: 60, height: 60, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  onderaan: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 18 },
+  rond: { width: 56, height: 56, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   rondLijn: { borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff' },
   rondVol: { backgroundColor: PETROL },
   rondKlaar: { backgroundColor: GROEN },
@@ -550,17 +550,18 @@ const s = StyleSheet.create({
   // WEEK-335
   stapHoeveelheid: { color: PETROL, fontWeight: '800' },
   // WEEK-334
-  wekkerRij: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 6, paddingHorizontal: 6 },
+  wekkerRij: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 6, paddingHorizontal: 4 },
   kaartSchuif: { flex: 1 },
-  wekker: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 999, borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff', paddingHorizontal: 12, minHeight: 44 },
+  // WEEK-339 (UAT): compact, zodat er twee naast elkaar passen tussen de pijlen.
+  wekker: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff', paddingHorizontal: 9, minHeight: 40 },
   wekkerLoopt: { backgroundColor: PETROL, paddingLeft: 0, paddingRight: 8 },
   wekkerPauze: { backgroundColor: MUTED, borderColor: MUTED },
   wekkerAf: { backgroundColor: ORANJE, borderColor: ORANJE },
-  wekkerHoofd: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 12, paddingVertical: 8 },
-  wekkerTekst: { fontWeight: '800', color: PETROL, fontSize: 16 },
-  cijfers: { fontVariant: ['tabular-nums'], minWidth: 46 },
+  wekkerHoofd: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 9, paddingVertical: 6 },
+  wekkerTekst: { fontWeight: '800', color: PETROL, fontSize: 15 },
+  cijfers: { fontVariant: ['tabular-nums'], minWidth: 40 },
   wit: { color: '#fff' },
-  wekkerWis: { width: 32, height: 32, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
+  wekkerWis: { width: 28, height: 28, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
   lopend: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, paddingTop: 6 },
   lopendChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: PETROL_ZACHT, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 },
   lopendTekst: { color: PETROL, fontWeight: '800', fontSize: 14, fontVariant: ['tabular-nums'] },

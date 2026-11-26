@@ -49,3 +49,14 @@ describe('WEEK-339: einde van de bereiding', () => {
     assert.equal(eindeBereiding(plan(dag({ bevestigd: true })), 'db-2'), 'nietBevestigd');
   });
 });
+
+describe('UAT 26/11: secties met fouten klappen open', async () => {
+  const { sectiesMetFouten } = await import('./profiel');
+  it('gezin en adres', () => {
+    assert.deepEqual(sectiesMetFouten(['volwassenen', 'postcodeLeeg', 'gemeente']), ['gezin', 'adres']);
+    assert.deepEqual(sectiesMetFouten(['postcode']), ['adres']);
+  });
+  it('negatief: geen fouten, geen secties', () => {
+    assert.deepEqual(sectiesMetFouten([]), []);
+  });
+});

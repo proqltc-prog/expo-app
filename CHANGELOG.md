@@ -10,13 +10,17 @@ Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
 ## [0.168.0] – 2026-11-26
 
-**Jira:** [WEEK-338](https://proqltc-1791495894841.atlassian.net/browse/WEEK-338) (gezinsruimte) · [WEEK-339](https://proqltc-1791495894841.atlassian.net/browse/WEEK-339) (bereiding) · [WEEK-340](https://proqltc-1791495894841.atlassian.net/browse/WEEK-340) (weekmenu) · **Confluence:** [WEEK-338](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29622273) · [WEEK-339](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29655041) · [WEEK-340](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29687809)
+**Jira:** [WEEK-338](https://proqltc-1791495894841.atlassian.net/browse/WEEK-338) (gezinsruimte) · [WEEK-339](https://proqltc-1791495894841.atlassian.net/browse/WEEK-339) (bereiding) · [WEEK-340](https://proqltc-1791495894841.atlassian.net/browse/WEEK-340) (weekmenu) · [WEEK-341](https://proqltc-1791495894841.atlassian.net/browse/WEEK-341) (keukens) · **Confluence:** [WEEK-338](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29622273) · [WEEK-339](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29655041) · [WEEK-340](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29687809) · [WEEK-341](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29589506)
 
 - Weekmenu: eerst gerechten met wat In huis ligt (hoofdingrediënten tellen zwaar, olie en specerijen bijna niet), dan het seizoen, dan de rest. Ook bij een ander gerecht.
 - Opgelost: na het aansluiten bij een gezinsruimte vroeg Gezinsprofiel nog om adres en gezin; het gedeelde profiel verschijnt nu meteen.
 - Wie zonder account aansluit, krijgt eerst de vraag om aan te melden, zodat je niet twee keer in de gezinsruimte staat.
 - Bereiding en info-vensters: een pijltje toont dat er nog tekst volgt; de kookwekkers staan vast tussen de pijlen onderaan.
 - Een niet-bevestigd gerecht krijgt op de laatste stap geen "Proficiat" meer, wel de uitleg om het eerst te bevestigen.
+- Opgelost: de keukens Indiaas, Chinees, Belgisch en Frans vonden hun eigen gerechten niet (109 gerechten). Nu komen eerst de gerechten van de gekozen keuken.
+- Opgelost: "Alleen vegetarische gerechten" ging verloren als je de app opnieuw opende.
+- Gezinsprofiel: bij een fout klapt de sectie met de fout open; adresvelden hebben een naam voor schermlezers.
+- Kookwekkers compacter: twee passen naast elkaar.
 
 ## [0.167.1] – 2026-11-25
 
