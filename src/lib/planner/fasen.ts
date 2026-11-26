@@ -1,6 +1,8 @@
 // Het weekmenu als stappen (WEEK-68 deel 4b; WEEK-189: enkel avondeten, dus geen maaltijdkeuze): periode, kooktijd, stijl, vermijden, plan.
 // Pure logica: het scherm toont de stap, deze module bepaalt de volgorde en wat er mag.
 import type { Moment } from '@/data/recept';
+import { bereikDatums } from '@/lib/planner/datums';
+import { PERIODE_STANDAARD } from '@/lib/planner/periode';
 import { behoudGeldige, kooktijdVoorMomenten, stijlVoorMomenten, standaardStijlen, vermijdVoorMomenten } from '@/lib/planner/opties';
 
 export const FASEN = ['periode', 'kooktijd', 'stijl', 'vermijden', 'plan'] as const;
@@ -83,4 +85,25 @@ export function naarStap(doel: Fase, keuzes: Keuzes): Keuzes {
   // Zelfde object terug bij de andere stappen, zodat de aanroeper niets hoeft op te slaan.
   if (doel === 'stijl') return { ...keuzes, stijlen: [] };
   return keuzes;
+}
+
+/**
+ * De bewaarde keuzes klaarzetten bij het openen van het weekmenu: ongeldige keuzes vallen weg, zonder datums start de
+ * periode vandaag (WEEK-97), zonder kooktijd "snel" en zonder keuken de standaardkeukens.
+ * UAT WEEK-341: "Alleen vegetarische gerechten" ging hier verloren; een vegetarisch gezin kreeg na het heropenen
+ * van de app zonder waarschuwing vlees en vis voorgesteld.
+ */
+export function keuzesBijStart(k: Keuzes, vandaag: string): Keuzes {
+  const momenten: Moment[] = k.momenten.length ? k.momenten : ['avond'];
+  const geldig = wijzigMomenten({ ...k, momenten }, momenten);
+  const datums = k.datums.length ? k.datums : bereikDatums(vandaag, PERIODE_STANDAARD);
+  return {
+    ...geldig,
+    datums,
+    uitgesloten: k.uitgesloten,
+    aantalDagen: datums.length - k.uitgesloten.length,
+    kooktijden: geldig.kooktijden.length ? geldig.kooktijden : ['snel'],
+    stijlen: geldig.stijlen.length ? geldig.stijlen : standaardStijlen(momenten[0]),
+    ...(k.enkelVegetarisch ? { enkelVegetarisch: true } : {}),
+  };
 }

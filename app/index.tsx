@@ -36,7 +36,7 @@ import { SterrenVraag } from '@/ui/sterrenVraag';
 import { beheerderNaam, magPlanWijzigen } from '@/lib/planner/beheer';
 import { dagSleutel, Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
-import { Fase, FASEN, Keuzes, kanVerder, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
+import { Fase, FASEN, Keuzes, kanVerder, keuzesBijStart, naarStap, ontbrekendeVoorkeur, volgendeFase, vorigeFase, wijzigMomenten } from '@/lib/planner/fasen';
 import { kooktijdVoorMomenten, standaardStijlen, stijlVoorMomenten, vermijdVoorMomenten } from '@/lib/planner/opties';
 import { vermijdOpties as vermijdKeuzesVoor, zetEnkelVegetarisch } from '@/lib/planner/vermijden';
 import { kooktijdNaarDb, stijlNaarDb } from '@/lib/planner/brug';
@@ -147,20 +147,8 @@ export default function Weekplanning() {
       setPlan(p);
       setFase(startFase(p));
     });
-    laadKeuzes().then((k) => {
-      const momenten: Moment[] = k.momenten.length ? k.momenten : ['avond'];
-      const geldig = wijzigMomenten({ aantalDagen: k.aantalDagen, datums: k.datums, uitgesloten: k.uitgesloten, momenten, kooktijden: k.kooktijden, stijlen: k.stijlen, vermijd: k.vermijd }, momenten);
-      // WEEK-97: zonder gekozen datums start de periode vandaag, voor de standaardperiode.
-      const datums = k.datums.length ? k.datums : bereikDatums(vandaagIso(), PERIODE_STANDAARD);
-      setKeuzes({
-        ...geldig,
-        datums,
-        uitgesloten: k.uitgesloten,
-        aantalDagen: datums.length - k.uitgesloten.length,
-        kooktijden: geldig.kooktijden.length ? geldig.kooktijden : ['snel'],
-        stijlen: geldig.stijlen.length ? geldig.stijlen : standaardStijlen(momenten[0]),
-      });
-    });
+    // WEEK-97/341: de bewaarde keuzes klaarzetten (ook "Alleen vegetarische gerechten", dat hier vroeger verloren ging).
+    laadKeuzes().then((k) => setKeuzes(keuzesBijStart(k, vandaagIso())));
   }, []);
 
   // Live: een ander gezinslid maakte of wijzigde het weekplan of het gezinsprofiel (WEEK-8).
@@ -308,7 +296,9 @@ export default function Weekplanning() {
         setMelding({ tekst: t('planning.geenVerbinding'), index });
         return;
       }
-      const nieuw: Weekplan = vervangDbDag(basis, index, maakDbPool(recepten, taal, profiel), Date.now());
+      // WEEK-340: ook bij een ander gerecht gaat wat In huis ligt voor.
+      const frigo = await laadFrigo().catch(() => []);
+      const nieuw: Weekplan = vervangDbDag(basis, index, maakDbPool(recepten, taal, profiel), Date.now(), frigo);
       // Geen enkel recept meer over: de gebruiker kiest zelf (WEEK-184).
       if (nieuw === basis) {
         setMelding({ tekst: t('planning.allesGezienTekst'), index, zelfKiezen: true });

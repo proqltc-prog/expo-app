@@ -17,7 +17,7 @@ import {
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { hoeveelheidTekst, Sleutel } from '@/i18n';
-import { begrensKaart, bereidingKaarten, doelBereikt, kaartOpPositie, naastDoel, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
+import { begrensKaart, bereidingKaarten, doelBereikt, eindeBereiding, kaartOpPositie, naastDoel, bereidingVoor, ingredientenMetFrigo, ingredientenVoor, kookbareDag, segmentStand } from '@/lib/bereiding';
 import type { FrigoItem } from '@/lib/frigo';
 import { EigenRecept } from '@/lib/eigenrecepten';
 import { wisselGedaan } from '@/lib/planner/bijwerken';
@@ -31,6 +31,7 @@ import { zetLijstBijPlan } from '@/opslag/lijstBijPlan';
 import { useTaal } from '@/ui/taal';
 import { usePaginaInfo } from '@/ui/paginaInfo';
 import { Feestbeeld } from '@/ui/feestbeeld';
+import { SchuifMetMeer } from '@/ui/schuifMetMeer';
 import { SterrenVraag } from '@/ui/sterrenVraag';
 import { useSchermWakker } from '@/ui/schermWakker';
 import { stappenMetHoeveelheden } from '@/lib/stapHoeveelheden';
@@ -148,16 +149,16 @@ export default function Bereiding() {
           accessibilityRole="button"
           accessibilityLabel={t('kookwekker.start', { tijd: label })}
         >
-          <Ionicons name="timer-outline" size={g(22)} color={PETROL} />
-          <Text style={[s.wekkerTekst, { fontSize: g(17) }]}>{label}</Text>
+          <Ionicons name="timer-outline" size={16} color={PETROL} />
+          <Text style={s.wekkerTekst}>{label}</Text>
         </Pressable>
       );
     }
     if (w.afgelopen) {
       return (
         <Pressable key={seconden} style={[s.wekker, s.wekkerAf]} onPress={kookwekkers.stopAlarm} accessibilityRole="button" accessibilityLabel={t('kookwekker.stop')}>
-          <Ionicons name="alarm-outline" size={g(22)} color="#fff" />
-          <Text style={[s.wekkerTekst, s.wit, { fontSize: g(17) }]}>{t('kookwekker.klaar')}</Text>
+          <Ionicons name="alarm-outline" size={16} color="#fff" />
+          <Text style={[s.wekkerTekst, s.wit]}>{t('kookwekker.klaar')}</Text>
         </Pressable>
       );
     }
@@ -170,8 +171,8 @@ export default function Bereiding() {
           accessibilityRole="button"
           accessibilityLabel={gepauzeerd ? t('kookwekker.hervat') : t('kookwekker.pauzeer')}
         >
-          <Ionicons name={gepauzeerd ? 'play' : 'pause'} size={g(20)} color="#fff" />
-          <Text style={[s.wekkerTekst, s.wit, s.cijfers, { fontSize: g(19) }]}>{aftellen(resterend(w, nu))}</Text>
+          <Ionicons name={gepauzeerd ? 'play' : 'pause'} size={16} color="#fff" />
+          <Text style={[s.wekkerTekst, s.wit, s.cijfers]}>{aftellen(resterend(w, nu))}</Text>
         </Pressable>
         <Pressable style={s.wekkerWis} onPress={() => kookwekkers.wis(w.id)} hitSlop={8} accessibilityRole="button" accessibilityLabel={t('kookwekker.wis')}>
           <Ionicons name="close" size={18} color="#fff" />
@@ -182,6 +183,7 @@ export default function Bereiding() {
   const laatste = kaarten.length - 1;
   const voorkeurDag = dag !== undefined && dag !== '' ? Number(dag) : undefined;
   const kookDag = kookbareDag(plan, id ?? '', voorkeurDag);
+  const einde = eindeBereiding(plan, id ?? '', voorkeurDag);
 
   // WEEK-108: het kruisje keert altijd terug naar het weekmenu, ongeacht de geschiedenis.
   const sluit = () => router.navigate('/');
@@ -346,7 +348,8 @@ export default function Bereiding() {
         {kaarten.map((k, i) => (
           <View key={i} style={[s.pagina, { width }, pagerHoogte > 0 && { height: pagerHoogte }]}>
             <View style={[s.kaart, i === index && s.kaartActief]}>
-              <ScrollView contentContainerStyle={s.kaartInhoud}>
+              {/* WEEK-339: lange stap (zeker met grote letters): een pijltje en een overgang tonen dat er nog tekst volgt. */}
+              <SchuifMetMeer style={s.kaartSchuif} contentContainerStyle={s.kaartInhoud} kleur={PETROL} meerLabel={t('pagina.meer')}>
                 {k.soort === 'ingredienten' ? (
                   <>
                     <Text style={s.kaartKop}>{t('bereiding.watNodig')}</Text>
@@ -383,12 +386,9 @@ export default function Bereiding() {
                         </Text>
                       ))}
                     </Text>
-                    {vindTijden(k.tekst).length > 0 && (
-                      <View style={s.wekkerRij}>{vindTijden(k.tekst).map((tijd) => wekkerKnop(k.nummer, tijd.seconden))}</View>
-                    )}
                   </>
                 )}
-              </ScrollView>
+              </SchuifMetMeer>
             </View>
           </View>
         ))}
@@ -423,7 +423,12 @@ export default function Bereiding() {
         >
           <Ionicons name="chevron-back" size={28} color={PETROL} />
         </Pressable>
-        <Text style={s.voortgang}>{t('bereiding.vegen')}</Text>
+        {/* WEEK-339: de kookwekkers van deze stap staan vast tussen de pijlen, altijd zichtbaar; anders de uitleg. */}
+        {huidig?.soort === 'stap' && vindTijden(huidig.tekst).length > 0 ? (
+          <View style={s.wekkerRij}>{vindTijden(huidig.tekst).map((tijd) => wekkerKnop(huidig.nummer, tijd.seconden))}</View>
+        ) : (
+          <Text style={s.voortgang}>{t('bereiding.vegen')}</Text>
+        )}
         <Pressable
           onPress={volgende}
           hitSlop={10}
@@ -439,10 +444,21 @@ export default function Bereiding() {
       <Modal visible={klaarVraag} transparent animationType="fade" onRequestClose={() => setKlaarVraag(false)}>
         <Pressable style={s.achtergrond} onPress={() => setKlaarVraag(false)} accessibilityLabel={t('bereiding.annuleer')}>
           <Pressable style={s.vraag} onPress={() => undefined}>
-            {/* WEEK-328: eigen tekening van een dampende pan in plaats van emoji. */}
-            <Feestbeeld soort="pan" grootte={150} zichtbaar={klaarVraag} />
-            <Text style={s.vraagTitel}>{t('bereiding.proficiat')}</Text>
-            <Text style={s.vraagTekst}>{kookDag !== undefined ? t('bereiding.gekooktVraag') : t('bereiding.alGekookt')}</Text>
+            {/* WEEK-339: een niet-bevestigd gerecht krijgt geen felicitatie: het staat niet vast in het weekmenu. */}
+            {einde === 'nietBevestigd' ? (
+              <>
+                <Ionicons name="information-circle-outline" size={48} color={PETROL} />
+                <Text style={s.vraagTitel}>{t('bereiding.nietBevestigdTitel')}</Text>
+                <Text style={s.vraagTekst}>{t('bereiding.nietBevestigdTekst')}</Text>
+              </>
+            ) : (
+              <>
+                {/* WEEK-328: eigen tekening van een dampende pan in plaats van emoji. */}
+                <Feestbeeld soort="pan" grootte={150} zichtbaar={klaarVraag} />
+                <Text style={s.vraagTitel}>{t('bereiding.proficiat')}</Text>
+                <Text style={s.vraagTekst}>{einde === 'koken' ? t('bereiding.gekooktVraag') : t('bereiding.alGekookt')}</Text>
+              </>
+            )}
             {kookDag !== undefined && <Text style={s.vraagUitleg}>{t('bereiding.gekooktUitleg')}</Text>}
             <View style={s.vraagKnoppen}>
               <Pressable style={[s.vraagKnop, s.vraagKnopLijn]} onPress={() => setKlaarVraag(false)} accessibilityRole="button">
@@ -505,8 +521,8 @@ const s = StyleSheet.create({
   ingFrigo: { marginLeft: 8, flexDirection: 'row', alignItems: 'center', gap: 3 },
   ingDeels: { marginLeft: 8, fontSize: 11, fontWeight: '700', color: MUTED },
   ingHoeveelheid: { fontSize: 16, fontWeight: '700', color: MUTED, marginLeft: 12 },
-  onderaan: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 8, paddingBottom: 18 },
-  rond: { width: 60, height: 60, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  onderaan: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 18 },
+  rond: { width: 56, height: 56, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   rondLijn: { borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff' },
   rondVol: { backgroundColor: PETROL },
   rondKlaar: { backgroundColor: GROEN },
@@ -534,16 +550,18 @@ const s = StyleSheet.create({
   // WEEK-335
   stapHoeveelheid: { color: PETROL, fontWeight: '800' },
   // WEEK-334
-  wekkerRij: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 },
-  wekker: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 999, borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff', paddingHorizontal: 16, minHeight: 50 },
+  wekkerRij: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 6, paddingHorizontal: 4 },
+  kaartSchuif: { flex: 1 },
+  // WEEK-339 (UAT): compact, zodat er twee naast elkaar passen tussen de pijlen.
+  wekker: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, borderWidth: 2, borderColor: PETROL, backgroundColor: '#fff', paddingHorizontal: 9, minHeight: 40 },
   wekkerLoopt: { backgroundColor: PETROL, paddingLeft: 0, paddingRight: 8 },
   wekkerPauze: { backgroundColor: MUTED, borderColor: MUTED },
   wekkerAf: { backgroundColor: ORANJE, borderColor: ORANJE },
-  wekkerHoofd: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 16, paddingVertical: 10 },
-  wekkerTekst: { fontWeight: '800', color: PETROL },
-  cijfers: { fontVariant: ['tabular-nums'], minWidth: 52 },
+  wekkerHoofd: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 9, paddingVertical: 6 },
+  wekkerTekst: { fontWeight: '800', color: PETROL, fontSize: 15 },
+  cijfers: { fontVariant: ['tabular-nums'], minWidth: 40 },
   wit: { color: '#fff' },
-  wekkerWis: { width: 32, height: 32, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
+  wekkerWis: { width: 28, height: 28, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.22)' },
   lopend: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, paddingTop: 6 },
   lopendChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: PETROL_ZACHT, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 },
   lopendTekst: { color: PETROL, fontWeight: '800', fontSize: 14, fontVariant: ['tabular-nums'] },

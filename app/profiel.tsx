@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,11 +10,13 @@ import {
   MAX_VOLWASSENEN,
   Profiel,
   ProfielFout,
+  profielNaSync,
+  sectiesMetFouten,
   standaardProfiel,
   valideerProfiel,
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
-import { laadBeheerderId, laadGezin, ikId } from '@/opslag/sync';
+import { bijWijziging, laadBeheerderId, laadGezin, ikId } from '@/opslag/sync';
 import { magGezinsprofielWijzigen } from '@/lib/gezinbeheer';
 import { zoekPlaats } from '@/opslag/winkels';
 import { landInTaal } from '@/lib/land';
@@ -97,16 +99,42 @@ export default function ProfielScherm() {
     rond: true,
   });
 
+  // WEEK-338: het laatst geladen profiel, om te weten of de gebruiker intussen zelf iets veranderde.
+  const laatstGeladen = useRef<Profiel>(standaardProfiel());
+  const laadMag = useCallback(() => {
+    laadGezin()
+      .then(async (gezin) => (gezin ? magGezinsprofielWijzigen(true, await laadBeheerderId(), await ikId()) : true))
+      .catch(() => false)
+      .then(setMag);
+  }, []);
+
+  // WEEK-338: na het aansluiten bij een gezinsruimte komt het gedeelde gezinsprofiel binnen terwijl dit scherm open is.
+  // Toon het meteen (vroeger bleven de lege velden staan en vroeg de app opnieuw om adres en gezin).
+  useEffect(() => {
+    const stopProfiel = bijWijziging('profiel', () => {
+      laadProfiel().then((binnen) => {
+        setProfiel((opScherm) => profielNaSync(opScherm, laatstGeladen.current, binnen));
+        laatstGeladen.current = binnen;
+        setFouten([]);
+      });
+    });
+    const stopGezin = bijWijziging('gezin', laadMag);
+    const stopLeden = bijWijziging('leden', laadMag);
+    return () => {
+      stopProfiel();
+      stopGezin();
+      stopLeden();
+    };
+  }, [laadMag]);
+
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then((p) => {
+        laatstGeladen.current = p;
         setProfiel(p);
         setFouten([]);
       });
-      laadGezin()
-        .then(async (gezin) => (gezin ? magGezinsprofielWijzigen(true, await laadBeheerderId(), await ikId()) : true))
-        .catch(() => false)
-        .then(setMag);
+      laadMag();
       aangemeldAls().then(setAccount).catch(() => setAccount(undefined));
       toestemmingKnopNodig().then(setToestemmingKnop).catch(() => setToestemmingKnop(false));
       setAanmeldFout(false);
@@ -177,8 +205,13 @@ export default function ProfielScherm() {
   const bewaar = async () => {
     const gevonden = valideerProfiel(profiel);
     setFouten(gevonden);
-    if (gevonden.length) return;
+    if (gevonden.length) {
+      // UAT 26/11: de secties met een fout klappen open, zodat de gebruiker ziet wat er nog ontbreekt.
+      setUitgeklapt((open) => new Set([...open, ...sectiesMetFouten(gevonden)]));
+      return;
+    }
     await bewaarProfiel(profiel);
+    laatstGeladen.current = profiel;
     // WEEK-100: na bewaren direct naar het menu.
     router.navigate('/');
   };
@@ -262,16 +295,16 @@ export default function ProfielScherm() {
         <View style={s.rijVelden}>
           <View style={{ width: 100, gap: 4 }}>
             <Text style={s.label}>{t('profiel.postcode')}</Text>
-            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" editable={mag} />
+            <TextInput style={s.veld} value={profiel.adres.postcode} onChangeText={wijzigPostcode} keyboardType="number-pad" editable={mag} accessibilityLabel={t('profiel.postcode')} />
           </View>
           <View style={{ flex: 1, gap: 4 }}>
             <Text style={s.label}>{t('profiel.gemeente')}</Text>
-            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(t) => wijzigAdres({ gemeente: t })} editable={mag} />
+            <TextInput style={s.veld} value={profiel.adres.gemeente} onChangeText={(tekst) => wijzigAdres({ gemeente: tekst })} editable={mag} accessibilityLabel={t('profiel.gemeente')} />
           </View>
         </View>
         <View style={{ gap: 4 }}>
           <Text style={s.label}>{t('profiel.land')}</Text>
-          <TextInput style={s.veld} value={landInTaal(profiel.adres.land, taal)} onChangeText={(t) => wijzigAdres({ land: t })} editable={mag} />
+          <TextInput style={s.veld} value={landInTaal(profiel.adres.land, taal)} onChangeText={(tekst) => wijzigAdres({ land: tekst })} editable={mag} accessibilityLabel={t('profiel.land')} />
         </View>
       </View>
       </Inklapbaar>
