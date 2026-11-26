@@ -1,6 +1,7 @@
-import { test } from 'node:test';
+import { describe, it, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { dbReceptId, markeerVerstuurd, moetVragen, naarRij, normaliseerBeoordelingen, teVersturen, zetSterren } from './beoordeling';
+import { dbReceptId, markeerVerstuurd, moetVragen, naarRij, normaliseerBeoordelingen, sterrenNaKoken, teVersturen, zetSterren } from './beoordeling';
+import type { Beoordeling } from './beoordeling';
 
 const NU = '2026-11-18T22:00:00.000Z';
 const LATER = '2026-11-18T22:05:00.000Z';
@@ -56,4 +57,28 @@ test('WEEK-316: normaliseren laat onbruikbare rijen weg; oude redenen vallen weg
 
 test('WEEK-316: rij voor de databank zonder naam of e-mail', () => {
   assert.deepEqual(naarRij({ receptId: 9, sterren: 2, op: NU, verstuurd: false }), { recept_id: 9, sterren: 2, bijgewerkt_op: NU });
+});
+
+// WEEK-333: de sterrenvraag na Gekookt is dezelfde in het weekmenu en in de bereiding.
+describe('sterrenNaKoken (WEEK-333)', () => {
+  const b = (receptId: number): Beoordeling => ({ receptId, sterren: 4, op: '2026-11-25', verstuurd: true });
+  it('vraagt na koken van een gerecht van de app zonder score', () => {
+    assert.equal(sterrenNaKoken({ gedaan: true, recept: { id: 'db-408' } }, []), 408);
+  });
+  it('vraagt niet meer als het gerecht al een score heeft', () => {
+    assert.equal(sterrenNaKoken({ gedaan: true, recept: { id: 'db-408' } }, [b(408)]), undefined);
+  });
+  it('een score van een ander gerecht telt niet', () => {
+    assert.equal(sterrenNaKoken({ gedaan: true, recept: { id: 'db-408' } }, [b(409)]), 408);
+  });
+  it('regressie: niet bij terugzetten naar niet gekookt', () => {
+    assert.equal(sterrenNaKoken({ gedaan: false, recept: { id: 'db-408' } }, []), undefined);
+    assert.equal(sterrenNaKoken({ recept: { id: 'db-408' } }, []), undefined);
+  });
+  it('regressie: niet voor eigen gerechten van het gezin', () => {
+    assert.equal(sterrenNaKoken({ gedaan: true, recept: { id: 'eigen:mwqhqh2432d' } }, []), undefined);
+  });
+  it('zonder dag: niets', () => {
+    assert.equal(sterrenNaKoken(undefined, []), undefined);
+  });
 });

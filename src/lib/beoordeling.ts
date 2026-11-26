@@ -50,3 +50,16 @@ export function moetVragen(beoordelingen: readonly Beoordeling[], receptId: numb
 export function naarRij(b: Beoordeling): { recept_id: number; sterren: number; bijgewerkt_op: string } {
   return { recept_id: b.receptId, sterren: b.sterren, bijgewerkt_op: b.op };
 }
+
+/**
+ * WEEK-333: voor welk gerecht moet de sterrenvraag open na een tik op Gekookt (weekmenu én bereiding)?
+ * Enkel als de dag nu gekookt is (niet bij terugzetten), voor gerechten van de app en zolang er geen score is.
+ */
+export function sterrenNaKoken(
+  dag: { gedaan?: boolean; recept: { id?: string } } | undefined,
+  beoordelingen: readonly Beoordeling[],
+): number | undefined {
+  if (!dag?.gedaan) return undefined;
+  const receptId = dbReceptId(dag.recept.id);
+  return receptId !== undefined && moetVragen(beoordelingen, receptId) ? receptId : undefined;
+}
