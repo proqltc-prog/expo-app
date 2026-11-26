@@ -8,6 +8,12 @@ Alle wijzigingen aan Gezond Boodschappen. Versies volgen [Semantic Versioning](h
 
 Elke versie verwijst naar zijn Jira-workitem(s) en Confluence-pagina.
 
+## [0.167.1] – 2026-11-25
+
+**Jira:** [WEEK-337](https://proqltc-1791495894841.atlassian.net/browse/WEEK-337) (voorbereiding webwinkels) · **Confluence:** [WEEK-337](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29425666)
+
+- Voorbereiding om later zelf je (web)winkel te kiezen (Colruyt/Collect&Go, Delhaize, Albert Heijn, Carrefour). Nog niet zichtbaar in de app.
+
 ## [0.167.0] – 2026-11-25
 
 **Jira:** [WEEK-334](https://proqltc-1791495894841.atlassian.net/browse/WEEK-334) (kookwekker) · [WEEK-335](https://proqltc-1791495894841.atlassian.net/browse/WEEK-335) (hoeveelheden in de stap) · [WEEK-336](https://proqltc-1791495894841.atlassian.net/browse/WEEK-336) (grotere tekst) · **Confluence:** [WEEK-334](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29360129) · [WEEK-335](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29360149) · [WEEK-336](https://proqltc-1791495894841.atlassian.net/wiki/spaces/WEEK/pages/29392897)
