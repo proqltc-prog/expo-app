@@ -34,6 +34,7 @@ import {
 } from '@/opslag/sync';
 import { Sleutel } from '@/i18n';
 import { useTaal } from '@/ui/taal';
+import { aangemeldAls, meldAanMetGoogle } from '@/opslag/aanmelden';
 import { LEEG_VELD, PLACEHOLDER_KLEUR, VELD, VELD_FOUT } from '@/ui/invoerStijl';
 
 const KLEUR = '#2e7d4f';
@@ -68,6 +69,8 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
   const [voornaam, setVoornaam] = useState('');
   const [voornaamInvoer, setVoornaamInvoer] = useState('');
   const [voornaamFout, setVoornaamFout] = useState<VoornaamFout | null>(null);
+  // WEEK-338: aansluiten zonder account? Eerst vragen of de gebruiker al een account heeft (anders een dubbel lid).
+  const [zonderAccount, setZonderAccount] = useState<string | null>(null);
   const [voornaamOpgeslagen, setVoornaamOpgeslagen] = useState(false);
 
   useEffect(() => {
@@ -158,17 +161,37 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
       if (id) await wijsPlanBeheerderAan(id);
     });
 
-  const sluitAan = () => {
-    const gelezen = leesGezinscode(code);
-    if (!gelezen) {
-      setFout(t('gezin.fout.code'));
-      return;
-    }
+  const sluitAanMet = (gelezen: string) =>
     voerUit(async () => {
       const naam = await voornaamVoorGezin();
       if (!naam) return;
       await wordLid(gelezen, naam);
     });
+
+  const sluitAan = async () => {
+    const gelezen = leesGezinscode(code);
+    if (!gelezen) {
+      setFout(t('gezin.fout.code'));
+      return;
+    }
+    // WEEK-338: zonder account wordt elk toestel een nieuw lid. Wie al een account heeft (bv. na een nieuwe installatie),
+    // meldt beter eerst aan: dan is hij meteen terug lid, zonder een tweede keer in de gezinsruimte te staan.
+    // Ook zonder sessie (nieuwe installatie): dan maakt het aansluiten zelf een nieuwe, anonieme gebruiker.
+    if ((await aangemeldAls().catch(() => undefined)) === undefined) {
+      setZonderAccount(gelezen);
+      return;
+    }
+    void sluitAanMet(gelezen);
+  };
+
+  const eerstAanmelden = () => {
+    setZonderAccount(null);
+    void voerUit(meldAanMetGoogle);
+  };
+  const tochAansluiten = () => {
+    const gelezen = zonderAccount;
+    setZonderAccount(null);
+    if (gelezen) void sluitAanMet(gelezen);
   };
 
   const deel = () => gezin && Share.share({ message: t('gezin.deelTekst', { code: toonGezinscode(gezin.code) }) });
@@ -295,7 +318,7 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
               />
               <Pressable
                 style={[s.icoonKnop, bezig && s.uit]}
-                onPress={sluitAan}
+                onPress={() => void sluitAan()}
                 disabled={bezig}
                 accessibilityRole="button"
                 accessibilityLabel={t('gezin.wordLid')}
@@ -303,6 +326,17 @@ export function GezinsRuimte({ kopTonen = true }: { kopTonen?: boolean } = {}) {
                 <Ionicons name="enter-outline" size={24} color={KLEUR} />
               </Pressable>
             </View>
+            {zonderAccount && (
+              <View style={s.vraagAccount} accessibilityLiveRegion="polite">
+                <Text style={s.uitleg}>{t('gezin.zonderAccountVraag')}</Text>
+                <Pressable style={s.knop} onPress={eerstAanmelden} accessibilityRole="button">
+                  <Text style={s.knopTekst}>{t('gezin.eerstAanmelden')}</Text>
+                </Pressable>
+                <Pressable style={s.knopLijn} onPress={tochAansluiten} accessibilityRole="button">
+                  <Text style={s.knopLijnTekst}>{t('gezin.tochAansluiten')}</Text>
+                </Pressable>
+              </View>
+            )}
             {/* WEEK-283: ook zonder gezinsruimte de fout tonen (ongeldige of onbekende code, maken mislukt); vroeger onzichtbaar. */}
             {fout && <Text style={s.fout} accessibilityRole="alert">{fout}</Text>}
           </>
@@ -487,6 +521,9 @@ const s = StyleSheet.create({
   actieKnop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, minHeight: 48, borderWidth: 1, borderColor: '#f1c4c4', borderRadius: 10, paddingHorizontal: 12 },
   verlaatTekst: { color: GEVAAR, fontWeight: '600', flexShrink: 1 },
   annuleerKnop: { alignItems: 'center', padding: 8 },
+  vraagAccount: { gap: 10, borderWidth: 1, borderColor: '#D5DBD3', borderRadius: 10, padding: 12, backgroundColor: '#F8F8F4' },
+  knopLijn: { borderWidth: 1.5, borderColor: ACCENT, borderRadius: 12, padding: 12, alignItems: 'center', minHeight: 48, justifyContent: 'center' },
+  knopLijnTekst: { color: ACCENT, fontWeight: '700', fontSize: 16 },
   bevestig: { gap: 10, borderWidth: 1, borderColor: '#f1c4c4', borderRadius: 10, padding: 12 },
   fout: { color: GEVAAR },
 });

@@ -117,3 +117,23 @@ export function naastDoel(index: number, doel: number | undefined, richting: 1 |
 export function doelBereikt(x: number, breedte: number, doel: number): boolean {
   return Math.abs(x - doel * breedte) < 2;
 }
+
+/**
+ * WEEK-339: wat de vraag na de laatste stap toont.
+ * - 'koken': bevestigd en nog niet gekookt → Proficiat en de vraag om op gekookt te zetten;
+ * - 'alGekookt': al op gekookt → Proficiat, smakelijk;
+ * - 'nietBevestigd': niet (of niet meer) bevestigd in het weekmenu → geen felicitatie, wel uitleg dat je eerst bevestigt.
+ */
+export type EindeBereiding = 'koken' | 'alGekookt' | 'nietBevestigd';
+
+export function eindeBereiding(plan: Weekplan | null, receptId: string, voorkeur?: number): EindeBereiding {
+  if (kookbareDag(plan, receptId, voorkeur) !== undefined) return 'koken';
+  const dagen = plan?.dagen.filter((d) => d.recept.id === receptId) ?? [];
+  return dagen.some((d) => d.bevestigd && d.gedaan) ? 'alGekookt' : 'nietBevestigd';
+}
+
+/** WEEK-339: staat er onder in een schuifvlak nog inhoud die je niet ziet? Een paar pixels afronding tellen niet. */
+export function meerOnder(scrollY: number, zichtbareHoogte: number, inhoudHoogte: number): boolean {
+  if (!(zichtbareHoogte > 0) || !(inhoudHoogte > 0)) return false;
+  return scrollY + zichtbareHoogte < inhoudHoogte - 6;
+}

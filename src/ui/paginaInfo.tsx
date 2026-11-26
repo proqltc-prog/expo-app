@@ -1,8 +1,10 @@
 import { useLayoutEffect, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
 import { alineas, vetteDelen } from '@/lib/opmaak';
+import { SchuifMetMeer } from '@/ui/schuifMetMeer';
+import { useTaal } from '@/ui/taal';
 
 /**
  * Uitleg over een pagina (WEEK-177): een infoknop rechtsboven in de koptekst, die een popup opent die je kunt wegklikken.
@@ -25,6 +27,7 @@ export function usePaginaInfo({
   rond?: boolean;
 }) {
   const navigation = useNavigation();
+  const { t } = useTaal();
   const [open, setOpen] = useState(false);
 
   useLayoutEffect(() => {
@@ -49,7 +52,8 @@ export function usePaginaInfo({
       <Pressable style={s.achtergrond} onPress={() => setOpen(false)} accessibilityLabel={sluitLabel}>
         {/* Tikken binnen het venster sluit niet; enkel de achtergrond en de knop sluiten. */}
         <Pressable style={s.venster} onPress={() => undefined}>
-          <ScrollView style={s.scroll} contentContainerStyle={s.inhoud}>
+          {/* WEEK-339: lange uitleg (zeker met grote letters): een pijltje en een overgang tonen dat er nog tekst volgt. */}
+          <SchuifMetMeer style={s.scroll} contentContainerStyle={s.inhoud} kleur={kleur} meerLabel={t('pagina.meer')}>
             {alinea.map((a, i) => (
               <Text key={i} style={s.tekst}>
                 {vetteDelen(a).map((d, n) => (
@@ -59,7 +63,7 @@ export function usePaginaInfo({
                 ))}
               </Text>
             ))}
-          </ScrollView>
+          </SchuifMetMeer>
           <Pressable style={[s.knopSluit, { backgroundColor: kleur }]} onPress={() => setOpen(false)} accessibilityRole="button">
             <Text style={s.knopSluitTekst}>{sluitLabel}</Text>
           </Pressable>
@@ -76,8 +80,8 @@ const s = StyleSheet.create({
   knopRond: { marginRight: 16, width: 42, height: 42, borderRadius: 21, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
   achtergrond: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 24 },
   venster: { width: '100%', maxWidth: 480, maxHeight: '80%', backgroundColor: '#fff', borderRadius: 16, padding: 18, gap: 14 },
-  scroll: { flexGrow: 0 },
-  inhoud: { gap: 12 },
+  scroll: { flexShrink: 1 },
+  inhoud: { gap: 12, paddingBottom: 8 },
   tekst: { color: '#1F2A24', fontSize: 15, lineHeight: 22 },
   vet: { fontWeight: '700' },
   knopSluit: { alignSelf: 'stretch', borderRadius: 12, paddingVertical: 12, alignItems: 'center' },

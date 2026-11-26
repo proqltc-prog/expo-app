@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,11 +10,12 @@ import {
   MAX_VOLWASSENEN,
   Profiel,
   ProfielFout,
+  profielNaSync,
   standaardProfiel,
   valideerProfiel,
 } from '@/lib/profiel';
 import { bewaarProfiel, laadProfiel } from '@/opslag/profiel';
-import { laadBeheerderId, laadGezin, ikId } from '@/opslag/sync';
+import { bijWijziging, laadBeheerderId, laadGezin, ikId } from '@/opslag/sync';
 import { magGezinsprofielWijzigen } from '@/lib/gezinbeheer';
 import { zoekPlaats } from '@/opslag/winkels';
 import { landInTaal } from '@/lib/land';
@@ -97,16 +98,42 @@ export default function ProfielScherm() {
     rond: true,
   });
 
+  // WEEK-338: het laatst geladen profiel, om te weten of de gebruiker intussen zelf iets veranderde.
+  const laatstGeladen = useRef<Profiel>(standaardProfiel());
+  const laadMag = useCallback(() => {
+    laadGezin()
+      .then(async (gezin) => (gezin ? magGezinsprofielWijzigen(true, await laadBeheerderId(), await ikId()) : true))
+      .catch(() => false)
+      .then(setMag);
+  }, []);
+
+  // WEEK-338: na het aansluiten bij een gezinsruimte komt het gedeelde gezinsprofiel binnen terwijl dit scherm open is.
+  // Toon het meteen (vroeger bleven de lege velden staan en vroeg de app opnieuw om adres en gezin).
+  useEffect(() => {
+    const stopProfiel = bijWijziging('profiel', () => {
+      laadProfiel().then((binnen) => {
+        setProfiel((opScherm) => profielNaSync(opScherm, laatstGeladen.current, binnen));
+        laatstGeladen.current = binnen;
+        setFouten([]);
+      });
+    });
+    const stopGezin = bijWijziging('gezin', laadMag);
+    const stopLeden = bijWijziging('leden', laadMag);
+    return () => {
+      stopProfiel();
+      stopGezin();
+      stopLeden();
+    };
+  }, [laadMag]);
+
   useFocusEffect(
     useCallback(() => {
       laadProfiel().then((p) => {
+        laatstGeladen.current = p;
         setProfiel(p);
         setFouten([]);
       });
-      laadGezin()
-        .then(async (gezin) => (gezin ? magGezinsprofielWijzigen(true, await laadBeheerderId(), await ikId()) : true))
-        .catch(() => false)
-        .then(setMag);
+      laadMag();
       aangemeldAls().then(setAccount).catch(() => setAccount(undefined));
       toestemmingKnopNodig().then(setToestemmingKnop).catch(() => setToestemmingKnop(false));
       setAanmeldFout(false);
@@ -179,6 +206,7 @@ export default function ProfielScherm() {
     setFouten(gevonden);
     if (gevonden.length) return;
     await bewaarProfiel(profiel);
+    laatstGeladen.current = profiel;
     // WEEK-100: na bewaren direct naar het menu.
     router.navigate('/');
   };

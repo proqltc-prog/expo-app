@@ -308,7 +308,9 @@ export default function Weekplanning() {
         setMelding({ tekst: t('planning.geenVerbinding'), index });
         return;
       }
-      const nieuw: Weekplan = vervangDbDag(basis, index, maakDbPool(recepten, taal, profiel), Date.now());
+      // WEEK-340: ook bij een ander gerecht gaat wat In huis ligt voor.
+      const frigo = await laadFrigo().catch(() => []);
+      const nieuw: Weekplan = vervangDbDag(basis, index, maakDbPool(recepten, taal, profiel), Date.now(), frigo);
       // Geen enkel recept meer over: de gebruiker kiest zelf (WEEK-184).
       if (nieuw === basis) {
         setMelding({ tekst: t('planning.allesGezienTekst'), index, zelfKiezen: true });

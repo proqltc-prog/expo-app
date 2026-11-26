@@ -105,10 +105,11 @@ describe('planUitDatabase met frigo-voorrang (WEEK-188)', () => {
     if (!plan) throw new Error('er is een plan');
     return plan;
   };
-  test('de recepten die opmaken wat in huis is, komen eerst; daarna de rest zonder dubbel recept', () => {
+  test('het gerecht dat het meest opmaakt wat in huis is, komt eerst; daarna de rest zonder dubbel recept', () => {
     const plan = planMet({ frigo });
-    // Linzencurry (db-1) en Thaise kipcurry (db-6) gebruiken kokosmelk; die staan op de eerste twee dagen.
-    assert.deepEqual(plan.dagen.slice(0, 2).map((d) => d.recept.id).sort(), ['db-1', 'db-6']);
+    // WEEK-340: linzencurry (db-1) maakt linzen en spinazie op. De Thaise kipcurry (db-6) gebruikt enkel kokosmelk,
+    // en dat is basisvoorraad (categorie condiment): geen reden meer om dat gerecht voorrang te geven (vroeger wel, WEEK-188).
+    assert.equal(plan.dagen[0].recept.id, 'db-1');
     assert.equal(new Set(plan.dagen.map((d) => d.recept.id)).size, plan.dagen.length, 'geen dubbel recept');
   });
   test('zonder frigo verandert er niets', () => {

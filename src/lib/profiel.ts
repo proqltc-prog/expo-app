@@ -109,3 +109,11 @@ export function heeftGezin(p: Profiel): boolean {
 export function gezinIcoonOplichten(p: Profiel | null): boolean {
   return p !== null && !isProfielIngesteld(p);
 }
+
+/**
+ * WEEK-338: een gezinsprofiel dat binnenkomt via de gezinsruimte (bv. net aangesloten) komt meteen op het scherm,
+ * tenzij de gebruiker intussen zelf iets veranderd heeft: wat hij aan het typen is, wordt nooit overschreven.
+ */
+export function profielNaSync(opScherm: Profiel, laatstGeladen: Profiel, binnen: Profiel): Profiel {
+  return JSON.stringify(opScherm) === JSON.stringify(laatstGeladen) ? binnen : opScherm;
+}
