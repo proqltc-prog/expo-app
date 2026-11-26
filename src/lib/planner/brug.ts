@@ -13,14 +13,15 @@ export function kooktijdNaarDb(momenten: readonly Moment[], gekozen: readonly st
 const STIJL_NAAR_DB: Record<string, StijlCode[]> = {
   mediterraan: ['mediterraan'],
   italiaans: ['italiaans'],
-  frans: ['klassiek'],
-  belgisch: ['klassiek'],
+  // WEEK-341: de eigen stijl uit de databank, plus de oude, ruimere stijl (gerechten van vóór de fijnere indeling).
+  frans: ['frans', 'klassiek'],
+  belgisch: ['belgisch', 'klassiek'],
   mexicaans: ['mexicaans'],
-  chinees: ['aziatisch'],
+  chinees: ['chinees', 'aziatisch'],
   japans: ['japans'],
   koreaans: ['koreaans'],
   thais: ['thais'],
-  indiaas: ['aziatisch'],
+  indiaas: ['indiaas', 'aziatisch'],
   hartig: ['klassiek'],
   zoet: ['klassiek'],
 };

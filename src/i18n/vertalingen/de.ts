@@ -374,6 +374,10 @@ export const de: Vertalingen = {
   'stijl.thais': 'Thailändisch',
   'stijl.japans': 'Japanisch',
   'stijl.koreaans': 'Koreanisch',
+  'stijl.indiaas': 'Indisch',
+  'stijl.chinees': 'Chinesisch',
+  'stijl.belgisch': 'Belgisch',
+  'stijl.frans': 'Französisch',
   'stijl.comfort': 'Wohlfühlessen',
   'stijl.licht': 'Leicht / frisch',
 

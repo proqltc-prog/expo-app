@@ -25,8 +25,8 @@ describe('stijl naar databasestijlen', () => {
   test('mediterraan en italiaans blijven zichzelf', () => {
     assert.deepEqual(stijlNaarDb(['mediterraan', 'italiaans']), ['mediterraan', 'italiaans']);
   });
-  test('chinees en indiaas vallen samen onder aziatisch', () => {
-    assert.deepEqual(stijlNaarDb(['chinees', 'indiaas']), ['aziatisch']);
+  test('WEEK-341: chinees en indiaas hebben een eigen databasestijl, en delen het oudere aziatisch', () => {
+    assert.deepEqual(stijlNaarDb(['chinees', 'indiaas']), ['chinees', 'aziatisch', 'indiaas']);
   });
   test('thais, japans en koreaans hebben elk een eigen databasestijl (WEEK-86)', () => {
     assert.deepEqual(stijlNaarDb(['thais']), ['thais']);
@@ -34,7 +34,7 @@ describe('stijl naar databasestijlen', () => {
     assert.deepEqual(stijlNaarDb(['koreaans']), ['koreaans']);
   });
   test('dubbele keuzes komen maar één keer voor', () => {
-    assert.deepEqual(stijlNaarDb(['chinees', 'indiaas']), ['aziatisch']);
+    assert.deepEqual(stijlNaarDb(['chinees', 'chinees']), ['chinees', 'aziatisch']);
     assert.deepEqual(stijlNaarDb(['thais', 'thais']), ['thais']);
   });
   test('elke stijl uit het scherm heeft minstens één databasestijl', () => {
@@ -44,12 +44,12 @@ describe('stijl naar databasestijlen', () => {
       }
     }
   });
-  test('belgisch en hartig vallen onder klassiek; licht en comfort bestaan niet meer (WEEK-78 deel 2)', () => {
-    assert.deepEqual(stijlNaarDb(['belgisch']), ['klassiek']);
+  test('belgisch (WEEK-341: ook de eigen stijl) en hartig vallen onder klassiek; licht en comfort bestaan niet meer (WEEK-78 deel 2)', () => {
+    assert.deepEqual(stijlNaarDb(['belgisch']), ['belgisch', 'klassiek']);
     assert.deepEqual(stijlNaarDb(['hartig']), ['klassiek']);
     const alles = stijlOpties('avond').map((o) => o.id);
     for (const code of stijlNaarDb(alles)) {
-      assert.ok(['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'thais', 'japans', 'koreaans'].includes(code), code);
+      assert.ok(['klassiek', 'italiaans', 'aziatisch', 'mexicaans', 'mediterraan', 'thais', 'japans', 'koreaans', 'indiaas', 'chinees', 'belgisch', 'frans'].includes(code), code);
     }
   });
 });

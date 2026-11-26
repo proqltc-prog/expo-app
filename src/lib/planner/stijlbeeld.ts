@@ -46,6 +46,11 @@ const BEELD_VOOR_DB_STIJL: Record<string, string> = {
   thais: 'thais',
   japans: 'japans',
   koreaans: 'koreaans',
+  // WEEK-341
+  indiaas: 'indiaas',
+  chinees: 'chinees',
+  belgisch: 'belgisch',
+  frans: 'frans',
 };
 
 /** Het stijlbeeld voor een recept met deze eerste databasestijl, of undefined als er geen is. */

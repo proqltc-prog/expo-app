@@ -2,7 +2,7 @@ import { isGeldigeIso, plandagenVoorDatums } from '@/lib/planner/datums';
 // Controle van een weekplan dat van buitenaf komt (opslag op het toestel of AI-antwoord).
 import { AFDELINGEN, Afdeling, naarDbCode } from '@/data/ingredienten';
 import type { Vermijd } from '@/data/vermijden';
-import { MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/recept';
+import { DB_STIJLEN, MOMENTEN, Moment, STIJLEN, StijlCode, Soort } from '@/data/recept';
 import { normaliseerMomenten } from './moment';
 import { isTaal, type Taal } from '@/i18n';
 import { normaliseerFrigo } from '@/lib/frigo';
@@ -53,7 +53,7 @@ export function normaliseerRecept(ruw: unknown): PlanRecept | null {
     : [];
   if (!ingredienten.length) return null;
   const minuten = typeof ruw.minuten === 'number' && ruw.minuten > 0 && ruw.minuten < 24 * 60 ? Math.round(ruw.minuten) : 30;
-  const stijlen = Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [];
+  const stijlen = Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => DB_STIJLEN.includes(s as StijlCode)) : [];
   const recept: PlanRecept = {
     id: tekst(ruw.id) || naam.toLowerCase().replace(/\s+/g, '-'),
     naam,
@@ -96,7 +96,7 @@ export function normaliseerWeekplan(ruw: unknown): Weekplan | null {
   return {
     dagen,
     kooktijden: Array.isArray(ruw.kooktijden) ? ruw.kooktijden.filter((k): k is KooktijdCode => KOOKTIJDEN.includes(k as KooktijdCode)) : [],
-    stijlen: Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => STIJLEN.includes(s as StijlCode)) : [],
+    stijlen: Array.isArray(ruw.stijlen) ? ruw.stijlen.filter((s): s is StijlCode => DB_STIJLEN.includes(s as StijlCode)) : [],
     ...(normaliseerVermijd(ruw.vermijd).length ? { vermijd: normaliseerVermijd(ruw.vermijd) } : {}),
     ...(ruw.enkelVegetarisch === true ? { enkelVegetarisch: true } : {}),
     taal: isTaal(ruw.taal) ? ruw.taal : 'nl',

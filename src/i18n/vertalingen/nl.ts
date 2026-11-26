@@ -375,6 +375,10 @@ export const nl = {
   'stijl.thais': 'Thais',
   'stijl.japans': 'Japans',
   'stijl.koreaans': 'Koreaans',
+  'stijl.indiaas': 'Indiaas',
+  'stijl.chinees': 'Chinees',
+  'stijl.belgisch': 'Belgisch',
+  'stijl.frans': 'Frans',
   'stijl.comfort': 'Comfortfood',
   'stijl.licht': 'Licht / fris',
 
